@@ -1,0 +1,15 @@
+{
+  "name": "slipway-repo",
+  "private": true,
+  "description": "Slipway: an editorial, RTL-ready, agent-native site template, verified by Seaworthy.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node planning/roadmap/build.mjs --check && node --test planning/roadmap/",
+    "roadmap:build": "node planning/roadmap/build.mjs",
+    "roadmap:apply": "node planning/roadmap/apply.mjs"
+  }
+}
