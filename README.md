@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/exports/banner-dark.png">
+    <img alt="Slipway: build on Slipway. Ship Seaworthy." src="brand/exports/banner-light.png" width="100%">
+  </picture>
+</p>
+
 # Slipway
 
 **Build on Slipway. Ship Seaworthy.**
@@ -29,6 +36,10 @@ Slipway depends on Seaworthy, never the reverse. The deliverables Slipway waits 
 ## Contributing
 
 Every planned task is a small issue with a lane and a size. Start with [CONTRIBUTING.md](CONTRIBUTING.md). Agents: read [AGENTS.md](AGENTS.md).
+
+## Brand
+
+The mark, palette, badge, favicons, and social art are in [brand/](brand/). Rules for using the name and logo: [brand/USAGE_POLICY.md](brand/USAGE_POLICY.md).
 
 ## License
 
