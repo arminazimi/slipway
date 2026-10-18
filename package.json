@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "check": "node planning/roadmap/build.mjs --check && node --test planning/roadmap/",
+    "check": "node planning/roadmap/build.mjs --check && node --test \"planning/roadmap/*.test.mjs\"",
     "roadmap:build": "node planning/roadmap/build.mjs",
     "roadmap:apply": "node planning/roadmap/apply.mjs"
   }
