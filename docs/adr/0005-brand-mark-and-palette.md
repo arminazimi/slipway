@@ -18,7 +18,7 @@ The maintainer's brief for the mark and palette: in the family of the two earlie
 
 ### The mark
 
-Two concentric rings, cut by one diagonal slip: the part above the slip is light, the part below it is bronze, and a gap separates the halves. It reads as the ramp a ship slides down into the water, and as Seaworthy's ring-and-waterline turned through 35 degrees. The master file is `brand/slipway-mark-source.svg`.
+Two concentric rings, cut by one diagonal slip: the part above the slip is light, the part below it is bronze, and a gap separates the halves. It reads as the ramp a ship slides down into the water, and as Seaworthy's ring-and-waterline turned through 35 degrees. The master file is `brand/assets/slipway-mark-dark.svg`.
 
 | Property | Value |
 | --- | --- |
