@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Slipway mark for dark surfaces</title>
+  <desc id="desc">Two concentric rings split by a diagonal slip: light above the ramp, bronze below it.</desc>
+  <defs>
+    <clipPath id="above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath>
+    <clipPath id="below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath>
+  </defs>
+  <g fill="none" stroke-width="16">
+    <g clip-path="url(#above)" stroke="#F4EFE4"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g>
+    <g clip-path="url(#below)" stroke="#B8975A"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g>
+  </g>
+</svg>
