@@ -1,6 +1,6 @@
 // Generates every SVG brand asset from tools/brand/mark.mjs and brand/tokens.json.
 //
-//   node tools/brand/build.mjs           # write brand/assets, brand/favicon, the logo sheet, and tokens.css
+//   node tools/brand/build.mjs           # write brand/assets, brand/favicon, brand/templates, the logo sheet, tokens.css, and the export presets
 //   node tools/brand/build.mjs --check   # fail if any generated file is missing or out of date
 //
 // PNG exports are separate (tools/brand/export.mjs) because they need a browser.
@@ -13,6 +13,7 @@ import { badgeSvg } from "./badge.mjs";
 import { BRAND_DIR, VARIANTS, faviconSvg, markSvg, tokensCss } from "./mark.mjs";
 import { FAVICON_ICO, FAVICON_PNGS, SHEET, markPngs } from "./outputs.mjs";
 import { logoSheet } from "./sheet.mjs";
+import { EXPORT_PRESETS_JSON, TEMPLATE_FILES } from "./templates.mjs";
 
 export function generatedFiles() {
   const files = new Map();
@@ -21,12 +22,14 @@ export function generatedFiles() {
   files.set("favicon/favicon.svg", faviconSvg({ rounded: true }));
   files.set("favicon/icon-square.svg", faviconSvg({ rounded: false }));
   files.set(SHEET.source, logoSheet());
+  for (const { file, svg } of TEMPLATE_FILES) files.set(file, svg);
   files.set("tokens.css", tokensCss());
+  files.set("export-presets.json", JSON.stringify(EXPORT_PRESETS_JSON, null, 2) + "\n");
   return files;
 }
 
 /** Every PNG and the .ico that `npm run export:brand` must have produced. */
-export const exportedFiles = () => [...markPngs(Object.keys(VARIANTS)).map((p) => p.output), ...FAVICON_PNGS.map((p) => p.output), FAVICON_ICO.output, SHEET.output];
+export const exportedFiles = () => [...markPngs(Object.keys(VARIANTS)).map((p) => p.output), ...FAVICON_PNGS.map((p) => p.output), FAVICON_ICO.output, SHEET.output, ...EXPORT_PRESETS_JSON.presets.map((p) => p.output)];
 
 function main() {
   const check = process.argv.includes("--check");

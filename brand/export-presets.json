@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "format": "png",
+  "note": "Exports are rendered from the SVG sources with headless Chrome. Run `npm run export:brand`.",
+  "presets": [
+    {
+      "name": "social-preview-dark",
+      "source": "templates/social-preview-dark.svg",
+      "output": "exports/social-preview-dark.png",
+      "width": 1280,
+      "height": 640,
+      "background": "#17130F"
+    },
+    {
+      "name": "avatar-dark",
+      "source": "templates/avatar-dark.svg",
+      "output": "exports/avatar-dark.png",
+      "width": 512,
+      "height": 512,
+      "background": "#17130F"
+    },
+    {
+      "name": "banner-dark",
+      "source": "templates/banner-dark.svg",
+      "output": "exports/banner-dark.png",
+      "width": 1500,
+      "height": 500,
+      "background": "#17130F"
+    },
+    {
+      "name": "template-thumbnail-dark",
+      "source": "templates/template-thumbnail-dark.svg",
+      "output": "exports/template-thumbnail-dark.png",
+      "width": 1200,
+      "height": 750,
+      "background": "#17130F"
+    },
+    {
+      "name": "social-preview-light",
+      "source": "templates/social-preview-light.svg",
+      "output": "exports/social-preview-light.png",
+      "width": 1280,
+      "height": 640,
+      "background": "#F4EFE4"
+    },
+    {
+      "name": "avatar-light",
+      "source": "templates/avatar-light.svg",
+      "output": "exports/avatar-light.png",
+      "width": 512,
+      "height": 512,
+      "background": "#F4EFE4"
+    },
+    {
+      "name": "banner-light",
+      "source": "templates/banner-light.svg",
+      "output": "exports/banner-light.png",
+      "width": 1500,
+      "height": 500,
+      "background": "#F4EFE4"
+    },
+    {
+      "name": "template-thumbnail-light",
+      "source": "templates/template-thumbnail-light.svg",
+      "output": "exports/template-thumbnail-light.png",
+      "width": 1200,
+      "height": 750,
+      "background": "#F4EFE4"
+    }
+  ]
+}

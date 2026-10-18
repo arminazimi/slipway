@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">Slipway avatar</title>
+<rect width="512" height="512" fill="#17130F"/>
+<g transform="translate(76.8 76.8) scale(1.4)"><defs><clipPath id="t0-above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath><clipPath id="t0-below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath></defs><g fill="none" stroke-width="16"><g clip-path="url(#t0-above)" stroke="#F4EFE4"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g><g clip-path="url(#t0-below)" stroke="#B8975A"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g></g></g>
+</svg>

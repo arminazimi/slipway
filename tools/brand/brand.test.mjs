@@ -8,6 +8,7 @@ import { generatedFiles } from "./build.mjs";
 import { readIco } from "./ico.mjs";
 import { BRAND_DIR, FAVICON, MARK, VARIANTS, faviconSvg, markSvg, tokens } from "./mark.mjs";
 import { FAVICON_ICO, FAVICON_PNGS } from "./outputs.mjs";
+import { EXPORT_PRESETS_JSON, PRESETS, TEMPLATES, THEMES } from "./templates.mjs";
 
 const hex = (name) => tokens.colors[name].value;
 
@@ -59,6 +60,7 @@ test("every color in a generated SVG is a palette color", () => {
   palette.add("#0c0906"); // the sheet's outer backdrop
   palette.add("#4a4036"); // swatch outline on the sheet
   palette.add("#fff");
+  palette.add("#ffffff"); // the page panel in the light template thumbnail
   for (const [path, content] of generatedFiles()) {
     if (!path.endsWith(".svg")) continue;
     for (const [color] of content.matchAll(/#[0-9a-fA-F]{6}\b|#fff\b/g)) assert.ok(palette.has(color.toLowerCase()), `${path} uses ${color}`);
@@ -117,4 +119,31 @@ test("tokens.css has every token and the two themes", () => {
   const css = readFileSync(join(BRAND_DIR, "tokens.css"), "utf8");
   for (const { value } of Object.values(tokens.colors)) assert.ok(css.includes(value.toLowerCase()), value);
   assert.ok(css.includes('[data-slipway-theme="dark"]') && css.includes('[data-slipway-theme="light"]'));
+});
+
+test("every social template exists in a dark and a light version at the size the presets claim", () => {
+  const sizes = { "social-preview": [1280, 640], avatar: [512, 512], banner: [1500, 500], "template-thumbnail": [1200, 750] };
+  assert.equal(PRESETS.length, Object.keys(sizes).length * 2);
+  for (const p of PRESETS) {
+    assert.deepEqual([p.width, p.height], sizes[p.template], p.name);
+    const svg = TEMPLATES[p.template](THEMES[p.theme]);
+    assert.ok(svg.includes(`width="${p.width}" height="${p.height}"`), `${p.name} svg size`);
+    assert.equal(p.background, THEMES[p.theme].bg, `${p.name} background`);
+  }
+});
+
+test("the social exports are PNGs of the right size", () => {
+  for (const p of EXPORT_PRESETS_JSON.presets) {
+    const png = readFileSync(join(BRAND_DIR, p.output));
+    assert.equal(png.toString("latin1", 1, 4), "PNG", p.output);
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [p.width, p.height], p.output);
+  }
+});
+
+test("the social art uses the brand's words and no others", () => {
+  const all = PRESETS.map((p) => TEMPLATES[p.template](THEMES[p.theme])).join("\n");
+  assert.match(all, /SLIPWAY/);
+  assert.match(all, new RegExp(tokens.tagline.toUpperCase().replace(/\./g, "\\.")));
+  assert.match(all, new RegExp(tokens.descriptor.replace(/\./g, "\\.")));
+  assert.ok(!/seaworthy\.sh|npx |AI-powered/i.test(all), "no invented domains, commands, or hype words");
 });
