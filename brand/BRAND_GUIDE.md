@@ -150,9 +150,18 @@ Plain, specific, and checkable. Say what a thing does and how to use it.
 
 Use the 4 px base scale from `tokens.json`; prefer 16, 24, 32, 48, and 64 px. Use 8 px radius for compact UI, 16 px for cards, and 24 px for presentation panels. The mark itself never gets a container shape unless a platform requires an avatar crop.
 
-## Social assets
+## Social assets and templates
 
-The social preview, banner, avatar, and template thumbnail are a separate task (`brand.social`) that builds on this kit.
+Editable sources are in [`templates/`](templates/) and PNG exports are in [`exports/`](exports/), each in a dark and a light version. Dimensions and source mappings are in [`export-presets.json`](export-presets.json). They use the same layouts as Seaworthy's and Evergreen's, so the products look like one family.
+
+| Template | Dimensions | Purpose |
+| --- | ---: | --- |
+| Social preview | 1280 × 640 | GitHub repository and social sharing (the tagline and the descriptor) |
+| Avatar | 512 × 512 | Organization, repository, and profile icon |
+| Banner | 1500 × 500 | README, docs, and launch headers (the tagline and the secondary line) |
+| Template thumbnail | 1200 × 750 | Template galleries and directories: an abstract docs page in brand colors |
+
+The template thumbnail is an abstract page, not a screenshot, until the theme has a final look. Replace it with real screenshots of the starters when they exist (task `launch2.directories`).
 
 ## Generated files
 
@@ -160,8 +169,8 @@ Do not edit these by hand. They come from `tools/brand/` and `tokens.json`.
 
 | Output | Regenerate with |
 | --- | --- |
-| `assets/*.svg`, `favicon/*.svg`, `slipway-logo-sheet.svg`, `tokens.css` | `npm run build:brand` |
-| `assets/*.png`, `favicon/*.png`, `favicon/favicon.ico`, `slipway-logo-sheet.png` | `npm run export:brand` (needs Chrome or Chromium) |
+| `assets/*.svg`, `favicon/*.svg`, `templates/*.svg`, `slipway-logo-sheet.svg`, `tokens.css`, `export-presets.json` | `npm run build:brand` |
+| `assets/*.png`, `exports/*.png`, `favicon/*.png`, `favicon/favicon.ico`, `slipway-logo-sheet.png` | `npm run export:brand` (needs Chrome or Chromium) |
 
 `npm run check` fails when the SVG sources are out of date or a PNG export is missing. The mark's geometry lives in `tools/brand/mark.mjs`.
 

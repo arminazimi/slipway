@@ -14,6 +14,7 @@ import { pathToFileURL } from "node:url";
 import { icoFromPngs } from "./ico.mjs";
 import { BRAND_DIR, VARIANTS } from "./mark.mjs";
 import { FAVICON_ICO, FAVICON_PNGS, MARK_PNG_SIZE, SHEET, markPngs } from "./outputs.mjs";
+import { EXPORT_PRESETS_JSON } from "./templates.mjs";
 
 const CANDIDATES = [
   process.env.CHROME,
@@ -63,4 +64,8 @@ writeFileSync(join(BRAND_DIR, FAVICON_ICO.output), icoFromPngs(FAVICON_ICO.sizes
 count++;
 render(join(BRAND_DIR, SHEET.source), join(BRAND_DIR, SHEET.output), SHEET.width, SHEET.height, SHEET.background);
 count++;
+for (const p of EXPORT_PRESETS_JSON.presets) {
+  render(join(BRAND_DIR, p.source), join(BRAND_DIR, p.output), p.width, p.height, p.background);
+  count++;
+}
 console.log(`Exported ${count} files with ${chrome}`);

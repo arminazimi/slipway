@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title">
+<title id="title">Slipway social preview</title>
+<rect width="1280" height="640" fill="#17130F"/>
+<g transform="translate(112 192) scale(1)"><defs><clipPath id="t0-above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath><clipPath id="t0-below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath></defs><g fill="none" stroke-width="16"><g clip-path="url(#t0-above)" stroke="#F4EFE4"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g><g clip-path="url(#t0-below)" stroke="#B8975A"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g></g></g>
+<text x="420" y="322" fill="#F4EFE4" font-family="Inter Variable, Inter, Helvetica Neue, Arial, sans-serif" font-size="82" font-weight="700" letter-spacing="8">SLIPWAY</text>
+<text x="424" y="378" fill="#B8975A" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="24" letter-spacing="2">BUILD ON SLIPWAY.</text>
+<text x="112" y="566" fill="#A39880" font-family="IBM Plex Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="0.5">Agent-native sites for GitHub Pages.</text>
+</svg>
