@@ -1,0 +1,47 @@
+:root {
+  --slipway-color-canvas: #17130f;
+  --slipway-color-surface: #26201a;
+  --slipway-color-bronze: #b8975a;
+  --slipway-color-bronze-soft: #8c7648;
+  --slipway-color-ink-bronze: #5e4a26;
+  --slipway-color-tint: #d9c9a3;
+  --slipway-color-light: #f4efe4;
+  --slipway-color-text: #e6dfd0;
+  --slipway-color-mist: #a39880;
+
+  --slipway-font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --slipway-font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --slipway-space-1: 4px;
+  --slipway-space-2: 8px;
+  --slipway-space-3: 12px;
+  --slipway-space-4: 16px;
+  --slipway-space-6: 24px;
+  --slipway-space-8: 32px;
+  --slipway-space-12: 48px;
+  --slipway-space-16: 64px;
+  --slipway-space-24: 96px;
+  --slipway-space-32: 128px;
+
+  --slipway-radius-compact: 8px;
+  --slipway-radius-card: 16px;
+  --slipway-radius-panel: 24px;
+}
+
+[data-slipway-theme="dark"] {
+  --slipway-canvas: var(--slipway-color-canvas);
+  --slipway-surface: var(--slipway-color-surface);
+  --slipway-text: var(--slipway-color-text);
+  --slipway-text-accent: var(--slipway-color-bronze);
+  --slipway-text-muted: var(--slipway-color-mist);
+  --slipway-line: var(--slipway-color-bronze);
+}
+
+[data-slipway-theme="light"] {
+  --slipway-canvas: var(--slipway-color-light);
+  --slipway-surface: #fff;
+  --slipway-text: var(--slipway-color-canvas);
+  --slipway-text-accent: var(--slipway-color-ink-bronze);
+  --slipway-text-muted: var(--slipway-color-ink-bronze);
+  --slipway-line: var(--slipway-color-bronze-soft);
+}

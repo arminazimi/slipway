@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="28" viewBox="0 0 192 28" role="img" aria-label="built with slipway">
+<title>built with slipway</title>
+<clipPath id="r"><rect width="192" height="28" rx="6"/></clipPath>
+<g clip-path="url(#r)">
+<rect width="120" height="28" fill="#26201A"/>
+<rect x="120" width="72" height="28" fill="#B8975A"/>
+</g>
+<g transform="translate(10 5) scale(0.0703125)"><defs><clipPath id="b-above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath><clipPath id="b-below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath></defs><g fill="none" stroke-width="16"><g clip-path="url(#b-above)" stroke="#F4EFE4"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g><g clip-path="url(#b-below)" stroke="#F4EFE4"><circle cx="128" cy="128" r="88"/><circle cx="128" cy="128" r="58"/></g></g></g>
+<g font-family="Inter, Verdana, Arial, sans-serif" font-size="12" font-weight="700" dominant-baseline="central">
+<text x="36" y="14.5" fill="#F4EFE4">built with</text>
+<text x="130" y="14.5" fill="#17130F">slipway</text>
+</g>
+</svg>
