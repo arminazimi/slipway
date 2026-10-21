@@ -186,3 +186,42 @@
     margin-block: var(--sl-space-8);
   }
 }
+
+/* Home layout: a large typographic hero and the latest-posts list. */
+@layer components {
+  .sl-hero {
+    padding-block: var(--sl-space-12) var(--sl-space-8);
+  }
+
+  .sl-hero-title {
+    margin-block: 0 var(--sl-space-3);
+    font-size: var(--sl-step-3xl);
+    line-height: 1.05;
+  }
+
+  .sl-hero-lead {
+    margin-block: 0 var(--sl-space-4);
+    font-size: var(--sl-step-lg);
+    color: var(--sl-color-muted);
+  }
+
+  .sl-post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sl-post-list li {
+    display: flex;
+    gap: var(--sl-space-3);
+    padding-block: var(--sl-space-2);
+    border-block-end: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  .sl-post-list time {
+    flex: none;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
+  }
+}

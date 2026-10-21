@@ -1,0 +1,26 @@
+---
+layout: base
+---
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+<section class="sl-hero">
+  <h1 class="sl-hero-title">{{ page.title }}</h1>
+  {%- if page.description %}
+  <p class="sl-hero-lead">{{ page.description }}</p>
+  {%- endif %}
+  {%- if page.cta_text and page.cta_url %}
+  <p><a class="sl-button" href="{{ page.cta_url | relative_url }}">{{ page.cta_text }}</a></p>
+  {%- endif %}
+</section>
+{{ content }}
+{%- assign sl_recent = site.posts | where_exp: "p", "p.lang == nil or p.lang == sl_lang" | slice: 0, 5 -%}
+{%- if sl_recent.size > 0 %}
+<h2>{% if sl_lang == 'fa' %}آخرین نوشته‌ها{% else %}Latest posts{% endif %}</h2>
+<ul class="sl-post-list">
+  {%- for post in sl_recent %}
+  <li>
+    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
