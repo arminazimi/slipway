@@ -12,7 +12,8 @@
     line-height: 1.65;
   }
 
-  :lang(fa) {
+  :lang(fa),
+  :lang(fa) :is(h1, h2, h3) {
     font-family: var(--sl-font-persian);
   }
 
@@ -29,6 +30,18 @@
     font-weight: 400;
     line-height: 1.15;
     color: var(--sl-color-heading);
+  }
+
+  h1 {
+    font-size: var(--sl-step-2xl);
+  }
+
+  h2 {
+    font-size: var(--sl-step-xl);
+  }
+
+  h3 {
+    font-size: var(--sl-step-lg);
   }
 
   a {
@@ -100,5 +113,35 @@
   ::view-transition-old(*),
   ::view-transition-new(*) {
     animation: none;
+  }
+}
+
+/* Editorial signature: numbered sections between hairline rules. */
+@layer components {
+  .sl-sections {
+    counter-reset: sl-section;
+  }
+
+  .sl-sections > h2 {
+    counter-increment: sl-section;
+    margin-block-start: var(--sl-space-12);
+    padding-block-start: var(--sl-space-3);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  .sl-sections > h2::before {
+    display: block;
+    content: counter(sl-section, decimal-leading-zero);
+    margin-block-end: var(--sl-space-1);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    letter-spacing: 0.06em;
+    color: var(--sl-color-rose);
+  }
+
+  .sl-rule {
+    border: 0;
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+    margin-block: var(--sl-space-8);
   }
 }
