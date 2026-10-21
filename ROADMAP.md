@@ -188,7 +188,7 @@ Layouts for home, docs, posts, and pages, with right-to-left and multilingual su
 
 ### Exit criteria
 - [x] Every example site (minimal, docs, blog, Persian) passes Seaworthy with zero findings.
-- [ ] Seaworthy dependencies are met: the Seaworthy CLI runs in CI (`foundation.seaworthy-cli`).
+- [x] Seaworthy dependencies are met: the Seaworthy CLI runs in CI (`foundation.seaworthy-cli`).
 
 ---
 
