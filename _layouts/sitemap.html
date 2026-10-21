@@ -1,0 +1,24 @@
+{%- assign sl_m_all = site.pages | concat: site.documents -%}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{%- for item in sl_m_all -%}
+  {%- if item.sitemap == false or item.layout == 'feed' or item.layout == 'sitemap' or item.layout == 'search-index' or item.url == '/404.html' -%}{%- continue -%}{%- endif -%}
+  {%- assign sl_m_last = item.url | slice: -1 -%}
+  {%- assign sl_m_ext = item.url | split: '.' | last -%}
+  {%- if sl_m_last != '/' and sl_m_ext != 'html' -%}{%- continue -%}{%- endif %}
+  <url>
+    <loc>{{ item.url | absolute_url | xml_escape }}</loc>
+    {%- assign sl_m_mod = item.last_modified_at | default: item.date -%}
+    {%- if sl_m_mod %}
+    <lastmod>{{ sl_m_mod | date_to_xmlschema }}</lastmod>
+    {%- endif %}
+    {%- if item.translation_key %}
+    {%- for other in sl_m_all %}
+    {%- if other.translation_key == item.translation_key %}
+    <xhtml:link rel="alternate" hreflang="{{ other.lang | default: site.lang | default: 'en' }}" href="{{ other.url | absolute_url | xml_escape }}"/>
+    {%- endif %}
+    {%- endfor %}
+    {%- endif %}
+  </url>
+{%- endfor %}
+</urlset>
