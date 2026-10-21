@@ -112,7 +112,7 @@ Answer the questions that decide the architecture before building on them. Each 
 | `spike.content-model` | A framework-neutral content model (front matter, collections, navigation) so an Astro adapter can follow | strong-agent | M | none |
 
 ### Exit criteria
-- [ ] Each spike has an ADR with a decision and its consequences.
+- [x] Each spike has an ADR with a decision and its consequences.
 
 
 ## Epic: Brand
