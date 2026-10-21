@@ -3,3 +3,11 @@ lang: en
 theme: slipway-theme
 plugins:
   - jekyll-remote-theme
+
+# Theme tokens: change these and the site restyles (see docs/tokens.md). Values shown are the defaults.
+slipway:
+  tokens:
+    radius: 0.75rem
+    # accent: "#7a4f4f"
+    # canvas: "#e9e1d6"
+    # font_display: '"Instrument Serif", Georgia, serif'

@@ -1,0 +1,10 @@
+{%- assign t = site.slipway.tokens -%}
+{%- if t -%}
+<style>:root {
+{%- if t.accent %} --sl-color-rose: {{ t.accent | escape }}; --sl-color-rose-fill: {{ t.accent | escape }};{% endif -%}
+{%- if t.canvas %} --sl-color-canvas: {{ t.canvas | escape }};{% endif -%}
+{%- if t.text %} --sl-color-text: {{ t.text | escape }};{% endif -%}
+{%- if t.font_display %} --sl-font-display: {{ t.font_display | escape }};{% endif -%}
+{%- if t.font_body %} --sl-font-body: {{ t.font_body | escape }};{% endif -%}
+{%- if t.radius %} --sl-radius-card: {{ t.radius | escape }};{% endif %} }</style>
+{%- endif -%}

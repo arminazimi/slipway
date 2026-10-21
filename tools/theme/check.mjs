@@ -14,6 +14,7 @@ import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, root } from "./build.mjs";
+import { validateExampleConfigs } from "./config.mjs";
 
 export const checkedModes = ["gem", "template"];
 
@@ -69,6 +70,12 @@ export function main(env = process.env) {
     process.exitCode = 1;
   } else console.log("OK: schemas");
 
+  const configProblems = validateExampleConfigs();
+  if (configProblems.length) {
+    console.error(`FAIL: example configs\n${configProblems.map((p) => `  ${p}`).join("\n")}`);
+    process.exitCode = 1;
+  } else console.log("OK: example configs");
+
   if (!bundleAvailable()) {
     skipOrFail(env.SLIPWAY_REQUIRE_BUILD === "1", "the example site was not built: install Ruby 3.3 (.ruby-version) and run `bundle install`");
     return;
@@ -87,6 +94,10 @@ export function main(env = process.env) {
     for (const mode of checkedModes) {
       const site = buildExample(mode, join(work, mode));
       console.log(`OK: example site builds (${mode} mode)`);
+      if (!readFileSync(join(site, "index.html"), "utf8").includes("--sl-radius-card: 0.75rem;")) {
+        console.error(`FAIL: theme overrides from _config.yml are missing in the built page (${mode} mode)`);
+        process.exitCode = 1;
+      }
       if (!cli) continue;
       const { ok, output } = runSeaworthy(cli, site);
       if (ok) console.log(`OK: Seaworthy (${mode} mode)`);
