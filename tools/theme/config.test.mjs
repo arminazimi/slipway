@@ -31,7 +31,7 @@ test("configMap, the schema, and the Liquid include list the same keys", () => {
   const schema = JSON.parse(readFileSync(join(root, "schema/slipway-config.schema.json"), "utf8"));
   const schemaKeys = Object.keys(schema.properties.slipway.properties.tokens.properties).sort();
   const include = readFileSync(join(root, "_includes/theme-vars.html"), "utf8");
-  const includeKeys = [...new Set([...include.matchAll(/\bt\.([a-z_]+) %/g)].map((m) => m[1]))].sort();
+  const includeKeys = [...new Set([...include.matchAll(/value=t\.([a-z_]+)/g)].map((m) => m[1]))].sort();
   assert.deepEqual(Object.keys(configMap).sort(), schemaKeys);
   assert.deepEqual(includeKeys, schemaKeys);
 });
@@ -55,4 +55,10 @@ test("validateExampleConfigs reports a bad example config and passes the real on
   const problems = validateExampleConfigs(dir);
   assert.equal(problems.length > 0, true);
   assert.match(problems[0], /^examples\/bad\/_config\.yml:/);
+});
+
+test("the include keeps quotes in font stacks and strips what could end the style block", () => {
+  const helper = readFileSync(join(root, "_includes/theme-var.html"), "utf8");
+  assert.doesNotMatch(helper, /\|\s*escape/, "escape would turn quotes into &quot; inside <style>");
+  for (const char of ["<", ">", "{", "}", ";"]) assert.ok(helper.includes(`remove: "${char}"`), char);
 });

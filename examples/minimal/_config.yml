@@ -8,6 +8,7 @@ plugins:
 slipway:
   tokens:
     radius: 0.75rem
+    font_body: '"Source Serif 4", Georgia, serif'
     # accent: "#7a4f4f"
     # canvas: "#e9e1d6"
     # font_display: '"Instrument Serif", Georgia, serif'
