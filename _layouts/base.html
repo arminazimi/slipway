@@ -4,7 +4,7 @@
 <body>
   {% include skip-link.html %}
   {% include header.html %}
-  <main id="main" class="sl-sections" tabindex="-1">
+  <main id="main" class="sl-sections sl-layout-{{ page.layout }}" tabindex="-1">
     {{ content }}
   </main>
   {% include footer.html %}
