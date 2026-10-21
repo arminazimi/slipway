@@ -9,3 +9,4 @@
 | [0005](0005-brand-mark-and-palette.md) | Brand: the "slip" mark and the quiet bronze palette | Accepted |
 | [0006](0006-markdown-twins.md) | Markdown twins: a stub per page on classic Pages, a generator in Actions mode | Accepted |
 | [0007](0007-source-maps.md) | Source maps: three levels, from a Liquid page map to a plugin with exact lines | Accepted |
+| [0008](0008-theme-palette.md) | Theme palette: desert rose on muted sand and charcoal | Accepted |
