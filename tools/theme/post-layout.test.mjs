@@ -15,10 +15,11 @@ test("post inherits base and shows title, date, reading time, and tags", () => {
   assert.match(post, /page\.tags/);
 });
 
-test("the post pager links the older post as previous and the newer one as next", () => {
+test("the post pager links the older post as previous and the newer one as next, in the same language", () => {
   const post = read("_layouts/post.html");
-  assert.match(post, /rel="prev" href="\{\{ page\.previous\.url/);
-  assert.match(post, /rel="next" href="\{\{ page\.next\.url/);
+  assert.match(post, /rel="prev" href="\{\{ sl_older\.url/);
+  assert.match(post, /rel="next" href="\{\{ sl_newer\.url/);
+  assert.match(post, /sl_post_lang != sl_lang/);
 });
 
 test("the post styles use logical properties only", () => {

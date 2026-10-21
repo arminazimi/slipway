@@ -1,0 +1,24 @@
+---
+layout: base
+---
+<article class="sl-page">
+  <header class="sl-page-header">
+    <h1>{{ page.title }}</h1>
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+  {{ content }}
+  {%- capture sl_tag_sections %}{% include taxonomy.html terms=site.tags kind="tag" %}{% endcapture %}
+  {%- assign sl_tag_sections_clean = sl_tag_sections | strip %}
+  {%- if sl_tag_sections_clean != '' %}
+  <h2 id="tags">{% include t.html key='tags' %}</h2>
+  {{ sl_tag_sections }}
+  {%- endif %}
+  {%- capture sl_cat_sections %}{% include taxonomy.html terms=site.categories kind="category" %}{% endcapture %}
+  {%- assign sl_cat_sections_clean = sl_cat_sections | strip %}
+  {%- if sl_cat_sections_clean != '' %}
+  <h2 id="categories">{% include t.html key='categories' %}</h2>
+  {{ sl_cat_sections }}
+  {%- endif %}
+</article>

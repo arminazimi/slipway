@@ -1,0 +1,32 @@
+---
+layout: base
+---
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+<article class="sl-page">
+  <header class="sl-page-header">
+    <h1>{{ page.title }}</h1>
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+  {{ content }}
+  {%- comment -%} Posts come newest first; a new heading starts whenever the year (Jalali when opted in) changes. {%- endcomment %}
+  {%- assign sl_year = '' -%}
+  {%- for post in site.posts -%}
+    {%- assign sl_post_lang = post.lang | default: site.lang | default: 'en' -%}
+    {%- if sl_post_lang != sl_lang %}{% continue %}{% endif -%}
+    {%- capture sl_date_unused %}{% include date.html date=post.date %}{% endcapture -%}
+    {%- if sl_d_year != sl_year -%}
+      {%- unless sl_year == '' %}
+  </ul>
+      {%- endunless %}
+  <h2 id="year-{{ sl_d_year }}">{% include num.html value=sl_d_year %}</h2>
+  <ul class="sl-post-list">
+      {%- assign sl_year = sl_d_year -%}
+    {%- endif %}
+  {% include post-item.html post=post %}
+  {%- endfor %}
+  {%- unless sl_year == '' %}
+  </ul>
+  {%- endunless %}
+</article>

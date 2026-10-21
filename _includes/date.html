@@ -41,4 +41,5 @@
   {{- include.date | date: '%Y-%m-%d' -}}
 {%- endif -%}
 {%- endcapture -%}
+{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali -%}{%- assign sl_d_year = jy -%}{%- else -%}{%- assign sl_d_year = include.date | date: '%Y' -%}{%- endif -%}
 {%- include num.html value=sl_d_text -%}

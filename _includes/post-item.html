@@ -1,0 +1,4 @@
+<li>
+    <time datetime="{{ include.post.date | date_to_xmlschema }}">{% include date.html date=include.post.date %}</time>
+    <a href="{{ include.post.url | relative_url }}">{{ include.post.title }}</a>
+  </li>

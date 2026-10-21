@@ -1,0 +1,8 @@
+{%- comment -%} Prints the url of the first page with layout include.layout in the current language, or nothing. {%- endcomment -%}
+{%- assign sl_lu_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- for p in site.pages -%}
+  {%- if p.layout == include.layout -%}
+    {%- assign sl_lu_page_lang = p.lang | default: site.lang | default: 'en' -%}
+    {%- if sl_lu_page_lang == sl_lu_lang -%}{{ p.url | relative_url }}{%- break -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
