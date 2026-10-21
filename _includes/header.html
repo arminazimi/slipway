@@ -1,0 +1,5 @@
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+<header class="sl-header">
+  <a class="sl-site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  <button type="button" class="sl-theme-toggle" data-theme-toggle hidden>{% if sl_lang == 'fa' %}تم{% else %}Theme{% endif %}</button>
+</header>

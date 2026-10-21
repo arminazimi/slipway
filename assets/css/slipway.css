@@ -88,8 +88,49 @@
 @layer components {
   .sl-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--sl-space-3);
     padding: var(--sl-space-3) var(--sl-space-4);
+  }
+
+  .sl-site-title {
+    font-family: var(--sl-font-display);
+    font-size: var(--sl-step-lg);
+    color: var(--sl-color-heading);
+    text-decoration: none;
+  }
+
+  .sl-skip-link {
+    position: absolute;
+    inset-inline-start: var(--sl-space-3);
+    inset-block-start: var(--sl-space-3);
+    padding: var(--sl-space-1) var(--sl-space-3);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-button-fg);
+    background: var(--sl-button-bg);
+    border-radius: var(--sl-button-radius);
+    transform: translateY(-200%);
+  }
+
+  .sl-skip-link:focus {
+    transform: none;
+  }
+
+  main:focus {
+    outline: none;
+  }
+
+  .sl-footer {
+    max-inline-size: var(--sl-measure);
+    margin-inline: auto;
+    margin-block-start: var(--sl-space-12);
+    padding: var(--sl-space-4);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
   }
 
   .sl-theme-toggle {
