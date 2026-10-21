@@ -1,0 +1,56 @@
+/* Print: the light palette, no chrome, and the address after each external link. Logical properties only. */
+@page {
+  margin: 2cm;
+}
+
+:root,
+:root[data-theme] {
+  color-scheme: light;
+}
+
+html {
+  background: none;
+}
+
+body {
+  font-size: 11pt;
+  line-height: 1.5;
+}
+
+.sl-header,
+.sl-theme-toggle,
+nav {
+  display: none;
+}
+
+main {
+  max-inline-size: none;
+  padding-inline: 0;
+}
+
+h1,
+h2,
+h3 {
+  break-after: avoid;
+}
+
+pre,
+img,
+blockquote {
+  break-inside: avoid;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+a {
+  color: inherit;
+}
+
+a[href^="http"]::after {
+  content: " (" attr(href) ")";
+  font-size: 0.85em;
+  color: var(--sl-color-muted);
+  overflow-wrap: anywhere;
+}
