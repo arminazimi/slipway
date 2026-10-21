@@ -1,0 +1,4 @@
+{%- if include.value -%}
+{%- assign v = include.value | remove: "<" | remove: ">" | remove: "{" | remove: "}" | remove: ";" | remove: "\" -%}
+ {{ include.name }}: {{ v }};
+{%- endif -%}

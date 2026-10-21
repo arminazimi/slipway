@@ -94,7 +94,8 @@ export function main(env = process.env) {
     for (const mode of checkedModes) {
       const site = buildExample(mode, join(work, mode));
       console.log(`OK: example site builds (${mode} mode)`);
-      if (!readFileSync(join(site, "index.html"), "utf8").includes("--sl-radius-card: 0.75rem;")) {
+      const page = readFileSync(join(site, "index.html"), "utf8");
+      if (!page.includes("--sl-radius-card: 0.75rem;") || !page.includes('--sl-font-body: "Source Serif 4", Georgia, serif;')) {
         console.error(`FAIL: theme overrides from _config.yml are missing in the built page (${mode} mode)`);
         process.exitCode = 1;
       }
