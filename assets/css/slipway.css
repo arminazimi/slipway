@@ -1,12 +1,73 @@
-/* Placeholder until the token scale (theme.tokens). Logical properties only. */
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  line-height: 1.6;
+/* Base styles. Every value comes from assets/css/tokens.css. Logical properties only. */
+@layer base {
+  html {
+    background: var(--sl-color-canvas);
+    color: var(--sl-color-text);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--sl-font-body);
+    font-size: var(--sl-step-base);
+    line-height: 1.65;
+  }
+
+  :lang(fa) {
+    font-family: var(--sl-font-persian);
+  }
+
+  main {
+    max-inline-size: var(--sl-measure);
+    margin-inline: auto;
+    padding-inline: var(--sl-space-4);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--sl-font-display);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--sl-color-heading);
+  }
+
+  a {
+    color: var(--sl-color-rose);
+  }
+
+  a:hover {
+    color: var(--sl-color-rose-hover);
+  }
+
+  hr {
+    border: 0;
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  code,
+  pre {
+    font-family: var(--sl-font-mono);
+    font-size: 0.9em;
+  }
+
+  pre {
+    padding: var(--sl-space-3) var(--sl-space-4);
+    background: var(--sl-color-surface);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    overflow-x: auto;
+  }
 }
 
-main {
-  max-inline-size: 42rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
+@layer components {
+  .sl-button {
+    display: inline-block;
+    padding: var(--sl-space-1) var(--sl-space-3);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-button-fg);
+    background: var(--sl-button-bg);
+    border-radius: var(--sl-button-radius);
+    text-decoration: none;
+  }
 }
