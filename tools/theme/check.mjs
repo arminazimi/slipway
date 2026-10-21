@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, root } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
+import { validateExampleNavigation } from "./navigation.mjs";
 
 export const checkedModes = ["gem", "template"];
 
@@ -75,6 +76,12 @@ export function main(env = process.env) {
     console.error(`FAIL: example configs\n${configProblems.map((p) => `  ${p}`).join("\n")}`);
     process.exitCode = 1;
   } else console.log("OK: example configs");
+
+  const navProblems = validateExampleNavigation();
+  if (navProblems.length) {
+    console.error(`FAIL: example navigation\n${navProblems.map((p) => `  ${p}`).join("\n")}`);
+    process.exitCode = 1;
+  } else console.log("OK: example navigation");
 
   if (!bundleAvailable()) {
     skipOrFail(env.SLIPWAY_REQUIRE_BUILD === "1", "the example site was not built: install Ruby 3.3 (.ruby-version) and run `bundle install`");

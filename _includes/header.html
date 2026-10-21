@@ -1,5 +1,19 @@
 <header class="sl-header">
   <a class="sl-site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  {%- assign sl_nav_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
+  {%- assign sl_nav_key = 'main_' | append: sl_nav_lang -%}
+  {%- assign sl_main = site.data.navigation[sl_nav_key] | default: site.data.navigation.main -%}
+  {%- if sl_main.size > 0 %}
+  <nav class="sl-main-nav" aria-label="{% include t.html key='main_nav' %}">
+    <ul>
+      {%- for item in sl_main %}
+      {%- assign sl_here = false %}
+      {%- if page.url == item.url %}{% assign sl_here = true %}{% elsif item.url != '/' and page.url contains item.url %}{% assign sl_here = true %}{% endif %}
+      <li><a href="{{ item.url | relative_url }}"{% if sl_here %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+      {%- endfor %}
+    </ul>
+  </nav>
+  {%- endif %}
   {% include search.html %}
   {% include lang-switcher.html %}
   <button type="button" class="sl-theme-toggle" data-theme-toggle data-label-auto="{% include t.html key='mode_auto' %}" data-label-light="{% include t.html key='mode_light' %}" data-label-dark="{% include t.html key='mode_dark' %}" hidden>{% include t.html key='theme' %}</button>

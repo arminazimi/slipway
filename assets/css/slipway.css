@@ -519,3 +519,31 @@
     color: var(--sl-color-muted);
   }
 }
+
+/* Main navigation in the header. */
+@layer components {
+  .sl-main-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sl-space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-main-nav a {
+    color: var(--sl-color-muted);
+    text-decoration: none;
+  }
+
+  .sl-main-nav a:hover,
+  .sl-main-nav a[aria-current="page"] {
+    color: var(--sl-color-heading);
+  }
+
+  .sl-doc-nav .sl-doc-group > ul {
+    padding-inline-start: var(--sl-space-3);
+  }
+}

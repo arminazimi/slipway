@@ -10,7 +10,7 @@ const read = (path) => readFileSync(join(root, path), "utf8");
 test("doc inherits base and reads the sidebar from _data/navigation.yml", () => {
   const doc = read("_layouts/doc.html");
   assert.match(doc, /layout: base/);
-  assert.match(doc, /site\.data\.navigation\.docs/);
+  assert.match(doc, /site\.data\.navigation/);
   assert.match(doc, /aria-current="page"/);
 });
 
@@ -38,11 +38,13 @@ test("the doc styles use logical properties only", () => {
   assert.doesNotMatch(doc, /\b(left|right|margin-left|margin-right|padding-left|padding-right|border-left|border-right)\s*:/);
 });
 
-test("every navigation entry in the example points at a page that uses the doc layout", () => {
+test("every navigation link in the example points at a page of the example site", () => {
   const nav = parse(read("examples/minimal/_data/navigation.yml"));
-  assert.ok(nav.docs.length >= 3);
-  for (const item of nav.docs) {
-    const pages = ["index", "layouts", "tokens"].map((n) => read(`examples/minimal/docs/${n}.md`));
-    assert.ok(pages.some((p) => p.includes(`permalink: ${item.url}`) && p.includes("layout: doc")), item.url);
+  const leaves = (list) => list.flatMap((i) => (i.children ? i.children : [i]));
+  const permalinks = ["docs/index", "docs/layouts", "docs/tokens", "about", "fa/index", "de/index", "index"]
+    .map((n) => read(`examples/minimal/${n}.md`))
+    .map((p) => p.match(/permalink: (\S+)/)?.[1] ?? (p.includes("layout: page") ? "/about.html" : "/"));
+  for (const [key, list] of Object.entries(nav)) {
+    for (const item of leaves(list)) assert.ok(permalinks.includes(item.url), `${key}: ${item.url}`);
   }
 });

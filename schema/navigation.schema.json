@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/navigation.schema.json",
+  "title": "Slipway navigation",
+  "description": "_data/navigation.yml. `main` is the header menu and `docs` is the sidebar of the doc layout. A language adds its own list with a suffix (`main_fa`, `docs_fa`); a language without one uses the plain key.",
+  "type": "object",
+  "properties": {
+    "main": { "$ref": "#/$defs/list" },
+    "docs": { "$ref": "#/$defs/list" }
+  },
+  "patternProperties": {
+    "^(main|docs)_[a-z]{2,3}$": { "$ref": "#/$defs/list" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "list": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/group" }
+    },
+    "link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "url"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." }
+      }
+    },
+    "group": {
+      "description": "A link, or a heading with links under it (one level of children).",
+      "oneOf": [
+        { "$ref": "#/$defs/link" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["title", "children"],
+          "properties": {
+            "title": { "type": "string", "minLength": 1 },
+            "children": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/link" } }
+          }
+        }
+      ]
+    }
+  }
+}

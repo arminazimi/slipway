@@ -1,11 +1,30 @@
-# The docs sidebar and the previous/next links of the `doc` layout, in reading order.
-docs:
-  - title: Introduction
+# Navigation, validated by schema/navigation.schema.json. `main` is the header menu and `docs` the
+# sidebar of the doc layout (and its previous/next links), in reading order. A language adds
+# `main_<lang>` or `docs_<lang>`; one without them uses the plain key.
+main:
+  - title: Home
+    url: /
+  - title: Docs
     url: /docs/
-    group: Start
-  - title: Layouts
-    url: /docs/layouts/
-    group: Start
-  - title: Tokens
-    url: /docs/tokens/
-    group: Reference
+  - title: About
+    url: /about.html
+
+main_fa:
+  - title: خانه
+    url: /fa/
+
+main_de:
+  - title: Start
+    url: /de/
+
+docs:
+  - title: Start
+    children:
+      - title: Introduction
+        url: /docs/
+      - title: Layouts
+        url: /docs/layouts/
+  - title: Reference
+    children:
+      - title: Tokens
+        url: /docs/tokens/
