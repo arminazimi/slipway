@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Ruby and the Pages gem are part of this job, so a skipped site build is a failure.
+      SLIPWAY_REQUIRE_BUILD: "1"
+      LANG: C.UTF-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # The GitHub Pages environment: the Ruby in .ruby-version and the github-pages gem
+      # (Jekyll and the whitelisted plugins), installed from Gemfile.lock.
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - run: bundle exec github-pages versions
+      - run: npm run check

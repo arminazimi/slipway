@@ -12,6 +12,10 @@ The repository holds the roadmap and its tooling. The theme, starters, Skill, an
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only.
 
+## CI
+
+`.github/workflows/ci.yml` runs `npm run check` in the GitHub Pages environment: the Ruby in `.ruby-version`, the `github-pages` gem from `Gemfile.lock` (Jekyll and the whitelisted plugins), and Node 22. It sets `SLIPWAY_REQUIRE_BUILD=1`, so a missing Ruby fails instead of skipping.
+
 ## Layout
 
 - `ROADMAP.md`: the source of truth for planned work. Issues are generated from it; edit the roadmap, not the issues.
