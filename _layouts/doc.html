@@ -1,7 +1,6 @@
 ---
 layout: base
 ---
-{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_items = site.data.navigation.docs -%}
 {%- assign sl_index = -1 -%}
 {%- for item in sl_items -%}
@@ -10,8 +9,8 @@ layout: base
 <div class="sl-doc">
   {%- if sl_items.size > 0 %}
   <details class="sl-doc-nav">
-    <summary>{% if sl_lang == 'fa' %}فهرست مستندات{% else %}Documentation{% endif %}</summary>
-    <nav aria-label="{% if sl_lang == 'fa' %}مستندات{% else %}Documentation{% endif %}">
+    <summary>{% include t.html key='docs_nav' %}</summary>
+    <nav aria-label="{% include t.html key='docs_nav' %}">
       {%- assign sl_group = nil %}
       <ul>
         {%- for item in sl_items %}
@@ -43,8 +42,8 @@ layout: base
     {%- endcapture -%}
     {%- assign sl_toc_trim = sl_toc_html | strip -%}
     {%- if sl_toc_trim != '' %}
-    <nav class="sl-toc" aria-label="{% if sl_lang == 'fa' %}در این صفحه{% else %}On this page{% endif %}">
-      <p class="sl-toc-title">{% if sl_lang == 'fa' %}در این صفحه{% else %}On this page{% endif %}</p>
+    <nav class="sl-toc" aria-label="{% include t.html key='on_this_page' %}">
+      <p class="sl-toc-title">{% include t.html key='on_this_page' %}</p>
       <ul>{{ sl_toc_html }}
       </ul>
     </nav>
@@ -54,14 +53,14 @@ layout: base
     {%- if sl_index >= 0 %}
     {%- assign sl_prev_index = sl_index | minus: 1 -%}
     {%- assign sl_next_index = sl_index | plus: 1 %}
-    <nav class="sl-pager" aria-label="{% if sl_lang == 'fa' %}صفحهٔ قبل و بعد{% else %}Previous and next{% endif %}">
+    <nav class="sl-pager" aria-label="{% include t.html key='pager' %}">
       {%- if sl_index > 0 %}
       {%- assign sl_prev = sl_items[sl_prev_index] %}
-      <a class="sl-pager-prev" rel="prev" href="{{ sl_prev.url | relative_url }}"><span>{% if sl_lang == 'fa' %}قبلی{% else %}Previous{% endif %}</span> {{ sl_prev.title }}</a>
+      <a class="sl-pager-prev" rel="prev" href="{{ sl_prev.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ sl_prev.title }}</a>
       {%- endif %}
       {%- if sl_next_index < sl_items.size %}
       {%- assign sl_next = sl_items[sl_next_index] %}
-      <a class="sl-pager-next" rel="next" href="{{ sl_next.url | relative_url }}"><span>{% if sl_lang == 'fa' %}بعدی{% else %}Next{% endif %}</span> {{ sl_next.title }}</a>
+      <a class="sl-pager-next" rel="next" href="{{ sl_next.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ sl_next.title }}</a>
       {%- endif %}
     </nav>
     {%- endif %}

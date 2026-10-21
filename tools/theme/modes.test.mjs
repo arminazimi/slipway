@@ -15,7 +15,7 @@ function assertSite(out) {
   assert.match(en, /<link rel="stylesheet" href="[^"]*\/assets\/css\/slipway\.css">/);
   assert.ok(existsSync(join(out, "assets/css/slipway.css")), "theme stylesheet is in the built site");
 
-  const fa = readFileSync(join(out, "fa.html"), "utf8");
+  const fa = readFileSync(join(out, "fa/index.html"), "utf8");
   assert.match(fa, /<html lang="fa" dir="rtl">/);
 }
 

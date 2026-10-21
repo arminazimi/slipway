@@ -1,0 +1,4 @@
+# A site adds a language with one file; keys it leaves out fall back to English.
+skip: Zum Inhalt springen
+theme: Design
+language: Sprache

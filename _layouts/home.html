@@ -1,7 +1,6 @@
 ---
 layout: base
 ---
-{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
 <section class="sl-hero">
   <h1 class="sl-hero-title">{{ page.title }}</h1>
   {%- if page.description %}
@@ -12,6 +11,7 @@ layout: base
   {%- endif %}
 </section>
 {{ content }}
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_shown = 0 -%}
 {%- capture sl_items -%}
   {%- for post in site.posts -%}
@@ -25,7 +25,7 @@ layout: base
   {%- endfor -%}
 {%- endcapture -%}
 {%- if sl_shown > 0 %}
-<h2>{% if sl_lang == 'fa' %}آخرین نوشته‌ها{% else %}Latest posts{% endif %}</h2>
+<h2>{% include t.html key='latest_posts' %}</h2>
 <ul class="sl-post-list">{{ sl_items }}
 </ul>
 {%- endif %}
