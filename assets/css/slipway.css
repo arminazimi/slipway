@@ -71,3 +71,34 @@
     text-decoration: none;
   }
 }
+
+@layer components {
+  .sl-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--sl-space-3) var(--sl-space-4);
+  }
+
+  .sl-theme-toggle {
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
+    background: transparent;
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    padding: var(--sl-space-1) var(--sl-space-3);
+    cursor: pointer;
+  }
+
+  .sl-theme-toggle:hover {
+    color: var(--sl-color-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

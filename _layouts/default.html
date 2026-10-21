@@ -2,6 +2,9 @@
 <html lang="{{ page.lang | default: site.lang | default: 'en' }}" dir="{{ page.direction | default: site.direction | default: 'ltr' }}">
 {% include head.html %}
 <body>
+  <header class="sl-header">
+    <button type="button" class="sl-theme-toggle" data-theme-toggle hidden>Theme</button>
+  </header>
   <main>
     {{ content }}
   </main>
