@@ -362,3 +362,12 @@
     border-radius: var(--sl-radius-compact);
   }
 }
+
+/* Page layout: title, optional lead, and text at reading width. */
+@layer components {
+  .sl-page-lead {
+    margin-block: 0 var(--sl-space-6);
+    font-size: var(--sl-step-lg);
+    color: var(--sl-color-muted);
+  }
+}
