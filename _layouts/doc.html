@@ -1,24 +1,41 @@
 ---
 layout: base
 ---
-{%- assign sl_items = site.data.navigation.docs -%}
+{%- assign sl_nav_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
+{%- assign sl_nav_key = 'docs_' | append: sl_nav_lang -%}
+{%- assign sl_tree = site.data.navigation[sl_nav_key] | default: site.data.navigation.docs -%}
+{%- comment -%} Flatten the leaves, in reading order, to "url||title" entries for the previous/next links. {%- endcomment -%}
+{%- capture sl_flat_text -%}
+  {%- for item in sl_tree -%}
+    {%- if item.children -%}
+      {%- for child in item.children -%}{{ child.url }}||{{ child.title }}@@{%- endfor -%}
+    {%- else -%}{{ item.url }}||{{ item.title }}@@{%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+{%- assign sl_items = sl_flat_text | split: '@@' -%}
 {%- assign sl_index = -1 -%}
-{%- for item in sl_items -%}
-  {%- if item.url == page.url %}{% assign sl_index = forloop.index0 %}{% endif -%}
+{%- for entry in sl_items -%}
+  {%- assign sl_entry_url = entry | split: '||' | first -%}
+  {%- if sl_entry_url == page.url %}{% assign sl_index = forloop.index0 %}{% endif -%}
 {%- endfor -%}
 <div class="sl-doc">
-  {%- if sl_items.size > 0 %}
+  {%- if sl_tree.size > 0 %}
   <details class="sl-doc-nav">
     <summary>{% include t.html key='docs_nav' %}</summary>
     <nav aria-label="{% include t.html key='docs_nav' %}">
-      {%- assign sl_group = nil %}
       <ul>
-        {%- for item in sl_items %}
-        {%- if item.group and item.group != sl_group %}
-        {%- assign sl_group = item.group %}
-        <li class="sl-doc-group">{{ item.group }}</li>
-        {%- endif %}
+        {%- for item in sl_tree %}
+        {%- if item.children %}
+        <li class="sl-doc-group">{{ item.title }}
+          <ul>
+            {%- for child in item.children %}
+            <li><a href="{{ child.url | relative_url }}"{% if child.url == page.url %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+            {%- endfor %}
+          </ul>
+        </li>
+        {%- else %}
         <li><a href="{{ item.url | relative_url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        {%- endif %}
         {%- endfor %}
       </ul>
     </nav>
@@ -55,12 +72,12 @@ layout: base
     {%- assign sl_next_index = sl_index | plus: 1 %}
     <nav class="sl-pager" aria-label="{% include t.html key='pager' %}">
       {%- if sl_index > 0 %}
-      {%- assign sl_prev = sl_items[sl_prev_index] %}
-      <a class="sl-pager-prev" rel="prev" href="{{ sl_prev.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ sl_prev.title }}</a>
+      {%- assign sl_prev = sl_items[sl_prev_index] | split: '||' %}
+      <a class="sl-pager-prev" rel="prev" href="{{ sl_prev[0] | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ sl_prev[1] }}</a>
       {%- endif %}
-      {%- if sl_next_index < sl_items.size %}
-      {%- assign sl_next = sl_items[sl_next_index] %}
-      <a class="sl-pager-next" rel="next" href="{{ sl_next.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ sl_next.title }}</a>
+      {%- if sl_next_index < sl_items.size and sl_items[sl_next_index] != '' %}
+      {%- assign sl_next = sl_items[sl_next_index] | split: '||' %}
+      <a class="sl-pager-next" rel="next" href="{{ sl_next[0] | relative_url }}"><span>{% include t.html key='next' %}</span> {{ sl_next[1] }}</a>
       {%- endif %}
     </nav>
     {%- endif %}
