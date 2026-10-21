@@ -54,3 +54,7 @@ a[href^="http"]::after {
   color: var(--sl-color-muted);
   overflow-wrap: anywhere;
 }
+
+.sl-copy {
+  display: none;
+}
