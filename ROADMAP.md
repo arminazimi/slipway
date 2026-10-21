@@ -157,7 +157,7 @@ An editorial theme where every visual decision is a CSS custom property, restyle
 | `theme.print` | Print stylesheet | free-agent | XS | `theme.tokens` |
 
 ### Exit criteria
-- [ ] Changing three tokens restyles the demo site; all text tokens pass WCAG AA in light and dark.
+- [x] Changing three tokens restyles the demo site; all text tokens pass WCAG AA in light and dark.
 
 
 ## Epic: Theme layouts and RTL
