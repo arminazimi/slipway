@@ -23,6 +23,15 @@
             }
           }
         },
+        "persian": {
+          "type": "object",
+          "description": "Opt-in Persian conventions for pages whose lang is fa.",
+          "additionalProperties": false,
+          "properties": {
+            "digits": { "type": "boolean", "description": "Print dates, reading time, and section numbers with Persian digits." },
+            "jalali": { "type": "boolean", "description": "Print post dates in the Jalali calendar." }
+          }
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs.",

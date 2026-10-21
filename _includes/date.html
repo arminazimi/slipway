@@ -1,0 +1,44 @@
+{%- comment -%}
+  Prints include.date as YYYY-MM-DD, or as "D Month YYYY" in the Jalali calendar when the page is Persian and
+  slipway.persian.jalali is on. Integer arithmetic of the 33-year cycle (Borkowski); digits follow slipway.persian.digits.
+{%- endcomment -%}
+{%- assign sl_d_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
+{%- capture sl_d_text -%}
+{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali -%}
+  {%- assign gy = include.date | date: '%Y' | plus: 0 -%}
+  {%- assign gm = include.date | date: '%-m' | plus: 0 -%}
+  {%- assign gd = include.date | date: '%-d' | plus: 0 -%}
+  {%- assign offsets = '0,31,59,90,120,151,181,212,243,273,304,334' | split: ',' -%}
+  {%- assign idx = gm | minus: 1 -%}
+  {%- assign off = offsets[idx] | plus: 0 -%}
+  {%- assign gy2 = gy -%}
+  {%- if gm > 2 -%}{%- assign gy2 = gy | plus: 1 -%}{%- endif -%}
+  {%- assign a = gy2 | plus: 3 | divided_by: 4 -%}
+  {%- assign b = gy2 | plus: 99 | divided_by: 100 -%}
+  {%- assign c = gy2 | plus: 399 | divided_by: 400 -%}
+  {%- assign days = gy | times: 365 | plus: 355666 | plus: a | minus: b | plus: c | plus: gd | plus: off -%}
+  {%- assign jy = days | divided_by: 12053 | times: 33 | minus: 1595 -%}
+  {%- assign days = days | modulo: 12053 -%}
+  {%- assign jy = days | divided_by: 1461 | times: 4 | plus: jy -%}
+  {%- assign days = days | modulo: 1461 -%}
+  {%- if days > 365 -%}
+    {%- assign dm1 = days | minus: 1 -%}
+    {%- assign jy = dm1 | divided_by: 365 | plus: jy -%}
+    {%- assign days = dm1 | modulo: 365 -%}
+  {%- endif -%}
+  {%- if days < 186 -%}
+    {%- assign jm = days | divided_by: 31 | plus: 1 -%}
+    {%- assign jd = days | modulo: 31 | plus: 1 -%}
+  {%- else -%}
+    {%- assign r = days | minus: 186 -%}
+    {%- assign jm = r | divided_by: 30 | plus: 7 -%}
+    {%- assign jd = r | modulo: 30 | plus: 1 -%}
+  {%- endif -%}
+  {%- assign months = 'فروردین,اردیبهشت,خرداد,تیر,مرداد,شهریور,مهر,آبان,آذر,دی,بهمن,اسفند' | split: ',' -%}
+  {%- assign mi = jm | minus: 1 -%}
+  {{- jd }} {{ months[mi] }} {{ jy -}}
+{%- else -%}
+  {{- include.date | date: '%Y-%m-%d' -}}
+{%- endif -%}
+{%- endcapture -%}
+{%- include num.html value=sl_d_text -%}

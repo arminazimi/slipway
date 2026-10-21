@@ -8,7 +8,7 @@
 <!doctype html>
 <html lang="{{ sl_lang }}" dir="{{ sl_dir }}">
 {% include head.html %}
-<body data-copy="{% include t.html key='copy' %}" data-copied="{% include t.html key='copied' %}" data-copy-failed="{% include t.html key='copy_failed' %}">
+<body{% if sl_lang == 'fa' and site.slipway.persian.digits %} class="sl-fa-digits"{% endif %} data-copy="{% include t.html key='copy' %}" data-copied="{% include t.html key='copied' %}" data-copy-failed="{% include t.html key='copy_failed' %}">
   {% include skip-link.html %}
   {% include header.html %}
   <main id="main" class="sl-sections sl-layout-{{ page.layout }}" tabindex="-1">

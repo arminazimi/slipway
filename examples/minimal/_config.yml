@@ -6,6 +6,9 @@ plugins:
 
 # Theme tokens: change these and the site restyles (see docs/tokens.md). Values shown are the defaults.
 slipway:
+  persian:
+    digits: true
+    jalali: true
   languages:
     - { code: en, name: English, prefix: "" }
     - { code: fa, name: فارسی, prefix: /fa }
