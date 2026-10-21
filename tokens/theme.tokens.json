@@ -1,6 +1,21 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Slipway theme tokens (W3C Design Tokens format). Three tiers: primitive, semantic, component. Run `npm run build:tokens` after editing.",
+  "$extensions": {
+    "slipway": {
+      "pairs": [
+        ["color.text", "color.canvas", "text"],
+        ["color.text", "color.surface", "text"],
+        ["color.heading", "color.canvas", "text"],
+        ["color.heading", "color.surface", "text"],
+        ["color.muted", "color.canvas", "text"],
+        ["color.muted", "color.surface", "text"],
+        ["color.rose", "color.canvas", "text"],
+        ["color.rose", "color.surface", "text"],
+        ["color.on-rose-fill", "color.rose-fill", "text"]
+      ]
+    }
+  },
   "primitive": {
     "sand": {
       "100": { "$type": "color", "$value": "#efe8de", "$description": "Raised sand, the light surface." },
