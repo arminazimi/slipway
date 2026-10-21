@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test": "node --test \"planning/roadmap/*.test.mjs\" \"tools/brand/*.test.mjs\" \"tools/theme/*.test.mjs\"",
-    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent",
+    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:site --silent",
+    "check:site": "node tools/theme/check.mjs",
     "roadmap:build": "node planning/roadmap/build.mjs",
     "roadmap:apply": "node planning/roadmap/apply.mjs",
     "build:brand": "node tools/brand/build.mjs",

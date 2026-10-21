@@ -37,11 +37,12 @@ export function buildExample(mode, out) {
   mkdirSync(dirname(out), { recursive: true });
   const result = spawnSync(
     "bundle",
-    ["exec", "jekyll", "build", "--source", source, "--destination", out, "--config", configs.join(",")],
+    ["exec", "jekyll", "build", "--source", source, "--destination", out, "--baseurl", "", "--config", configs.join(",")],
     {
       cwd: root,
       encoding: "utf8",
-      // jekyll-github-metadata runs on every Pages build and wants a repository; the theme
+      // jekyll-github-metadata runs on every Pages build and wants a repository (it also sets a
+      // baseurl, which --baseurl "" above clears so the site can be checked from its root); the theme
       // stylesheet fails to build without a UTF-8 locale (ADR 0006).
       env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
     },
