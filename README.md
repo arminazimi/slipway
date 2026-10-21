@@ -27,7 +27,7 @@ Slipway is an editorial, right-to-left-ready site template for GitHub Pages, bui
 
 ## Planned use
 
-Fork the repository, turn on GitHub Pages, and your site is live with no build step. Power features, such as source maps and verification, run in GitHub Actions.
+Fork the repository, turn on GitHub Pages, and your site is live with no build step. Power features, such as source maps and verification, run in GitHub Actions. See [the two modes](docs/modes.md) for what each feature needs.
 
 ## Relationship to Seaworthy
 

@@ -23,6 +23,7 @@ The repository holds the roadmap and its tooling. The theme, starters, Skill, an
 - `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
 - `examples/minimal/`: the smallest site that uses the theme. `node tools/theme/build.mjs <gem|template|remote>` builds it with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
 - `planning/roadmap/briefs/<task-key>.md`: optional agent briefs merged into issues.
+- `docs/modes.md`: classic Pages versus Actions mode, and what each feature needs. Update its table when a feature lands or an ADR changes a column.
 - `docs/adr/`: architecture decisions. Add one for every decision that is hard to reverse.
 
 ## Rules
