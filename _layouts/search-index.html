@@ -1,0 +1,12 @@
+{%- assign sl_ix_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_ix_all = site.pages | concat: site.documents -%}
+{%- assign sl_ix_n = 0 -%}
+[
+{%- for item in sl_ix_all -%}
+  {%- assign sl_ix_item_lang = item.lang | default: site.lang | default: 'en' -%}
+  {%- if sl_ix_item_lang != sl_ix_lang or item.search == false or item.layout == 'search-index' or item.title == nil -%}{%- continue -%}{%- endif -%}
+  {%- if sl_ix_n > 0 -%},{%- endif -%}
+  {%- assign sl_ix_n = sl_ix_n | plus: 1 %}
+{"title":{{ item.title | jsonify }},"url":{{ item.url | relative_url | jsonify }},"description":{{ item.description | default: '' | jsonify }},"text":{{ item.content | markdownify | strip_html | normalize_whitespace | truncate: 600 | jsonify }}}
+{%- endfor %}
+]

@@ -1,0 +1,12 @@
+{%- assign sl_s_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_s_prefix = '' -%}
+{%- for l in site.slipway.languages -%}
+  {%- if l.code == sl_s_lang -%}{%- assign sl_s_prefix = l.prefix -%}{%- endif -%}
+{%- endfor -%}
+<form class="sl-search" role="search" data-search="{{ sl_s_prefix | append: '/search.json' | relative_url }}" data-none="{% include t.html key='search_none' %}" data-count="{% include t.html key='search_count' %}" hidden>
+  <input type="search" name="q" autocomplete="off" spellcheck="false" aria-label="{% include t.html key='search' %}" placeholder="{% include t.html key='search' %}">
+  <div class="sl-search-panel" hidden>
+    <p class="sl-search-status" aria-live="polite"></p>
+    <ul class="sl-search-results"></ul>
+  </div>
+</form>

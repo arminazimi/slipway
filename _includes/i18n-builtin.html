@@ -2,6 +2,9 @@
 {%- if include.lang == 'fa' -%}
 {%- case include.key -%}
 {%- when 'skip' -%}رفتن به محتوا
+{%- when 'search' -%}جست‌وجو
+{%- when 'search_none' -%}نتیجه‌ای پیدا نشد
+{%- when 'search_count' -%}{n} نتیجه
 {%- when 'theme' -%}تم
 {%- when 'mode_auto' -%}خودکار
 {%- when 'mode_light' -%}روشن
@@ -22,6 +25,9 @@
 {%- else -%}
 {%- case include.key -%}
 {%- when 'skip' -%}Skip to content
+{%- when 'search' -%}Search
+{%- when 'search_none' -%}No results
+{%- when 'search_count' -%}{n} results
 {%- when 'theme' -%}Theme
 {%- when 'mode_auto' -%}Auto
 {%- when 'mode_light' -%}Light
