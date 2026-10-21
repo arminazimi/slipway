@@ -1,0 +1,5 @@
+{
+  "repository": "arminazimi/seaworthy",
+  "commit": "ccf4b201a5b8fa01e838364ff072b4fb86bfa167",
+  "note": "Seaworthy is not on npm yet (Seaworthy issue #122). Slipway builds this commit into .seaworthy/seaworthy. Replace this folder with a devDependency when it is published."
+}

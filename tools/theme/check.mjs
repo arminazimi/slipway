@@ -3,12 +3,16 @@
 //
 //   SLIPWAY_REQUIRE_BUILD=1       fail instead of skipping when Ruby and `bundle install` are missing
 //   SLIPWAY_REQUIRE_SEAWORTHY=1   fail instead of skipping when no Seaworthy CLI is found
-//   SEAWORTHY_CLI=<path>          a built Seaworthy CLI (packages/verify/dist/src/cli.js)
+//   SEAWORTHY_CLI=<path>          use this built Seaworthy CLI instead of the pinned one
+//
+// Without SEAWORTHY_CLI, Seaworthy is fetched from git at the commit in tools/seaworthy/pin.json
+// (needs network on the first run).
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, root } from "./build.mjs";
 
 export const checkedModes = ["gem", "template"];
@@ -35,7 +39,7 @@ export function validateSchemas(dir) {
   return problems;
 }
 
-/** The Seaworthy CLI to run, or null. SEAWORTHY_CLI wins, then the pinned checkout, then node_modules. */
+/** A Seaworthy CLI that is already there, or null. SEAWORTHY_CLI wins, then the pinned checkout, then node_modules. */
 export function findSeaworthy(env = process.env, base = root) {
   const candidates = [
     env.SEAWORTHY_CLI,
@@ -70,7 +74,14 @@ export function main(env = process.env) {
     return;
   }
 
-  const cli = findSeaworthy(env);
+  let cli = env.SEAWORTHY_CLI && existsSync(env.SEAWORTHY_CLI) ? env.SEAWORTHY_CLI : null;
+  if (!cli) {
+    try {
+      cli = ensureSeaworthy();
+    } catch (error) {
+      console.error(`Seaworthy setup failed: ${error.message}`);
+    }
+  }
   const work = mkdtempSync(join(tmpdir(), "slipway-check-"));
   try {
     for (const mode of checkedModes) {
@@ -87,7 +98,7 @@ export function main(env = process.env) {
   } finally {
     rmSync(work, { recursive: true, force: true });
   }
-  if (!cli) skipOrFail(env.SLIPWAY_REQUIRE_SEAWORTHY === "1", "Seaworthy did not run: set SEAWORTHY_CLI to a built packages/verify/dist/src/cli.js");
+  if (!cli) skipOrFail(env.SLIPWAY_REQUIRE_SEAWORTHY === "1", "Seaworthy did not run: fetching it from git failed (see above); set SEAWORTHY_CLI to a built packages/verify/dist/src/cli.js to use your own");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) main();

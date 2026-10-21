@@ -19,6 +19,7 @@ jobs:
     env:
       # Ruby and the Pages gem are part of this job, so a skipped site build is a failure.
       SLIPWAY_REQUIRE_BUILD: "1"
+      SLIPWAY_REQUIRE_SEAWORTHY: "1"
       LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v4
@@ -31,5 +32,9 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - uses: actions/cache@v4
+        with:
+          path: .seaworthy
+          key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
       - run: bundle exec github-pages versions
       - run: npm run check
