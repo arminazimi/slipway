@@ -458,3 +458,64 @@
     content: counter(sl-section, sl-persian-padded);
   }
 }
+
+/* Search: a field in the header with a results panel under it. Hidden until the script has loaded the index. */
+@layer components {
+  .sl-search {
+    position: relative;
+    flex: 1;
+    max-inline-size: 18rem;
+    margin-inline-start: auto;
+  }
+
+  .sl-search input {
+    inline-size: 100%;
+    box-sizing: border-box;
+    padding: var(--sl-space-1) var(--sl-space-3);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-text);
+    background: var(--sl-color-surface);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+  }
+
+  .sl-search-panel {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 100%;
+    z-index: 10;
+    min-inline-size: 18rem;
+    margin-block-start: var(--sl-space-1);
+    padding: var(--sl-space-2) var(--sl-space-3);
+    background: var(--sl-color-canvas);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-search-status {
+    margin-block: 0 var(--sl-space-1);
+    color: var(--sl-color-muted);
+  }
+
+  .sl-search-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sl-search-results li {
+    padding-block: var(--sl-space-1);
+  }
+
+  .sl-search-results a {
+    display: block;
+  }
+
+  .sl-search-results span {
+    display: block;
+    color: var(--sl-color-muted);
+  }
+}

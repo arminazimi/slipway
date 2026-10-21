@@ -1,5 +1,6 @@
 <header class="sl-header">
   <a class="sl-site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  {% include search.html %}
   {% include lang-switcher.html %}
   <button type="button" class="sl-theme-toggle" data-theme-toggle data-label-auto="{% include t.html key='mode_auto' %}" data-label-light="{% include t.html key='mode_light' %}" data-label-dark="{% include t.html key='mode_dark' %}" hidden>{% include t.html key='theme' %}</button>
 </header>
