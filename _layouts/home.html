@@ -1,0 +1,31 @@
+---
+layout: base
+---
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+<section class="sl-hero">
+  <h1 class="sl-hero-title">{{ page.title }}</h1>
+  {%- if page.description %}
+  <p class="sl-hero-lead">{{ page.description }}</p>
+  {%- endif %}
+  {%- if page.cta_text and page.cta_url %}
+  <p><a class="sl-button" href="{{ page.cta_url | relative_url }}">{{ page.cta_text }}</a></p>
+  {%- endif %}
+</section>
+{{ content }}
+{%- assign sl_shown = 0 -%}
+{%- capture sl_items -%}
+  {%- for post in site.posts -%}
+    {%- if post.lang and post.lang != sl_lang %}{% continue %}{% endif -%}
+    {%- if sl_shown == 5 %}{% break %}{% endif -%}
+    {%- assign sl_shown = sl_shown | plus: 1 %}
+  <li>
+    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
+    <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+  </li>
+  {%- endfor -%}
+{%- endcapture -%}
+{%- if sl_shown > 0 %}
+<h2>{% if sl_lang == 'fa' %}آخرین نوشته‌ها{% else %}Latest posts{% endif %}</h2>
+<ul class="sl-post-list">{{ sl_items }}
+</ul>
+{%- endif %}
