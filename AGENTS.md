@@ -8,7 +8,7 @@ The repository holds the roadmap and its tooling. The theme, starters, Skill, an
 
 ## Commands
 
-- `npm run check`: validates `ROADMAP.md` and runs the tooling tests. Run it before you say a change is done.
+- `npm run check`: validates `ROADMAP.md`, runs the tooling tests, builds the example site with the GitHub Pages gem, and runs Seaworthy on it. Run it before you say a change is done. The site step skips with a notice when Ruby 3.3 or a Seaworthy CLI is missing; `SLIPWAY_REQUIRE_BUILD=1` and `SLIPWAY_REQUIRE_SEAWORTHY=1` turn those skips into failures, and `SEAWORTHY_CLI` points at a built `packages/verify/dist/src/cli.js`.
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only.
 
