@@ -1,0 +1,69 @@
+---
+layout: base
+---
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_items = site.data.navigation.docs -%}
+{%- assign sl_index = -1 -%}
+{%- for item in sl_items -%}
+  {%- if item.url == page.url %}{% assign sl_index = forloop.index0 %}{% endif -%}
+{%- endfor -%}
+<div class="sl-doc">
+  {%- if sl_items.size > 0 %}
+  <details class="sl-doc-nav">
+    <summary>{% if sl_lang == 'fa' %}فهرست مستندات{% else %}Documentation{% endif %}</summary>
+    <nav aria-label="{% if sl_lang == 'fa' %}مستندات{% else %}Documentation{% endif %}">
+      {%- assign sl_group = nil %}
+      <ul>
+        {%- for item in sl_items %}
+        {%- if item.group and item.group != sl_group %}
+        {%- assign sl_group = item.group %}
+        <li class="sl-doc-group">{{ item.group }}</li>
+        {%- endif %}
+        <li><a href="{{ item.url | relative_url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        {%- endfor %}
+      </ul>
+    </nav>
+  </details>
+  {%- endif %}
+
+  <article class="sl-doc-body">
+    <h1>{{ page.title }}</h1>
+    {%- assign sl_parts = content | split: '<h' -%}
+    {%- capture sl_toc_html -%}
+      {%- for part in sl_parts offset: 1 -%}
+        {%- assign sl_level = part | slice: 0, 1 -%}
+        {%- if sl_level == '2' or sl_level == '3' -%}
+          {%- assign sl_head = part | split: '</h' | first -%}
+          {%- assign sl_id = sl_head | split: 'id="' | last | split: '"' | first -%}
+          {%- if sl_head contains 'id="' %}
+          <li class="sl-toc-{{ sl_level }}"><a href="#{{ sl_id }}">{{ sl_head | split: '">' | last | strip_html }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+    {%- assign sl_toc_trim = sl_toc_html | strip -%}
+    {%- if sl_toc_trim != '' %}
+    <nav class="sl-toc" aria-label="{% if sl_lang == 'fa' %}در این صفحه{% else %}On this page{% endif %}">
+      <p class="sl-toc-title">{% if sl_lang == 'fa' %}در این صفحه{% else %}On this page{% endif %}</p>
+      <ul>{{ sl_toc_html }}
+      </ul>
+    </nav>
+    {%- endif %}
+    {{ content }}
+
+    {%- if sl_index >= 0 %}
+    {%- assign sl_prev_index = sl_index | minus: 1 -%}
+    {%- assign sl_next_index = sl_index | plus: 1 %}
+    <nav class="sl-pager" aria-label="{% if sl_lang == 'fa' %}صفحهٔ قبل و بعد{% else %}Previous and next{% endif %}">
+      {%- if sl_index > 0 %}
+      {%- assign sl_prev = sl_items[sl_prev_index] %}
+      <a class="sl-pager-prev" rel="prev" href="{{ sl_prev.url | relative_url }}"><span>{% if sl_lang == 'fa' %}قبلی{% else %}Previous{% endif %}</span> {{ sl_prev.title }}</a>
+      {%- endif %}
+      {%- if sl_next_index < sl_items.size %}
+      {%- assign sl_next = sl_items[sl_next_index] %}
+      <a class="sl-pager-next" rel="next" href="{{ sl_next.url | relative_url }}"><span>{% if sl_lang == 'fa' %}بعدی{% else %}Next{% endif %}</span> {{ sl_next.title }}</a>
+      {%- endif %}
+    </nav>
+    {%- endif %}
+  </article>
+</div>

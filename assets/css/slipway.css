@@ -225,3 +225,116 @@
     color: var(--sl-color-muted);
   }
 }
+
+/* Doc layout: sidebar, table of contents, and previous/next links. No JavaScript. */
+@layer components {
+  .sl-layout-doc {
+    max-inline-size: 72rem;
+  }
+
+  .sl-doc-nav {
+    margin-block: var(--sl-space-4);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-doc-nav summary {
+    cursor: pointer;
+    color: var(--sl-color-muted);
+  }
+
+  .sl-doc-nav ul,
+  .sl-toc ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sl-doc-nav li {
+    padding-block: var(--sl-space-1);
+  }
+
+  .sl-doc-group {
+    margin-block-start: var(--sl-space-3);
+    color: var(--sl-color-muted);
+    letter-spacing: 0.06em;
+  }
+
+  .sl-doc-nav a[aria-current="page"] {
+    color: var(--sl-color-heading);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .sl-toc {
+    margin-block: var(--sl-space-4);
+    padding: var(--sl-space-3) var(--sl-space-4);
+    background: var(--sl-color-surface);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-toc-title {
+    margin-block: 0 var(--sl-space-2);
+    color: var(--sl-color-muted);
+  }
+
+  .sl-toc-3 {
+    padding-inline-start: var(--sl-space-4);
+  }
+
+  .sl-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sl-space-4);
+    margin-block-start: var(--sl-space-12);
+    padding-block-start: var(--sl-space-4);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+    font-family: var(--sl-font-ui);
+  }
+
+  .sl-pager a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .sl-pager span {
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
+  }
+
+  .sl-pager-next {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+
+  @media (min-width: 64rem) {
+    .sl-doc {
+      display: grid;
+      grid-template-columns: 14rem minmax(0, 1fr);
+      gap: var(--sl-space-8);
+      align-items: start;
+    }
+
+    .sl-doc-nav {
+      position: sticky;
+      inset-block-start: var(--sl-space-4);
+    }
+  }
+
+  /* Where ::details-content is supported, the sidebar is always open on wide screens. */
+  @supports selector(::details-content) {
+    @media (min-width: 64rem) {
+      .sl-doc-nav::details-content {
+        content-visibility: visible;
+      }
+
+      .sl-doc-nav summary {
+        display: none;
+      }
+    }
+  }
+}

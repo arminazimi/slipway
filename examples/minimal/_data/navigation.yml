@@ -1,0 +1,11 @@
+# The docs sidebar and the previous/next links of the `doc` layout, in reading order.
+docs:
+  - title: Introduction
+    url: /docs/
+    group: Start
+  - title: Layouts
+    url: /docs/layouts/
+    group: Start
+  - title: Tokens
+    url: /docs/tokens/
+    group: Reference
