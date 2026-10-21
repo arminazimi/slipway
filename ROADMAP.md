@@ -92,7 +92,7 @@ A repository agents and humans can contribute to on day one, whose CI already ru
 | `foundation.modes` | Document the two modes: GitHub Pages classic (no build step) and Actions mode (plugins allowed), and what each feature needs | strong-agent | S | `spike.md-twin-liquid`, `spike.source-map` |
 
 ### Exit criteria
-- [ ] `npm ci && npm run check` passes on a fresh clone, including a Seaworthy run on the example site.
+- [x] `npm ci && npm run check` passes on a fresh clone, including a Seaworthy run on the example site.
 
 
 ## Epic: Feasibility spikes
