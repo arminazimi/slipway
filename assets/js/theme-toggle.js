@@ -43,7 +43,11 @@
     var mode = read();
     var buttons = document.querySelectorAll("[data-theme-toggle]");
     function label() {
-      for (var i = 0; i < buttons.length; i++) buttons[i].textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+      var fallback = mode.charAt(0).toUpperCase() + mode.slice(1);
+      for (var i = 0; i < buttons.length; i++) {
+        var data = buttons[i].dataset;
+        buttons[i].textContent = (data && data["label" + fallback]) || fallback;
+      }
     }
     for (var i = 0; i < buttons.length; i++) {
       buttons[i].hidden = false;

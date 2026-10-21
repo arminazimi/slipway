@@ -1,0 +1,15 @@
+{%- assign sl_langs = site.slipway.languages -%}
+{%- if sl_langs.size > 1 -%}
+{%- assign sl_cur = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_all = site.pages | concat: site.documents -%}
+<nav class="sl-lang" aria-label="{% include t.html key='language' %}">
+  {%- for l in sl_langs %}
+  {%- assign sl_href = l.prefix | append: '/' -%}
+  {%- if page.translation_key -%}
+    {%- assign sl_match = sl_all | where: 'translation_key', page.translation_key | where: 'lang', l.code | first -%}
+    {%- if sl_match %}{% assign sl_href = sl_match.url %}{% endif -%}
+  {%- endif %}
+  <a href="{{ sl_href | relative_url }}" hreflang="{{ l.code }}" lang="{{ l.code }}"{% if l.code == sl_cur %} aria-current="true"{% endif %}>{{ l.name }}</a>
+  {%- endfor %}
+</nav>
+{%- endif -%}

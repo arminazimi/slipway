@@ -6,6 +6,10 @@ plugins:
 
 # Theme tokens: change these and the site restyles (see docs/tokens.md). Values shown are the defaults.
 slipway:
+  languages:
+    - { code: en, name: English, prefix: "" }
+    - { code: fa, name: فارسی, prefix: /fa }
+    - { code: de, name: Deutsch, prefix: /de }
   tokens:
     radius: 0.75rem
     font_body: '"Source Serif 4", Georgia, serif'

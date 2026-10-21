@@ -9,6 +9,20 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "languages": {
+          "type": "array",
+          "description": "Languages of the site, in switcher order. Pages join by lang and translation_key in front matter; prefix is the URL folder of the language home ('' for the default language).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "name", "prefix"],
+            "properties": {
+              "code": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$" },
+              "name": { "type": "string", "minLength": 1 },
+              "prefix": { "type": "string", "pattern": "^(/[a-z0-9-]+)?$" }
+            }
+          }
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs.",

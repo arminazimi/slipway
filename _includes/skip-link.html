@@ -1,2 +1,1 @@
-{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
-<a class="sl-skip-link" href="#main">{% if sl_lang == 'fa' %}رفتن به محتوا{% else %}Skip to content{% endif %}</a>
+<a class="sl-skip-link" href="#main">{% include t.html key='skip' %}</a>

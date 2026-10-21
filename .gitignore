@@ -7,3 +7,4 @@ vendor/
 planning/roadmap/out/
 .seaworthy/
 .DS_Store
+.tmp-i18n-site/

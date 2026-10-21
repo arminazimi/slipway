@@ -1,7 +1,6 @@
 ---
 layout: base
 ---
-{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_words = content | number_of_words -%}
 {%- assign sl_minutes = sl_words | divided_by: 200.0 | ceil -%}
 {%- if sl_minutes < 1 %}{% assign sl_minutes = 1 %}{% endif -%}
@@ -10,7 +9,7 @@ layout: base
     <h1>{{ page.title }}</h1>
     <p class="sl-post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
-      <span>{{ sl_minutes }} {% if sl_lang == 'fa' %}دقیقه مطالعه{% else %}min read{% endif %}</span>
+      <span>{{ sl_minutes }} {% include t.html key='min_read' %}</span>
       {%- if page.tags and page.tags.size > 0 %}
       <span class="sl-post-tags">
         {%- for tag in page.tags %}<span class="sl-tag">{{ tag }}</span>{% endfor -%}
@@ -21,12 +20,12 @@ layout: base
   {{ content }}
   {%- comment -%} In this Jekyll, page.previous is the older post and page.next the newer one. {%- endcomment %}
   {%- if page.next or page.previous %}
-  <nav class="sl-pager" aria-label="{% if sl_lang == 'fa' %}نوشتهٔ قبل و بعد{% else %}Previous and next post{% endif %}">
+  <nav class="sl-pager" aria-label="{% include t.html key='post_pager' %}">
     {%- if page.previous %}
-    <a class="sl-pager-prev" rel="prev" href="{{ page.previous.url | relative_url }}"><span>{% if sl_lang == 'fa' %}قبلی{% else %}Previous{% endif %}</span> {{ page.previous.title }}</a>
+    <a class="sl-pager-prev" rel="prev" href="{{ page.previous.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ page.previous.title }}</a>
     {%- endif %}
     {%- if page.next %}
-    <a class="sl-pager-next" rel="next" href="{{ page.next.url | relative_url }}"><span>{% if sl_lang == 'fa' %}بعدی{% else %}Next{% endif %}</span> {{ page.next.title }}</a>
+    <a class="sl-pager-next" rel="next" href="{{ page.next.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ page.next.title }}</a>
     {%- endif %}
   </nav>
   {%- endif %}
