@@ -36,5 +36,6 @@ jobs:
         with:
           path: .seaworthy
           key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
+      - run: npm ci
       - run: bundle exec github-pages versions
       - run: npm run check
