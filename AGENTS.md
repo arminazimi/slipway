@@ -16,6 +16,8 @@ The repository holds the roadmap and its tooling. The theme, starters, Skill, an
 
 - `ROADMAP.md`: the source of truth for planned work. Issues are generated from it; edit the roadmap, not the issues.
 - `planning/roadmap/`: parser, issue builder, GitHub sync, labels, and tests. Ported from Seaworthy.
+- `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
+- `examples/minimal/`: the smallest site that uses the theme. `node tools/theme/build.mjs <gem|template|remote>` builds it with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
 - `planning/roadmap/briefs/<task-key>.md`: optional agent briefs merged into issues.
 - `docs/adr/`: architecture decisions. Add one for every decision that is hard to reverse.
 
