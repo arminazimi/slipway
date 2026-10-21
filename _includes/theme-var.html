@@ -1,1 +1,4 @@
-{%- if include.value %} {{ include.name }}: {{ include.value | remove: "<" | remove: ">" | remove: "{" | remove: "}" | remove: ";" | remove: "\" }};{% endif -%}
+{%- if include.value -%}
+{%- assign v = include.value | remove: "<" | remove: ">" | remove: "{" | remove: "}" | remove: ";" | remove: "\" -%}
+ {{ include.name }}: {{ v }};
+{%- endif -%}

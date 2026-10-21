@@ -60,5 +60,6 @@ test("validateExampleConfigs reports a bad example config and passes the real on
 test("the include keeps quotes in font stacks and strips what could end the style block", () => {
   const helper = readFileSync(join(root, "_includes/theme-var.html"), "utf8");
   assert.doesNotMatch(helper, /\|\s*escape/, "escape would turn quotes into &quot; inside <style>");
+  assert.doesNotMatch(helper, /\{\{[^}]*"[{}]"/, "a brace inside quotes in {{ }} breaks the Liquid parser");
   for (const char of ["<", ">", "{", "}", ";"]) assert.ok(helper.includes(`remove: "${char}"`), char);
 });
