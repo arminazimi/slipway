@@ -69,6 +69,8 @@
     border: var(--sl-rule) solid var(--sl-color-line);
     border-radius: var(--sl-radius-compact);
     overflow-x: auto;
+    direction: ltr;
+    text-align: start;
   }
 }
 
@@ -369,5 +371,60 @@
     margin-block: 0 var(--sl-space-6);
     font-size: var(--sl-step-lg);
     color: var(--sl-color-muted);
+  }
+}
+
+/* Code blocks: Rouge colors from the tokens (keywords rose, strings heading, comments muted) and the copy button. */
+@layer components {
+  .sl-code {
+    position: relative;
+  }
+
+  .sl-copy {
+    position: absolute;
+    inset-block-start: var(--sl-space-2);
+    inset-inline-end: var(--sl-space-2);
+    padding: 0 var(--sl-space-2);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
+    background: var(--sl-color-canvas);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    cursor: pointer;
+  }
+
+  .sl-copy:hover {
+    color: var(--sl-color-text);
+  }
+
+  .highlight .c,
+  .highlight .c1,
+  .highlight .cm,
+  .highlight .cs {
+    color: var(--sl-color-muted);
+    font-style: italic;
+  }
+
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kr,
+  .highlight .kt,
+  .highlight .m,
+  .highlight .mi,
+  .highlight .mf,
+  .highlight .nb,
+  .highlight .nf {
+    color: var(--sl-color-rose);
+  }
+
+  .highlight .s,
+  .highlight .s1,
+  .highlight .s2,
+  .highlight .sb,
+  .highlight .sa {
+    color: var(--sl-color-heading);
+    font-style: italic;
   }
 }
