@@ -1,0 +1,3 @@
+{%- comment -%} Prints include.value, with Persian digits when the page is Persian and slipway.persian.digits is on. {%- endcomment -%}
+{%- assign sl_n_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
+{%- if sl_n_lang == 'fa' and site.slipway.persian.digits -%}{{ include.value | append: '' | replace: '0', '۰' | replace: '1', '۱' | replace: '2', '۲' | replace: '3', '۳' | replace: '4', '۴' | replace: '5', '۵' | replace: '6', '۶' | replace: '7', '۷' | replace: '8', '۸' | replace: '9', '۹' }}{%- else -%}{{ include.value }}{%- endif -%}
