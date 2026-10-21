@@ -2,6 +2,8 @@
 {%- if include.lang == 'fa' -%}
 {%- case include.key -%}
 {%- when 'skip' -%}رفتن به محتوا
+{%- when 'tags' -%}برچسب‌ها
+{%- when 'categories' -%}دسته‌ها
 {%- when 'main_nav' -%}منوی اصلی
 {%- when 'search' -%}جست‌وجو
 {%- when 'search_none' -%}نتیجه‌ای پیدا نشد
@@ -26,6 +28,8 @@
 {%- else -%}
 {%- case include.key -%}
 {%- when 'skip' -%}Skip to content
+{%- when 'tags' -%}Tags
+{%- when 'categories' -%}Categories
 {%- when 'main_nav' -%}Main
 {%- when 'search' -%}Search
 {%- when 'search_none' -%}No results

@@ -10,22 +10,45 @@ layout: base
     <p class="sl-post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{% include date.html date=page.date %}</time>
       <span>{% include num.html value=sl_minutes %} {% include t.html key='min_read' %}</span>
+      {%- capture sl_tags_url %}{% include layout-url.html layout='tags' %}{% endcapture %}
+      {%- assign sl_tags_url = sl_tags_url | strip %}
       {%- if page.tags and page.tags.size > 0 %}
       <span class="sl-post-tags">
-        {%- for tag in page.tags %}<span class="sl-tag">{{ tag }}</span>{% endfor -%}
+        {%- for tag in page.tags %}
+        {%- if sl_tags_url != '' %}<a class="sl-tag" href="{{ sl_tags_url }}#tag-{{ tag | slugify }}">{{ tag }}</a>{% else %}<span class="sl-tag">{{ tag }}</span>{% endif %}
+        {%- endfor -%}
+      </span>
+      {%- endif %}
+      {%- if page.categories and page.categories.size > 0 %}
+      <span class="sl-post-tags">
+        {%- for category in page.categories %}
+        {%- if sl_tags_url != '' %}<a class="sl-tag" href="{{ sl_tags_url }}#category-{{ category | slugify }}">{{ category }}</a>{% else %}<span class="sl-tag">{{ category }}</span>{% endif %}
+        {%- endfor -%}
       </span>
       {%- endif %}
     </p>
   </header>
   {{ content }}
-  {%- comment -%} In this Jekyll, page.previous is the older post and page.next the newer one. {%- endcomment %}
-  {%- if page.next or page.previous %}
+  {%- comment -%} Neighbours in the same language: site.posts is newest first, so the post seen before this one is newer. {%- endcomment %}
+  {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+  {%- assign sl_newer = nil -%}
+  {%- assign sl_older = nil -%}
+  {%- assign sl_last = nil -%}
+  {%- assign sl_found = false -%}
+  {%- for post in site.posts -%}
+    {%- assign sl_post_lang = post.lang | default: site.lang | default: 'en' -%}
+    {%- if sl_post_lang != sl_lang %}{% continue %}{% endif -%}
+    {%- if sl_found -%}{%- assign sl_older = post -%}{%- break -%}{%- endif -%}
+    {%- if post.url == page.url -%}{%- assign sl_found = true -%}{%- assign sl_newer = sl_last -%}{%- endif -%}
+    {%- assign sl_last = post -%}
+  {%- endfor -%}
+  {%- if sl_newer or sl_older %}
   <nav class="sl-pager" aria-label="{% include t.html key='post_pager' %}">
-    {%- if page.previous %}
-    <a class="sl-pager-prev" rel="prev" href="{{ page.previous.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ page.previous.title }}</a>
+    {%- if sl_older %}
+    <a class="sl-pager-prev" rel="prev" href="{{ sl_older.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ sl_older.title }}</a>
     {%- endif %}
-    {%- if page.next %}
-    <a class="sl-pager-next" rel="next" href="{{ page.next.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ page.next.title }}</a>
+    {%- if sl_newer %}
+    <a class="sl-pager-next" rel="next" href="{{ sl_newer.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ sl_newer.title }}</a>
     {%- endif %}
   </nav>
   {%- endif %}

@@ -547,3 +547,21 @@
     padding-inline-start: var(--sl-space-3);
   }
 }
+
+/* Tags, categories, and archive. */
+@layer components {
+  a.sl-tag {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.sl-tag:hover {
+    color: var(--sl-color-rose-hover);
+  }
+
+  .sl-count {
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    color: var(--sl-color-muted);
+  }
+}

@@ -1,5 +1,7 @@
 title: Slipway minimal
 lang: en
+# The sample posts are dated at the edges of the Jalali year; publish them whatever the clock says.
+future: true
 theme: slipway-theme
 plugins:
   - jekyll-remote-theme
