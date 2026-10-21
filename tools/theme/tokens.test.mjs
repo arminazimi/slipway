@@ -46,9 +46,9 @@ test("every token has a description, and variable names are unique", () => {
 
 test("staleOutputs flags a hand-edited stylesheet", () => {
   const path = join(mkdtempSync(join(tmpdir(), "slipway-tokens-")), "tokens.css");
-  assert.deepEqual(staleOutputs(tokens, path), [path]);
+  assert.deepEqual(staleOutputs(tokens, { css: path, docs: null }), [path]);
   writeFileSync(path, buildCss(tokens));
-  assert.deepEqual(staleOutputs(tokens, path), []);
+  assert.deepEqual(staleOutputs(tokens, { css: path, docs: null }), []);
   writeFileSync(path, `${buildCss(tokens)}/* edited */`);
-  assert.deepEqual(staleOutputs(tokens, path), [path]);
+  assert.deepEqual(staleOutputs(tokens, { css: path, docs: null }), [path]);
 });
