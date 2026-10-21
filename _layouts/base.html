@@ -1,9 +1,7 @@
 {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_dir = page.direction | default: site.direction -%}
 {%- unless sl_dir -%}
-  {%- assign sl_rtl = 'fa,ar,he,ur,ps,ku,sd,yi,dv,ug' | split: ',' -%}
-  {%- assign sl_base = sl_lang | split: '-' | first -%}
-  {%- if sl_rtl contains sl_base %}{% assign sl_dir = 'rtl' %}{% else %}{% assign sl_dir = 'ltr' %}{% endif -%}
+  {%- capture sl_dir %}{% include dir.html lang=sl_lang %}{% endcapture -%}
 {%- endunless -%}
 <!doctype html>
 <html lang="{{ sl_lang }}" dir="{{ sl_dir }}">
