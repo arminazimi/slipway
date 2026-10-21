@@ -1,0 +1,5 @@
+title: Slipway docs
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme

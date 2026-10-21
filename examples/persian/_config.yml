@@ -1,0 +1,14 @@
+title: اسلیپ‌وی فارسی
+lang: fa
+# The sample posts are dated at the edges of the Jalali year; publish them whatever the clock says.
+future: true
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+
+slipway:
+  persian:
+    digits: true
+    jalali: true
+  languages:
+    - { code: fa, name: فارسی, prefix: "" }

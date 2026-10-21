@@ -1,0 +1,3 @@
+# Overlay for the remote_theme mode: replaces the gem theme with the one on GitHub.
+theme: null
+remote_theme: arminazimi/slipway

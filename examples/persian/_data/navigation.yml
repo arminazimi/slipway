@@ -1,0 +1,17 @@
+main:
+  - title: خانه
+    url: /
+  - title: راهنما
+    url: /guide/
+  - title: بایگانی
+    url: /archive/
+  - title: دربارهٔ ما
+    url: /about.html
+
+docs:
+  - title: شروع
+    children:
+      - title: مقدمه
+        url: /guide/
+      - title: نوشتن
+        url: /guide/writing/
