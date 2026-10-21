@@ -17,8 +17,8 @@ test("home inherits the base layout and shows title, description, and an optiona
 test("home renders the page body, then at most five latest posts only when posts exist", () => {
   const home = read("_layouts/home.html");
   assert.ok(home.indexOf("{{ content }}") < home.indexOf("site.posts"));
-  assert.match(home, /slice: 0, 5/);
-  assert.match(home, /sl_recent\.size > 0/);
+  assert.match(home, /sl_shown == 5/);
+  assert.match(home, /sl_shown > 0/);
 });
 
 test("the home styles use logical properties only", () => {
