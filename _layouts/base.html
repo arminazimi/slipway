@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}" dir="{{ page.direction | default: site.direction | default: 'ltr' }}">
+{% include head.html %}
+<body>
+  {% include skip-link.html %}
+  {% include header.html %}
+  <main id="main" class="sl-sections" tabindex="-1">
+    {{ content }}
+  </main>
+  {% include footer.html %}
+</body>
+</html>
