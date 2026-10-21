@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
+import { exampleNames } from "./build.mjs";
 import { findSeaworthy, runSeaworthy, validateSchemas } from "./check.mjs";
 
 const temp = () => mkdtempSync(join(tmpdir(), "slipway-check-test-"));
@@ -49,4 +50,8 @@ test("runSeaworthy fails the check on the CLI's exit code and passes warnings to
   } finally {
     delete process.env.FAKE_FAIL;
   }
+});
+
+test("the four example sites the theme epic promises are all checked", () => {
+  for (const name of ["minimal", "docs", "blog", "persian"]) assert.ok(exampleNames().includes(name), `examples/${name} is missing`);
 });

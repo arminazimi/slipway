@@ -187,7 +187,7 @@ Layouts for home, docs, posts, and pages, with right-to-left and multilingual su
 | `theme.zero-js` | JavaScript budget: none required to read a page; search and toggle under 10 KB, enforced in CI | strong-agent | S | `theme.search` |
 
 ### Exit criteria
-- [ ] Every example site (minimal, docs, blog, Persian) passes Seaworthy with zero findings.
+- [x] Every example site (minimal, docs, blog, Persian) passes Seaworthy with zero findings.
 - [ ] Seaworthy dependencies are met: the Seaworthy CLI runs in CI (`foundation.seaworthy-cli`).
 
 ---

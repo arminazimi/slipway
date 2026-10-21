@@ -40,4 +40,4 @@ Only rows with a decision record are filled in. The other planned features (sear
 
 ## How Slipway itself tests both
 
-`npm run check` builds `examples/minimal` with the GitHub Pages gem as a gem theme and as a template, and runs Seaworthy on each build. CI does it in the Pages environment (Ruby from `.ruby-version`, `Gemfile.lock`). The `remote_theme` build needs network and a pushed theme, so it is opt-in: `SLIPWAY_TEST_REMOTE=1 node --test tools/theme/modes.test.mjs`.
+`npm run check` builds every site in `examples/` (minimal, docs, blog, persian) with the GitHub Pages gem as a gem theme and as a template, and runs Seaworthy on each build. CI does it in the Pages environment (Ruby from `.ruby-version`, `Gemfile.lock`). The `remote_theme` build needs network and a pushed theme, so it is opt-in: `SLIPWAY_TEST_REMOTE=1 node --test tools/theme/modes.test.mjs`.

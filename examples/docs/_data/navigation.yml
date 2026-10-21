@@ -1,0 +1,21 @@
+main:
+  - title: Home
+    url: /
+  - title: Guide
+    url: /guide/
+
+docs:
+  - title: Getting started
+    children:
+      - title: Overview
+        url: /guide/
+      - title: Install
+        url: /guide/install/
+  - title: Using the theme
+    children:
+      - title: Configure
+        url: /guide/configure/
+      - title: Write pages
+        url: /guide/write/
+      - title: Deploy
+        url: /guide/deploy/

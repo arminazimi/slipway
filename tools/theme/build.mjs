@@ -1,24 +1,33 @@
-// Builds the minimal example site with the GitHub Pages gem, in one of three modes:
+// Builds an example site (minimal by default) with the GitHub Pages gem, in one of three modes:
 //   gem       theme: slipway-theme from the local gemspec (the Gemfile)
 //   template  the theme files live in the site, as after "Use this template"
 //   remote    remote_theme: arminazimi/slipway, fetched from GitHub (needs network)
-// Usage: node tools/theme/build.mjs <gem|template|remote> [outDir]
+// Usage: node tools/theme/build.mjs <gem|template|remote> [outDir] [example]
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const modes = ["gem", "template", "remote"];
-const example = join(root, "examples/minimal");
+/** Names of the example sites under examples/, each a folder with a _config.yml. */
+export function exampleNames() {
+  const dir = join(root, "examples");
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && existsSync(join(dir, entry.name, "_config.yml")))
+    .map((entry) => entry.name)
+    .sort();
+}
 const themeDirs = ["_layouts", "_includes", "_sass", "assets"];
 
 export function bundleAvailable() {
   return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8" }).status === 0;
 }
 
-export function buildExample(mode, out) {
+export function buildExample(mode, out, name = "minimal") {
+  const example = join(root, "examples", name);
+  if (!existsSync(example)) throw new Error(`no example site named ${name}`);
   if (!modes.includes(mode)) throw new Error(`mode must be one of ${modes.join(", ")}`);
   let source = example;
   const configs = [join(example, "_config.yml")];
@@ -54,7 +63,8 @@ export function buildExample(mode, out) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const mode = process.argv[2] ?? "gem";
+  const name = process.argv[4] ?? "minimal";
   const out = resolve(process.argv[3] ?? join(root, "_site", mode));
-  buildExample(mode, out);
+  buildExample(mode, out, name);
   console.log(`built ${mode} → ${out}`);
 }
