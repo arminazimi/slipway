@@ -1,0 +1,27 @@
+---
+layout: base
+---
+{%- comment -%}
+  GitHub Pages serves one 404.html for the whole site and cannot tell which language the visitor wanted, so this
+  page has a section for every language in slipway.languages (or just the page language) under one heading.
+{%- endcomment -%}
+{%- assign sl_nf_langs = site.slipway.languages -%}
+<article class="sl-not-found">
+  <h1 class="sl-not-found-code">404</h1>
+  {%- if sl_nf_langs.size > 0 %}
+  {%- for l in sl_nf_langs %}
+  {%- capture sl_nf_dir %}{% include dir.html lang=l.code %}{% endcapture %}
+  <section lang="{{ l.code }}" dir="{{ sl_nf_dir }}">
+    <h2>{% include t.html lang=l.code key='not_found_title' %}</h2>
+    <p>{% include t.html lang=l.code key='not_found_text' %}</p>
+    <p><a class="sl-button" href="{{ l.prefix | append: '/' | relative_url }}">{% include t.html lang=l.code key='go_home' %}</a></p>
+  </section>
+  {%- endfor %}
+  {%- else %}
+  <section>
+    <h2>{% include t.html key='not_found_title' %}</h2>
+    <p>{% include t.html key='not_found_text' %}</p>
+    <p><a class="sl-button" href="{{ '/' | relative_url }}">{% include t.html key='go_home' %}</a></p>
+  </section>
+  {%- endif %}
+</article>

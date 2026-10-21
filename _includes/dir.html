@@ -1,0 +1,4 @@
+{%- comment -%} Prints rtl or ltr for include.lang. {%- endcomment -%}
+{%- assign sl_dir_rtl = 'fa,ar,he,ur,ps,ku,sd,yi,dv,ug' | split: ',' -%}
+{%- assign sl_dir_base = include.lang | split: '-' | first -%}
+{%- if sl_dir_rtl contains sl_dir_base -%}rtl{%- else -%}ltr{%- endif -%}

@@ -1,4 +1,4 @@
-{%- assign sl_t_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_t_lang = include.lang | default: page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_t_base = sl_t_lang | split: '-' | first -%}
 {%- assign sl_t_value = site.data.i18n[sl_t_lang][include.key] | default: site.data.i18n[sl_t_base][include.key] -%}
 {%- if sl_t_value -%}{{ sl_t_value }}{%- else -%}{% include i18n-builtin.html lang=sl_t_base key=include.key %}{%- endif -%}

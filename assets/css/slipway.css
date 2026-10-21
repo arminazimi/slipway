@@ -565,3 +565,19 @@
     color: var(--sl-color-muted);
   }
 }
+
+/* 404: one section per language under a large code. */
+@layer components {
+  .sl-not-found-code {
+    margin-block: var(--sl-space-12) 0;
+    font-family: var(--sl-font-display);
+    font-size: var(--sl-step-3xl);
+    line-height: 1;
+    color: var(--sl-color-rose);
+  }
+
+  .sl-not-found section {
+    padding-block: var(--sl-space-4);
+    border-block-end: var(--sl-rule) solid var(--sl-color-line);
+  }
+}
