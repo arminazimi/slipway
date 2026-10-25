@@ -1,0 +1,8 @@
+{
+  "version": 0,
+  "pages": [
+    { "url": "/", "source": "pages/index.md", "sections": [{ "id": "start", "level": 1, "line": 6, "text": "شروع با Slipway" }], "links": [] },
+    { "url": "/guide/", "source": "pages/guide.md", "sections": [{ "id": "guide", "level": 1, "line": 6, "text": "راهنما" }], "links": [] },
+    { "url": "/about/", "source": "pages/about.md", "sections": [{ "id": "about", "level": 1, "line": 6, "text": "About" }], "links": [] }
+  ]
+}

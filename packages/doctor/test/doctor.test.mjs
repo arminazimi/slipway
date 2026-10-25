@@ -10,6 +10,7 @@ import { checks } from "../src/checks.mjs";
 import { exitCode, parseArgs } from "../src/cli.mjs";
 import { globToRegExp } from "../src/glob.mjs";
 import { codeSpans, headings } from "../src/markdown.mjs";
+import { parse, walk } from "../src/html.mjs";
 
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
 const repo = here("../../../");
@@ -225,4 +226,25 @@ test("cli: --level, usage errors, and a missing folder give exit codes 0, 1, and
   assert.equal(cli("doctor").status, 2);
   assert.equal(cli("doctor", "no/such/folder").status, 2);
   assert.match(cli("--help").stdout, /Usage: slipway doctor/);
+});
+
+test("right-to-left: a dir that disagrees with lang, and one finding per unisolated mixed title, h1, and nav link", async () => {
+  const report = await run("rtl-mixed");
+  const found = (id) => report.findings.filter((f) => f.test === id).map((f) => `${f.severity} ${f.in}:${f.file}:${f.line} ${f.key}`);
+  assert.deepEqual(found("ae.rtl.dir-matches-lang"), ["warning output:about/index.html:2 html", "warning output:guide/index.html:2 html"]);
+  // Isolated runs (bdi, dir, FSI and PDI), titles inside svg, and body text are not reported.
+  assert.deepEqual(found("ae.rtl.bidi-isolated"), [
+    "warning output:guide/index.html:4 title",
+    "warning source:pages/index.md:2 title",
+    "warning output:index.html:11 a",
+    "warning source:pages/index.md:6 h1",
+  ]);
+  assert.match(report.findings.find((f) => f.key === "a").message, /^nav link "دربارهٔ Slipway" mixes/);
+});
+
+test("HTML: nesting, lines, entities, and raw text", () => {
+  const tree = parse('<!doctype html>\n<html lang="fa">\n<title>A &amp; <b></title>\n<nav><p><a href="/">x<bdi>y</bdi></a></p></nav><br>\n<script>if (a < b) "</nav>"</script><h1>z</h1></html>');
+  const seen = [...walk(tree)].map(({ element, ancestors }) => `${element.name}@${element.line}<${ancestors.map((a) => a.name).join(">")}`);
+  assert.deepEqual(seen, ["html@2<", "title@3<html", "nav@4<html", "p@4<html>nav", "a@4<html>nav>p", "bdi@4<html>nav>p>a", "br@4<html", "script@5<html", "h1@5<html"]);
+  assert.deepEqual([...walk(tree)][1].element.children, [{ text: "A & <b>" }]);
 });
