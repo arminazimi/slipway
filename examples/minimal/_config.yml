@@ -12,6 +12,8 @@ slipway:
   persian:
     digits: true
     jalali: true
+  arabic:
+    digits: true
   languages:
     - { code: en, name: English, prefix: "" }
     - { code: fa, name: فارسی, prefix: /fa }

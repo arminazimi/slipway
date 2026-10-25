@@ -9,6 +9,7 @@ planning/roadmap/out/
 .DS_Store
 .tmp-i18n-site/
 .tmp-persian-site/
+.tmp-arabic-site/
 .tmp-search-site/
 .tmp-nav-site/
 .tmp-taxonomy-site/
