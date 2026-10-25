@@ -17,6 +17,8 @@ test("every example's _config.yml and navigation.yml name an existing schema on 
   for (const example of examples) {
     for (const [file, schema] of Object.entries(files)) {
       const path = `examples/${example}/${file}`;
+      // examples/bare has no navigation.yml: zero config means no _data at all.
+      if (file !== "_config.yml" && !existsSync(join(root, path))) continue;
       const match = read(path).match(modeline);
       assert.ok(match, `${path} starts with a yaml-language-server comment`);
       const target = join(root, dirname(path), match[1]);

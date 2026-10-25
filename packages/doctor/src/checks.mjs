@@ -4,6 +4,7 @@
 import { codeSpans, blocks, headings } from "./markdown.mjs";
 import { startTags } from "./html.mjs";
 import { allowedFor, splitFrontMatter, parseWithLines } from "./yaml.mjs";
+import { rtlChecks } from "./checks/rtl.mjs";
 
 const pass = { status: "pass", findings: [] };
 const failWith = (findings) => (findings.length ? { status: "fail", findings } : { status: "pass", findings: [] });
@@ -482,5 +483,7 @@ export const checks = {
     });
     return ok ? pass : failWith([{ in: "output", file: ".well-known/agent-skills/index.json", message: "no skill gives the source repository's https URL and names AGENTS.md" }]);
   },
+
+  ...rtlChecks,
 };
 

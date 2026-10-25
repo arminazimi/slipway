@@ -3,6 +3,7 @@
 // names the file, the line when there is one, and a one-line fix.
 import { blocks } from "../markdown.mjs";
 import { findDeprecations, packagedDeprecations } from "../deprecations.mjs";
+import { detect } from "../detect.mjs";
 
 /** The files of starter-files/ in the repository, except its README: every site copies them. */
 export const stubs = [".vscode/settings.json", "AGENTS.md"];
@@ -18,9 +19,14 @@ export const builtinKeys = [
 const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_modules)\//;
 const isMarkdown = (path) => /\.(md|markdown)$/i.test(path);
 
-/** Whether the source folder is a Jekyll site. `doctor.detect` will decide this for every generator. */
+/**
+ * Whether the checks apply: `detect()` says Jekyll, or the config names a Slipway theme. A site on the
+ * remote theme has neither a Gemfile nor `_layouts/`, so detection alone would miss it.
+ */
 export function applies(site) {
-  return site.isFile(site.source, "_config.yml") || site.isFile(site.source, "_config.yaml");
+  if (detect(site.source).generator === "jekyll") return true;
+  const { data } = config(site);
+  return [data.theme, data.remote_theme].some((name) => typeof name === "string" && /slipway/i.test(name));
 }
 
 function config(site) {
