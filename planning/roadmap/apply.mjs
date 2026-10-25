@@ -2,6 +2,8 @@
 //
 //   node planning/roadmap/apply.mjs            # print the plan, change nothing
 //   node planning/roadmap/apply.mjs --apply    # sync labels, phase milestones, and issues
+//   node planning/roadmap/apply.mjs --rebuild-state [--apply]
+//                                              # first rebuild out/state.json from the issues on GitHub
 //
 // Run `node planning/roadmap/build.mjs` first. Target repo: $SLIPWAY_REPO or arminazimi/slipway.
 // Each phase is its own milestone. Resumable and idempotent: issue and milestone numbers are recorded
@@ -24,6 +26,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const out = join(here, "out");
 const statePath = join(out, "state.json");
 const apply = process.argv.includes("--apply");
+const rebuild = process.argv.includes("--rebuild-state");
 
 if (!existsSync(join(out, "issues.json"))) {
   console.error("Run `node planning/roadmap/build.mjs` first.");
@@ -42,6 +45,30 @@ state.transferred ??= {};
 if (state.repo !== REPO) {
   console.error(`out/state.json belongs to ${state.repo}, not ${REPO}. Move it aside to start fresh.`);
   process.exit(1);
+}
+
+/**
+ * Rebuilds the issue numbers in out/state.json from the roadmap-key marker that starts every roadmap issue body,
+ * so the sync can run anywhere (for example in the roadmap-sync workflow), not only where state.json was written.
+ * Digests are dropped, so the next sync rewrites every issue once.
+ */
+function rebuildState() {
+  const pages = gh([`repos/${REPO}/issues?state=all&per_page=100`, "--paginate", "--slurp"]);
+  const found = pages.flat().filter((i) => !i.pull_request);
+  state.numbers = {};
+  state.written = {};
+  state.closed = {};
+  for (const issue of found) {
+    const m = (issue.body ?? "").match(/^<!--\s*slipway-roadmap-key:\s*(\S+)\s*-->/);
+    if (!m) continue;
+    const key = m[1];
+    if (state.numbers[key] && state.numbers[key] < issue.number) continue; // keep the oldest if a key repeats
+    state.numbers[key] = issue.number;
+    if (issue.state === "closed" && DONE[key]) state.closed[key] = true;
+    if (TRANSFER_FROM.issues[key]) state.transferred[key] ??= TRANSFER_FROM.issues[key];
+  }
+  save();
+  console.log(`rebuilt out/state.json: ${Object.keys(state.numbers).length} roadmap issues found on ${REPO}`);
 }
 
 const keys = new Set(issues.map((i) => i.key));
@@ -116,6 +143,8 @@ function resolve(body) {
     return `#${n}`;
   });
 }
+
+if (rebuild) rebuildState();
 
 const toTransfer = Object.entries(TRANSFER_FROM.issues).filter(([key]) => !state.numbers[key]);
 const transferKeys = new Set(Object.keys(TRANSFER_FROM.issues));

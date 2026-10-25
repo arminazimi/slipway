@@ -14,7 +14,7 @@ import { parseRoadmap } from "./parse.mjs";
 import { DONE, TRANSFER_FROM } from "./status.mjs";
 
 /** Tasks that wait on a Seaworthy deliverable (see "Depends on Seaworthy" in ROADMAP.md). */
-const NEEDS_SEAWORTHY = new Set(["foundation.seaworthy-cli", "theme.action", "agent.verified-gate", "agent.mcp-verify", "agent.edit-button", "agent.webmcp", "sourcemap.contract", "sourcemap.e2e", "starter.gallery", "launch.co-launch", "spec.theme"]);
+const NEEDS_SEAWORTHY = new Set(["foundation.seaworthy-cli", "theme.action", "agent.verified-gate", "agent.mcp-verify", "sourcemap.e2e", "seaworthy.doctor", "seaworthy.sourcemap", "seaworthy.badge", "seaworthy.fixtures", "launch.demo-video", "launch.co-launch", "spec.theme"]);
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -22,7 +22,7 @@ const root = join(here, "..", "..");
 const ref = (key) => `{{ref:${key}}}`;
 const marker = (key) => `<!-- slipway-roadmap-key: ${key} -->`;
 const FOOTER_TASK =
-  "<sub>Part of the Slipway H1 roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>";
+  "<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>";
 const FOOTER_EPIC = "<sub>Pick any open task above whose dependencies are closed. Lane labels say who it suits.</sub>";
 
 const DEFAULT_DONT = [

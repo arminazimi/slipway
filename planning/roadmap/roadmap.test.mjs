@@ -130,7 +130,9 @@ test("every issue transferred from Seaworthy has its key in the roadmap", async 
 test("tasks that wait on Seaworthy are labeled", () => {
   const { issues } = buildIssues(real, loadBriefs());
   const label = (key) => issues.find((i) => i.key === key).labels;
-  assert.ok(label("sourcemap.contract").includes("needs: seaworthy"));
+  assert.ok(label("theme.action").includes("needs: seaworthy"));
+  assert.ok(!label("sourcemap.contract").includes("needs: seaworthy"));
+  assert.ok(!label("agent.edit-button").includes("needs: seaworthy"));
   assert.ok(label("agent.verified-gate").includes("needs: seaworthy"));
   assert.ok(!label("theme.tokens").includes("needs: seaworthy"));
 });
