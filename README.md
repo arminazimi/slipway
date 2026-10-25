@@ -33,7 +33,7 @@ The theme is the spec's reference implementation: a site built with it reaches t
 
 ## Planned use
 
-Add `remote_theme: arminazimi/slipway` to your `_config.yml`, or fork the repository and turn on GitHub Pages: your site is live with no build step. Pinned releases, a gem, and `npx create-slipway` arrive in Phase 2. Power features, such as exact-line source maps, run in GitHub Actions. See [the two modes](docs/modes.md) for what each feature needs.
+Add `remote_theme: arminazimi/slipway` to your `_config.yml`, or fork the repository and turn on GitHub Pages: your site is live with no build step. Pinned releases, a gem, and `npx create-slipway` arrive in Phase 2. Power features, such as exact-line source maps, run in GitHub Actions. See [the two modes](docs/modes.md) for what each feature needs. To add a snippet, a footer line, or your own CSS without forking, use the [override slots](docs/overrides.md).
 
 ## Relationship to Seaworthy
 

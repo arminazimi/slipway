@@ -35,7 +35,8 @@ export function buildExample(mode, out, name = "minimal") {
   if (mode === "template") {
     source = mkdtempSync(join(realpathSync(tmpdir()), "slipway-template-"));
     cpSync(example, source, { recursive: true });
-    for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true });
+    // force: false keeps the site's own files, so an override slot the example fills wins, as it does after "Use this template".
+    for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true, force: false });
     const config = readFileSync(join(example, "_config.yml"), "utf8").replace(/^theme:.*\n/m, "");
     writeFileSync(join(source, "_config.yml"), config);
     configs[0] = join(source, "_config.yml");

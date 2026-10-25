@@ -15,3 +15,4 @@ planning/roadmap/out/
 .tmp-feed-site/
 .tmp-404-site/
 .tmp-js-site/
+.tmp-overrides-*/

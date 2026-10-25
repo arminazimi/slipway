@@ -1,0 +1,46 @@
+name: release
+
+# A maintainer pushes a tag vX.Y.Z after merging the pull request from `node tools/release/prepare.mjs X.Y.Z`.
+# This workflow checks the tag against the gemspec, runs the full check, and creates the GitHub release.
+# It never publishes a package: the gem is pushed by hand (standalone.gem-publish).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      SLIPWAY_REQUIRE_BUILD: "1"
+      SLIPWAY_REQUIRE_SEAWORTHY: "1"
+      LANG: C.UTF-8
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tag matches the gemspec version
+        run: node tools/release/prepare.mjs --check "$TAG"
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - uses: actions/cache@v4
+        with:
+          path: .seaworthy
+          key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
+      - run: npm ci
+      - run: npm run check
+      - name: Release notes from CHANGELOG.md
+        run: node tools/release/prepare.mjs --notes "$TAG" > "$RUNNER_TEMP/notes.md"
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag

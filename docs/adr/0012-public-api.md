@@ -91,8 +91,10 @@ Includes are internal, so the theme can restructure its markup. One is public, b
 | Include | Parameters | Public | Tested by |
 | --- | --- | --- | --- |
 | `t.html` | `key` (required), `lang` (defaults to the page's) | yes | `i18n.test.mjs` |
+| `head-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<head>` | yes | `overrides.test.mjs` |
+| `footer-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<footer>` | yes | `overrides.test.mjs` |
 
-The override slots `head-custom.html` and `footer-custom.html` become public with `standalone.overrides`. Shadowing any other include works but is unsupported: it may break in a minor release.
+The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). Shadowing any other include works but is unsupported: it may break in a minor release.
 
 ### CSS custom properties
 
@@ -122,7 +124,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 
 ## Consequences
 
-- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and `docs/overrides.md` (`standalone.overrides`) will say so.
+- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and [docs/overrides.md](../overrides.md) says so.
 - Adding a config key, front-matter field, layout, or token means adding a row here in the same pull request.
 - Items marked *not yet tested* get tests before `1.0.0` (the `1.0 readiness review` task checks this).
 - `standalone.deprecations` and `standalone.upgrade-test` implement rule 4.
