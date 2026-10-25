@@ -26,6 +26,18 @@ Comment on the issue to claim it. If you go quiet for a week, someone else may p
 5. Run `npm run check`.
 6. Open the PR with `Closes #<issue>`.
 
+Add a line under `Unreleased` in [CHANGELOG.md](CHANGELOG.md) for anything a site owner would notice.
+
+## Releasing
+
+Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.Y.Z`.
+
+1. On an up-to-date `main`, run `node tools/release/prepare.mjs X.Y.Z`. It bumps `slipway-theme.gemspec`, moves `Unreleased` in `CHANGELOG.md` under `X.Y.Z` with today's date, and prints the git commands.
+2. Commit on a `release/vX.Y.Z` branch, open a pull request, and merge it once CI is green.
+3. On `main`, tag the merge commit and push the tag: `git tag -a vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
+4. The [release workflow](.github/workflows/release.yml) fails if the tag does not match the gemspec version, runs `npm run check`, and creates the GitHub release with that `CHANGELOG.md` section as its notes.
+5. Publishing the gem to RubyGems is a separate, manual step; no workflow does it.
+
 ## Proposing starters, blocks, and migrations
 
 Open an issue that names who the starter or block is for, links two or three real sites it should be able to build, and lists what it needs from the core theme.
