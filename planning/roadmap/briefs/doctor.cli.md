@@ -12,6 +12,7 @@ This is the checker. It runs on Node 22 with no Ruby. It reads the source folder
 3. Reuse `tools/theme/validate.mjs` logic for schemas by moving it into the package; keep the old path as a thin re-export.
 4. Exit codes: 0 all required tests of the target level pass (`--level`), 1 findings, 2 usage error.
 5. Tests with three fixtures: a conforming site, a site missing `AGENTS.md`, a site with invalid front matter.
+6. In `starter-files/AGENTS.md` (and its copy in `examples/minimal`), make `npx slipway doctor .` the check in "Check your edit", and add it to the known commands in `tools/theme/agents-md.test.mjs`.
 
 **Files**
 - `packages/doctor/`
