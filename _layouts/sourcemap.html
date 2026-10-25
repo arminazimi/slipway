@@ -1,0 +1,28 @@
+{%- comment -%}
+  /sourcemap.json, level 0 (ADR 0007, spec/sourcemap/v0.md): each content page's url and its source file.
+  Generated files are left out: anything under assets/, the feed, sitemap, search index and this map,
+  Markdown twin stubs, and every url that is not a page (ends in neither / nor .html).
+  Lines are not computed here; ADR 0007 rejects a Liquid line map.
+{%- endcomment -%}
+{%- assign sl_sm_all = site.pages | concat: site.documents -%}
+{%- assign sl_sm_n = 0 -%}
+{"version":0,"pages":[
+{%- for item in sl_sm_all -%}
+  {%- if item.path == nil or item.url == nil -%}{%- continue -%}{%- endif -%}
+  {%- if item.layout == 'feed' or item.layout == 'sitemap' or item.layout == 'search-index' or item.layout == 'sourcemap' -%}{%- continue -%}{%- endif -%}
+  {%- assign sl_sm_head = item.path | slice: 0, 7 -%}
+  {%- if sl_sm_head == 'assets/' -%}{%- continue -%}{%- endif -%}
+  {%- assign sl_sm_ext = item.path | split: '.' | last | downcase -%}
+  {%- if sl_sm_ext == 'xml' or sl_sm_ext == 'json' or sl_sm_ext == 'css' or sl_sm_ext == 'scss' or sl_sm_ext == 'js' or sl_sm_ext == 'txt' -%}{%- continue -%}{%- endif -%}
+  {%- assign sl_sm_last = item.url | slice: -1 -%}
+  {%- assign sl_sm_uext = item.url | split: '.' | last -%}
+  {%- if sl_sm_last != '/' and sl_sm_uext != 'html' -%}{%- continue -%}{%- endif -%}
+  {%- if item.collection -%}
+    {%- assign sl_sm_coll = site.collections | where: 'label', item.collection | first -%}
+    {%- if sl_sm_coll.output == false -%}{%- continue -%}{%- endif -%}
+  {%- endif -%}
+  {%- if sl_sm_n > 0 -%},{%- endif -%}
+  {%- assign sl_sm_n = sl_sm_n | plus: 1 %}
+{"url":{{ item.url | jsonify }},"source":{{ item.path | jsonify }}}
+{%- endfor %}
+]}

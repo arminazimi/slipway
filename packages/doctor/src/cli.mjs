@@ -51,7 +51,7 @@ export function parseArgs(args) {
 
 const display = (path) => relative(process.cwd(), path).split(sep).join("/") || ".";
 
-/** A finding as `path:line key: message (allowed: ...)`, with the path from the current folder. */
+/** A finding as `path:line key: message (allowed: ...) (fix: ...)`, with the path from the current folder. */
 export function formatFinding(finding, { source, build }) {
   const base = finding.in === "output" ? build : source;
   const file = finding.file ? `${base ? display(resolve(base, finding.file)) : finding.file}${finding.line ? `:${finding.line}` : ""}` : "";
@@ -63,7 +63,7 @@ export function formatText(report, folders) {
   lines.push(`level: ${report.level ?? "none"} (agent-editable ${report.version})`);
   const failed = report.tests.filter((test) => test.status === "fail");
   for (const test of failed) {
-    lines.push("", `${test.keyword === "MUST" ? "error" : "warning"} ${test.id} (${test.level} ${test.keyword})`);
+    lines.push("", `${test.keyword === "MUST" ? "error" : "warning"} ${test.id} (${test.level ? `${test.level} ${test.keyword}` : test.scope})`);
     for (const finding of test.findings) lines.push(`  ${formatFinding(finding, folders)}`);
   }
   const notRun = report.tests.filter((test) => test.status === "not-run");

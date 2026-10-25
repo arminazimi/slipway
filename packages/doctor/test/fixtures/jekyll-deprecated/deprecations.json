@@ -1,0 +1,5 @@
+{
+  "deprecations": [
+    { "kind": "front-matter", "old": "fixture_kicker", "new": "fixture_eyebrow", "since": "0.2.0", "removed_in": "1.0.0" }
+  ]
+}

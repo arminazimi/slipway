@@ -8,8 +8,9 @@ const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url),
 export const tool = { name: "slipway doctor", version: pkg.version, informationUri: "https://github.com/arminazimi/slipway/tree/main/packages/doctor" };
 
 /**
- * A finding on a built HTML page, moved to the source file the source map gives for that page, at the line of the
- * section named by `key` when there is one. The built location is kept in `output`. Other findings are returned as is.
+ * A finding on a built HTML page, moved to the source file the source map gives for that page: at the line of the
+ * section named by `key`, or with no line when the finding had none. A finding with a line in the built page and no
+ * matching section keeps it, since that line is more precise. The built file is kept in `output`.
  */
 export function locate(site, finding) {
   if (finding.in !== "output" || !finding.file || !/\.html?$/i.test(finding.file)) return finding;
@@ -18,17 +19,20 @@ export function locate(site, finding) {
   const page = pages.find((p) => typeof p?.url === "string" && typeof p.source === "string" && site.outputFile(p.url) === finding.file);
   if (!page || !site.isFile(site.source, page.source)) return finding;
   const section = Array.isArray(page.sections) && finding.key !== undefined ? page.sections.find((s) => s?.id === finding.key) : null;
+  const sectionLine = Number.isInteger(section?.line) && section.line >= 1 ? section.line : null;
+  if (!sectionLine && finding.line) return finding;
   const { in: _, file, line: __, column: ___, ...rest } = finding;
   const moved = { ...rest, in: "source", file: page.source, output: { file } };
-  if (Number.isInteger(section?.line) && section.line >= 1) moved.line = section.line;
+  if (sectionLine) moved.line = sectionLine;
   return moved;
 }
 
-/** A finding's text without its location: `key: message (allowed: ...)`. */
+/** A finding's text without its location: `key: message (allowed: ...) (fix: ...)`. */
 export function describe(finding) {
   const key = finding.key ? `${finding.key}: ` : "";
   const allowed = finding.allowed?.length ? ` (allowed: ${finding.allowed.join(", ")})` : "";
-  return `${key}${finding.message}${allowed}`;
+  const fix = finding.fix ? ` (fix: ${finding.fix})` : "";
+  return `${key}${finding.message}${allowed}${fix}`;
 }
 
 /** A file in the source or output folder as a SARIF URI: relative to `cwd` with forward slashes, or a file: URL outside it. */

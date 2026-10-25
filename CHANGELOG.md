@@ -29,6 +29,9 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
 - `slipway doctor`: checks a site's source and output against the agent-editable spec and prints the level it reaches (#181).
+- Generator detection for `slipway doctor`: `detect()` names the generator (Jekyll, Hugo, Astro, Docusaurus, MkDocs, Eleventy) and its source and output folders from marker files (#182).
+- `slipway doctor` right-to-left checks: `dir` matches `lang`, and titles, `h1` headings, and nav links that mix directions isolate one of them (#184).
+- `slipway doctor` Jekyll and Slipway checks: missing starter files, deprecated keys, Liquid in content, missing translations, and missing UI strings, each with a fix (#183).
 - `slipway doctor --format json` and `--format sarif` for agents and GitHub code scanning; a finding on a built page names its Markdown file and line (#185).
 - An RFC process for spec changes, with a template, a 14-day review window, and `spec/CHANGELOG.md` (#180).
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
@@ -39,6 +42,8 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Editor autocomplete for `_config.yml` and `_data/navigation.yml` through the YAML language server, with `starter-files/.vscode/settings.json` and `docs/editor.md` (#74).
 - "Edit with your agent" on every `h2` and `h3` of doc and post pages: a button copies a prompt with the source file, the line (Actions mode), and the section's text. It appears only with JavaScript and sends nothing (#82).
 - `AGENTS.md` for every new site (`starter-files/AGENTS.md`): where content lives, the schemas, how to add a page, a post, a menu item, and a translation, how to check an edit, and a Never list (#75).
+- Agent Skill `skills/slipway-site` for creating and customizing a site, with a config reference generated from the schema (#76).
+- Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
 
 ### Fixed
 

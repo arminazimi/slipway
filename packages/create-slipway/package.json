@@ -1,0 +1,26 @@
+{
+  "name": "create-slipway",
+  "version": "0.1.0",
+  "description": "Create a Slipway site: npx create-slipway my-site",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "create-slipway": "bin/create-slipway.mjs"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "template/"
+  ],
+  "scripts": {
+    "prepack": "node scripts/bundle.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arminazimi/slipway.git",
+    "directory": "packages/create-slipway"
+  }
+}

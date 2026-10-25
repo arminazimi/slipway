@@ -13,6 +13,7 @@ import { exitCode, formatFinding, parseArgs } from "../src/cli.mjs";
 import { locate, toSarif } from "../src/report.mjs";
 import { globToRegExp } from "../src/glob.mjs";
 import { codeSpans, headings } from "../src/markdown.mjs";
+import { parse, walk } from "../src/html.mjs";
 
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
 const repo = here("../../../");
@@ -230,6 +231,27 @@ test("cli: --level, usage errors, and a missing folder give exit codes 0, 1, and
   assert.match(cli("--help").stdout, /Usage: slipway doctor/);
 });
 
+test("right-to-left: a dir that disagrees with lang, and one finding per unisolated mixed title, h1, and nav link", async () => {
+  const report = await run("rtl-mixed");
+  const found = (id) => report.findings.filter((f) => f.id === id).map((f) => `${f.severity} ${f.in}:${f.file}:${f.line} ${f.key}`);
+  assert.deepEqual(found("ae.rtl.dir-matches-lang"), ["warning output:about/index.html:2 html", "warning output:guide/index.html:2 html"]);
+  // Isolated runs (bdi, dir, FSI and PDI), titles inside svg, and body text are not reported.
+  assert.deepEqual(found("ae.rtl.bidi-isolated"), [
+    "warning output:guide/index.html:4 title",
+    "warning source:pages/index.md:2 title",
+    "warning output:index.html:11 a",
+    "warning source:pages/index.md:6 h1",
+  ]);
+  assert.match(report.findings.find((f) => f.key === "a").message, /^nav link "دربارهٔ Slipway" mixes/);
+});
+
+test("HTML: nesting, lines, entities, and raw text", () => {
+  const tree = parse('<!doctype html>\n<html lang="fa">\n<title>A &amp; <b></title>\n<nav><p><a href="/">x<bdi>y</bdi></a></p></nav><br>\n<script>if (a < b) "</nav>"</script><h1>z</h1></html>');
+  const seen = [...walk(tree)].map(({ element, ancestors }) => `${element.name}@${element.line}<${ancestors.map((a) => a.name).join(">")}`);
+  assert.deepEqual(seen, ["html@2<", "title@3<html", "nav@4<html", "p@4<html>nav", "a@4<html>nav>p", "bdi@4<html>nav>p>a", "br@4<html", "script@5<html", "h1@5<html"]);
+  assert.deepEqual([...walk(tree)][1].element.children, [{ text: "A & <b>" }]);
+});
+
 const reportSchema = JSON.parse(readFileSync(join(repo, "spec/agent-editable/report.schema.json"), "utf8"));
 const validateReport = new Ajv2020({ allErrors: true, strict: false }).compile(reportSchema);
 
@@ -251,6 +273,11 @@ test("report: json validates against the report schema, passing or failing", asy
     assert.ok(validateReport(report), JSON.stringify(validateReport.errors));
     assert.equal(report.generator, "unknown");
   }
+  // examples/docs runs the Jekyll checks (level null, scope "jekyll"); the detect fixture is a detected Jekyll site.
+  const withChecks = await doctor(join(repo, "examples/docs"));
+  assert.ok(validateReport(withChecks), JSON.stringify(validateReport.errors));
+  assert.ok(withChecks.tests.some((t) => t.scope === "jekyll"));
+  assert.equal((await doctor(fixture("detect/jekyll"))).generator, "jekyll");
 });
 
 test("report: a finding on a built page names the Markdown file and the section's line", async (t) => {

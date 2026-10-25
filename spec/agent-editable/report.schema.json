@@ -25,15 +25,15 @@
     },
     "tests": {
       "type": "array",
-      "description": "Every test in tests.json, in its order, with how it ended.",
+      "description": "Every test in tests.json, in its order, with how it ended, then the checker's own checks for the site's generator.",
       "items": {
         "type": "object",
         "required": ["id", "level", "keyword", "scope", "status", "findings"],
         "properties": {
           "id": { "$ref": "#/$defs/testId" },
-          "level": { "enum": ["L0", "L1", "L2", "L3"] },
-          "keyword": { "enum": ["MUST", "SHOULD"] },
-          "scope": { "enum": ["source", "output", "both"] },
+          "level": { "enum": ["L0", "L1", "L2", "L3", null], "description": "null for a generator check, which never changes the level." },
+          "keyword": { "enum": ["MUST", "SHOULD", null], "description": "null for a generator check." },
+          "scope": { "type": "string", "minLength": 1, "description": "`source`, `output`, or `both` for a spec test; the generator's name for a generator check." },
           "description": { "type": "string" },
           "status": { "enum": ["pass", "fail", "not-run"] },
           "reason": { "type": "string", "description": "Why a test was not run, or how it passed in part." },
@@ -48,7 +48,11 @@
     }
   },
   "$defs": {
-    "testId": { "type": "string", "pattern": "^ae\\.[a-z0-9-]+(\\.[a-z0-9-]+)+$" },
+    "testId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)+$",
+      "description": "A spec test id from tests.json (`ae.`), or a generator check id that starts with the generator's name, such as `jekyll.stubs`."
+    },
     "location": {
       "type": "object",
       "required": ["message"],
@@ -82,8 +86,8 @@
       "allOf": [{ "$ref": "#/$defs/location" }],
       "required": ["id", "severity", "message"],
       "properties": {
-        "id": { "$ref": "#/$defs/testId", "description": "The test in tests.json the finding belongs to." },
-        "severity": { "enum": ["error", "warning"], "description": "`error` for a failed MUST, `warning` for a failed SHOULD." }
+        "id": { "$ref": "#/$defs/testId", "description": "The test or generator check the finding belongs to." },
+        "severity": { "enum": ["error", "warning"], "description": "`error` for a failed MUST, `warning` for a failed SHOULD or a generator check." }
       }
     }
   }
