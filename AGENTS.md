@@ -4,7 +4,7 @@ Instructions for coding agents working on Slipway itself. Every site built with 
 
 ## Status
 
-The repository holds the roadmap and its tooling. The theme, starters, Skill, and MCP server arrive in the phases in [ROADMAP.md](ROADMAP.md).
+The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Skill, and MCP server arrive in the phases in [ROADMAP.md](ROADMAP.md). Slipway 1.0 is standalone; Seaworthy integration comes after it ([ADR 0011](docs/adr/0011-standalone-and-the-spec.md)).
 
 ## Commands
 
@@ -29,7 +29,7 @@ The repository holds the roadmap and its tooling. The theme, starters, Skill, an
 ## Rules
 
 - One issue = one pull request, with `Closes #<issue>`.
-- Keep the dependency on Seaworthy one-way and use only its public contracts: the CLI, the Action, the report format, and the specs. Never copy its code.
+- Nothing a Slipway site needs may depend on Seaworthy before 1.0; Slipway's own CI runs it only as a regression net. Keep the dependency one-way and use only its public contracts: the CLI, the Action, the report format, and the specs. Never copy its code.
 - A task whose issue has `needs: seaworthy` waits on a Seaworthy deliverable; check it is released before you start.
 - Content and config must not depend on Jekyll, so other adapters can follow (principle 6 in the roadmap).
 - JavaScript is optional: every page must read without it, scripts are deferred, controls they enhance start `hidden`, and `assets/js/` stays under 10 KB in total (`npm run check:js`).
