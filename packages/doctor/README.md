@@ -18,6 +18,8 @@ Once the package is published, `npx slipway doctor` runs the same command. Until
 
 Exit codes: `0` the target level is reached, `1` findings, `2` a usage error or a missing folder.
 
+Agents can run it without a shell: the [MCP server](../mcp/README.md) has a `doctor` tool that returns the JSON report, and the [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) says when to run it and how to fix what it finds.
+
 ## Output
 
 Text output names the level, then each failed test with its findings as `path:line key: message (allowed: ...)`, then the tests not run. A failed MUST is an `error`; a failed SHOULD is a `warning` and never lowers the level.
