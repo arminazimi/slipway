@@ -27,6 +27,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Markdown twin of every page (the same address with `.md`) | | Stubs from `npm run twins` | A generator plugin, no stubs | [ADR 0006](adr/0006-markdown-twins.md) |
 | Page-to-file source map (level 0) | yes, in Liquid | | yes | [ADR 0007](adr/0007-source-maps.md) |
 | Section and link to exact line (levels 1 and 2) | | `npm run sourcemap` and a committed `sourcemap.json` | Generated at build, cannot go stale | [ADR 0007](adr/0007-source-maps.md) |
+| "Edit with your agent" button on each section | The page's file, no line | The page's file, no line (the layouts cannot read a committed map) | File and line, from the plugin | [agent.edit-button](../ROADMAP.md) |
 | Atom feed per language and a sitemap with `hreflang` | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
 | Verification with Seaworthy | In CI, not a gate on publishing | | In the workflow, before it deploys | [ROADMAP.md](../ROADMAP.md) |
 

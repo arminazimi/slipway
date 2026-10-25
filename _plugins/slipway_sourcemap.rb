@@ -171,7 +171,14 @@ if defined?(Jekyll::Generator)
           # This map replaces the level 0 stub page and a committed level 1 file.
           site.pages.reject! { |page| page.url == "/sourcemap.json" }
           site.static_files.reject! { |file| file.relative_path.sub(%r!\A/!, "") == "sourcemap.json" }
-          site.static_files << MapFile.new(site, Sourcemap.to_json(Sourcemap.build(site)))
+          map = Sourcemap.build(site)
+          site.static_files << MapFile.new(site, Sourcemap.to_json(map))
+          # The doc and post layouts read the lines from page.slipway_sections (edit-sources.html).
+          by_url = map["pages"].to_h { |entry| [entry["url"], entry] }
+          Sourcemap.markdown_pages(site).each do |page|
+            sections = by_url.dig(page.url, "sections")
+            page.data["slipway_sections"] = sections if sections
+          end
         end
       end
     end

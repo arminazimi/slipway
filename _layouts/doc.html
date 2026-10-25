@@ -1,6 +1,8 @@
 ---
 layout: base
 ---
+{%- capture sl_edit_label %}{% include t.html key='edit_label' %}{% endcapture -%}
+{%- capture sl_edit_prompt %}{% include t.html key='edit_prompt' %}{% endcapture -%}
 {%- assign sl_nav_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
 {%- assign sl_nav_key = 'docs_' | append: sl_nav_lang -%}
 {%- assign sl_tree = site.data.navigation[sl_nav_key] | default: site.data.navigation.docs -%}
@@ -42,7 +44,7 @@ layout: base
   </details>
   {%- endif %}
 
-  <article class="sl-doc-body">
+  <article class="sl-doc-body" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
     <h1>{{ page.title }}</h1>
     {%- assign sl_parts = content | split: '<h' -%}
     {%- capture sl_toc_html -%}
@@ -65,7 +67,7 @@ layout: base
       </ul>
     </nav>
     {%- endif %}
-    {{ content }}
+    {% include edit-sources.html html=content %}
 
     {%- if sl_index >= 0 %}
     {%- assign sl_prev_index = sl_index | minus: 1 -%}
