@@ -2,24 +2,66 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/arminazimi/slipway/schema/slipway-config.schema.json",
   "title": "Slipway site configuration",
-  "description": "The slipway block of _config.yml. Other keys belong to Jekyll and are not checked here.",
+  "description": "The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to plugins and are allowed unchecked.",
   "type": "object",
+  "additionalProperties": true,
   "properties": {
+    "title": {
+      "type": "string",
+      "description": "Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset."
+    },
+    "lang": {
+      "type": "string",
+      "default": "en",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$",
+      "description": "Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction."
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["ltr", "rtl"],
+      "description": "Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins."
+    },
+    "author": {
+      "description": "Author of the site, used in the feed. Either a name or an object with a name.",
+      "anyOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "description": "Author name, shown in the feed." }
+          }
+        }
+      ]
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^(https?://[^/\\s]+)?$",
+      "description": "Scheme and host of the published site, without a trailing slash. Jekyll's absolute_url uses it for the feed, the sitemap, and canonical links; GitHub Pages sets it for you."
+    },
+    "baseurl": {
+      "type": "string",
+      "pattern": "^(/[^\\s]*[^/\\s])?$",
+      "description": "Path the site lives under, such as /my-project, without a trailing slash; empty at a domain root. Jekyll's relative_url and absolute_url use it for every link."
+    },
     "slipway": {
       "type": "object",
+      "description": "Slipway's own settings. Unknown keys here are rejected, so a typo fails instead of being ignored.",
       "additionalProperties": false,
       "properties": {
         "languages": {
           "type": "array",
-          "description": "Languages of the site, in switcher order. Pages join by lang and translation_key in front matter; prefix is the URL folder of the language home ('' for the default language).",
+          "default": [],
+          "description": "Languages of the site, in switcher order. Pages join by lang and translation_key in front matter. Leave it unset for a one-language site.",
           "items": {
             "type": "object",
             "additionalProperties": false,
             "required": ["code", "name", "prefix"],
             "properties": {
-              "code": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$" },
-              "name": { "type": "string", "minLength": 1 },
-              "prefix": { "type": "string", "pattern": "^(/[a-z0-9-]+)?$" }
+              "code": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$", "description": "Language tag that pages use in their lang front matter, such as en or fa." },
+              "name": { "type": "string", "minLength": 1, "description": "Name of the language in that language, shown in the switcher, such as فارسی." },
+              "prefix": { "type": "string", "pattern": "^(/[a-z0-9-]+)?$", "description": "URL folder of the language home, such as /fa; '' for the default language." }
             }
           }
         },
@@ -28,21 +70,21 @@
           "description": "Opt-in Persian conventions for pages whose lang is fa.",
           "additionalProperties": false,
           "properties": {
-            "digits": { "type": "boolean", "description": "Print dates, reading time, and section numbers with Persian digits." },
-            "jalali": { "type": "boolean", "description": "Print post dates in the Jalali calendar." }
+            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Persian digits." },
+            "jalali": { "type": "boolean", "default": false, "description": "Print post dates in the Jalali calendar." }
           }
         },
         "tokens": {
           "type": "object",
-          "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs.",
+          "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",
           "additionalProperties": false,
           "properties": {
             "accent": { "$ref": "#/$defs/color", "description": "Accent for links, marks, and filled buttons, in both light and dark." },
             "canvas": { "$ref": "#/$defs/color", "description": "Page background, in both light and dark." },
             "text": { "$ref": "#/$defs/color", "description": "Body text color, in both light and dark." },
-            "font_display": { "$ref": "#/$defs/fontStack", "description": "Large headings (Latin)." },
-            "font_body": { "$ref": "#/$defs/fontStack", "description": "Reading text (Latin)." },
-            "radius": { "$ref": "#/$defs/length", "description": "Corner radius of cards." }
+            "font_display": { "$ref": "#/$defs/fontStack", "default": "\"Instrument Serif\", Georgia, \"Times New Roman\", serif", "description": "Large headings (Latin)." },
+            "font_body": { "$ref": "#/$defs/fontStack", "default": "\"Source Serif 4\", Georgia, serif", "description": "Reading text (Latin)." },
+            "radius": { "$ref": "#/$defs/length", "default": "0.75rem", "description": "Corner radius of cards." }
           }
         }
       }
@@ -51,9 +93,10 @@
   "$defs": {
     "color": {
       "type": "string",
+      "description": "A hex color (#rrggbb) or an oklch() color.",
       "anyOf": [{ "pattern": "^#[0-9a-fA-F]{6}$" }, { "pattern": "^oklch\\([0-9. %/]+\\)$" }]
     },
-    "fontStack": { "type": "string", "pattern": "^[A-Za-z0-9 ,'\"_-]{1,200}$" },
-    "length": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|em|px)$" }
+    "fontStack": { "type": "string", "description": "A CSS font-family list.", "pattern": "^[A-Za-z0-9 ,'\"_-]{1,200}$" },
+    "length": { "type": "string", "description": "A CSS length in rem, em, or px.", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|em|px)$" }
   }
 }

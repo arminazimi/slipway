@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { configMap, renderOverrides } from "./config-map.mjs";
-import { validateConfig, validateExampleConfigs } from "./config.mjs";
+import { propertiesWithoutDescription, undocumentedSiteKeys, validateConfig, validateExampleConfigs } from "./config.mjs";
 import { root } from "./tokens.mjs";
 
 const tokens = (value) => ({ slipway: { tokens: value } });
@@ -62,4 +62,25 @@ test("the include keeps quotes in font stacks and strips what could end the styl
   assert.doesNotMatch(helper, /\|\s*escape/, "escape would turn quotes into &quot; inside <style>");
   assert.doesNotMatch(helper, /\{\{[^}]*"[{}]"/, "a brace inside quotes in {{ }} breaks the Liquid parser");
   for (const char of ["<", ">", "{", "}", ";"]) assert.ok(helper.includes(`remove: "${char}"`), char);
+});
+
+test("the top-level keys the theme reads are checked, and other keys pass", () => {
+  assert.equal(validateConfig({ title: "x", lang: "fa", direction: "rtl", author: { name: "A" }, url: "https://example.org", baseurl: "/site", plugins: ["x"] }).ok, true);
+  assert.equal(validateConfig({ author: "A" }).ok, true);
+  for (const bad of [{ direction: "right" }, { lang: "Persian" }, { author: {} }, { baseurl: "/site/" }, { url: "example.org" }, { title: 3 }]) {
+    assert.equal(validateConfig(bad).ok, false, JSON.stringify(bad));
+  }
+  assert.equal(validateConfig({ slipway: { colour: "red" } }).ok, false);
+});
+
+test("every site key read in a layout or include is in the schema", () => {
+  assert.deepEqual(undocumentedSiteKeys(), []);
+  const dir = mkdtempSync(join(tmpdir(), "slipway-layout-"));
+  writeFileSync(join(dir, "x.html"), "{{ site.title }} {{ site.posts.size }} {{ site.slipway.languages.size }} {{ site.slipway.sidebar }} {{ site.footer_text }}");
+  assert.deepEqual(undocumentedSiteKeys([dir]), ["footer_text", "slipway.sidebar"]);
+});
+
+test("every schema property has a description", () => {
+  assert.deepEqual(propertiesWithoutDescription(), []);
+  assert.deepEqual(propertiesWithoutDescription({ properties: { a: { description: "x", properties: { b: {} } } } }), ["/a/b"]);
 });
