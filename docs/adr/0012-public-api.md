@@ -82,6 +82,7 @@ Collections and their schemas are added by `schema.front-matter`; this table gro
 | `not-found` | yes | `not-found.test.mjs` |
 | `feed`, `sitemap` | yes | `feed.test.mjs` |
 | `search-index` | yes | `search.test.mjs` |
+| `sourcemap` | yes | `sourcemap.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes
@@ -116,6 +117,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | `/sitemap.xml` | yes | `feed.test.mjs` |
 | `/search.json` (the URL, not its format) | yes | `search.test.mjs` |
 | `/404.html` | yes | `not-found.test.mjs` |
+| `/sourcemap.json` (format: [spec/sourcemap/v0.md](../../spec/sourcemap/v0.md)) | yes | `sourcemap.test.mjs` |
 | Language homes at each `prefix` of `slipway.languages` | yes | `i18n.test.mjs` |
 
 `tools/theme/public-api.test.mjs` fails when a key in the config schema or a custom property in `tokens.css` is missing from this ADR, so the list cannot fall behind silently.

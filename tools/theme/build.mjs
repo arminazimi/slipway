@@ -6,7 +6,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -25,8 +25,9 @@ export function bundleAvailable() {
   return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8" }).status === 0;
 }
 
+/** `name` is an example under examples/, or an absolute path to another site folder (tests use throwaway sites). */
 export function buildExample(mode, out, name = "minimal") {
-  const example = join(root, "examples", name);
+  const example = isAbsolute(name) ? name : join(root, "examples", name);
   if (!existsSync(example)) throw new Error(`no example site named ${name}`);
   if (!modes.includes(mode)) throw new Error(`mode must be one of ${modes.join(", ")}`);
   let source = example;
