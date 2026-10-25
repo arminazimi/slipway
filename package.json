@@ -12,9 +12,10 @@
   ],
   "scripts": {
     "test": "node --test \"planning/roadmap/*.test.mjs\" \"tools/brand/*.test.mjs\" \"tools/theme/*.test.mjs\" \"tools/seaworthy/*.test.mjs\" \"tools/release/*.test.mjs\" \"tools/sourcemap/*.test.mjs\" \"tools/spec/*.test.mjs\" \"packages/mcp/test/*.test.mjs\"",
-    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:site --silent",
+    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:schemas --silent && npm run check:site --silent",
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:site": "node tools/theme/check.mjs",
+    "check:schemas": "node tools/theme/validate.mjs",
     "sourcemap": "node tools/sourcemap/run.mjs",
     "roadmap:build": "node planning/roadmap/build.mjs",
     "roadmap:apply": "node planning/roadmap/apply.mjs",

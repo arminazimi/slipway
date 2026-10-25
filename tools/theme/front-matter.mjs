@@ -42,7 +42,8 @@ export function frontMatter(source) {
   return match ? match[1] : null;
 }
 
-function allowedFor(error) {
+/** Allowed values for an Ajv error, for messages. Needs an Ajv instance with `verbose: true`. */
+export function allowedFor(error) {
   const schema = error.parentSchema ?? {};
   if (error.keyword === "enum") return error.params.allowedValues.map(String);
   if (error.keyword === "type") return [`a ${[error.params.type].flat().join(" or ")}`];
