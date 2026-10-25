@@ -29,6 +29,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
 - A release workflow, `CHANGELOG.md`, and `tools/release/prepare.mjs` (#174).
+- Build-time warnings for renamed config keys and front-matter fields, naming the replacement; the old names keep working (#173).
 
 ### Fixed
 
