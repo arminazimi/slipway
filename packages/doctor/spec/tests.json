@@ -246,6 +246,24 @@
       "how": "automated",
       "description": "A control that builds a prompt SHOULD carry a `data-edit-prompt` attribute and, when it needs a script to work, SHOULD be hidden in the HTML as served and shown only by that script.",
       "check": "every element with a `data-edit-prompt` attribute in the built HTML also has the `hidden` attribute."
+    },
+    {
+      "id": "ae.rtl.dir-matches-lang",
+      "level": "L0",
+      "keyword": "SHOULD",
+      "scope": "output",
+      "how": "automated",
+      "description": "The root element of every built HTML page SHOULD have `dir=\"rtl\"` when its `lang` is a right-to-left language, and SHOULD NOT have `dir=\"rtl\"` when it is not.",
+      "check": "for each HTML file in the output folder whose root `html` element has a `lang`, `dir` is `rtl` exactly when the primary language subtag is one of `ar`, `arc`, `ckb`, `dv`, `fa`, `he`, `ks`, `ps`, `sd`, `ug`, `ur`, or `yi`."
+    },
+    {
+      "id": "ae.rtl.bidi-isolated",
+      "level": "L0",
+      "keyword": "SHOULD",
+      "scope": "output",
+      "how": "automated",
+      "description": "The page title, each `h1`, and each link inside a `nav` element SHOULD isolate a run of one direction when their text holds both right-to-left and left-to-right letters: inside a `bdi` element or an element with a `dir` attribute, or between an isolate mark (U+2066, U+2067, or U+2068) and U+2069.",
+      "check": "in each HTML file in the output folder, the text of each `title` (outside `svg`), `h1`, and `a` inside a `nav`, without the text inside isolating elements and isolate marks, does not contain both a letter of a right-to-left script and any other letter. A finding names the source line when the element's `data-source` or `/sourcemap.json` gives it, and the output line otherwise."
     }
   ]
 }

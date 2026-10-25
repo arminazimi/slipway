@@ -27,6 +27,8 @@ SHOULD requirements belong to a level too, so a checker can say where a warning 
 | [`ae.sourcemap.urls-exist`](0.1.md#33-aesourcemapurls-exist) | MUST | output |
 | [`ae.agents-md.never`](0.1.md#14-aeagents-mdnever) | SHOULD | source |
 | [`ae.agents-md.size`](0.1.md#17-aeagents-mdsize) | SHOULD | source |
+| [`ae.rtl.dir-matches-lang`](0.1.md#61-aertldir-matches-lang) | SHOULD | output |
+| [`ae.rtl.bidi-isolated`](0.1.md#62-aertlbidi-isolated) | SHOULD | output |
 
 ### L1: content schemas
 

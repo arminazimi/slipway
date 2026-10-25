@@ -16,6 +16,8 @@ import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, exampleNames, root } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
 import { findDeprecations } from "./deprecations.mjs";
+import { rtlChecks } from "../../packages/doctor/src/checks/rtl.mjs";
+import { Site } from "../../packages/doctor/src/site.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
 
 export const checkedModes = ["gem", "template"];
@@ -117,6 +119,13 @@ export function main(env = process.env) {
             process.exitCode = 1;
           }
         }
+        // Every example, the Persian one above all, passes slipway doctor's right-to-left checks.
+        const doctorSite = new Site(join(root, "examples", name), { build: site });
+        const rtl = Object.values(rtlChecks).flatMap((check) => check(doctorSite).findings);
+        if (rtl.length) {
+          console.error(`FAIL: right-to-left findings (${label})\n${rtl.map((f) => `  ${f.file}:${f.line} ${f.message}`).join("\n")}`);
+          process.exitCode = 1;
+        } else console.log(`OK: no right-to-left findings (${label})`);
         if (!cli) continue;
         const { ok, output } = runSeaworthy(cli, site);
         if (ok) console.log(`OK: Seaworthy (${label})`);
