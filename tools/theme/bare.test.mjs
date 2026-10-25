@@ -22,6 +22,7 @@ for (const mode of ["gem", "template"]) {
     const html = readFileSync(join(out, "index.html"), "utf8");
     assert.match(html, /<title>[^<]+<\/title>/);
     assert.match(html, /<a class="sl-skip-link" href="#main">[^<]+<\/a>/);
+    assert.match(html, /<meta name="description" content="[^"]+">/);
     assert.match(html, /<main id="main"/);
     assert.match(html, /<header class="sl-header">\s*<a class="sl-site-title" href="\/">Slipway bare<\/a>/);
     assert.match(html, /<footer class="sl-footer">/);
