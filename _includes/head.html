@@ -15,6 +15,12 @@
   {%- if sl_feed_url != '' %}
   <link rel="alternate" type="application/atom+xml" href="{{ sl_feed_url }}" title="{{ site.title | escape }}">
   {%- endif %}
+  {%- comment %} The Markdown twin (ADR 0006): set by the Actions plugin, or the stub page from `npm run twins` on classic Pages. {% endcomment %}
+  {%- assign sl_twin = page.slipway_twin %}
+  {%- unless sl_twin %}{% assign sl_twin = site.pages | where: 'twin_of', page.path | map: 'url' | first %}{% endunless %}
+  {%- if sl_twin %}
+  <link rel="alternate" type="text/markdown" href="{{ sl_twin | relative_url }}">
+  {%- endif %}
   <link rel="stylesheet" href="{{ '/assets/css/fonts.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/tokens.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/slipway.css' | relative_url }}">
