@@ -4,7 +4,10 @@ import Ajv2020 from "ajv/dist/2020.js";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { basename, join, relative, sep } from "node:path";
 import { parse } from "yaml";
+import { allowedFor, frontMatter } from "slipway/yaml";
 import { root } from "./tokens.mjs";
+
+export { allowedFor, frontMatter };
 
 export const schemaDir = join(root, "schema/front-matter");
 
@@ -34,24 +37,6 @@ export function schemaFor(data, file = "") {
   if (typeof data?.layout === "string") return layoutSchemas[data.layout] ?? "base";
   const folder = file.split(/[\\/]/).find((part) => part in collectionSchemas);
   return folder ? collectionSchemas[folder] : "page";
-}
-
-/** Splits `---` front matter off a Markdown source. Returns null when there is none. */
-export function frontMatter(source) {
-  const match = /^---\r?\n([\s\S]*?)\r?\n?---\r?\n?/.exec(source);
-  return match ? match[1] : null;
-}
-
-/** Allowed values for an Ajv error, for messages. Needs an Ajv instance with `verbose: true`. */
-export function allowedFor(error) {
-  const schema = error.parentSchema ?? {};
-  if (error.keyword === "enum") return error.params.allowedValues.map(String);
-  if (error.keyword === "type") return [`a ${[error.params.type].flat().join(" or ")}`];
-  if (error.keyword === "oneOf") return ["a list", "a space-separated string"];
-  if (error.keyword === "minLength") return ["a non-empty string"];
-  if (schema.description) return [schema.description];
-  if (error.keyword === "pattern") return [`text matching ${error.params.pattern}`];
-  return [];
 }
 
 /**

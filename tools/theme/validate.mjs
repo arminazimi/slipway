@@ -1,46 +1,18 @@
 // Validates a site's _config.yml and the front matter of every Markdown page against the schemas in schema/.
-// Each problem names the file, the line, the key, and the allowed values. `slipway doctor` will call validateSite.
+// Each problem names the file, the line, the key, and the allowed values. The YAML and error helpers live in packages/doctor (`slipway/yaml`), shared with `slipway doctor`.
 //   node tools/theme/validate.mjs [site folder ...]   (every example site by default)
 import Ajv2020 from "ajv/dist/2020.js";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { LineCounter, isMap, isSeq, parseDocument } from "yaml";
-import { allowedFor, frontMatter, markdownFiles, validateFrontMatter } from "./front-matter.mjs";
+import { allowedFor, formatProblem, frontMatter, parseWithLines } from "slipway/yaml";
+import { markdownFiles, validateFrontMatter } from "./front-matter.mjs";
 import { root } from "./tokens.mjs";
+
+export { allowedFor, formatProblem, frontMatter, parseWithLines };
 
 const configSchema = JSON.parse(readFileSync(join(root, "schema/slipway-config.schema.json"), "utf8"));
 const validateConfigSchema = new Ajv2020({ allErrors: true, verbose: true }).compile(configSchema);
-
-/** Parses YAML and returns its data with a function that finds the 1-based line of a key path. */
-function parseWithLines(source) {
-  const lineCounter = new LineCounter();
-  const doc = parseDocument(source, { lineCounter });
-  if (doc.errors.length) {
-    const [error] = doc.errors;
-    const message = error.message.split("\n")[0].replace(/ at line \d+, column \d+:?$/, "");
-    return { error: message, errorLine: error.linePos?.[0]?.line ?? 1 };
-  }
-  const lineAt = (offset) => lineCounter.linePos(offset).line;
-  /** The line of the deepest node on `path` that exists: the key itself when present, else its parent. */
-  const lineOf = (path) => {
-    let node = doc.contents;
-    let line = node?.range ? lineAt(node.range[0]) : 1;
-    for (const segment of path) {
-      if (isMap(node)) {
-        const pair = node.items.find((item) => String(item.key?.value ?? item.key) === segment);
-        if (!pair) break;
-        if (pair.key?.range) line = lineAt(pair.key.range[0]);
-        node = pair.value;
-      } else if (isSeq(node) && node.items[Number(segment)]) {
-        node = node.items[Number(segment)];
-        if (node.range) line = lineAt(node.range[0]);
-      } else break;
-    }
-    return line;
-  };
-  return { data: doc.toJS() ?? {}, lineOf };
-}
 
 /** Problems in a parsed _config.yml: one per key, the most specific error wins, like front matter. */
 export function configProblems(data) {
@@ -115,10 +87,6 @@ export function validateSite(dir, base = process.cwd()) {
   ];
 }
 
-/** `path:line key: message (allowed: ...)` */
-export function formatProblem({ file, line, key, message, allowed }) {
-  return `${file}:${line} ${key}: ${message}${allowed.length ? ` (allowed: ${allowed.join(", ")})` : ""}`;
-}
 
 /** Every examples/<name> folder. */
 export function exampleSites(dir = join(root, "examples")) {
