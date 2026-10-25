@@ -1,0 +1,251 @@
+{
+  "$schema": "../../schema/conformance-tests.schema.json",
+  "version": "0.1",
+  "spec": "agent-editable/0.1.md",
+  "tests": [
+    {
+      "id": "ae.agents-md.present",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "The source folder MUST contain a file named `AGENTS.md` at its root, encoded as UTF-8 Markdown and not empty.",
+      "check": "the file `AGENTS.md` exists at the root of the source folder, decodes as UTF-8, and has at least one non-blank line."
+    },
+    {
+      "id": "ae.agents-md.layout",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "`AGENTS.md` MUST name, each in a code span, at least one folder or file where content lives and the output folder that agents must not edit.",
+      "check": "`AGENTS.md` contains a code span equal to the output folder's path relative to the source folder, or its name (with or without a trailing `/`), and a code span naming a folder or file that contains at least one content file."
+    },
+    {
+      "id": "ae.agents-md.paths-exist",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "Every relative path that `AGENTS.md` names in a code span MUST exist in the source folder, except the output folder and paths that contain a placeholder in angle brackets (`<slug>`).",
+      "check": "each code span that looks like a source path (contains a `/` or ends in a file extension, and has no spaces) resolves to a file or folder in the source folder."
+    },
+    {
+      "id": "ae.agents-md.never",
+      "level": "L0",
+      "keyword": "SHOULD",
+      "scope": "source",
+      "how": "automated",
+      "description": "`AGENTS.md` SHOULD have a section, under a heading that starts with \"Never\" or \"Do not\", listing the edits that break the site.",
+      "check": "`AGENTS.md` has a heading whose text starts with `Never` or `Do not`, followed by at least one list item."
+    },
+    {
+      "id": "ae.agents-md.verify",
+      "level": "L1",
+      "keyword": "SHOULD",
+      "scope": "source",
+      "how": "automated",
+      "description": "`AGENTS.md` SHOULD give the command that checks the site after an edit, in a fenced code block marked `sh`, `bash`, or `shell`.",
+      "check": "`AGENTS.md` contains a fenced code block whose info string is `sh`, `bash`, or `shell`."
+    },
+    {
+      "id": "ae.agents-md.schemas",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "`AGENTS.md` MUST name the content-schema index (`content-schemas.json`, section 2) in a code span.",
+      "check": "`AGENTS.md` contains the code span `content-schemas.json`."
+    },
+    {
+      "id": "ae.agents-md.size",
+      "level": "L0",
+      "keyword": "SHOULD",
+      "scope": "source",
+      "how": "automated",
+      "description": "`AGENTS.md` SHOULD be at most 32 KiB.",
+      "check": "the file's size in bytes is at most 32768."
+    },
+    {
+      "id": "ae.schemas.index",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "The source folder MUST contain `content-schemas.json` at its root, valid against `schema/content-schemas.schema.json`.",
+      "check": "the file exists, parses as JSON, and validates against `schema/content-schemas.schema.json`."
+    },
+    {
+      "id": "ae.schemas.resolve",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "network": "opt-in",
+      "description": "Every `schema` in the index MUST resolve to a JSON Schema draft 2020-12 document. A relative path MUST stay inside the source folder.",
+      "check": "each relative `schema` names a file inside the source folder that parses as JSON and compiles as a draft 2020-12 schema. An `https` URL is fetched only when the checker's network option is on; otherwise the check reports it as not run."
+    },
+    {
+      "id": "ae.schemas.config",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "Each configuration file that the generator reads MUST match an entry with `target: \"file\"`.",
+      "check": "every configuration file the checker finds when it detects the generator matches at least one `file` entry."
+    },
+    {
+      "id": "ae.schemas.content",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "both",
+      "how": "automated",
+      "description": "Every content file MUST match at least one entry with `target: \"front-matter\"`.",
+      "check": "every `source` in `/sourcemap.json` whose file has front matter matches at least one `front-matter` entry, taking `when` into account."
+    },
+    {
+      "id": "ae.schemas.valid",
+      "level": "L1",
+      "keyword": "MUST",
+      "scope": "source",
+      "how": "automated",
+      "description": "Every file that matches an entry MUST be valid against that entry's schema.",
+      "check": "each matched file's front matter or whole content, parsed as the entry's `target` says, validates against the schema; each error is reported with the file and the key."
+    },
+    {
+      "id": "ae.schemas.described",
+      "level": "L2",
+      "keyword": "SHOULD",
+      "scope": "source",
+      "how": "automated",
+      "description": "Every property in a content schema SHOULD have a `description`, and a property with a fixed set of values SHOULD list them in `enum`.",
+      "check": "every object in each resolved schema's `properties` has a non-empty `description`."
+    },
+    {
+      "id": "ae.schemas.closed",
+      "level": "L2",
+      "keyword": "SHOULD",
+      "scope": "source",
+      "how": "automated",
+      "description": "A content schema SHOULD reject unknown keys (`\"additionalProperties\": false` or `\"unevaluatedProperties\": false`), unless the site reads arbitrary keys.",
+      "check": "each resolved schema whose top-level `type` is `object` sets `additionalProperties` or `unevaluatedProperties` to `false`."
+    },
+    {
+      "id": "ae.sourcemap.present",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "The output folder MUST contain `/sourcemap.json`, valid against `schema/sourcemap.schema.json`, with each `url` listed once.",
+      "check": "the file exists at the root of the output folder, validates against the schema, and has no duplicate `url`."
+    },
+    {
+      "id": "ae.sourcemap.sources-exist",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "both",
+      "how": "automated",
+      "description": "Every `source` in the map MUST be a source path that exists in the source folder.",
+      "check": "each `source` resolves to a file in the source folder."
+    },
+    {
+      "id": "ae.sourcemap.urls-exist",
+      "level": "L0",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "Every `url` in the map MUST resolve to a file in the output folder, where a `url` ending in `/` resolves to its `index.html`.",
+      "check": "each `url` resolves to a file in the output folder."
+    },
+    {
+      "id": "ae.sourcemap.coverage",
+      "level": "L1",
+      "keyword": "SHOULD",
+      "scope": "both",
+      "how": "automated",
+      "description": "Every content file that matches a `front-matter` entry in `content-schemas.json` SHOULD appear as a `source` in the map, unless it produces no page.",
+      "check": "every file matched by a `front-matter` entry appears as a `source`, except files the generator does not publish (drafts, partials), which the checker learns when it detects the generator; it lists the missing ones."
+    },
+    {
+      "id": "ae.sourcemap.lines",
+      "level": "L2",
+      "keyword": "MUST",
+      "scope": "both",
+      "how": "automated",
+      "description": "Every page in the map MUST have `sections` and `links`, and every `line` MUST exist in its source file and hold what the map says is there.",
+      "check": "each `line` is at most the source file's line count. For a section, the letters and digits of its `text`, lowercased, appear in order among those of the source line, or of the line before it for a heading underlined on the next line. For a link, the source line contains its `href`."
+    },
+    {
+      "id": "ae.sourcemap.ids",
+      "level": "L2",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "Every section `id` MUST be the `id` of a heading on the built page at its `url`.",
+      "check": "the built HTML of each page has an `h1` to `h6` element with that `id`, at the level the map gives."
+    },
+    {
+      "id": "ae.skills.index",
+      "level": "L3",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "The output folder MUST contain `/.well-known/agent-skills/index.json`, a JSON object whose `skills` array has at least one entry, each with a non-empty string `name`, `description`, and `url`.",
+      "check": "the file exists at that path in the output folder, parses as JSON, and has the fields described."
+    },
+    {
+      "id": "ae.skills.resolve",
+      "level": "L3",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "Every `url` in the index MUST be a path on the same site that resolves to a `SKILL.md` in the output folder, whose front matter has the same `name` and a non-empty `description`.",
+      "check": "each `url` is a path starting with `/` or a relative path, resolves to a file in the output folder, and that file's front matter has `name` equal to the entry's `name` and a non-empty `description`."
+    },
+    {
+      "id": "ae.skills.edit",
+      "level": "L3",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "At least one skill MUST describe how to edit the site: its `SKILL.md` MUST give the absolute `https` URL of the site's source repository and name `AGENTS.md`.",
+      "check": "at least one resolved `SKILL.md` contains an absolute `https` URL that is not on the site's own origin, and the text `AGENTS.md`."
+    },
+    {
+      "id": "ae.edit-prompt.source",
+      "level": "L2",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "automated",
+      "description": "Every heading listed in a page's `sections` MUST carry a `data-source` attribute whose value is the page's `source` and the section's `line`, joined by a colon: `docs/intro.md:23`.",
+      "check": "for each section in `/sourcemap.json`, the element with its `id` on the built page has `data-source` equal to `<source>:<line>`."
+    },
+    {
+      "id": "ae.edit-prompt.content",
+      "level": "L2",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "review",
+      "description": "A prompt that the site builds MUST name the source path, the line, and the section's current text, and nothing else from the page.",
+      "check": "A person copies the prompt for two sections, one in a right-to-left language if the site has one, and compares it with the map."
+    },
+    {
+      "id": "ae.edit-prompt.no-send",
+      "level": "L2",
+      "keyword": "MUST",
+      "scope": "output",
+      "how": "review",
+      "description": "A control that builds a prompt MUST only copy it or open a destination the person chooses; it MUST NOT send the prompt or page content anywhere on its own.",
+      "check": "With the network panel open, using the control makes no request."
+    },
+    {
+      "id": "ae.edit-prompt.without-script",
+      "level": "L2",
+      "keyword": "SHOULD",
+      "scope": "output",
+      "how": "automated",
+      "description": "A control that builds a prompt SHOULD carry a `data-edit-prompt` attribute and, when it needs a script to work, SHOULD be hidden in the HTML as served and shown only by that script.",
+      "check": "every element with a `data-edit-prompt` attribute in the built HTML also has the `hidden` attribute."
+    }
+  ]
+}
