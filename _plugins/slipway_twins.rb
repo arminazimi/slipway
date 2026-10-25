@@ -17,9 +17,9 @@ module Slipway
     FRONT_MATTER = %r!\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)!m.freeze
     MARKDOWN_EXTENSIONS = %w(.md .markdown .mkdown .mkdn .mkd).freeze
     STUB_SUFFIX = ".twin.html"
-    # Layouts that write most of the page themselves (post lists, tag lists, the 404 page). Their
+    # Layouts that write most of the page themselves (post lists, tag and author pages, the 404 page). Their
     # source is a title and an intro, not the page, so they get no twin.
-    LISTING_LAYOUTS = %w(home archive tags not-found).freeze
+    LISTING_LAYOUTS = %w(home archive tags author not-found).freeze
 
     module_function
 

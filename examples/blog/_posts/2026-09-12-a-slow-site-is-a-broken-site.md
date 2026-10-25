@@ -15,3 +15,7 @@ A page that needs a script to show its text is slower for everyone and unusable 
 ## A budget
 
 Set a size budget for scripts and fail the build when it is crossed.
+
+## Plain pages last
+
+Plain HTML and a little CSS still render on an old phone over a weak connection. Every script added on top should earn its weight, and the page should stay complete when it fails to load.

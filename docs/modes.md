@@ -49,7 +49,7 @@ A page's twin is its Markdown source without the front matter, at the page's add
 
 - **Classic mode:** run `npm run twins -- <site>` (it needs Ruby and `bundle install`) and commit the stubs it writes. Each stub is a generated `.twin.html` page beside its source (`guide/install.twin.html`), or, for a post or a collection document, beside the underscore folder (`posts-2026-10-20-hello.twin.html`). Do not edit stubs; run the command again when a page is added, moved, or deleted. `npm run twins -- <site> --check` fails when a stub is missing, stale, or left over. Liquid in the source is evaluated in the twin, which is one more reason content must not contain it.
 - **Actions mode:** `_plugins/slipway_twins.rb` writes every twin at build, from the source file's bytes, with no Liquid. It drops committed stubs, so a site can keep them when it moves from classic mode.
-- Pages on a listing layout (`home`, `archive`, `tags`, `not-found`) get no twin: the layout writes most of the page, so the source would be a different document. Seaworthy's `readability.md-alternates` fails such a twin.
+- Pages on a listing layout (`home`, `archive`, `tags`, `author`, `not-found`) get no twin: the layout writes most of the page, so the source would be a different document. Seaworthy's `readability.md-alternates` fails such a twin.
 - A Markdown file with no front matter needs no twin: Jekyll copies it as is.
 - The `bare` example has no stubs, so it has no twins; it proves a site needs only two files.
 
