@@ -98,7 +98,7 @@ Includes are internal, so the theme can restructure its markup. One is public, b
 | `head-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<head>` | yes | `overrides.test.mjs` |
 | `footer-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<footer>` | yes | `overrides.test.mjs` |
 
-The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). Shadowing any other include works but is unsupported: it may break in a minor release.
+The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). The fourth is `assets/images/social.png`, the `og:image` of every page (`seo.test.mjs`); the theme ships a plain one. Shadowing any other include works but is unsupported: it may break in a minor release.
 
 ### CSS custom properties
 

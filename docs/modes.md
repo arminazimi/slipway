@@ -29,6 +29,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Section and link to exact line (levels 1 and 2), see [source maps](source-maps.md) | | `npm run sourcemap` and a committed `sourcemap.json` | Generated at build, cannot go stale | [ADR 0007](adr/0007-source-maps.md) |
 | "Edit with your agent" button on each section | The page's file, no line | The page's file, no line (the layouts cannot read a committed map) | File and line, from the plugin | [agent.edit-button](../ROADMAP.md) |
 | Atom feed per language and a sitemap with `hreflang` | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
+| Canonical link, Open Graph, Twitter card, and `hreflang` alternates in `<head>` | yes, in Liquid | | yes | [pub.seo](../ROADMAP.md) |
 | Verification with Seaworthy | In CI, not a gate on publishing | | In the workflow, before it deploys | [ROADMAP.md](../ROADMAP.md) |
 
 Only rows with a decision record are filled in. The other planned features (search, feeds, sitemap, `llms.txt`, WebMCP, migration tools) are not placed in a column yet; each task adds its row when it lands.
