@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/deprecations.schema.json",
+  "title": "Slipway deprecations",
+  "description": "schema/deprecations.json: every renamed config key and front-matter field that still works and warns (ADR 0012, rule 4). tools/theme/deprecations.mjs reads it to warn, and _includes/compat.html reads the old name when the new one is unset.",
+  "type": "object",
+  "required": ["deprecations"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "The path of this schema."
+    },
+    "deprecations": {
+      "type": "array",
+      "description": "One entry per renamed key, oldest first.",
+      "items": {
+        "type": "object",
+        "required": ["kind", "old", "new", "since", "removed_in"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": ["config", "front-matter"],
+            "description": "config: a key in _config.yml, as a dotted path from the root (slipway.tokens.radius). front-matter: a field in a page's front matter or in a `defaults` entry's `values`."
+          },
+          "old": {
+            "$ref": "#/$defs/path",
+            "description": "The deprecated name."
+          },
+          "new": {
+            "$ref": "#/$defs/path",
+            "description": "The name that replaces it. It wins when both are set."
+          },
+          "since": {
+            "$ref": "#/$defs/version",
+            "description": "The release that deprecated the old name."
+          },
+          "removed_in": {
+            "$ref": "#/$defs/version",
+            "description": "The first release that may remove the old name: the next major (the next 0.MINOR before 1.0)."
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "path": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    }
+  }
+}

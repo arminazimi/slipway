@@ -27,6 +27,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
 - `examples/`: `minimal` (the smallest site), `docs` (the doc layout), `blog` (posts, tags, feed), and `persian` (a Persian-only, right-to-left site). `node tools/theme/build.mjs <gem|template|remote> [outDir] [example]` builds one (minimal by default) with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
 - `planning/roadmap/briefs/<task-key>.md`: optional agent briefs merged into issues.
+- `schema/deprecations.json`: renamed config keys and front-matter fields (ADR 0012, rule 4). To rename one, add an entry, read it in the layouts with `{% include compat.html new=site.<new> old=site.<old> %}` (or `page.`), and keep the old key in the config schema with `"deprecated": true`. `node tools/theme/deprecations.mjs <site>` prints a warning per use with file and line; `npm run check` runs it on the examples and never fails on it.
 - `docs/modes.md`: classic Pages versus Actions mode, and what each feature needs. Update its table when a feature lands or an ADR changes a column.
 - `docs/adr/`: architecture decisions. Add one for every decision that is hard to reverse.
 
