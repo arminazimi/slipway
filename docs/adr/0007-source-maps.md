@@ -47,13 +47,13 @@ The offset for the front matter was 3 lines and was added to the tree's lines. A
 
 ## Decision
 
-Slipway supports three levels, and the map is one file, `sourcemap.json` at the site root, in the format of Seaworthy's contract (not yet written; the field names below are placeholders until `spec.source-map` exists).
+Slipway supports three levels, and the map is one file, `sourcemap.json` at the site root. Slipway owns the format (ADR 0011): [`spec/sourcemap/v0.md`](../../spec/sourcemap/v0.md), with the schema in `schema/sourcemap.schema.json`. Its fields are `version` (`0`) and `pages`, each page with `url` and `source`, optional `sections` (`id`, `level`, `line`, `text`) and optional `links` (`href`, `line`); every line is 1-based and counts the front matter. Seaworthy's contract (`spec.source-map`) is not written yet; the spec records the differences to settle.
 
-1. **Level 0, classic Pages, no tooling: page to file.** A Liquid page emits `{ url, source }` for content pages (collections, posts, and pages in content folders; not generated files). This is the whole of what pure Liquid does reliably. Seaworthy can report "this page comes from `_docs/intro.md`" but not a line.
+1. **Level 0, classic Pages, no tooling: page to file.** A Liquid page emits `url` and `source` for content pages (collections, posts, and pages in content folders; not generated files). This is the whole of what pure Liquid does reliably. Seaworthy can report "this page comes from `_docs/intro.md`" but not a line.
 2. **Level 1, classic Pages plus a committed map: sections and links to lines.** `npm run sourcemap` (the same script style as ADR 0006's stubs) walks kramdown's tree with the same kramdown version Pages uses and writes `sourcemap.json` with exact lines and ids. It needs Ruby on the author's machine, so it is optional; CI runs it and fails when the committed file is stale. This keeps the site deployable without a build.
 3. **Level 2, Actions mode: the plugin generates it at build.** The same code as a Jekyll generator, so nothing is committed and the map cannot go stale. This is the default for the starters that use Actions.
 4. **Not a Liquid-computed line map.** It is approximate in ways that look right in a demo and are wrong on real documents (ids, setext, duplicates), which is the worst kind of source map. Level 0 states its limit instead of guessing.
-5. **Sections are identified by id and by order.** The map lists headings in document order with `id`, `level`, `line`, and `text`, so a consumer can match by id first and by order and text if an id differs.
+5. **Sections are identified by id and by order.** The map lists headings in document order with `id`, `level`, `line`, and `text`, in each page's `sections`, so a consumer can match by id first and by order and text if an id differs.
 6. **Test with a real finding.** `sourcemap.e2e` plants a broken link in a Markdown post and expects Seaworthy to report it at that line, in levels 1 and 2.
 
 ## Consequences
@@ -61,4 +61,4 @@ Slipway supports three levels, and the map is one file, `sourcemap.json` at the 
 - Level 0 is honest and cheap but cannot point at a line, so "Edit with your agent" prompts at that level name the file and the section heading only. The exact line needs level 1 or 2.
 - Both of the higher levels depend on kramdown's `location`; if a kramdown release changes it, the map tests fail first. The script pins the version Pages reports (2.4.0 on 2026-10-18).
 - Source maps for non-Markdown sources (HTML pages, data files) are out of scope.
-- **Not verified:** the Seaworthy contract itself, a real Pages deployment, performance on a site with thousands of pages, and Markdown with Liquid or `{::options}` blocks (excluded by the content rules of ADR 0003 and 0006).
+- **Not verified:** agreement with Seaworthy's contract, which does not exist yet, a real Pages deployment, performance on a site with thousands of pages, and Markdown with Liquid or `{::options}` blocks (excluded by the content rules of ADR 0003 and 0006).
