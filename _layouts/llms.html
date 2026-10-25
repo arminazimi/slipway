@@ -1,0 +1,32 @@
+{%- comment -%}
+  /llms.txt (https://llmstxt.org): the site title, its description, and one link per page with its
+  description, in sections Docs, Posts and Pages. Pages are chosen by llms-item.html.
+{%- endcomment -%}
+{%- assign sl_ll_all = site.pages | concat: site.documents -%}
+{%- assign sl_ll_full = nil -%}
+{%- for p in site.pages -%}{%- if p.layout == 'llms-full' -%}{%- assign sl_ll_full = p -%}{%- break -%}{%- endif -%}{%- endfor -%}
+# {{ site.title | default: 'Untitled' }}
+{%- if site.description %}
+
+> {{ site.description | strip_newlines }}
+{%- endif %}
+{%- if sl_ll_full %}
+
+The full text of every page is in [{{ sl_ll_full.url | remove_first: '/' }}]({{ sl_ll_full.url | absolute_url }}).
+{%- endif %}
+{%- for sl_ll_group in (1..3) -%}
+  {%- case sl_ll_group -%}{%- when 1 -%}{%- assign sl_ll_name = 'Docs' -%}{%- when 2 -%}{%- assign sl_ll_name = 'Posts' -%}{%- else -%}{%- assign sl_ll_name = 'Pages' -%}{%- endcase -%}
+  {%- capture sl_ll_lines -%}
+    {%- for item in sl_ll_all -%}
+      {%- include llms-item.html item=item -%}
+      {%- if sl_li_group != sl_ll_name -%}{%- continue -%}{%- endif %}
+- [{{ item.title | default: item.url | strip_newlines }}]({{ item.url | absolute_url }})
+      {%- if item.description -%}: {{ item.description | strip_newlines }}{%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- if sl_ll_lines != '' %}
+
+## {{ sl_ll_name }}
+{{ sl_ll_lines }}
+  {%- endif -%}
+{%- endfor %}

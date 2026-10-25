@@ -21,3 +21,4 @@ planning/roadmap/out/
 .tmp-overrides-*/
 .tmp-bare-gem/
 .tmp-bare-template/
+.tmp-llms-site/

@@ -22,6 +22,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Navigation from `_data/navigation.yml`, validated by a schema (#58).
 - Tags, categories, and archive pages (#59).
 - Atom feed per language and a sitemap with `hreflang` (#60).
+- `llms.txt` and `llms-full.txt` layouts: a list of every page with its description for agents, and the text of every page in one file (#21).
 - A 404 page with a section for every language (#61).
 - Example sites: `minimal`, `docs`, `blog`, and `persian` (#9).
 - `sourcemap.json` format v0 and its schema (#66).

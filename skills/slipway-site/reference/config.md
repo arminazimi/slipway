@@ -6,6 +6,7 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | Key | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `title` | string |  | Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset. |
+| `description` | string |  | One-sentence summary of the site, quoted under the title in llms.txt and llms-full.txt. |
 | `lang` | string | `en` | Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction. |
 | `direction` | `ltr` or `rtl` |  | Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins. |
 | `author` | string or object |  | Author of the site, used in the feed. Either a name or an object with a name. |

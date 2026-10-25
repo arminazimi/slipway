@@ -48,7 +48,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.tokens.font_body` | yes | `config.test.mjs` |
 | `slipway.tokens.radius` | yes | `config.test.mjs` |
 
-Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all six, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
+Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `description` (the site summary in `llms.txt`) is public (`llms.test.mjs`). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all seven, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
 
 ### Data files
 
@@ -86,6 +86,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `feed`, `sitemap` | yes | `feed.test.mjs` |
 | `search-index` | yes | `search.test.mjs` |
 | `sourcemap` | yes | `sourcemap.test.mjs` |
+| `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes
@@ -123,6 +124,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | `/search.json` (the URL, not its format) | yes | `search.test.mjs` |
 | `/404.html` | yes | `not-found.test.mjs` |
 | `/sourcemap.json` (format: [spec/sourcemap/v0.md](../../spec/sourcemap/v0.md)) | yes | `sourcemap.test.mjs` |
+| `/llms.txt` and `/llms-full.txt` (the URLs; `llms.txt` follows [llmstxt.org](https://llmstxt.org)) | yes | `llms.test.mjs` |
 | Language homes at each `prefix` of `slipway.languages` | yes | `i18n.test.mjs` |
 
 `tools/theme/public-api.test.mjs` fails when a key in the config schema or a custom property in `tokens.css` is missing from this ADR, so the list cannot fall behind silently.
