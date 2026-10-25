@@ -96,6 +96,26 @@
     padding: var(--sl-space-3) var(--sl-space-4);
   }
 
+  /* Header variants (slipway.header): centered stacks everything on the middle axis; minimal is one quiet row. */
+  .sl-header-centered {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sl-header-centered .sl-main-nav ul {
+    justify-content: center;
+  }
+
+  .sl-header-minimal {
+    padding-block: var(--sl-space-2);
+  }
+
+  .sl-header-minimal .sl-site-title {
+    margin-inline-end: auto;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-base);
+  }
+
   .sl-site-title {
     font-family: var(--sl-font-display);
     font-size: var(--sl-step-lg);

@@ -106,7 +106,7 @@ slipway:
     radius: 0.5rem
 ```
 
-Colors are `#rrggbb` or `oklch()`. A color you set applies to both light and dark, so check it reads in both. The keys and their defaults are in [reference/config.md](reference/config.md); what each token does is in https://github.com/arminazimi/slipway/blob/main/docs/tokens.md.
+Colors are `#rrggbb` or `oklch()`. A color you set applies to both light and dark, so check it reads in both. The keys and their defaults are in [reference/config.md](reference/config.md); what each token does is in https://github.com/arminazimi/slipway/blob/main/docs/tokens.md. Pick a header layout with `slipway.header`: `classic` (the default), `centered`, or `minimal` (title, language switcher, and theme toggle only, no navigation or search).
 
 ## 5. Add to the theme with override slots
 

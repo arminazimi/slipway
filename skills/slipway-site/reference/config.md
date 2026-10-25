@@ -12,6 +12,7 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `url` | string |  | Scheme and host of the published site, without a trailing slash. Jekyll's absolute_url uses it for the feed, the sitemap, and canonical links; GitHub Pages sets it for you. |
 | `baseurl` | string |  | Path the site lives under, such as /my-project, without a trailing slash; empty at a domain root. Jekyll's relative_url and absolute_url use it for every link. |
 | `slipway` | object |  | Slipway's own settings. Unknown keys here are rejected, so a typo fails instead of being ignored. |
+| `slipway.header` | `classic` or `centered` or `minimal` | `classic` | Header layout. classic puts the title at the start and navigation, search, and the toggles at the end; centered stacks them on the middle axis; minimal shows only the title, the language switcher, and the theme toggle. |
 | `slipway.languages` | list of object | `[]` | Languages of the site, in switcher order. Pages join by lang and translation_key in front matter. Leave it unset for a one-language site. |
 | `slipway.languages[].code` | string | required | Language tag that pages use in their lang front matter, such as en or fa. |
 | `slipway.languages[].name` | string | required | Name of the language in that language, shown in the switcher, such as فارسی. |
