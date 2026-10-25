@@ -15,3 +15,7 @@ Body text reads best around eighteen pixels on a phone.
 ## Line length
 
 Keep lines under seventy-five characters.
+
+## Spacing
+
+Give paragraphs room: a line height near one and a half keeps long passages easy to follow, and generous margins stop the eye from drifting into the next column.

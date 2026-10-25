@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- A Markdown twin of every page at its address with `.md`, linked from the head: stubs from `npm run twins` on classic Pages, a plugin in Actions mode (#22).
 - Theme layout that works as a gem, through `remote_theme`, and after "Use this template" (#41).
 - Design tokens with a desert rose palette, mapped from `_config.yml` to CSS variables with a JSON Schema (#4).
 - Dark mode without a flash and a manual toggle (#5).
