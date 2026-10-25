@@ -1,6 +1,8 @@
 // The site half of `npm run check`: validates schemas, builds every example site with the GitHub
 // Pages gem in gem and template mode, and runs Seaworthy on each build.
 //
+//   BUNDLE_GEMFILE=tools/theme/gemfiles/jekyll4.gemfile   build with plain Jekyll 4 instead
+//
 //   SLIPWAY_REQUIRE_BUILD=1       fail instead of skipping when Ruby and `bundle install` are missing
 //   SLIPWAY_REQUIRE_SEAWORTHY=1   fail instead of skipping when no Seaworthy CLI is found
 //   SEAWORTHY_CLI=<path>          use this built Seaworthy CLI instead of the pinned one
@@ -13,7 +15,7 @@ import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ensureSeaworthy } from "../seaworthy/setup.mjs";
-import { bundleAvailable, buildExample, exampleNames, root } from "./build.mjs";
+import { bundleAvailable, buildExample, exampleNames, root, target } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
 
@@ -100,7 +102,7 @@ export function main(env = process.env) {
   try {
     for (const name of exampleNames()) {
       for (const mode of checkedModes) {
-        const label = `${name}, ${mode} mode`;
+        const label = `${name}, ${mode} mode, ${target()}`;
         const site = buildExample(mode, join(work, name, mode), name);
         console.log(`OK: example site builds (${label})`);
         // Only the minimal site sets theme tokens in its _config.yml.
