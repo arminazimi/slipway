@@ -34,20 +34,18 @@ Plain Markdown here.
 
 Copy the theme's starter files into the site root, keeping their paths: `starter-files/AGENTS.md` (how an agent edits the site) and `starter-files/.vscode/settings.json` (schema autocomplete). Fetch them from https://github.com/arminazimi/slipway/tree/main/starter-files.
 
-Add the pages the theme fills in for you. Each is front matter only; keep them even though they have no text:
+Those two files are a working site. Add a page below for each feature the site needs; the theme fills it in. Each is front matter only; keep it even though it has no text:
 
-| File | Front matter |
-| --- | --- |
-| `search.json` | `layout: search-index`, `lang: en`, `permalink: /search.json` |
-| `feed.xml` | `layout: feed`, `lang: en`, `permalink: /feed.xml` |
-| `sitemap.xml` | `layout: sitemap`, `permalink: /sitemap.xml` |
-| `404.md` | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
+| File | Turns on | Front matter |
+| --- | --- | --- |
+| `search.json` | Search in the header | `layout: search-index`, `lang: en`, `permalink: /search.json` |
+| `feed.xml` | The Atom feed | `layout: feed`, `lang: en`, `permalink: /feed.xml` |
+| `sitemap.xml` | The sitemap | `layout: sitemap`, `permalink: /sitemap.xml` |
+| `404.md` | A styled not-found page | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
 
 Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files.
 
-To publish, the owner turns on GitHub Pages for the repository (Settings, Pages, deploy from a branch). That is a repository setting: ask the owner, do not change it yourself.
-
-Leave `url` and `baseurl` unset on GitHub Pages; Pages fills them in. Set `baseurl` (such as `/my-project`, no trailing slash) only to preview a project site locally.
+To publish, the owner turns on GitHub Pages for the repository (Settings, Pages, deploy from a branch). That is a repository setting: ask the owner, do not change it yourself. Leave `url` and `baseurl` unset on GitHub Pages; Pages fills them in. Set `baseurl` (such as `/my-project`, no trailing slash) only to preview a project site locally.
 
 ## 2. Set the title and languages
 
@@ -124,13 +122,21 @@ In these files, add `defer` to scripts (every page must read without JavaScript)
 
 ## 6. Check the site
 
-Check the config against the schema: the `$schema` comment in `_config.yml` gives editors that support it errors as you type. Then build the site, if the site has a `Gemfile` with `gem "github-pages", group: :jekyll_plugins`:
+Run `slipway doctor` on the site. It is not on npm yet: run it from a clone of https://github.com/arminazimi/slipway after `npm ci`, with the site folder as the argument, and add `--build` with the built folder when you have one:
+
+```sh
+node packages/doctor/bin/slipway.mjs doctor ../my-site --build ../my-site/_site
+```
+
+It prints the conformance level the site reaches and each finding as `path:line key: message`. It also warns about starter files the site has not copied, Liquid in content, and translations with a missing language. Fix each finding at the file and line it names and run it again until it is clean.
+
+To build the site locally, give it a `Gemfile` with `gem "github-pages", group: :jekyll_plugins`, then run:
 
 ```sh
 bundle exec jekyll build
 ```
 
-Read every error and warning, fix it at the file and line it names, and build again until it is clean. To look at the result, run `bundle exec jekyll serve` and open the address it prints. Without a `Gemfile`, push and read the log of the Pages build.
+Read every error and warning and fix them the same way. To look at the result, run `bundle exec jekyll serve` and open the address it prints. Without a `Gemfile`, push and read the log of the Pages build.
 
 ## Never
 
