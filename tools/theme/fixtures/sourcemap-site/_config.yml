@@ -1,0 +1,6 @@
+# The fixture site of the source map tests (tools/sourcemap/sourcemap.test.mjs).
+title: Source map fixture
+collections:
+  docs:
+    output: true
+theme: slipway-theme

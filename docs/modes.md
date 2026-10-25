@@ -12,7 +12,7 @@ A Slipway site runs in one of two modes. They read the same files (the content m
 
 The design is that you can start in classic mode and move to Actions mode later with no content or config changes, only the Pages source and the workflow. That is not tested yet.
 
-**Status:** the commands and plugins named below (`npm run twins`, `npm run sourcemap`, the generator and the lines plugin) are decided in the ADRs and not built yet; the tasks that build them are in [ROADMAP.md](../ROADMAP.md).
+**Status:** `npm run sourcemap` and the lines plugin (`_plugins/slipway_sourcemap.rb`) are built. The other commands and plugins named below (`npm run twins`, the twins generator) are decided in the ADRs and not built yet; the tasks that build them are in [ROADMAP.md](../ROADMAP.md).
 
 ## What each feature needs
 

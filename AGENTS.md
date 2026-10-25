@@ -9,6 +9,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 ## Commands
 
 - `npm ci` installs the dev dependencies (ajv, yaml) the theme tests use. `npm run check`: validates `ROADMAP.md`, runs the tooling tests, builds every example site with the GitHub Pages gem, and runs Seaworthy on each. Run it before you say a change is done. The site step skips with a notice when Ruby 3.3 is missing; `SLIPWAY_REQUIRE_BUILD=1` and `SLIPWAY_REQUIRE_SEAWORTHY=1` turn skips into failures. Seaworthy is fetched from git at the commit in `tools/seaworthy/pin.json` and built into `.seaworthy/` on the first run (needs network); `npm run seaworthy:setup` does that alone, and `SEAWORTHY_CLI` points at your own built `packages/verify/dist/src/cli.js`. To update Seaworthy, change the commit in `pin.json`; when it is on npm (Seaworthy issue #122), replace the folder with a devDependency.
+- `npm run sourcemap -- [site] [--check]`: writes `<site>/sourcemap.json` with exact lines (ADR 0007 level 1) using the Actions plugin's code and the Pages gem's kramdown; `--check` fails when the committed file is stale. Needs Ruby and `bundle install`.
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
@@ -21,6 +22,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `ROADMAP.md`: the source of truth for planned work. Issues are generated from it; edit the roadmap, not the issues.
 - `planning/roadmap/`: parser, issue builder, GitHub sync, labels, and tests. Ported from Seaworthy.
 - `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
+- `_plugins/slipway_sourcemap.rb`: the Actions-mode plugin that writes `sourcemap.json` with sections and links at their lines (ADR 0007 level 2). Classic Pages ignores it; `tools/sourcemap/` runs the same code for level 1. Not shipped in the gem: themes cannot ship plugins.
 - `examples/`: `minimal` (the smallest site), `docs` (the doc layout), `blog` (posts, tags, feed), and `persian` (a Persian-only, right-to-left site). `node tools/theme/build.mjs <gem|template|remote> [outDir] [example]` builds one (minimal by default) with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
 - `planning/roadmap/briefs/<task-key>.md`: optional agent briefs merged into issues.
 - `docs/modes.md`: classic Pages versus Actions mode, and what each feature needs. Update its table when a feature lands or an ADR changes a column.
