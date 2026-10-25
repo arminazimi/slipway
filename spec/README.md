@@ -4,7 +4,7 @@ Contracts that Slipway publishes for any generator, theme, or tool to implement.
 
 | Spec | Version | Status | Schema |
 | --- | --- | --- | --- |
-| [Agent-editable site](agent-editable/0.1.md): what a site publishes so an agent can edit it safely | 0.1 | Draft | [`content-schemas.schema.json`](../schema/content-schemas.schema.json) |
+| [Agent-editable site](agent-editable/0.1.md): what a site publishes so an agent can edit it safely, in [levels](agent-editable/levels.md) L0 to L3 with [machine-readable tests](agent-editable/tests.json) | 0.1 | Draft | [`content-schemas.schema.json`](../schema/content-schemas.schema.json), [`conformance-tests.schema.json`](../schema/conformance-tests.schema.json) |
 | [Source map](sourcemap/v0.md): which source file and line produced each built page, heading, and link | 0 | Draft | [`sourcemap.schema.json`](../schema/sourcemap.schema.json) |
 
 Drafts may change without notice until Spec 1.0 (`spec.theme` in [ROADMAP.md](../ROADMAP.md)). Requirement ids such as `ae.agents-md.present` are never reused for a different meaning.

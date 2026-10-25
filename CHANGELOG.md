@@ -29,6 +29,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
+- Conformance levels L0 to L3 for the agent-editable spec, with a machine-readable `tests.json` (#178).
 - A release workflow, `CHANGELOG.md`, and `tools/release/prepare.mjs` (#174).
 - Build-time warnings for renamed config keys and front-matter fields, naming the replacement; the old names keep working (#173).
 - `slipway-mcp`, an MCP server for a site with two read-only tools, `list_layouts` and `read_config` (#78).
