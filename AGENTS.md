@@ -12,7 +12,11 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
+- `node tools/release/prepare.mjs <version>`: bumps the gemspec and dates `Unreleased` in `CHANGELOG.md`; maintainers push the tag (CONTRIBUTING.md, "Releasing"). Add a `CHANGELOG.md` line in any PR a site owner would notice.
+
 ## CI
+
+`.github/workflows/release.yml` runs on a `v*` tag: it checks the tag against the gemspec, runs `npm run check`, and creates the GitHub release from `CHANGELOG.md`. It never publishes a package.
 
 `.github/workflows/ci.yml` runs `npm run check` in the GitHub Pages environment: the Ruby in `.ruby-version`, the `github-pages` gem from `Gemfile.lock` (Jekyll and the whitelisted plugins), and Node 22. It sets `SLIPWAY_REQUIRE_BUILD=1`, so a missing Ruby fails instead of skipping.
 
