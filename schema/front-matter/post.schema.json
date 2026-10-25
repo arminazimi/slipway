@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/post.schema.json",
+  "title": "Slipway front matter: post layout",
+  "description": "A dated post. The date and slug come from the file name (YYYY-MM-DD-slug.md); `date` in the front matter overrides the date.",
+  "type": "object",
+  "allOf": [{ "$ref": "base.schema.json" }]
+}

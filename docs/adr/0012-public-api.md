@@ -69,8 +69,9 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
+| `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
 
-Collections and their schemas are added by `schema.front-matter`; this table grows with it.
+Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home` and `archive`. `front-matter.test.mjs` fails when a schema field is missing from this table.
 
 ### Layouts
 

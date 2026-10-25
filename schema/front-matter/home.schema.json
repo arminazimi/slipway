@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/home.schema.json",
+  "title": "Slipway front matter: home layout",
+  "description": "The landing page: a hero with an optional call to action, then the latest posts.",
+  "type": "object",
+  "allOf": [{ "$ref": "base.schema.json" }],
+  "properties": {
+    "cta_text": { "type": "string", "minLength": 1, "description": "Label of the call-to-action button. Shown only with `cta_url`." },
+    "cta_url": { "$ref": "base.schema.json#/$defs/url", "description": "Where the call-to-action button goes." }
+  },
+  "dependentRequired": { "cta_text": ["cta_url"], "cta_url": ["cta_text"] }
+}
