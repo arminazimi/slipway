@@ -23,9 +23,24 @@ Text output names the level, then each failed test with its findings as `path:li
 
 The JSON report has `spec`, `version`, `level` (`"L0"` to `"L3"`, or `null`), `notRun`, `tests` (every test with its `status`: `pass`, `fail`, or `not-run`), and `findings`. Each finding has `test`, `severity`, `message`, and when known `in` (`source` or `output`), `file` (relative to that folder), `line`, `key`, and `allowed`. The finding format is a draft until `doctor.output` fixes it.
 
+## Generator detection
+
+`detect(dir)` from `slipway/detect` (`src/detect.mjs`) names a site's generator and its default source and output folders from marker files alone; it never runs a build.
+
+| Generator | Marker | Source | Output |
+| --- | --- | --- | --- |
+| Jekyll | `_config.yml` with a `Gemfile` or `_layouts/` | `.` | `_site` |
+| Hugo | `hugo.toml`, `hugo.yaml`, `hugo.json`, or `config.toml` with `baseURL` | `content` | `public` |
+| Astro | `astro.config.*` | `src` | `dist` |
+| Docusaurus | `docusaurus.config.*` | `docs` | `build` |
+| MkDocs | `mkdocs.yml` | `docs` | `site` |
+| Eleventy | `.eleventy.js` or `eleventy.config.*` | `.` | `_site` |
+
+It returns `{ generator, sourceDir, outputDir, confidence, candidates }`. `confidence` is `high` for one marker and `low` when several generators match; then a generator's own config file wins over Jekyll's `_config.yml` and Hugo's `config.toml`. A folder with no marker returns `generator: "unknown"`, `confidence: "none"`, and `null` folders, and the doctor runs only the generator-neutral tests, as it does today.
+
 ## What it does not do yet
 
-- `ae.schemas.config` is not run: which files a generator reads as configuration comes from generator detection (`doctor.detect`). For the same reason `ae.sourcemap.coverage` also lists drafts and partials.
+- `ae.schemas.config` is not run: which files a generator reads as configuration will come from generator detection, which the doctor does not use yet. For the same reason `ae.sourcemap.coverage` also lists drafts and partials.
 - Front matter in TOML is not parsed; files that use it are reported as not checked.
 - The two review tests, `ae.edit-prompt.content` and `ae.edit-prompt.no-send`, are left to a person.
 
