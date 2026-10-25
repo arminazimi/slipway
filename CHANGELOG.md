@@ -28,6 +28,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - A schema for every `_config.yml` key the theme reads (#71).
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
+- An RFC process for spec changes, with a template, a 14-day review window, and `spec/CHANGELOG.md` (#180).
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
 - Conformance levels L0 to L3 for the agent-editable spec, with a machine-readable `tests.json` (#178).
 - A release workflow, `CHANGELOG.md`, and `tools/release/prepare.mjs` (#174).
