@@ -15,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, exampleNames, root } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
+import { findDeprecations } from "./deprecations.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
 
 export const checkedModes = ["gem", "template"];
@@ -82,6 +83,11 @@ export function main(env = process.env) {
     console.error(`FAIL: example navigation\n${navProblems.map((p) => `  ${p}`).join("\n")}`);
     process.exitCode = 1;
   } else console.log("OK: example navigation");
+
+  // Deprecated names warn and never fail (ADR 0012, rule 4); the examples should still use none.
+  const deprecated = exampleNames().flatMap((name) => findDeprecations(join(root, "examples", name)).map((d) => `examples/${name}/${d.message}`));
+  if (deprecated.length) console.log(`WARN: deprecated keys in the examples\n${deprecated.map((d) => `  ${d}`).join("\n")}`);
+  else console.log("OK: no deprecated keys in the examples");
 
   if (!bundleAvailable()) {
     skipOrFail(env.SLIPWAY_REQUIRE_BUILD === "1", "the example site was not built: install Ruby 3.3 (.ruby-version) and run `bundle install`");

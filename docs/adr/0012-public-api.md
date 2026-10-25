@@ -26,6 +26,8 @@ Sites pin a version with `remote_theme: arminazimi/slipway@vX.Y.Z` or the `slipw
 
    Example: `1.3.0` renames `slipway.tokens.radius` to `slipway.tokens.radius_card`. In `1.3.0` both keys work, the new one wins when both are set, and the build prints `_config.yml:14 slipway.tokens.radius is deprecated since 1.3.0, use slipway.tokens.radius_card`. The old key is removed no earlier than `2.0.0`.
 
+   The renames live in [`schema/deprecations.json`](../../schema/deprecations.json). The layouts read each one through `_includes/compat.html`, which works on classic Pages because it is Liquid; `tools/theme/deprecations.mjs <site>` prints the warnings, since classic Pages runs no plugin that could.
+
 5. **Visual changes are not breaking.** A new default colour, spacing, or font within the same tokens is a minor change. Removing or renaming a token is not.
 
 ## The public surface

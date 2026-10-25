@@ -1,0 +1,7 @@
+{
+  "$schema": "../../../../schema/deprecations.schema.json",
+  "deprecations": [
+    { "kind": "config", "old": "slipway.fixture_greeting", "new": "slipway.fixture_welcome", "since": "0.2.0", "removed_in": "0.3.0" },
+    { "kind": "front-matter", "old": "fixture_kicker", "new": "fixture_eyebrow", "since": "0.2.0", "removed_in": "0.3.0" }
+  ]
+}
