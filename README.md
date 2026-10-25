@@ -20,7 +20,7 @@ The theme is the spec's reference implementation: a site built with it reaches t
 
 ## What makes it different
 
-- **Source maps.** Every finding points at the Markdown file and line to edit, not the built HTML.
+- **Source maps.** Every finding points at the Markdown file and line to edit, not the built HTML. See [how source maps work](docs/source-maps.md).
 - **Edit with your agent.** Every section offers a prompt with its source file, line, and current text.
 - **`slipway doctor`.** Checks any static site against the agent-editable spec, with findings on the source line, as JSON and SARIF, in a GitHub Action, and as an MCP tool.
 - **WebMCP** (experimental). Every site exposes search and page content as tools to browser agents.

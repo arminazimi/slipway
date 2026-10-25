@@ -25,6 +25,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - A 404 page with a section for every language (#61).
 - Example sites: `minimal`, `docs`, `blog`, and `persian` (#9).
 - `sourcemap.json` format v0 and its schema (#66).
+- A guide to source maps, with Liquid and Hugo templates other themes can copy (`docs/source-maps.md`, #70).
 - A schema for every `_config.yml` key the theme reads (#71).
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
