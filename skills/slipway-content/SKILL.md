@@ -36,6 +36,7 @@ Every key, its type, and its allowed values are in [reference/front-matter.md](r
 - `title` is required and must not be empty. The layout prints it as the page heading.
 - Add `description`: one sentence for search results and link previews.
 - `tags` and `categories` are a list: `tags: [release, notes]`.
+- `author` on a post is a key of `_data/authors.yml`, or a list of keys for several authors: `author: [ada, sam]`. If the key is missing from that file, add the author there first.
 - `permalink` starts with `/`. Leave it out on a post in the default language; the site's config sets the address.
 - Set `lang` on a page that is not in the site's default language (`lang` in `_config.yml`), and on every page that has a translation.
 - `home` only: `cta_text` and `cta_url` go together, or not at all.

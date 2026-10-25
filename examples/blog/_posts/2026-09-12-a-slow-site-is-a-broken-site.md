@@ -2,6 +2,7 @@
 title: A slow site is a broken site
 description: Why pages should read without JavaScript.
 layout: post
+author: [ada, sam]
 permalink: /2026/09/12/a-slow-site-is-a-broken-site.html
 tags: [performance, writing]
 categories: [essays]
