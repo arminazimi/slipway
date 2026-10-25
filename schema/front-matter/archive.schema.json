@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/archive.schema.json",
+  "title": "Slipway front matter: archive layout",
+  "description": "Every post, grouped by year.",
+  "type": "object",
+  "allOf": [{ "$ref": "base.schema.json" }]
+}
