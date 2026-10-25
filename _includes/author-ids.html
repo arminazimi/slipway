@@ -1,0 +1,2 @@
+{%- comment -%} Sets sl_ai_ids to the author ids of include.page: `author` is one id or a list of ids, keys of _data/authors.yml. {%- endcomment -%}
+{%- assign sl_ai_ids = include.page.author | join: ',' | split: ',' -%}

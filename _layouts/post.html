@@ -12,6 +12,11 @@ layout: base
     <p class="sl-post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{% include date.html date=page.date %}</time>
       <span>{% include num.html value=sl_minutes %} {% include t.html key='min_read' %}</span>
+      {%- capture sl_byline %}{% include byline.html page=page %}{% endcapture %}
+      {%- assign sl_byline = sl_byline | strip %}
+      {%- if sl_byline != '' %}
+      {{ sl_byline }}
+      {%- endif %}
       {%- capture sl_tags_url %}{% include layout-url.html layout='tags' %}{% endcapture %}
       {%- assign sl_tags_url = sl_tags_url | strip %}
       {%- if page.tags and page.tags.size > 0 %}
@@ -31,6 +36,14 @@ layout: base
     </p>
   </header>
   {% include edit-sources.html html=content %}
+  {%- include author-ids.html page=page -%}
+  {%- capture sl_author_cards %}{% for id in sl_ai_ids %}{% include author-card.html id=id link=true %}{% endfor %}{% endcapture %}
+  {%- assign sl_author_cards_clean = sl_author_cards | strip %}
+  {%- if sl_author_cards_clean != '' %}
+  <aside class="sl-authors" aria-label="{% include t.html key='about_author' %}">
+    {{ sl_author_cards_clean }}
+  </aside>
+  {%- endif %}
   {%- comment -%} Neighbours in the same language: site.posts is newest first, so the post seen before this one is newer. {%- endcomment %}
   {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
   {%- assign sl_newer = nil -%}

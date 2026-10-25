@@ -44,7 +44,7 @@ Those two files are a working site. Add a page below for each feature the site n
 | `llms.txt`, `llms-full.txt` | A page list for agents ([llmstxt.org](https://llmstxt.org)) and every page's text in one file | `layout: llms`, `permalink: /llms.txt`; `layout: llms-full`, `permalink: /llms-full.txt` |
 | `404.md` | A styled not-found page | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
 
-Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files.
+Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files. For post authors, add `_data/authors.yml` (each key is an id with a `name`, and optionally `bio`, `avatar`, and `links`) and one page per author with `layout: author` and `author: <id>`; `examples/blog` has both.
 
 To publish, the owner turns on GitHub Pages for the repository (Settings, Pages, deploy from a branch). That is a repository setting: ask the owner, do not change it yourself. Leave `url` and `baseurl` unset on GitHub Pages; Pages fills them in. Set `baseurl` (such as `/my-project`, no trailing slash) only to preview a project site locally.
 
