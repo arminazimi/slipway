@@ -11,4 +11,4 @@ Drafts may change without notice until Spec 1.0 (`spec.theme` in [ROADMAP.md](..
 
 To change a spec, follow [PROCESS.md](PROCESS.md): an RFC from the [template](rfcs/0000-template.md), a 14-day review window, and an entry in [CHANGELOG.md](CHANGELOG.md).
 
-Each spec says what must exist and how to check it, with no network access by default. Requirements in a spec's normative text never depend on one generator; generator-specific notes appear only in examples. The checker is `slipway doctor` (planned, `doctor.cli`). Questions of site health and agent readability, such as broken links or `llms.txt`, belong to Seaworthy, not to these specs ([ADR 0011](../docs/adr/0011-standalone-and-the-spec.md)).
+Each spec says what must exist and how to check it, with no network access by default. Requirements in a spec's normative text never depend on one generator; generator-specific notes appear only in examples. The checker is [`slipway doctor`](../packages/doctor/README.md). Questions of site health and agent readability, such as broken links or `llms.txt`, belong to Seaworthy, not to these specs ([ADR 0011](../docs/adr/0011-standalone-and-the-spec.md)).
