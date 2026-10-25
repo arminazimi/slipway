@@ -11,3 +11,4 @@
 | [0007](0007-source-maps.md) | Source maps: three levels, from a Liquid page map to a plugin with exact lines | Accepted |
 | [0008](0008-theme-palette.md) | Theme palette: desert rose on muted sand and charcoal | Accepted |
 | [0011](0011-standalone-and-the-spec.md) | Slipway 1.0 is standalone: a theme and an agent-editable site spec; Seaworthy integration follows in 1.1 | Accepted |
+| [0012](0012-public-api.md) | The public API under semver: what sites may rely on, and how it is deprecated | Accepted |

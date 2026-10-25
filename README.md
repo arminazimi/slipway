@@ -37,7 +37,7 @@ Add `remote_theme: arminazimi/slipway` to your `_config.yml`, or fork the reposi
 
 ## Relationship to Seaworthy
 
-Slipway works without [Seaworthy](https://github.com/arminazimi/seaworthy) and integrates with it after 1.0. Seaworthy asks "is this site healthy and readable by agents?"; Slipway's spec asks "can an agent edit this site safely?". The integration plan is in [ROADMAP.md](ROADMAP.md#slipway-and-seaworthy). Why the two are separate projects: [ADR 0001](docs/adr/0001-why-slipway.md); why 1.0 is standalone: [ADR 0011](docs/adr/0011-standalone-and-the-spec.md).
+Slipway works without [Seaworthy](https://github.com/arminazimi/seaworthy) and integrates with it after 1.0. Seaworthy asks "is this site healthy and readable by agents?"; Slipway's spec asks "can an agent edit this site safely?". The integration plan is in [ROADMAP.md](ROADMAP.md#slipway-and-seaworthy). Why the two are separate projects: [ADR 0001](docs/adr/0001-why-slipway.md); why 1.0 is standalone: [ADR 0011](docs/adr/0011-standalone-and-the-spec.md). What a site may rely on across versions: [ADR 0012](docs/adr/0012-public-api.md).
 
 ## Contributing
 
