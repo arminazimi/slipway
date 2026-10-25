@@ -10,14 +10,16 @@ import { root } from "./tokens.mjs";
 const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
 
-test("every key used in a layout has a built-in English and Persian string", () => {
+test("every key used in a layout has a built-in English, Persian, and Arabic string", () => {
   const files = ["_layouts/base.html", "_layouts/home.html", "_layouts/doc.html", "_layouts/post.html", "_includes/header.html", "_includes/skip-link.html", "_includes/lang-switcher.html"];
   const used = new Set(files.flatMap((f) => [...read(f).matchAll(/include t\.html key=['"](\w+)['"]/g)].map((m) => m[1])));
   const builtin = read("_includes/i18n-builtin.html");
-  const [fa, en] = builtin.split("{%- else -%}");
+  const [faAr, en] = builtin.split("{%- else -%}");
+  const [fa, ar] = faAr.split("{%- elsif include.lang == 'ar' -%}");
   assert.ok(used.size >= 12);
   for (const key of used) {
     assert.ok(fa.includes(`when '${key}'`), `fa: ${key}`);
+    assert.ok(ar.includes(`when '${key}'`), `ar: ${key}`);
     assert.ok(en.includes(`when '${key}'`), `en: ${key}`);
   }
 });

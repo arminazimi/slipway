@@ -1,0 +1,19 @@
+{%- comment -%}
+  For llms.txt and llms-full.txt: sets sl_li_group to the section include.item belongs in ("Docs",
+  "Posts" or "Pages"), or to nothing when it is left out. Left out, as in the sitemap: pages with
+  sitemap: false, the 404 page, generated files (feed, sitemap, search index, source map, these two),
+  every url that is neither a folder nor .html, and collections that do not output.
+{%- endcomment -%}
+{%- assign sl_li = include.item -%}
+{%- assign sl_li_group = nil -%}
+{%- assign sl_li_last = sl_li.url | slice: -1 -%}
+{%- assign sl_li_ext = sl_li.url | split: '.' | last -%}
+{%- assign sl_li_coll = nil -%}
+{%- if sl_li.collection -%}{%- assign sl_li_coll = site.collections | where: 'label', sl_li.collection | first -%}{%- endif -%}
+{%- if sl_li.url == nil or sl_li.sitemap == false or sl_li.url == '/404.html' or sl_li_coll.output == false -%}
+{%- elsif sl_li.layout == 'feed' or sl_li.layout == 'sitemap' or sl_li.layout == 'search-index' or sl_li.layout == 'sourcemap' or sl_li.layout == 'llms' or sl_li.layout == 'llms-full' -%}
+{%- elsif sl_li_last != '/' and sl_li_ext != 'html' -%}
+{%- elsif sl_li.collection == 'posts' -%}{%- assign sl_li_group = 'Posts' -%}
+{%- elsif sl_li.collection or sl_li.layout == 'doc' -%}{%- assign sl_li_group = 'Docs' -%}
+{%- else -%}{%- assign sl_li_group = 'Pages' -%}
+{%- endif -%}

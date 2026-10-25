@@ -17,6 +17,11 @@
     font-family: var(--sl-font-persian);
   }
 
+  :lang(ar),
+  :lang(ar) :is(h1, h2, h3) {
+    font-family: var(--sl-font-arabic);
+  }
+
   main {
     max-inline-size: var(--sl-measure);
     margin-inline: auto;
@@ -468,33 +473,42 @@
   }
 }
 
-/* Persian: taller lines, no italics (the script has none), and Persian digits in section numbers when opted in. */
+/* Persian and Arabic: taller lines, no italics (the script has none), and native digits in section numbers when opted in. */
 @layer components {
   @counter-style sl-persian-padded {
     system: extends persian;
     pad: 2 "۰";
   }
 
-  :lang(fa) body,
-  body:lang(fa) {
+  @counter-style sl-arabic-padded {
+    system: extends arabic-indic;
+    pad: 2 "٠";
+  }
+
+  :is(:lang(fa), :lang(ar)) body,
+  body:is(:lang(fa), :lang(ar)) {
     line-height: 1.9;
   }
 
-  :lang(fa) :is(h1, h2, h3) {
+  :is(:lang(fa), :lang(ar)) :is(h1, h2, h3) {
     line-height: 1.4;
     font-weight: 700;
   }
 
-  :lang(fa) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
+  :is(:lang(fa), :lang(ar)) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
     font-style: normal;
   }
 
-  :lang(fa) :is(.sl-doc-group, .sl-sections > h2::before) {
+  :is(:lang(fa), :lang(ar)) :is(.sl-doc-group, .sl-sections > h2::before) {
     letter-spacing: 0;
   }
 
   .sl-fa-digits .sl-sections > h2::before {
     content: counter(sl-section, sl-persian-padded);
+  }
+
+  .sl-ar-digits .sl-sections > h2::before {
+    content: counter(sl-section, sl-arabic-padded);
   }
 }
 
