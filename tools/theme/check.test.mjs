@@ -53,5 +53,5 @@ test("runSeaworthy fails the check on the CLI's exit code and passes warnings to
 });
 
 test("the four example sites the theme epic promises are all checked", () => {
-  for (const name of ["minimal", "docs", "blog", "persian"]) assert.ok(exampleNames().includes(name), `examples/${name} is missing`);
+  for (const name of ["bare", "minimal", "docs", "blog", "persian"]) assert.ok(exampleNames().includes(name), `examples/${name} is missing`);
 });
