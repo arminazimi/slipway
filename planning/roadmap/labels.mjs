@@ -32,6 +32,7 @@ export const EPIC_AREAS = {
   "E-agent-interface": ["area: agent"],
   "E-i18n": ["area: i18n"],
   "E-adapters": ["area: standards", "area: ecosystem"],
+  "E-agent-tooling": ["area: agent", "area: standards"],
   "E-agent-reach": ["area: agent", "area: community"],
   "E-docs-site": ["area: docs"],
   "E-quality": ["area: devops", "area: theme"],

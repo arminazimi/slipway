@@ -220,7 +220,6 @@ Any project adds Slipway with one line, pins a version, and upgrades without sur
 | `standalone.baseurl` | Project sites under `/<repo>/` and custom domains: every URL respects `baseurl`, tested in CI | free-agent | S | `standalone.zero-config` |
 | `standalone.jekyll4` | Works on Jekyll 4 outside GitHub Pages (Netlify, Cloudflare Pages, plain `jekyll build`); CI matrix with 3.10 and 4.x | strong-agent | M | `foundation.ci` |
 | `standalone.overrides` | Documented override slots (`head-custom.html`, `footer-custom.html`, `assets/css/custom.css`), no fork needed | free-agent | S | `theme.base` |
-| `standalone.existing-site` | Guide: switch an existing Jekyll site to Slipway, keeping permalinks and mapping front matter | free-agent | S | `standalone.stubs` |
 | `standalone.public-api` | ADR: the public API under semver (config keys, front matter, layouts, include names, CSS tokens) and the deprecation policy | strong-agent | S | none |
 | `standalone.deprecations` | Build-time warnings for renamed config keys and front-matter fields, naming the replacement | strong-agent | S | `standalone.public-api` |
 | `standalone.release` | Release workflow: version bump, `CHANGELOG.md`, tag, and GitHub release, so `remote_theme: arminazimi/slipway@v0.2.0` pins a version | strong-agent | S | `standalone.public-api` |
@@ -250,17 +249,13 @@ An open spec says what a site publishes so an agent can edit it safely, and `sli
 | `spec.levels` | Conformance levels L0 to L3, with a machine-readable list of tests | strong-agent | S | `spec.editable` |
 | `spec.site` | Publish the spec as a versioned site, with its JSON Schemas at stable URLs | free-agent | S | `spec.levels` |
 | `spec.rfc` | RFC process for spec changes: template, review window, changelog | free-agent | XS | `spec.editable` |
-| `spec.outreach` | Invite three theme maintainers to adopt the spec | maintainer | S | `spec.site` |
 | `doctor.cli` | `npx slipway doctor <dir>`: check a source folder and its built output against the spec, for any generator | strong-agent | M | `spec.levels`, `schema.validate` |
 | `doctor.detect` | Detect the generator (Jekyll, Hugo, Astro, Docusaurus, MkDocs, Eleventy) and its source and output folders | strong-agent | S | `doctor.cli` |
 | `doctor.jekyll` | Jekyll and Slipway checks: required stubs, deprecated keys, no Liquid in content, translation pairs, UI strings | free-agent | S | `doctor.cli` |
 | `doctor.rtl` | Right-to-left checks: `lang` and `dir` agree, mixed-direction titles are isolated | strong-agent | S | `doctor.cli` |
 | `doctor.output` | JSON and SARIF output with file and line, for agents and GitHub code scanning | strong-agent | S | `doctor.cli` |
 | `doctor.action` | GitHub Action that runs `slipway doctor` on any static site, with pull request annotations | free-agent | S | `doctor.output` |
-| `doctor.badge` | Conformance badge showing the level a site reaches, produced by the Action | free-agent | S | `doctor.action` |
-| `doctor.ci-recipes` | Recipes for GitLab CI, Netlify, Cloudflare Pages, Vercel, and pre-commit | free-agent | S | `doctor.cli` |
 | `doctor.mcp` | `slipway doctor` as an MCP tool and an Agent Skill, so agents run it themselves | strong-agent | S | `doctor.output`, `agent.mcp-server` |
-| `doctor.fix` | `--fix` for safe cases (missing stubs, deprecated keys), with a dry-run diff | strong-agent | M | `doctor.output`, `standalone.deprecations` |
 
 ### Exit criteria
 - [ ] `npx slipway doctor` reports the conformance level of every example site and of one non-Jekyll fixture, with findings on source lines.
@@ -322,11 +317,8 @@ Agents build, edit, and check Slipway sites as first-class users: instructions t
 | `agent.skill-site` | Agent Skill: create a Slipway site and customize it | strong-agent | M | `agent.agents-md` |
 | `agent.skill-content` | Agent Skill: write pages and posts that pass the schemas and `slipway doctor` | strong-agent | S | `agent.skill-site` |
 | `agent.mcp-server` | MCP server skeleton for Slipway sites | strong-agent | M | `schema.config` |
-| `agent.mcp-tools` | MCP tools: create page, set token, add navigation item, list layouts, preview | strong-agent | M | `agent.mcp-server` |
 | `agent.create-cli` | `npx create-slipway`: new site from a starter, interactive or flags-only for agents | strong-agent | M | `foundation.layout` |
 | `agent.edit-button` | "Edit with your agent" on every section: copies a prompt with the source file, line, and current text | strong-agent | M | `sourcemap.lines` |
-| `agent.webmcp` | Experimental WebMCP tools in every site: search, page Markdown, and page list, off by default | strong-agent | M | `spike.webmcp`, `theme.search` |
-| `agent.plugins` | Claude Code and Codex plugins bundling the Skills and the MCP server | strong-agent | S | `agent.skill-site`, `agent.mcp-tools` |
 
 ### Exit criteria
 - [ ] A fresh agent session creates a Slipway site, adds a page, breaks a link, sees the finding on the Markdown line, fixes it, and gets a clean `slipway doctor` report.
@@ -434,6 +426,30 @@ Every Slipway site is readable by agents out of the box: `llms.txt`, a Markdown 
 ### Exit criteria
 - [ ] Every example site publishes `llms.txt`, a Markdown twin of every page, and valid JSON-LD, checked by tests.
 
+## Epic: Agent tooling, round two
+<!-- slipway-roadmap-key: E-agent-tooling -->
+> **Epic** · **Phase:** Phase 3 — Content and design (2026-11-23 → 2026-12-20)
+
+### Outcome
+The first agent tools (Phase 2) get their second layer: MCP editing tools, plugins, WebMCP, a badge, `--fix`, CI recipes, and the first outreach and migration guide.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `standalone.existing-site` | Guide: switch an existing Jekyll site to Slipway, keeping permalinks and mapping front matter | free-agent | S | `standalone.stubs` |
+| `spec.outreach` | Invite three theme maintainers to adopt the spec | maintainer | S | `spec.site` |
+| `doctor.badge` | Conformance badge showing the level a site reaches, produced by the Action | free-agent | S | `doctor.action` |
+| `doctor.ci-recipes` | Recipes for GitLab CI, Netlify, Cloudflare Pages, Vercel, and pre-commit | free-agent | S | `doctor.cli` |
+| `doctor.fix` | `--fix` for safe cases (missing stubs, deprecated keys), with a dry-run diff | strong-agent | M | `doctor.output`, `standalone.deprecations` |
+| `agent.mcp-tools` | MCP tools: create page, set token, add navigation item, list layouts, preview | strong-agent | M | `agent.mcp-server` |
+| `agent.webmcp` | Experimental WebMCP tools in every site: search, page Markdown, and page list, off by default | strong-agent | M | `spike.webmcp`, `theme.search` |
+| `agent.plugins` | Claude Code and Codex plugins bundling the Skills and the MCP server | strong-agent | S | `agent.skill-site`, `agent.mcp-tools` |
+
+### Exit criteria
+- [ ] An agent creates a page, sets a token, and adds a navigation item through the MCP tools, then gets a clean `slipway doctor` report.
+- [ ] A Slipway site shows its conformance badge, and `slipway doctor --fix` repairs the safe cases with a dry-run diff.
+
+
 ---
 
 # Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
@@ -474,11 +490,11 @@ The agent-editable spec works outside Jekyll: adapters for the most used static 
 | Key | Task | Lane | Size | Depends |
 |---|---|---|---|---|
 | `astro.adapter-design` | Design the Astro adapter on the framework-neutral content model | strong-agent | M | `spike.content-model` |
-| `adapter.astro` | Astro integration that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable`, `astro.adapter-design` |
-| `adapter.hugo` | Hugo module that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable` |
-| `adapter.docusaurus` | Docusaurus plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable` |
-| `adapter.mkdocs` | MkDocs plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable` |
-| `adapter.eleventy` | Eleventy plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | free-agent | S | `spec.editable` |
+| `adapter.astro` | Astro integration that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.levels`, `astro.adapter-design` |
+| `adapter.hugo` | Hugo module that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable`, `spec.levels` |
+| `adapter.docusaurus` | Docusaurus plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable`, `spec.levels` |
+| `adapter.mkdocs` | MkDocs plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | strong-agent | M | `spec.editable`, `spec.levels` |
+| `adapter.eleventy` | Eleventy plugin that emits `sourcemap.json`, Markdown twins, and `AGENTS.md` | free-agent | S | `spec.editable`, `spec.levels` |
 | `adapter.fixtures` | A fixture site per generator, checked by `slipway doctor` in CI | strong-agent | S | `doctor.detect`, `adapter.astro` |
 | `adapter.css` | Slipway's tokens and CSS as a framework-neutral npm package | strong-agent | M | `theme.tokens` |
 | `adapter.guide` | Guide: make any generator conform to the spec, level by level | free-agent | S | `adapter.astro`, `adapter.hugo` |
@@ -658,7 +674,7 @@ Slipway 1.0: a stable theme and an open spec, launched in English and Persian.
 | `seaworthy.doctor` | `slipway doctor` runs Seaworthy too when it is installed and merges the reports | strong-agent | S | `doctor.output` |
 | `seaworthy.sourcemap` | Align `sourcemap.json` with Seaworthy's `spec/source-map` so Seaworthy reads it unchanged | strong-agent | S | `sourcemap.contract` |
 | `seaworthy.badge` | The Seaworthy badge in the starters and on the docs site | free-agent | XS | `theme.action` |
-| `seaworthy.fixtures` | The starters run as clean fixtures in Seaworthy's CI | strong-agent | S | `starter.docs` |
+| `seaworthy.fixtures` | The starters run as clean fixtures in Seaworthy's CI | strong-agent | S | `starter.docs`, `starter.blog`, `starter.portfolio`, `starter.project`, `starter.bilingual`, `starter.academic` |
 | `launch.demo-video` | Demo: an agent builds a site from a starter, Seaworthy catches a problem on the Markdown line, the agent fixes it | maintainer | M | `sourcemap.e2e` |
 | `launch.co-launch` | Co-launch day with Seaworthy wave 2 | maintainer | M | `launch.posts` |
 
