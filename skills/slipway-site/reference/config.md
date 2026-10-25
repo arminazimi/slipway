@@ -6,6 +6,7 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | Key | Type | Default | What it does |
 | --- | --- | --- | --- |
 | `title` | string |  | Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset. |
+| `description` | string |  | One-sentence summary of the site, quoted under the title in llms.txt and llms-full.txt. |
 | `lang` | string | `en` | Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction. |
 | `direction` | `ltr` or `rtl` |  | Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins. |
 | `author` | string or object |  | Author of the site, used in the feed. Either a name or an object with a name. |
@@ -19,6 +20,8 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.persian` | object |  | Opt-in Persian conventions for pages whose lang is fa. |
 | `slipway.persian.digits` | boolean | `false` | Print dates, reading time, and section numbers with Persian digits. |
 | `slipway.persian.jalali` | boolean | `false` | Print post dates in the Jalali calendar. |
+| `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
+| `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both. |
 | `slipway.tokens.accent` | string: A hex color (#rrggbb) or an oklch() color. |  | Accent for links, marks, and filled buttons, in both light and dark. |
 | `slipway.tokens.canvas` | string: A hex color (#rrggbb) or an oklch() color. |  | Page background, in both light and dark. |

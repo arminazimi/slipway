@@ -41,6 +41,7 @@ Those two files are a working site. Add a page below for each feature the site n
 | `search.json` | Search in the header | `layout: search-index`, `lang: en`, `permalink: /search.json` |
 | `feed.xml` | The Atom feed | `layout: feed`, `lang: en`, `permalink: /feed.xml` |
 | `sitemap.xml` | The sitemap | `layout: sitemap`, `permalink: /sitemap.xml` |
+| `llms.txt`, `llms-full.txt` | A page list for agents ([llmstxt.org](https://llmstxt.org)) and every page's text in one file | `layout: llms`, `permalink: /llms.txt`; `layout: llms-full`, `permalink: /llms-full.txt` |
 | `404.md` | A styled not-found page | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
 
 Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files.
