@@ -10,7 +10,8 @@
   },
   "exports": {
     ".": "./src/doctor.mjs",
-    "./yaml": "./src/yaml.mjs"
+    "./yaml": "./src/yaml.mjs",
+    "./deprecations": "./src/deprecations.mjs"
   },
   "files": [
     "bin",

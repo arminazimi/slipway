@@ -23,6 +23,20 @@ Text output names the level, then each failed test with its findings as `path:li
 
 The JSON report has `spec`, `version`, `level` (`"L0"` to `"L3"`, or `null`), `notRun`, `tests` (every test with its `status`: `pass`, `fail`, or `not-run`), and `findings`. Each finding has `test`, `severity`, `message`, and when known `in` (`source` or `output`), `file` (relative to that folder), `line`, `key`, and `allowed`. The finding format is a draft until `doctor.output` fixes it.
 
+## Jekyll and Slipway checks
+
+When the source folder has a `_config.yml`, doctor also runs the checks in `src/checks/jekyll.mjs`. They are not spec tests: a finding is a `warning` with a `fix`, it never changes the level or the exit code, and in the report the test has `level: null` and `scope: "jekyll"`. Generator detection (`doctor.detect`) will decide when they run.
+
+| Check id | What it finds |
+| --- | --- |
+| `jekyll.stubs` | A file from `starter-files/` (except its README) that the site has not copied. |
+| `jekyll.deprecated` | A deprecated config key or front-matter field from `schema/deprecations.json` (ADR 0012), with its replacement. |
+| `jekyll.liquid-in-content` | `{{` or `{%` in the body of a Markdown page, outside code spans and code blocks: content that only Jekyll can render. |
+| `jekyll.translation-pair` | A `translation_key` with no page in one of the languages in `slipway.languages`. |
+| `jekyll.ui-strings` | A UI string key a site adds in `_data/i18n/<lang>.yml` that another listed language has no text for. Keys the theme has built in fall back to English and are not reported. |
+
+`schema/deprecations.json` is a copy too; `tools/theme/deprecations.mjs` uses the same finder (`slipway/deprecations`).
+
 ## What it does not do yet
 
 - `ae.schemas.config` is not run: which files a generator reads as configuration comes from generator detection (`doctor.detect`). For the same reason `ae.sourcemap.coverage` also lists drafts and partials.
