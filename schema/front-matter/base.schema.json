@@ -35,6 +35,7 @@
         { "type": "string" }
       ]
     },
-    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." }
+    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." },
+    "authorId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$", "description": "A key of `_data/authors.yml`." }
   }
 }

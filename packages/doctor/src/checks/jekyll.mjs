@@ -13,6 +13,7 @@ export const builtinKeys = [
   "skip", "not_found_title", "not_found_text", "go_home", "tags", "categories", "main_nav", "search", "search_none",
   "search_count", "theme", "mode_auto", "mode_light", "mode_dark", "docs_nav", "on_this_page", "previous", "next",
   "pager", "post_pager", "latest_posts", "min_read", "language", "copy", "copied", "copy_failed", "edit_label", "edit_prompt",
+  "by", "and", "comma", "about_author", "posts",
 ];
 
 /** Folders that hold theme code or generated files, not content. */

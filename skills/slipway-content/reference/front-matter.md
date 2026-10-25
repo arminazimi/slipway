@@ -14,6 +14,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `post` | `_posts/` | `post.schema.json` | A dated post. The date and slug come from the file name (YYYY-MM-DD-slug.md); `date` in the front matter overrides the date. |
 | `home` |  | `home.schema.json` | The landing page: a hero with an optional call to action, then the latest posts. |
 | `archive` |  | `archive.schema.json` | Every post, grouped by year. |
+| `author` |  | `author.schema.json` | One author's page: the avatar, bio, and links from `_data/authors.yml`, then that author's posts in the page's language. Bylines link here. |
 
 ## Every layout
 
@@ -35,9 +36,21 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
 | `search` | boolean |  |  | `false` leaves the page out of the search index. |
 
+## Only in `post`
+
+| Key | Type | Required | Allowed | What it does |
+| --- | --- | --- | --- | --- |
+| `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
+
 ## Only in `home`
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
 | `cta_text` | string |  | not empty | Label of the call-to-action button. Shown only with `cta_url`. Set together with `cta_url`. |
 | `cta_url` | string |  | `^(/\|https://)[^\s"<>]*$` | Where the call-to-action button goes. Set together with `cta_text`. |
+
+## Only in `author`
+
+| Key | Type | Required | Allowed | What it does |
+| --- | --- | --- | --- | --- |
+| `author` | string | yes | `^[A-Za-z0-9][A-Za-z0-9_-]*$` | The key of this author in `_data/authors.yml`. |
