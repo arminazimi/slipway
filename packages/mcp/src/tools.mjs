@@ -1,9 +1,11 @@
-// The read-only tools of the Slipway MCP server. Each takes the site directory and returns plain data or throws.
+// The read-only tools of the Slipway MCP server. Each takes the site directory and returns plain data (or a promise of it) or throws.
 import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { validateConfig } from "../../../tools/theme/config.mjs";
+import { exitCode } from "../../doctor/src/cli.mjs";
+import { doctor, levels } from "../../doctor/src/doctor.mjs";
 
 export const themeRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const frontMatterDir = join(themeRoot, "schema/front-matter");
@@ -68,4 +70,15 @@ export function readConfig(site, file = "_config.yml") {
   }
   const { ok, errors } = validateConfig(config);
   return { file, valid: ok, errors, config };
+}
+
+/**
+ * `slipway doctor` on the site, with `build` as the output folder inside it. Returns the doctor's JSON report with
+ * `ok` and `target` first: `ok` follows the CLI's exit code, true when the site reaches `level`, or with no level
+ * when every MUST test passes. Never uses the network.
+ */
+export async function runDoctor(site, { build, level } = {}) {
+  if (level !== undefined && !levels.includes(level)) throw new Error(`level must be one of ${levels.join(", ")}`);
+  const report = await doctor(realpathSync(site), { build: build === undefined ? null : insideSite(site, build) });
+  return { ok: exitCode(report, level) === 0, target: level ?? null, ...report };
 }
