@@ -1,0 +1,11 @@
+{%- comment -%}
+  Reads a renamed config key or front-matter field (ADR 0012, rule 4): the new name wins when it is
+  set, else the deprecated old one. The result is in sl_compat. Call it with the include tag,
+  new= the new name and old= the old one (each under site or page), then print sl_compat.
+  Every entry in schema/deprecations.json has one such call; tools/theme/deprecations.test.mjs checks it.
+{%- endcomment -%}
+{%- if include.new == nil -%}
+  {%- assign sl_compat = include.old -%}
+{%- else -%}
+  {%- assign sl_compat = include.new -%}
+{%- endif -%}

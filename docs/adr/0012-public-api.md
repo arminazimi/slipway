@@ -26,6 +26,8 @@ Sites pin a version with `remote_theme: arminazimi/slipway@vX.Y.Z` or the `slipw
 
    Example: `1.3.0` renames `slipway.tokens.radius` to `slipway.tokens.radius_card`. In `1.3.0` both keys work, the new one wins when both are set, and the build prints `_config.yml:14 slipway.tokens.radius is deprecated since 1.3.0, use slipway.tokens.radius_card`. The old key is removed no earlier than `2.0.0`.
 
+   The renames live in [`schema/deprecations.json`](../../schema/deprecations.json). The layouts read each one through `_includes/compat.html`, which works on classic Pages because it is Liquid; `tools/theme/deprecations.mjs <site>` prints the warnings, since classic Pages runs no plugin that could.
+
 5. **Visual changes are not breaking.** A new default colour, spacing, or font within the same tokens is a minor change. Removing or renaming a token is not.
 
 ## The public surface
@@ -67,8 +69,9 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
+| `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
 
-Collections and their schemas are added by `schema.front-matter`; this table grows with it.
+Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home` and `archive`. `front-matter.test.mjs` fails when a schema field is missing from this table.
 
 ### Layouts
 
@@ -92,8 +95,10 @@ Includes are internal, so the theme can restructure its markup. One is public, b
 | Include | Parameters | Public | Tested by |
 | --- | --- | --- | --- |
 | `t.html` | `key` (required), `lang` (defaults to the page's) | yes | `i18n.test.mjs` |
+| `head-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<head>` | yes | `overrides.test.mjs` |
+| `footer-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<footer>` | yes | `overrides.test.mjs` |
 
-The override slots `head-custom.html` and `footer-custom.html` become public with `standalone.overrides`. Shadowing any other include works but is unsupported: it may break in a minor release.
+The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). Shadowing any other include works but is unsupported: it may break in a minor release.
 
 ### CSS custom properties
 
@@ -124,7 +129,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 
 ## Consequences
 
-- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and `docs/overrides.md` (`standalone.overrides`) will say so.
+- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and [docs/overrides.md](../overrides.md) says so.
 - Adding a config key, front-matter field, layout, or token means adding a row here in the same pull request.
 - Items marked *not yet tested* get tests before `1.0.0` (the `1.0 readiness review` task checks this).
 - `standalone.deprecations` and `standalone.upgrade-test` implement rule 4.

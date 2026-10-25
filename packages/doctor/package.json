@@ -1,0 +1,30 @@
+{
+  "name": "slipway",
+  "version": "0.0.0",
+  "private": true,
+  "description": "slipway doctor: checks a static site's source and built output against the agent-editable site spec, for any generator.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "slipway": "bin/slipway.mjs"
+  },
+  "exports": {
+    ".": "./src/doctor.mjs",
+    "./detect": "./src/detect.mjs",
+    "./yaml": "./src/yaml.mjs",
+    "./deprecations": "./src/deprecations.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "spec",
+    "schema"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "ajv": "^8.20.0",
+    "yaml": "^2.9.1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["site.config.yml"], "target": "file", "schema": "schema/config.schema.json" },
+    { "files": ["pages/**/*.md"], "target": "front-matter", "schema": "schema/page.schema.json" }
+  ]
+}

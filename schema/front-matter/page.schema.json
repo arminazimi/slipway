@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/page.schema.json",
+  "title": "Slipway front matter: page layout",
+  "description": "A plain page: a title, a description, and text. Also used by the default, tags, and not-found layouts.",
+  "type": "object",
+  "allOf": [{ "$ref": "base.schema.json" }]
+}

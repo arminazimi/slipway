@@ -12,7 +12,7 @@ A Slipway site runs in one of two modes. They read the same files (the content m
 
 The design is that you can start in classic mode and move to Actions mode later with no content or config changes, only the Pages source and the workflow. That is not tested yet.
 
-**Status:** the commands and plugins named below (`npm run twins`, `npm run sourcemap`, the generator and the lines plugin) are decided in the ADRs and not built yet; the tasks that build them are in [ROADMAP.md](../ROADMAP.md).
+**Status:** `npm run sourcemap` and the lines plugin (`_plugins/slipway_sourcemap.rb`) are built. The other commands and plugins named below (`npm run twins`, the twins generator) are decided in the ADRs and not built yet; the tasks that build them are in [ROADMAP.md](../ROADMAP.md).
 
 ## What each feature needs
 
@@ -21,10 +21,13 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Feature | Classic | Classic + command | Actions | Source |
 | --- | :---: | :---: | :---: | --- |
 | Layouts, includes, CSS, `remote_theme`, the gem, "Use this template" | yes | | yes | [foundation.layout](../ROADMAP.md) |
+| Override slots (`head-custom.html`, `footer-custom.html`, `custom.css`) | yes | | yes | [docs/overrides.md](overrides.md) |
+| Renamed config keys and front-matter fields keep working | yes, in Liquid (`compat.html`) | Warnings from `node tools/theme/deprecations.mjs <site>` | yes | [ADR 0012](adr/0012-public-api.md) |
 | Right-to-left and `direction` in front matter | yes | | yes | [ADR 0006](adr/0006-markdown-twins.md) |
 | Markdown twin of every page (the same address with `.md`) | | Stubs from `npm run twins` | A generator plugin, no stubs | [ADR 0006](adr/0006-markdown-twins.md) |
 | Page-to-file source map (level 0): a `sourcemap.json` stub on the `sourcemap` layout | yes, in Liquid | | yes | [ADR 0007](adr/0007-source-maps.md) |
 | Section and link to exact line (levels 1 and 2) | | `npm run sourcemap` and a committed `sourcemap.json` | Generated at build, cannot go stale | [ADR 0007](adr/0007-source-maps.md) |
+| "Edit with your agent" button on each section | The page's file, no line | The page's file, no line (the layouts cannot read a committed map) | File and line, from the plugin | [agent.edit-button](../ROADMAP.md) |
 | Atom feed per language and a sitemap with `hreflang` | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
 | Verification with Seaworthy | In CI, not a gate on publishing | | In the workflow, before it deploys | [ROADMAP.md](../ROADMAP.md) |
 

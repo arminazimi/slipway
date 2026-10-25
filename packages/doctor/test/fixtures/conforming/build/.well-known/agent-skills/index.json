@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "edit-example",
+      "description": "Edit the Example site: where content lives, its schemas, and how to check a change.",
+      "url": "/.well-known/agent-skills/edit-example/SKILL.md"
+    }
+  ]
+}

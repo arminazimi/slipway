@@ -1,0 +1,19 @@
+{
+  "name": "@slipway/mcp",
+  "version": "0.0.0",
+  "private": true,
+  "description": "MCP server for Slipway sites: read-only tools for layouts and config, over stdio.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "slipway-mcp": "bin/slipway-mcp.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "ajv": "^8.20.0",
+    "yaml": "^2.9.1"
+  }
+}

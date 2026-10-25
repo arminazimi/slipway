@@ -398,6 +398,25 @@
     color: var(--sl-color-text);
   }
 
+  /* "Edit with your agent" (assets/js/edit-prompt.js), added to h2 and h3 by the script. */
+  .sl-edit {
+    margin-inline-start: var(--sl-space-2);
+    padding: 0 var(--sl-space-2);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    font-weight: normal;
+    vertical-align: middle;
+    color: var(--sl-color-muted);
+    background: var(--sl-color-canvas);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    cursor: pointer;
+  }
+
+  .sl-edit:hover {
+    color: var(--sl-color-text);
+  }
+
   .highlight .c,
   .highlight .c1,
   .highlight .cm,

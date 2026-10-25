@@ -25,7 +25,7 @@ export function bundleAvailable() {
   return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8" }).status === 0;
 }
 
-/** `name` is an example under examples/, or an absolute path to another site folder (tests use throwaway sites). */
+/** Builds examples/<name>, or the site at `name` when it is an absolute path (a test fixture). */
 export function buildExample(mode, out, name = "minimal") {
   const example = isAbsolute(name) ? name : join(root, "examples", name);
   if (!existsSync(example)) throw new Error(`no example site named ${name}`);
@@ -33,15 +33,19 @@ export function buildExample(mode, out, name = "minimal") {
   let source = example;
   const configs = [join(example, "_config.yml")];
 
-  if (mode === "template") {
-    source = mkdtempSync(join(realpathSync(tmpdir()), "slipway-template-"));
+  const original = readFileSync(join(example, "_config.yml"), "utf8");
+  // A site that names only remote_theme (examples/bare) builds against this checkout in gem mode, not GitHub's copy.
+  const remoteOnly = mode === "gem" && /^remote_theme:/m.test(original);
+  if (mode === "template" || remoteOnly) {
+    source = mkdtempSync(join(realpathSync(tmpdir()), `slipway-${mode}-`));
     cpSync(example, source, { recursive: true });
-    for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true });
-    const config = readFileSync(join(example, "_config.yml"), "utf8").replace(/^theme:.*\n/m, "");
+    // force: false keeps the site's own files, so an override slot the example fills wins, as it does after "Use this template".
+    if (mode === "template") for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true, force: false });
+    const config = remoteOnly ? original.replace(/^remote_theme:.*$/m, "theme: slipway-theme") : original.replace(/^(remote_)?theme:.*\n/gm, "");
     writeFileSync(join(source, "_config.yml"), config);
     configs[0] = join(source, "_config.yml");
   }
-  if (mode === "remote") configs.push(join(example, "_config.remote.yml"));
+  if (mode === "remote" && existsSync(join(example, "_config.remote.yml"))) configs.push(join(example, "_config.remote.yml"));
 
   rmSync(out, { recursive: true, force: true });
   mkdirSync(dirname(out), { recursive: true });
@@ -57,7 +61,7 @@ export function buildExample(mode, out, name = "minimal") {
       env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
     },
   );
-  if (mode === "template") rmSync(source, { recursive: true, force: true });
+  if (source !== example) rmSync(source, { recursive: true, force: true });
   if (result.status !== 0) throw new Error(`jekyll build (${mode}) failed:\n${result.stdout}\n${result.stderr}`);
   return out;
 }

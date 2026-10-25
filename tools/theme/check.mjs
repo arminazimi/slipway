@@ -15,6 +15,9 @@ import { fileURLToPath } from "node:url";
 import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, exampleNames, root } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
+import { findDeprecations } from "./deprecations.mjs";
+import { rtlChecks } from "../../packages/doctor/src/checks/rtl.mjs";
+import { Site } from "../../packages/doctor/src/site.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
 
 export const checkedModes = ["gem", "template"];
@@ -83,6 +86,11 @@ export function main(env = process.env) {
     process.exitCode = 1;
   } else console.log("OK: example navigation");
 
+  // Deprecated names warn and never fail (ADR 0012, rule 4); the examples should still use none.
+  const deprecated = exampleNames().flatMap((name) => findDeprecations(join(root, "examples", name)).map((d) => `examples/${name}/${d.message}`));
+  if (deprecated.length) console.log(`WARN: deprecated keys in the examples\n${deprecated.map((d) => `  ${d}`).join("\n")}`);
+  else console.log("OK: no deprecated keys in the examples");
+
   if (!bundleAvailable()) {
     skipOrFail(env.SLIPWAY_REQUIRE_BUILD === "1", "the example site was not built: install Ruby 3.3 (.ruby-version) and run `bundle install`");
     return;
@@ -111,6 +119,13 @@ export function main(env = process.env) {
             process.exitCode = 1;
           }
         }
+        // Every example, the Persian one above all, passes slipway doctor's right-to-left checks.
+        const doctorSite = new Site(join(root, "examples", name), { build: site });
+        const rtl = Object.values(rtlChecks).flatMap((check) => check(doctorSite).findings);
+        if (rtl.length) {
+          console.error(`FAIL: right-to-left findings (${label})\n${rtl.map((f) => `  ${f.file}:${f.line} ${f.message}`).join("\n")}`);
+          process.exitCode = 1;
+        } else console.log(`OK: no right-to-left findings (${label})`);
         if (!cli) continue;
         const { ok, output } = runSeaworthy(cli, site);
         if (ok) console.log(`OK: Seaworthy (${label})`);

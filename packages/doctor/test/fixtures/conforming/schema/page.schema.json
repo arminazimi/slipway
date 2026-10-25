@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["title"],
+  "properties": {
+    "title": { "type": "string", "description": "The page title." },
+    "layout": { "enum": ["page"], "description": "The page layout." }
+  },
+  "additionalProperties": false
+}

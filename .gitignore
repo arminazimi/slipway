@@ -18,3 +18,6 @@ planning/roadmap/out/
 .tmp-sourcemap-docs/
 .tmp-sourcemap-blog/
 .tmp-sourcemap-persian/
+.tmp-overrides-*/
+.tmp-bare-gem/
+.tmp-bare-template/

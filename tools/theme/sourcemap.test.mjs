@@ -56,8 +56,9 @@ test("a source outside the site folder is rejected", () => {
 const built = (name, out) => JSON.parse(readFileSync(join(buildExample("gem", join(root, out), name), "sourcemap.json"), "utf8"));
 const generated = (entry) => !/(\/|\.html)$/.test(entry.url) || /^assets\/|\.(xml|json|css|scss|js|md\.html)$/.test(entry.source);
 
-test("every example has a sourcemap.json stub on the sourcemap layout", () => {
-  for (const name of exampleNames()) {
+test("every example but bare has a sourcemap.json stub on the sourcemap layout", () => {
+  // bare proves a site works with only _config.yml and index.md, so it has no map (#166).
+  for (const name of exampleNames().filter((n) => n !== "bare")) {
     assert.match(readFileSync(join(root, "examples", name, "sourcemap.json"), "utf8"), /^---\nlayout: sourcemap\npermalink: \/sourcemap\.json\n---/, name);
   }
 });

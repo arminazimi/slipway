@@ -27,6 +27,8 @@
 {%- when 'copy' -%}کپی
 {%- when 'copied' -%}کپی شد
 {%- when 'copy_failed' -%}Ctrl+C را بزنید
+{%- when 'edit_label' -%}ویرایش با دستیار
+{%- when 'edit_prompt' -%}فایل {source} را ویرایش کن. متن فعلی: «{text}». تغییر:
 {%- endcase -%}
 {%- else -%}
 {%- case include.key -%}
@@ -56,5 +58,7 @@
 {%- when 'copy' -%}Copy
 {%- when 'copied' -%}Copied
 {%- when 'copy_failed' -%}Press Ctrl+C
+{%- when 'edit_label' -%}Edit with your agent
+{%- when 'edit_prompt' -%}Edit {source}. Current text: "{text}". Change:
 {%- endcase -%}
 {%- endif -%}

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
 # Navigation, validated by schema/navigation.schema.json. `main` is the header menu and `docs` the
 # sidebar of the doc layout (and its previous/next links), in reading order. A language adds
 # `main_<lang>` or `docs_<lang>`; one without them uses the plain key.

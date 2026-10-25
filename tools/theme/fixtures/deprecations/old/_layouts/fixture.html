@@ -1,0 +1,8 @@
+---
+layout: default
+---
+{% include compat.html new=site.slipway.fixture_welcome old=site.slipway.fixture_greeting %}
+<p class="fixture-welcome">{{ sl_compat }}</p>
+{% include compat.html new=page.fixture_eyebrow old=page.fixture_kicker %}
+<p class="fixture-eyebrow">{{ sl_compat }}</p>
+{{ content }}

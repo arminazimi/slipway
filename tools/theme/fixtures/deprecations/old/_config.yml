@@ -1,0 +1,6 @@
+# Uses the deprecated names from ../deprecations.json; new/ is the same site with the new names.
+title: Deprecations fixture
+lang: en
+theme: slipway-theme
+slipway:
+  fixture_greeting: Welcome aboard

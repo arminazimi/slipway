@@ -1,0 +1,25 @@
+{%- comment -%}
+  include.html with a data-source attribute on every h2 and h3, for "Edit with your agent"
+  (assets/js/edit-prompt.js): "path:line" when the Actions plugin set page.slipway_sections from the
+  source map, the page's file alone otherwise (classic mode cannot know lines, ADR 0007).
+{%- endcomment -%}
+{%- assign sl_src_path = page.path | escape -%}
+{%- assign sl_src_parts = include.html | split: '<h' -%}
+{%- for part in sl_src_parts -%}
+  {%- if forloop.first %}{{ part }}{% continue %}{% endif -%}
+  {%- assign sl_src_level = part | slice: 0, 1 -%}
+  {%- assign sl_src_next = part | slice: 1, 1 -%}
+  {%- if sl_src_level == '2' or sl_src_level == '3' -%}
+    {%- if sl_src_next == ' ' or sl_src_next == '>' -%}
+      {%- assign sl_src = sl_src_path -%}
+      {%- assign sl_src_tag = part | split: '>' | first -%}
+      {%- if sl_src_tag contains 'id="' -%}
+        {%- assign sl_src_id = sl_src_tag | split: 'id="' | last | split: '"' | first -%}
+        {%- for section in page.slipway_sections -%}
+          {%- if section.id == sl_src_id %}{% assign sl_src = sl_src_path | append: ':' | append: section.line %}{% break %}{% endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+      <h{{ sl_src_level }} data-source="{{ sl_src }}"{{ part | slice: 1, part.size }}
+    {%- else -%}<h{{ part }}{%- endif -%}
+  {%- else -%}<h{{ part }}{%- endif -%}
+{%- endfor -%}
