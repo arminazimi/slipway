@@ -4,6 +4,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { checks } from "./checks.mjs";
+import { detect } from "./detect.mjs";
+import { locate } from "./report.mjs";
 import * as jekyll from "./checks/jekyll.mjs";
 import { Site } from "./site.mjs";
 
@@ -31,9 +33,11 @@ export function levelReached(results) {
 
 /**
  * Checks a site. `source` is the source folder, `build` the built output folder (optional).
- * Returns `{ spec, version, level, notRun, tests, findings }`; each finding has the test id,
- * `severity` (`error` for a MUST, `warning` for a SHOULD), the file relative to the source or
- * output folder (`in`), and the line and key when known. Generator checks follow the spec tests with
+ * Returns the report in spec/agent-editable/report.schema.json: `{ spec, version, generator, level,
+ * notRun, tests, findings }`. Each finding has the test `id`, `severity` (`error` for a MUST,
+ * `warning` for a SHOULD), the file relative to the source or output folder (`in`), and the line
+ * and key when known. A finding on a built page names its source file through the source map.
+ * `generator` is the detected site generator, or `"unknown"`. Generator checks follow the spec tests with
  * `level: null`, `keyword: null`, and the generator as `scope`; their findings are warnings with a `fix`.
  * `deprecations` replaces the packaged list of deprecated names (for tests).
  */
@@ -43,7 +47,7 @@ export async function doctor(source, { build = null, network = false, tests = lo
   const site = new Site(source, { build, network });
   const results = [];
   for (const test of tests.tests) {
-    const result = { id: test.id, level: test.level, keyword: test.keyword, scope: test.scope, status: "pass", findings: [] };
+    const result = { id: test.id, level: test.level, keyword: test.keyword, scope: test.scope, description: test.description, status: "pass", findings: [] };
     if (test.how === "review") {
       result.status = "not-run";
       result.reason = "decided by a person: " + test.check;
@@ -62,14 +66,16 @@ export async function doctor(source, { build = null, network = false, tests = lo
       results.push({ id, level: null, keyword: null, scope: name, ...(await check(site, { deprecations })) });
     }
   }
+  for (const result of results) result.findings = result.findings.map((finding) => locate(site, finding));
   const findings = results.flatMap((result) =>
     result.status === "fail"
-      ? result.findings.map((finding) => ({ test: result.id, severity: result.keyword === "MUST" ? "error" : "warning", ...finding }))
+      ? result.findings.map((finding) => ({ id: result.id, severity: result.keyword === "MUST" ? "error" : "warning", ...finding }))
       : [],
   );
   return {
     spec: "agent-editable",
     version: tests.version,
+    generator: detect(site.source).generator,
     level: levelReached(results),
     notRun: results.filter((r) => r.status === "not-run").map((r) => r.id),
     tests: results,

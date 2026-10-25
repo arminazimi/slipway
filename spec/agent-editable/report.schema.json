@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/blob/main/spec/agent-editable/report.schema.json",
+  "title": "Agent-editable site checker report",
+  "description": "What a checker such as `slipway doctor --format json` prints: the level a site reaches and each finding with its file and line. Defined in levels.md, \"How a checker reports a level\".",
+  "type": "object",
+  "required": ["spec", "version", "generator", "level", "notRun", "tests", "findings"],
+  "properties": {
+    "spec": { "const": "agent-editable", "description": "The spec the site was checked against." },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$", "description": "The spec version, as in tests.json." },
+    "generator": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The site's generator in lowercase, such as `hugo`, or `unknown` when the checker could not tell."
+    },
+    "level": {
+      "enum": ["L0", "L1", "L2", "L3", null],
+      "description": "The highest level reached, or null when an L0 MUST fails."
+    },
+    "notRun": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/testId" },
+      "uniqueItems": true,
+      "description": "The tests the checker did not run, for a person to finish."
+    },
+    "tests": {
+      "type": "array",
+      "description": "Every test in tests.json, in its order, with how it ended, then the checker's own checks for the site's generator.",
+      "items": {
+        "type": "object",
+        "required": ["id", "level", "keyword", "scope", "status", "findings"],
+        "properties": {
+          "id": { "$ref": "#/$defs/testId" },
+          "level": { "enum": ["L0", "L1", "L2", "L3", null], "description": "null for a generator check, which never changes the level." },
+          "keyword": { "enum": ["MUST", "SHOULD", null], "description": "null for a generator check." },
+          "scope": { "type": "string", "minLength": 1, "description": "`source`, `output`, or `both` for a spec test; the generator's name for a generator check." },
+          "description": { "type": "string" },
+          "status": { "enum": ["pass", "fail", "not-run"] },
+          "reason": { "type": "string", "description": "Why a test was not run, or how it passed in part." },
+          "findings": { "type": "array", "items": { "$ref": "#/$defs/location" } }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "description": "The findings of every failed test, in test order.",
+      "items": { "$ref": "#/$defs/finding" }
+    }
+  },
+  "$defs": {
+    "testId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z0-9-]+)+$",
+      "description": "A spec test id from tests.json (`ae.`), or a generator check id that starts with the generator's name, such as `jekyll.stubs`."
+    },
+    "location": {
+      "type": "object",
+      "required": ["message"],
+      "properties": {
+        "message": { "type": "string", "minLength": 1, "description": "What is wrong, without the file and line." },
+        "in": {
+          "enum": ["source", "output"],
+          "description": "The folder `file` is relative to. A finding on a built page that the source map covers is moved to `source`."
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?![/\\\\])(?!.*\\\\)",
+          "description": "The file, relative to the folder `in` names, with forward slashes."
+        },
+        "line": { "type": "integer", "minimum": 1, "description": "1-based, front matter included." },
+        "column": { "type": "integer", "minimum": 1, "description": "1-based." },
+        "key": { "type": "string", "description": "The config key, front-matter field, URL, or heading id the finding is about." },
+        "allowed": { "type": "array", "items": { "type": "string" }, "description": "The values that would be valid." },
+        "fix": { "type": "string", "minLength": 1, "description": "A change that would fix the finding, in words an agent can act on." },
+        "output": {
+          "type": "object",
+          "required": ["file"],
+          "properties": { "file": { "type": "string", "minLength": 1 } },
+          "additionalProperties": false,
+          "description": "The built file the finding was found in, when `file` was moved to its source through the source map."
+        }
+      }
+    },
+    "finding": {
+      "allOf": [{ "$ref": "#/$defs/location" }],
+      "required": ["id", "severity", "message"],
+      "properties": {
+        "id": { "$ref": "#/$defs/testId", "description": "The test or generator check the finding belongs to." },
+        "severity": { "enum": ["error", "warning"], "description": "`error` for a failed MUST, `warning` for a failed SHOULD or a generator check." }
+      }
+    }
+  }
+}

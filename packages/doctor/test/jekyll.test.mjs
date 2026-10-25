@@ -9,7 +9,7 @@ import { builtinKeys, checks, stubs } from "../src/checks/jekyll.mjs";
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
 const repo = here("../../../");
 const fixture = (name) => here(`fixtures/${name}`);
-const jekyllFindings = (report) => report.findings.filter((f) => f.scope === "jekyll" || f.test.startsWith("jekyll."));
+const jekyllFindings = (report) => report.findings.filter((f) => f.scope === "jekyll" || f.id.startsWith("jekyll."));
 const ids = Object.keys(checks);
 
 /** Every file under `dir`, dot-folders included, as forward-slash paths. */
@@ -31,18 +31,18 @@ test("the passing fixture and examples/minimal run every Jekyll check with no fi
 test("each failing fixture gives exactly one warning with file, line, and fix", async () => {
   const deprecations = JSON.parse(readFileSync(join(fixture("jekyll-deprecated"), "deprecations.json"), "utf8")).deprecations;
   const expected = {
-    "jekyll-stubs": { test: "jekyll.stubs", file: "AGENTS.md", line: undefined },
-    "jekyll-deprecated": { test: "jekyll.deprecated", file: "fa/index.md", line: 5 },
-    "jekyll-liquid": { test: "jekyll.liquid-in-content", file: "index.md", line: 9 },
-    "jekyll-translation": { test: "jekyll.translation-pair", file: "index.md", line: 4 },
-    "jekyll-ui-strings": { test: "jekyll.ui-strings", file: "_data/i18n/fa.yml", line: 2 },
+    "jekyll-stubs": { id: "jekyll.stubs", file: "AGENTS.md", line: undefined },
+    "jekyll-deprecated": { id: "jekyll.deprecated", file: "fa/index.md", line: 5 },
+    "jekyll-liquid": { id: "jekyll.liquid-in-content", file: "index.md", line: 9 },
+    "jekyll-translation": { id: "jekyll.translation-pair", file: "index.md", line: 4 },
+    "jekyll-ui-strings": { id: "jekyll.ui-strings", file: "_data/i18n/fa.yml", line: 2 },
   };
   for (const [name, want] of Object.entries(expected)) {
     const report = await doctor(fixture(name), { deprecations });
     const found = jekyllFindings(report);
     assert.equal(found.length, 1, `${name}: ${JSON.stringify(found)}`);
     const [finding] = found;
-    assert.deepEqual({ test: finding.test, file: finding.file, line: finding.line }, want, name);
+    assert.deepEqual({ id: finding.id, file: finding.file, line: finding.line }, want, name);
     assert.equal(finding.severity, "warning", name);
     assert.ok(finding.fix, `${name} has no fix`);
   }
