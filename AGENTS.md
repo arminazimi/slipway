@@ -10,7 +10,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 
 - `npm ci` installs the dev dependencies (ajv, yaml) the theme tests use. `npm run check`: validates `ROADMAP.md`, runs the tooling tests, builds every example site with the GitHub Pages gem, and runs Seaworthy on each. Run it before you say a change is done. The site step skips with a notice when Ruby 3.3 is missing; `SLIPWAY_REQUIRE_BUILD=1` and `SLIPWAY_REQUIRE_SEAWORTHY=1` turn skips into failures. Seaworthy is fetched from git at the commit in `tools/seaworthy/pin.json` and built into `.seaworthy/` on the first run (needs network); `npm run seaworthy:setup` does that alone, and `SEAWORTHY_CLI` points at your own built `packages/verify/dist/src/cli.js`. To update Seaworthy, change the commit in `pin.json`; when it is on npm (Seaworthy issue #122), replace the folder with a devDependency.
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
-- `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only.
+- `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
 ## CI
 
