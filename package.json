@@ -27,7 +27,7 @@
     "check:contrast": "node tools/theme/contrast.mjs",
     "check:logical": "node tools/theme/logical-css.mjs",
     "check:js": "node tools/theme/js-budget.mjs",
-    "build:skills": "node tools/skills/config-reference.mjs"
+    "build:skills": "node tools/skills/config-reference.mjs && node tools/skills/front-matter-reference.mjs"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
