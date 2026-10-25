@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
 title: Slipway docs
 lang: en
 theme: slipway-theme

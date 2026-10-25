@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
 title: Slipway minimal
 lang: en
 # The sample posts are dated at the edges of the Jalali year; publish them whatever the clock says.
