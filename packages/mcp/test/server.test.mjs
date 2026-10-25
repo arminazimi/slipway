@@ -9,6 +9,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 
 const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
 const docs = fileURLToPath(new URL("../../../examples/docs", import.meta.url));
+const conforming = fileURLToPath(new URL("../../doctor/test/fixtures/conforming", import.meta.url));
 
 async function connect(site, t) {
   const client = new Client({ name: "slipway-test", version: "0.0.0" });
@@ -25,9 +26,9 @@ test("initialize names the server", async (t) => {
   assert.ok(client.getServerCapabilities().tools);
 });
 
-test("tools/list returns exactly the two read-only tools with JSON Schema inputs", async (t) => {
+test("tools/list returns exactly the three read-only tools with JSON Schema inputs", async (t) => {
   const { tools } = await (await connect(docs, t)).listTools();
-  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["list_layouts", "read_config"]);
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["doctor", "list_layouts", "read_config"]);
   for (const tool of tools) {
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
@@ -107,4 +108,39 @@ test("paths outside the site are refused as tool errors, and the server keeps ru
   const unknown = await client.callTool({ name: "write_file", arguments: {} });
   assert.equal(unknown.isError, true);
   assert.equal((await client.callTool({ name: "list_layouts", arguments: {} })).isError, undefined);
+});
+
+test("doctor reports L3 and ok for a conforming site with its built output", async (t) => {
+  const result = await (await connect(conforming, t)).callTool({ name: "doctor", arguments: { build: "build", level: "L3" } });
+  assert.ok(!result.isError, result.content[0].text);
+  const report = json(result);
+  assert.equal(report.ok, true);
+  assert.equal(report.target, "L3");
+  assert.equal(report.spec, "agent-editable");
+  assert.equal(report.level, "L3");
+  assert.deepEqual(report.findings, []);
+});
+
+test("doctor returns findings with files, and ok false, for a site that fails MUST tests", async (t) => {
+  const report = json(await (await connect(docs, t)).callTool({ name: "doctor", arguments: {} }));
+  assert.equal(report.ok, false);
+  assert.equal(report.target, null);
+  assert.equal(report.level, null);
+  const missing = report.findings.find((finding) => finding.file === "AGENTS.md");
+  assert.ok(missing, JSON.stringify(report.findings));
+  assert.equal(missing.severity, "error");
+  assert.equal(missing.in, "source");
+});
+
+test("doctor refuses a build folder outside the site and an unknown level", async (t) => {
+  const client = await connect(conforming, t);
+  const outside = await client.callTool({ name: "doctor", arguments: { build: "../jekyll-pass" } });
+  assert.equal(outside.isError, true);
+  assert.match(outside.content[0].text, /outside the site directory/);
+  const level = await client.callTool({ name: "doctor", arguments: { level: "L9" } });
+  assert.equal(level.isError, true);
+  assert.match(level.content[0].text, /level must be one of L0, L1, L2, L3/);
+  const notString = await client.callTool({ name: "doctor", arguments: { build: 1 } });
+  assert.equal(notString.isError, true);
+  assert.match(notString.content[0].text, /build must be a string/);
 });

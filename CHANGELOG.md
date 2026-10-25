@@ -45,6 +45,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - `AGENTS.md` for every new site (`starter-files/AGENTS.md`): where content lives, the schemas, how to add a page, a post, a menu item, and a translation, how to check an edit, and a Never list (#75).
 - Agent Skill `skills/slipway-site` for creating and customizing a site, with a config reference generated from the schema (#76).
 - Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
+- `slipway doctor` as a `doctor` tool in `slipway-mcp` and an Agent Skill, `skills/slipway-doctor`, so agents check their own edits (#189).
 
 ### Fixed
 
