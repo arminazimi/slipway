@@ -1,0 +1,19 @@
+# Slipway's Hugo adapter: sourcemap.json, Markdown twins, and data-source on headings.
+# A site imports this module, then lists the output formats in its own `outputs` (see README.md).
+
+[module.hugoVersion]
+min = "0.123.0"
+
+[mediaTypes."text/markdown"]
+suffixes = ["md"]
+
+[outputFormats.sourcemap]
+mediaType = "application/json"
+baseName = "sourcemap"
+isPlainText = true
+notAlternative = true
+
+[outputFormats.markdown]
+mediaType = "text/markdown"
+baseName = "index"
+isPlainText = true
