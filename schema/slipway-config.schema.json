@@ -10,6 +10,10 @@
       "type": "string",
       "description": "Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset."
     },
+    "description": {
+      "type": "string",
+      "description": "One-sentence summary of the site, quoted under the title in llms.txt and llms-full.txt."
+    },
     "lang": {
       "type": "string",
       "default": "en",
