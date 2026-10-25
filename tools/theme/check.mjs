@@ -19,6 +19,7 @@ import { findDeprecations } from "./deprecations.mjs";
 import { rtlChecks } from "../../packages/doctor/src/checks/rtl.mjs";
 import { Site } from "../../packages/doctor/src/site.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
+import { validateExampleAuthors } from "./authors.mjs";
 
 export const checkedModes = ["gem", "template"];
 
@@ -85,6 +86,12 @@ export function main(env = process.env) {
     console.error(`FAIL: example navigation\n${navProblems.map((p) => `  ${p}`).join("\n")}`);
     process.exitCode = 1;
   } else console.log("OK: example navigation");
+
+  const authorProblems = validateExampleAuthors();
+  if (authorProblems.length) {
+    console.error(`FAIL: example authors\n${authorProblems.map((p) => `  ${p}`).join("\n")}`);
+    process.exitCode = 1;
+  } else console.log("OK: example authors");
 
   // Deprecated names warn and never fail (ADR 0012, rule 4); the examples should still use none.
   const deprecated = exampleNames().flatMap((name) => findDeprecations(join(root, "examples", name)).map((d) => `examples/${name}/${d.message}`));

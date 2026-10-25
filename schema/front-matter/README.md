@@ -12,9 +12,10 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 |---|---|---|---|
 | `page`, `default`, `tags`, `not-found` | (any other folder) | [`page.schema.json`](page.schema.json) | none |
 | `doc` | `_docs/` | [`doc.schema.json`](doc.schema.json) | none |
-| `post` | `_posts/` | [`post.schema.json`](post.schema.json) | none; the date and slug come from the `YYYY-MM-DD-slug.md` file name |
+| `post` | `_posts/` | [`post.schema.json`](post.schema.json) | `author`: one id or a list of ids from `_data/authors.yml`; the date and slug come from the `YYYY-MM-DD-slug.md` file name |
 | `home` | | [`home.schema.json`](home.schema.json) | `cta_text` and `cta_url`, set together |
 | `archive` | | [`archive.schema.json`](archive.schema.json) | none |
+| `author` | | [`author.schema.json`](author.schema.json) | `author`, required: the id of the author in `_data/authors.yml` |
 | any other layout (your own) | | [`base.schema.json`](base.schema.json) | |
 
 ## Shared keys

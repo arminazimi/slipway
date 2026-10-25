@@ -17,6 +17,11 @@
     font-family: var(--sl-font-persian);
   }
 
+  :lang(ar),
+  :lang(ar) :is(h1, h2, h3) {
+    font-family: var(--sl-font-arabic);
+  }
+
   main {
     max-inline-size: var(--sl-measure);
     margin-inline: auto;
@@ -365,6 +370,53 @@
   }
 }
 
+/* Authors: the byline, the author box after a post, and the author page. */
+@layer components {
+  .sl-authors {
+    display: grid;
+    gap: var(--sl-space-4);
+    margin-block: var(--sl-space-6);
+    padding-block-start: var(--sl-space-4);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  .sl-author {
+    display: flex;
+    gap: var(--sl-space-4);
+    align-items: flex-start;
+  }
+
+  .sl-avatar {
+    flex: none;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .sl-author-name {
+    margin: 0;
+    font-family: var(--sl-font-ui);
+    font-weight: 600;
+  }
+
+  .sl-author-bio {
+    margin-block: var(--sl-space-1) 0;
+    color: var(--sl-color-muted);
+  }
+
+  .sl-author-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sl-space-3);
+    margin: var(--sl-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+}
+
 /* Page layout: title, optional lead, and text at reading width. */
 @layer components {
   .sl-page-lead {
@@ -448,33 +500,42 @@
   }
 }
 
-/* Persian: taller lines, no italics (the script has none), and Persian digits in section numbers when opted in. */
+/* Persian and Arabic: taller lines, no italics (the script has none), and native digits in section numbers when opted in. */
 @layer components {
   @counter-style sl-persian-padded {
     system: extends persian;
     pad: 2 "۰";
   }
 
-  :lang(fa) body,
-  body:lang(fa) {
+  @counter-style sl-arabic-padded {
+    system: extends arabic-indic;
+    pad: 2 "٠";
+  }
+
+  :is(:lang(fa), :lang(ar)) body,
+  body:is(:lang(fa), :lang(ar)) {
     line-height: 1.9;
   }
 
-  :lang(fa) :is(h1, h2, h3) {
+  :is(:lang(fa), :lang(ar)) :is(h1, h2, h3) {
     line-height: 1.4;
     font-weight: 700;
   }
 
-  :lang(fa) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
+  :is(:lang(fa), :lang(ar)) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
     font-style: normal;
   }
 
-  :lang(fa) :is(.sl-doc-group, .sl-sections > h2::before) {
+  :is(:lang(fa), :lang(ar)) :is(.sl-doc-group, .sl-sections > h2::before) {
     letter-spacing: 0;
   }
 
   .sl-fa-digits .sl-sections > h2::before {
     content: counter(sl-section, sl-persian-padded);
+  }
+
+  .sl-ar-digits .sl-sections > h2::before {
+    content: counter(sl-section, sl-arabic-padded);
   }
 }
 
