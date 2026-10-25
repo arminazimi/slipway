@@ -9,6 +9,7 @@
   {%- if sl_desc != '' %}
   <meta name="description" content="{{ sl_desc | escape }}">
   {%- endif %}
+  {%- include jsonld.html %}
   <link rel="preload" href="{{ '/assets/fonts/source-serif-4-latin-wght-normal.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
   {%- capture sl_feed_url %}{% include layout-url.html layout='feed' %}{% endcapture %}
   {%- assign sl_feed_url = sl_feed_url | strip %}

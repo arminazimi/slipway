@@ -8,7 +8,7 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `title` | string |  | Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset. |
 | `lang` | string | `en` | Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction. |
 | `direction` | `ltr` or `rtl` |  | Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins. |
-| `author` | string or object |  | Author of the site, used in the feed. Either a name or an object with a name. |
+| `author` | string or object |  | Author of the site, used in the feed and as the author in the JSON-LD of posts and docs. Either a name or an object with a name. |
 | `url` | string |  | Scheme and host of the published site, without a trailing slash. Jekyll's absolute_url uses it for the feed, the sitemap, and canonical links; GitHub Pages sets it for you. |
 | `baseurl` | string |  | Path the site lives under, such as /my-project, without a trailing slash; empty at a domain root. Jekyll's relative_url and absolute_url use it for every link. |
 | `slipway` | object |  | Slipway's own settings. Unknown keys here are rejected, so a typo fails instead of being ignored. |

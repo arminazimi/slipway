@@ -25,6 +25,8 @@ export function totalBytes(sizes = scriptSizes()) {
 export function pageProblems(html, name = "page") {
   const problems = [];
   for (const [tag] of html.matchAll(/<script\b[^>]*>/g)) {
+    // A data block such as JSON-LD never runs, so it cannot block rendering.
+    if (/\btype="application\/(?:ld\+)?json"/.test(tag)) continue;
     const inlineInit = html.includes(tag + 'try{var t=localStorage.getItem("slipway-theme")');
     if (!/\bdefer\b/.test(tag) && !inlineInit) problems.push(`${name}: a script blocks rendering: ${tag}`);
   }

@@ -48,7 +48,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.tokens.font_body` | yes | `config.test.mjs` |
 | `slipway.tokens.radius` | yes | `config.test.mjs` |
 
-Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all six, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
+Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `direction` is public (`not-found.test.mjs`). `author` (feed and JSON-LD author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all six, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
 
 ### Data files
 

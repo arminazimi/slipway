@@ -22,7 +22,7 @@
       "description": "Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins."
     },
     "author": {
-      "description": "Author of the site, used in the feed. Either a name or an object with a name.",
+      "description": "Author of the site, used in the feed and as the author in the JSON-LD of posts and docs. Either a name or an object with a name.",
       "anyOf": [
         { "type": "string", "minLength": 1 },
         {
@@ -30,7 +30,7 @@
           "additionalProperties": true,
           "required": ["name"],
           "properties": {
-            "name": { "type": "string", "minLength": 1, "description": "Author name, shown in the feed." }
+            "name": { "type": "string", "minLength": 1, "description": "Author name, shown in the feed and the JSON-LD." }
           }
         }
       ]
