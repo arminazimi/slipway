@@ -31,6 +31,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
 - A release workflow, `CHANGELOG.md`, and `tools/release/prepare.mjs` (#174).
 - Build-time warnings for renamed config keys and front-matter fields, naming the replacement; the old names keep working (#173).
+- `slipway-mcp`, an MCP server for a site with two read-only tools, `list_layouts` and `read_config` (#78).
 - Editor autocomplete for `_config.yml` and `_data/navigation.yml` through the YAML language server, with `starter-files/.vscode/settings.json` and `docs/editor.md` (#74).
 
 ### Fixed

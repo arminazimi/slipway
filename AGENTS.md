@@ -27,6 +27,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `planning/roadmap/`: parser, issue builder, GitHub sync, labels, and tests. Ported from Seaworthy.
 - `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
 - `_plugins/slipway_sourcemap.rb`: the Actions-mode plugin that writes `sourcemap.json` with sections and links at their lines (ADR 0007 level 2). Classic Pages ignores it; `tools/sourcemap/` runs the same code for level 1. Not shipped in the gem: themes cannot ship plugins.
+- `packages/mcp/`: `slipway-mcp`, the MCP server (stdio) with the read-only tools `list_layouts` and `read_config`. It reads only inside the site directory it is given. Write tools come in `agent.mcp-tools`; see its README for registering it with an agent.
 - `examples/`: `minimal` (the smallest site), `docs` (the doc layout), `blog` (posts, tags, feed), and `persian` (a Persian-only, right-to-left site). `node tools/theme/build.mjs <gem|template|remote> [outDir] [example]` builds one (minimal by default) with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
 - `spec/`: contracts for any generator: the agent-editable site spec (`spec/agent-editable/0.1.md`) and the source map (`spec/sourcemap/v0.md`). Their normative text never names Jekyll or Liquid; `tools/spec/` tests that.
 - `planning/roadmap/briefs/<task-key>.md`: optional agent briefs merged into issues.
