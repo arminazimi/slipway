@@ -1,7 +1,8 @@
-// slipway doctor <dir> [--build <dir>] [--format text|json] [--level L0|L1|L2|L3] [--network]
+// slipway doctor <dir> [--build <dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
 // Exit codes: 0 the target level is reached (with no --level: no MUST fails), 1 findings, 2 usage error.
 import { relative, resolve, sep } from "node:path";
 import { doctor, levels } from "./doctor.mjs";
+import { describe, toSarif } from "./report.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
@@ -9,10 +10,12 @@ Checks a site against the agent-editable site spec and prints the level it reach
 
 Options:
   --build <dir>        the built output folder; tests on the output fail without it
-  --format text|json   output format (default: text)
+  --format <format>    text, json, or sarif (default: text)
   --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
   --network            fetch https schemas named in content-schemas.json
   -h, --help           show this help`;
+
+const formats = ["text", "json", "sarif"];
 
 /** Parses arguments. Returns `{ options }` or `{ error }`. */
 export function parseArgs(args) {
@@ -41,7 +44,7 @@ export function parseArgs(args) {
     }
   }
   if (options.source === null) return { error: "missing <source-dir>" };
-  if (!["text", "json"].includes(options.format)) return { error: `--format must be text or json, not ${options.format}` };
+  if (!formats.includes(options.format)) return { error: `--format must be text, json, or sarif, not ${options.format}` };
   if (options.level !== null && !levels.includes(options.level)) return { error: `--level must be one of ${levels.join(", ")}` };
   return { options };
 }
@@ -52,9 +55,7 @@ const display = (path) => relative(process.cwd(), path).split(sep).join("/") || 
 export function formatFinding(finding, { source, build }) {
   const base = finding.in === "output" ? build : source;
   const file = finding.file ? `${base ? display(resolve(base, finding.file)) : finding.file}${finding.line ? `:${finding.line}` : ""}` : "";
-  const key = finding.key ? `${finding.key}: ` : "";
-  const allowed = finding.allowed?.length ? ` (allowed: ${finding.allowed.join(", ")})` : "";
-  return `${file ? `${file} ` : ""}${key}${finding.message}${allowed}`;
+  return `${file ? `${file} ` : ""}${describe(finding)}`;
 }
 
 export function formatText(report, folders) {
@@ -100,6 +101,8 @@ export async function main(args, { log = console.log, error = console.error } = 
     error(`slipway: ${caught.message}`);
     return 2;
   }
-  log(options.format === "json" ? JSON.stringify(report, null, 2) : formatText(report, folders));
+  if (options.format === "json") log(JSON.stringify(report, null, 2));
+  else if (options.format === "sarif") log(JSON.stringify(toSarif(report, folders), null, 2));
+  else log(formatText(report, folders));
   return exitCode(report, options.level);
 }

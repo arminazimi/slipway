@@ -95,10 +95,25 @@ In JSON output the result has a `level` field, `"L0"` to `"L3"`, or `null` when 
 {
   "spec": "agent-editable",
   "version": "0.1",
+  "generator": "unknown",
   "level": "L2",
   "notRun": ["ae.edit-prompt.content", "ae.edit-prompt.no-send"],
-  "findings": []
+  "tests": [],
+  "findings": [
+    {
+      "id": "ae.sourcemap.ids",
+      "severity": "error",
+      "in": "source",
+      "file": "docs/intro.md",
+      "line": 6,
+      "key": "install",
+      "message": "is an h2, the map says h1",
+      "output": { "file": "docs/intro/index.html" }
+    }
+  ]
 }
 ```
 
-The rest of the output format, including `findings`, belongs to `doctor.output`.
+The whole report is defined by [`report.schema.json`](report.schema.json). `tests` lists every test with its `status`. Each finding has the test `id`, a `severity` (`error` for a failed MUST, `warning` for a failed SHOULD), and a `message`; when known it also has `file` (relative to the folder `in` names, `source` or `output`), `line`, `column`, `key`, `allowed` (the values that would be valid), and `fix`. A finding on a built page that the source map lists names the page's source file instead, at the line of the section it is about, and keeps the built file in `output`, so an agent edits the source and never the output.
+
+A checker may also write SARIF 2.1.0, for code scanning tools: each test is a rule with the test id as `ruleId`, `severity` becomes the result's `level`, and `file` and `line` become its location.

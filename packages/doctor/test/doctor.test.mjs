@@ -1,13 +1,16 @@
+import Ajv from "ajv";
+import Ajv2020 from "ajv/dist/2020.js";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { cpSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { doctor, levelReached, loadTests } from "../src/doctor.mjs";
 import { checks } from "../src/checks.mjs";
-import { exitCode, parseArgs } from "../src/cli.mjs";
+import { exitCode, formatFinding, parseArgs } from "../src/cli.mjs";
+import { locate, toSarif } from "../src/report.mjs";
 import { globToRegExp } from "../src/glob.mjs";
 import { codeSpans, headings } from "../src/markdown.mjs";
 
@@ -39,13 +42,13 @@ test("the conforming fixture reaches L3 with only the review and detection tests
 test("a site without AGENTS.md has no level", async () => {
   const report = await run("missing-agents");
   assert.equal(report.level, null);
-  assert.ok(report.findings.some((f) => f.test === "ae.agents-md.present" && f.file === "AGENTS.md" && f.message === "is missing"));
+  assert.ok(report.findings.some((f) => f.id === "ae.agents-md.present" && f.file === "AGENTS.md" && f.message === "is missing"));
 });
 
 test("invalid front matter stops at L0 with the file, line, key, and allowed values", async () => {
   const report = await run("invalid-front-matter");
   assert.equal(report.level, "L0");
-  const valid = report.findings.filter((f) => f.test === "ae.schemas.valid");
+  const valid = report.findings.filter((f) => f.id === "ae.schemas.valid");
   assert.deepEqual(
     valid.map(({ file, line, key, severity }) => ({ file, line, key, severity })),
     [
@@ -75,7 +78,7 @@ test("the packaged spec files match the repository's", () => {
 test("a failing SHOULD is a warning and never lowers the level", async (t) => {
   const report = await variant(t, (dir) => edit(join(dir, "AGENTS.md"), "## Never", "## Notes"));
   assert.equal(report.level, "L3");
-  assert.deepEqual(report.findings.map((f) => [f.test, f.severity]), [["ae.agents-md.never", "warning"]]);
+  assert.deepEqual(report.findings.map((f) => [f.id, f.severity]), [["ae.agents-md.never", "warning"]]);
 });
 
 test("the level is the highest one whose MUST tests and those below all pass", () => {
@@ -90,8 +93,8 @@ test("AGENTS.md: paths that do not exist are reported with their line; placehold
     writeFileSync(join(dir, "AGENTS.md"), `${readFileSync(join(dir, "AGENTS.md"), "utf8")}\nPosts go in \`pages/<slug>.md\`, never \`build/guide/\`; see \`docs/old.md\`.\n`),
   );
   assert.deepEqual(
-    report.findings.map(({ test, line, message }) => ({ test, line, message })),
-    [{ test: "ae.agents-md.paths-exist", line: 18, message: "`docs/old.md` does not exist in the source folder" }],
+    report.findings.map(({ id, line, message }) => ({ id, line, message })),
+    [{ id: "ae.agents-md.paths-exist", line: 18, message: "`docs/old.md` does not exist in the source folder" }],
   );
 });
 
@@ -107,7 +110,7 @@ test("source map: a stale line, a heading at another level, and a wrong data-sou
     edit(join(dir, "build/index.html"), "pages/index.md:6", "pages/index.md:7");
   });
   assert.equal(report.level, "L1");
-  const byTest = Object.fromEntries(report.findings.map((f) => [f.test, f]));
+  const byTest = Object.fromEntries(report.findings.map((f) => [f.id, f]));
   assert.equal(byTest["ae.sourcemap.lines"].file, "pages/index.md");
   assert.equal(byTest["ae.sourcemap.lines"].line, 6);
   assert.match(byTest["ae.sourcemap.ids"].message, /is an h2, the map says h1/);
@@ -166,7 +169,7 @@ test("skills: a SKILL.md whose name differs from the index fails L3", async (t) 
 test("without --build the output tests fail and say why", async () => {
   const report = await doctor(fixture("conforming"));
   assert.equal(report.level, null);
-  assert.ok(report.findings.some((f) => f.test === "ae.sourcemap.present" && /--build/.test(f.message)));
+  assert.ok(report.findings.some((f) => f.id === "ae.sourcemap.present" && /--build/.test(f.message)));
 });
 
 test("globs: * stays in one segment and ** spans any number", () => {
@@ -187,7 +190,7 @@ test("Markdown: code spans outside fences, and headings followed by a list", () 
 test("arguments: usage errors are reported, and --level picks the exit code", () => {
   assert.equal(parseArgs(["doctor"]).error, "missing <source-dir>");
   assert.equal(parseArgs(["check", "x"]).error, "unknown command: check");
-  assert.equal(parseArgs(["doctor", "x", "--format", "xml"]).error, "--format must be text or json, not xml");
+  assert.equal(parseArgs(["doctor", "x", "--format", "xml"]).error, "--format must be text, json, or sarif, not xml");
   assert.equal(parseArgs(["doctor", "x", "--level", "L9"]).error, "--level must be one of L0, L1, L2, L3");
   assert.equal(parseArgs(["doctor", "x", "--build"]).error, "--build needs a value");
   const report = { level: "L1", tests: [{ keyword: "MUST", status: "fail" }] };
@@ -225,4 +228,74 @@ test("cli: --level, usage errors, and a missing folder give exit codes 0, 1, and
   assert.equal(cli("doctor").status, 2);
   assert.equal(cli("doctor", "no/such/folder").status, 2);
   assert.match(cli("--help").stdout, /Usage: slipway doctor/);
+});
+
+const reportSchema = JSON.parse(readFileSync(join(repo, "spec/agent-editable/report.schema.json"), "utf8"));
+const validateReport = new Ajv2020({ allErrors: true, strict: false }).compile(reportSchema);
+
+// The official SARIF 2.1.0 schema, copied unchanged. It is draft-04; every keyword it uses means the same in
+// draft-07, so only its `id` is renamed for Ajv. Formats are not checked: the package has no ajv-formats.
+const sarifSchema = JSON.parse(readFileSync(here("sarif-schema-2.1.0.json"), "utf8"));
+const { id: sarifId, $schema: _draft04, ...sarifRest } = sarifSchema;
+const validateSarif = new Ajv({ allErrors: true, strict: false, validateFormats: false }).compile({ $id: sarifId, ...sarifRest });
+
+/** A heading at another level (an error on a section) and a visible edit control (a warning on a page). */
+function breakBuiltPages(dir) {
+  edit(join(dir, "build/guide/index.html"), /h1/g, "h2");
+  edit(join(dir, "build/index.html"), " hidden>", ">");
+}
+const sourcemapVariant = (t) => variant(t, breakBuiltPages);
+
+test("report: json validates against the report schema, passing or failing", async (t) => {
+  for (const report of [await run("conforming"), await run("invalid-front-matter"), await doctor(fixture("conforming")), await sourcemapVariant(t)]) {
+    assert.ok(validateReport(report), JSON.stringify(validateReport.errors));
+    assert.equal(report.generator, "unknown");
+  }
+});
+
+test("report: a finding on a built page names the Markdown file and the section's line", async (t) => {
+  const report = await sourcemapVariant(t);
+  const ids = report.findings.find((f) => f.id === "ae.sourcemap.ids");
+  assert.deepEqual(
+    { in: ids.in, file: ids.file, line: ids.line, output: ids.output, key: ids.key },
+    { in: "source", file: "pages/guide.md", line: 6, output: { file: "guide/index.html" }, key: "getting-started" },
+  );
+  const control = report.findings.find((f) => f.id === "ae.edit-prompt.without-script");
+  assert.deepEqual([control.in, control.file, control.line, control.output], ["source", "pages/index.md", undefined, { file: "index.html" }]);
+  assert.equal(formatFinding(ids, { source: "/s", build: "/s/build" }).split(" ")[0].endsWith("/s/pages/guide.md:6"), true);
+});
+
+test("report: a finding on a built page the source map does not list stays in the output", () => {
+  const site = { sourcemap: () => ({ data: { pages: [] } }), outputFile: () => null, isFile: () => true, source: "/s" };
+  const finding = { in: "output", file: "extra.html", key: "x", message: "m" };
+  assert.equal(locate(site, finding), finding);
+});
+
+test("sarif: the log validates against SARIF 2.1.0, with rule ids, levels, and source lines", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-sarif-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(fixture("conforming"), dir, { recursive: true });
+  breakBuiltPages(dir);
+  const report = await doctor(dir, { build: join(dir, "build") });
+  const sarif = toSarif(report, { source: dir, build: join(dir, "build") }, { cwd: dir });
+  assert.ok(validateSarif(sarif), JSON.stringify(validateSarif.errors));
+  const [run0] = sarif.runs;
+  assert.equal(run0.tool.driver.rules.length, report.tests.length);
+  const ids = run0.results.find((r) => r.ruleId === "ae.sourcemap.ids");
+  assert.equal(ids.level, "error");
+  assert.equal(run0.tool.driver.rules[ids.ruleIndex].id, "ae.sourcemap.ids");
+  assert.deepEqual(ids.locations[0].physicalLocation, { artifactLocation: { uri: "pages/guide.md" }, region: { startLine: 6 } });
+  assert.equal(run0.results.find((r) => r.ruleId === "ae.edit-prompt.without-script").level, "warning");
+  const outside = toSarif(report, { source: dir, build: join(dir, "build") }, { cwd: join(dir, "build") });
+  const moved = outside.runs[0].results.find((r) => r.ruleId === "ae.sourcemap.ids");
+  assert.equal(moved.locations[0].physicalLocation.artifactLocation.uri, pathToFileURL(join(dir, "pages/guide.md")).href);
+});
+
+test("cli: --format sarif prints a valid log with paths from the current folder", () => {
+  const dir = "packages/doctor/test/fixtures/invalid-front-matter";
+  const result = cli("doctor", dir, "--build", `${dir}/build`, "--format", "sarif");
+  assert.equal(result.status, 1, result.stderr);
+  const sarif = JSON.parse(result.stdout);
+  assert.ok(validateSarif(sarif), JSON.stringify(validateSarif.errors));
+  assert.ok(sarif.runs[0].results.some((r) => r.locations?.[0].physicalLocation.artifactLocation.uri === `${dir}/pages/index.md`));
 });

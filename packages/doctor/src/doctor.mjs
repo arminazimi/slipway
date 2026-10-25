@@ -3,6 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { checks } from "./checks.mjs";
+import { locate } from "./report.mjs";
 import { Site } from "./site.mjs";
 
 export const levels = ["L0", "L1", "L2", "L3"];
@@ -26,17 +27,19 @@ export function levelReached(results) {
 
 /**
  * Checks a site. `source` is the source folder, `build` the built output folder (optional).
- * Returns `{ spec, version, level, notRun, tests, findings }`; each finding has the test id,
- * `severity` (`error` for a MUST, `warning` for a SHOULD), the file relative to the source or
- * output folder (`in`), and the line and key when known.
+ * Returns the report in spec/agent-editable/report.schema.json: `{ spec, version, generator, level,
+ * notRun, tests, findings }`. Each finding has the test `id`, `severity` (`error` for a MUST,
+ * `warning` for a SHOULD), the file relative to the source or output folder (`in`), and the line
+ * and key when known. A finding on a built page names its source file through the source map.
+ * `generator` is the site generator, `"unknown"` until one is detected or given.
  */
-export async function doctor(source, { build = null, network = false, tests = loadTests() } = {}) {
+export async function doctor(source, { build = null, network = false, generator = "unknown", tests = loadTests() } = {}) {
   if (!existsSync(source)) throw new Error(`${source}: no such folder`);
   if (build && !existsSync(build)) throw new Error(`${build}: no such folder`);
   const site = new Site(source, { build, network });
   const results = [];
   for (const test of tests.tests) {
-    const result = { id: test.id, level: test.level, keyword: test.keyword, scope: test.scope, status: "pass", findings: [] };
+    const result = { id: test.id, level: test.level, keyword: test.keyword, scope: test.scope, description: test.description, status: "pass", findings: [] };
     if (test.how === "review") {
       result.status = "not-run";
       result.reason = "decided by a person: " + test.check;
@@ -47,16 +50,18 @@ export async function doctor(source, { build = null, network = false, tests = lo
       Object.assign(result, await checks[test.id](site, test));
     }
     if (result.status === "fail" && !result.findings.length) result.findings.push({ message: test.description });
+    result.findings = result.findings.map((finding) => locate(site, finding));
     results.push(result);
   }
   const findings = results.flatMap((result) =>
     result.status === "fail"
-      ? result.findings.map((finding) => ({ test: result.id, severity: result.keyword === "MUST" ? "error" : "warning", ...finding }))
+      ? result.findings.map((finding) => ({ id: result.id, severity: result.keyword === "MUST" ? "error" : "warning", ...finding }))
       : [],
   );
   return {
     spec: "agent-editable",
     version: tests.version,
+    generator,
     level: levelReached(results),
     notRun: results.filter((r) => r.status === "not-run").map((r) => r.id),
     tests: results,

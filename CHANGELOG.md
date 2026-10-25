@@ -29,6 +29,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Documented override slots: `head-custom.html`, `footer-custom.html`, and `custom.css`.
 - The public API under semver and the deprecation policy (ADR 0012, #172).
 - `slipway doctor`: checks a site's source and output against the agent-editable spec and prints the level it reaches (#181).
+- `slipway doctor --format json` and `--format sarif` for agents and GitHub code scanning; a finding on a built page names its Markdown file and line (#185).
 - An RFC process for spec changes, with a template, a 14-day review window, and `spec/CHANGELOG.md` (#180).
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
 - Conformance levels L0 to L3 for the agent-editable spec, with a machine-readable `tests.json` (#178).
