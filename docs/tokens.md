@@ -69,6 +69,7 @@ An override applies to both light and dark, so check its contrast in both. The s
 | `font.ui` | `--sl-font-ui` | Interface chrome: header, navigation, badges, buttons. | `system-ui, -apple-system, "Segoe UI", sans-serif` | same |
 | `font.mono` | `--sl-font-mono` | Code. | `"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace` | same |
 | `font.persian` | `--sl-font-persian` | All Persian text. | `Vazirmatn, "Source Serif 4", Tahoma, sans-serif` | same |
+| `font.arabic` | `--sl-font-arabic` | All Arabic text. | `Vazirmatn, "Source Serif 4", "Geeza Pro", "Segoe UI", Tahoma, sans-serif` | same |
 
 ## Type scale
 

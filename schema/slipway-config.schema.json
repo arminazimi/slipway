@@ -78,6 +78,14 @@
             "jalali": { "type": "boolean", "default": false, "description": "Print post dates in the Jalali calendar." }
           }
         },
+        "arabic": {
+          "type": "object",
+          "description": "Opt-in Arabic conventions for pages whose lang is ar.",
+          "additionalProperties": false,
+          "properties": {
+            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Arabic-Indic digits." }
+          }
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",

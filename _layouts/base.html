@@ -1,4 +1,5 @@
 {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_base = sl_lang | split: '-' | first -%}
 {%- assign sl_dir = page.direction | default: site.direction -%}
 {%- unless sl_dir -%}
   {%- capture sl_dir %}{% include dir.html lang=sl_lang %}{% endcapture -%}
@@ -6,7 +7,7 @@
 <!doctype html>
 <html lang="{{ sl_lang }}" dir="{{ sl_dir }}">
 {% include head.html %}
-<body{% if sl_lang == 'fa' and site.slipway.persian.digits %} class="sl-fa-digits"{% endif %} data-copy="{% include t.html key='copy' %}" data-copied="{% include t.html key='copied' %}" data-copy-failed="{% include t.html key='copy_failed' %}">
+<body{% if sl_base == 'fa' and site.slipway.persian.digits %} class="sl-fa-digits"{% elsif sl_base == 'ar' and site.slipway.arabic.digits %} class="sl-ar-digits"{% endif %} data-copy="{% include t.html key='copy' %}" data-copied="{% include t.html key='copied' %}" data-copy-failed="{% include t.html key='copy_failed' %}">
   {% include skip-link.html %}
   {% include header.html %}
   <main id="main" class="sl-sections sl-layout-{{ page.layout }}" tabindex="-1">

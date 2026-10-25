@@ -17,7 +17,7 @@ test("the persian setting accepts digits and jalali and nothing else", () => {
 
 test("Persian text has taller lines, no italics, and Persian section numbers behind the opt-in class", () => {
   const css = read("assets/css/slipway.css");
-  const fa = css.slice(css.indexOf("Persian: taller lines"));
+  const fa = css.slice(css.indexOf("Persian and Arabic: taller lines"));
   assert.match(fa, /line-height: 1\.9/);
   assert.match(fa, /font-style: normal/);
   assert.match(fa, /\.sl-fa-digits \.sl-sections > h2::before/);
