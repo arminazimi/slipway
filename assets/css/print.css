@@ -58,3 +58,7 @@ a[href^="http"]::after {
 .sl-copy {
   display: none;
 }
+
+.sl-edit {
+  display: none;
+}

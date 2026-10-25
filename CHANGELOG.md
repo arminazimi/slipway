@@ -35,6 +35,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Build-time warnings for renamed config keys and front-matter fields, naming the replacement; the old names keep working (#173).
 - `slipway-mcp`, an MCP server for a site with two read-only tools, `list_layouts` and `read_config` (#78).
 - Editor autocomplete for `_config.yml` and `_data/navigation.yml` through the YAML language server, with `starter-files/.vscode/settings.json` and `docs/editor.md` (#74).
+- "Edit with your agent" on every `h2` and `h3` of doc and post pages: a button copies a prompt with the source file, the line (Actions mode), and the section's text. It appears only with JavaScript and sends nothing (#82).
 
 ### Fixed
 
