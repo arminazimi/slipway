@@ -73,3 +73,4 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Quotes in font stack overrides are kept (#134).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
+- Guide: make any generator conform to the spec, level by level
