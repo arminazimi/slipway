@@ -681,3 +681,41 @@
     border-block-end: var(--sl-rule) solid var(--sl-color-line);
   }
 }
+
+/* Page widths (front matter `width`) and wide or full-bleed sections inside the reading column. */
+@layer components {
+  body {
+    overflow-x: clip;
+  }
+
+  .sl-width-narrow {
+    max-inline-size: var(--sl-measure-narrow);
+  }
+
+  .sl-width-wide {
+    max-inline-size: var(--sl-measure-wide);
+  }
+
+  .sl-width-full {
+    max-inline-size: none;
+  }
+
+  .sl-wide {
+    --sl-wide-size: max(100%, min(var(--sl-measure-wide), 100vw - 2 * var(--sl-space-4)));
+    box-sizing: border-box;
+    inline-size: var(--sl-wide-size);
+    margin-inline: calc((100% - var(--sl-wide-size)) / 2);
+  }
+
+  .sl-bleed {
+    box-sizing: border-box;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: var(--sl-space-4);
+  }
+
+  /* The doc column sits beside the sidebar, not in the middle of the screen. */
+  .sl-layout-doc :is(.sl-wide, .sl-bleed) {
+    inline-size: auto;
+    margin-inline: 0;
+  }
+}

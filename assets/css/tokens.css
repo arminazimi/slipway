@@ -37,6 +37,8 @@
     --sl-radius-compact: 0.375rem;
     --sl-radius-card: 0.75rem;
     --sl-measure: 42rem;
+    --sl-measure-narrow: 34rem;
+    --sl-measure-wide: 64rem;
     --sl-rule: 1px;
     --sl-button-bg: light-dark(#7a4f4f, #7a5558);
     --sl-button-fg: light-dark(#f6efe8, #efe8e8);
