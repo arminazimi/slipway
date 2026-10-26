@@ -579,7 +579,8 @@
   }
 
   /* "Edit with your agent" (assets/js/edit-prompt.js), added to h2 and h3 by the script. */
-  .sl-edit {
+  .sl-edit,
+  .sl-copy-page {
     margin-inline-start: var(--sl-space-2);
     padding: 0 var(--sl-space-2);
     font-family: var(--sl-font-ui);

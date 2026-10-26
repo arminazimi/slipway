@@ -15,32 +15,29 @@
     return set[state];
   }
 
+  function a(b, lang, data, orig, act) {
+    b.onclick = function () {
+      var c = navigator.clipboard, w = c && c.writeText ? act(c) : Promise.reject();
+      w.then(function(){b.textContent=label(lang,"done",data)},function(){b.textContent=label(lang,"fail",data)});
+      setTimeout(function(){b.textContent=orig}, 2e3);
+    };
+  }
+
   function attach(pre, lang, data) {
-    var wrap = document.createElement("div");
-    var button = document.createElement("button");
-    wrap.className = "sl-code";
-    button.type = "button";
-    button.className = "sl-copy";
-    button.textContent = label(lang, "copy", data);
-    button.addEventListener("click", function () {
-      var text = pre.textContent;
-      var write = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject();
-      write.then(
-        function () { button.textContent = label(lang, "done", data); },
-        function () { button.textContent = label(lang, "fail", data); }
-      );
-      setTimeout(function () { button.textContent = label(lang, "copy", data); }, 2000);
-    });
-    pre.parentNode.insertBefore(wrap, pre);
-    wrap.appendChild(pre);
-    wrap.appendChild(button);
+    var w=document.createElement("div"), b=document.createElement("button"), o;
+    w.className="sl-code"; b.type="button"; b.className="sl-copy";
+    o = b.textContent = label(lang, "copy", data);
+    a(b, lang, data, o, function(c){return c.writeText(pre.textContent)});
+    pre.parentNode.insertBefore(w, pre); w.appendChild(pre); w.appendChild(b);
   }
 
   function init() {
-    var lang = document.documentElement.lang;
-    var data = document.body && document.body.dataset;
-    var blocks = document.querySelectorAll("main pre");
-    for (var i = 0; i < blocks.length; i++) attach(blocks[i], lang, data);
+    var d=document, l=d.documentElement.lang, a_=d.body&&d.body.dataset, p=d.querySelectorAll("main pre"), b=d.querySelector(".sl-copy-page");
+    for (var i = 0; i < p.length; i++) attach(p[i], l, a_);
+    if (b) {
+      b.removeAttribute("hidden");
+      a(b, l, a_, b.textContent, function(c){return fetch(b.dataset.copyPage).then(function(r){return r.text()}).then(function(v){return c.writeText(v)})});
+    }
   }
 
   globalThis.slipwayCopy = { label: label };
