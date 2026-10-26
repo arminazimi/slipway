@@ -44,3 +44,17 @@ jobs:
       - run: npm ci
       - run: bundle exec github-pages versions
       - run: npm run check
+      # The doctor Action (action/doctor) on a site that must reach L3, and as a report on examples/docs,
+      # which does not reach L0 yet.
+      - uses: ./action/doctor
+        with:
+          path: packages/doctor/test/fixtures/conforming
+          build: packages/doctor/test/fixtures/conforming/build
+          level: L3
+          sarif: "true"
+          setup-node: "false"
+      - uses: ./action/doctor
+        with:
+          path: examples/docs
+          level: none
+          setup-node: "false"

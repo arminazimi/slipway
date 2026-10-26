@@ -20,6 +20,7 @@
     --sl-font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
     --sl-font-persian: Vazirmatn, "Source Serif 4", Tahoma, sans-serif;
     --sl-font-arabic: Vazirmatn, "Source Serif 4", "Geeza Pro", "Segoe UI", Tahoma, sans-serif;
+    --sl-font-hebrew: "Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif;
     --sl-step-sm: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
     --sl-step-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
     --sl-step-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
