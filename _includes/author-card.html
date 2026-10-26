@@ -1,0 +1,29 @@
+{%- comment -%} Avatar, name, bio, and links of include.id from _data/authors.yml. include.link links the name to the author page. Prints nothing for an unknown id. {%- endcomment -%}
+{%- assign sl_ac = site.data.authors[include.id] -%}
+{%- if sl_ac -%}
+{%- assign sl_ac_name = sl_ac.name | default: include.id -%}
+<div class="sl-author">
+  {%- if sl_ac.avatar %}
+  {%- assign sl_ac_src = sl_ac.avatar -%}
+  {%- unless sl_ac_src contains '://' %}{% assign sl_ac_src = sl_ac_src | relative_url %}{% endunless %}
+  <img class="sl-avatar" src="{{ sl_ac_src }}" alt="" width="64" height="64" loading="lazy">
+  {%- endif %}
+  <div>
+    {%- assign sl_ac_url = '' -%}
+    {%- if include.link %}{% capture sl_ac_url %}{% include author-url.html id=include.id %}{% endcapture %}{% assign sl_ac_url = sl_ac_url | strip %}{% endif %}
+    <p class="sl-author-name">{% if sl_ac_url != '' %}<a rel="author" href="{{ sl_ac_url }}">{{ sl_ac_name | escape }}</a>{% else %}{{ sl_ac_name | escape }}{% endif %}</p>
+    {%- if sl_ac.bio %}
+    <p class="sl-author-bio">{{ sl_ac.bio | escape }}</p>
+    {%- endif %}
+    {%- if sl_ac.links and sl_ac.links.size > 0 %}
+    <ul class="sl-author-links">
+      {%- for link in sl_ac.links %}
+      {%- assign sl_ac_href = link.url -%}
+      {%- unless sl_ac_href contains '://' %}{% assign sl_ac_href = sl_ac_href | relative_url %}{% endunless %}
+      <li><a href="{{ sl_ac_href | escape }}">{{ link.title | escape }}</a></li>
+      {%- endfor %}
+    </ul>
+    {%- endif %}
+  </div>
+</div>
+{%- endif -%}

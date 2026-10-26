@@ -1,0 +1,6 @@
+# The fixture site of the Markdown twin tests (tools/twins/twins.test.mjs).
+title: Twins fixture
+collections:
+  docs:
+    output: true
+theme: slipway-theme

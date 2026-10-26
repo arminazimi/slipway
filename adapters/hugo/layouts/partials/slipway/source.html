@@ -1,0 +1,11 @@
+{{- /* The page's source path relative to the site folder, with forward slashes, or "" when the page has
+   no file in this site (generated lists, content mounted from another module). */ -}}
+{{- $source := "" -}}
+{{- with .File -}}
+  {{- $file := replace .Filename "\\" "/" -}}
+  {{- $root := printf "%s/" (replace hugo.WorkingDir "\\" "/" | strings.TrimSuffix "/") -}}
+  {{- if hasPrefix $file $root -}}
+    {{- $source = strings.TrimPrefix $root $file -}}
+  {{- end -}}
+{{- end -}}
+{{- return $source -}}
