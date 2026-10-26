@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/navigation.schema.json
+items:
+  - title: Home
+    url: /
+  - title: Install
+    url: /install/
+  - title: Configuration
+    url: /config/
+  - title: The Spec
+    url: /spec/

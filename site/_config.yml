@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../schema/slipway-config.schema.json
+title: Slipway
+description: An editorial, RTL-ready, agent-native site template, verified by Seaworthy.
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme

@@ -1,0 +1,7 @@
+# Slipway
+> An editorial, RTL-ready, agent-native site template, verified by Seaworthy.
+
+- [Home](/): Slipway is an editorial, RTL-ready, agent-native site template.
+- [Install and quickstart](/install/): Get started with Slipway in three ways.
+- [Configuration](/config/): Slipway configuration reference.
+- [The Spec](/spec/): The agent-editable site spec.
