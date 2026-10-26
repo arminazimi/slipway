@@ -152,6 +152,25 @@
             "touch_icon": { "type": "string", "description": "Path to an Apple touch icon (180x180 PNG), relative to the site root." }
           }
         },
+        "analytics": {
+          "type": "object",
+          "description": "Opt-in, privacy-friendly analytics.",
+          "additionalProperties": false,
+          "properties": {
+            "plausible": { "type": "string", "description": "The domain name of your site to enable Plausible Analytics." },
+            "goatcounter": { "type": "string", "description": "Your GoatCounter endpoint URL." },
+            "umami": {
+              "type": "object",
+              "description": "Umami analytics configuration.",
+              "additionalProperties": false,
+              "required": ["website_id"],
+              "properties": {
+                "website_id": { "type": "string", "description": "Your Umami website ID." },
+                "url": { "type": "string", "description": "The URL to the Umami script. Defaults to https://analytics.umami.is/script.js." }
+              }
+            }
+          }
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",

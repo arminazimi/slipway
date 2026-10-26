@@ -1,0 +1,12 @@
+{%- assign sl_analytics = site.slipway.analytics -%}
+{%- if sl_analytics -%}
+  {%- if sl_analytics.plausible -%}
+  <script defer data-domain="{{ sl_analytics.plausible }}" src="https://plausible.io/js/script.js"></script>
+  {%- endif -%}
+  {%- if sl_analytics.goatcounter -%}
+  <script data-goatcounter="{{ sl_analytics.goatcounter }}" async src="//gc.zgo.at/count.js"></script>
+  {%- endif -%}
+  {%- if sl_analytics.umami -%}
+  <script defer src="{{ sl_analytics.umami.url | default: 'https://analytics.umami.is/script.js' }}" data-website-id="{{ sl_analytics.umami.website_id }}"></script>
+  {%- endif -%}
+{%- endif -%}
