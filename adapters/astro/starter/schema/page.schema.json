@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Astro page front matter",
+  "description": "The front matter of a Markdown or MDX page under src/pages/.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The page title, shown in the heading, the browser tab, and search results."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the page, for search results and link previews."
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords for the keywords meta tag."
+    },
+    "image": {
+      "type": "string",
+      "description": "The image shown in link previews: a path or URL."
+    },
+    "draft": {
+      "type": "boolean",
+      "description": "true builds the page in development only and leaves it out of the production build."
+    },
+    "unlisted": {
+      "type": "boolean",
+      "description": "true builds the page but leaves it out of the sidebar, lists, sitemap, and search."
+    },
+    "hide_table_of_contents": {
+      "type": "boolean",
+      "description": "true hides the table of contents beside the page."
+    },
+    "toc_min_heading_level": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 6,
+      "description": "The smallest heading level in the table of contents, 2 to 6."
+    },
+    "toc_max_heading_level": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 6,
+      "description": "The largest heading level in the table of contents, 2 to 6."
+    },
+    "last_update": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": [
+            "string"
+          ],
+          "description": "When the page last changed, such as 2026-10-25."
+        },
+        "author": {
+          "type": "string",
+          "description": "Who changed it last."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Overrides the last-updated date and author shown on the page."
+    },
+    "wrapperClassName": {
+      "type": "string",
+      "description": "A CSS class on the page's wrapper element."
+    }
+  },
+  "additionalProperties": false
+}

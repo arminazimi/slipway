@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Astro blog authors",
+  "description": "blog/authors.yml: the authors a post can name in its authors key, by key.",
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The author's name, shown on their posts."
+      },
+      "title": {
+        "type": "string",
+        "description": "A short line under the name, such as their role."
+      },
+      "url": {
+        "type": "string",
+        "description": "A link on the author's name."
+      },
+      "image_url": {
+        "type": "string",
+        "description": "The author's picture: a path or URL."
+      },
+      "email": {
+        "type": "string",
+        "description": "The author's email address."
+      },
+      "page": {
+        "type": [
+          "boolean",
+          "object"
+        ],
+        "description": "true gives the author a page listing their posts."
+      },
+      "socials": {
+        "type": "object",
+        "description": "Social accounts, by network name, such as github: their-login."
+      }
+    },
+    "additionalProperties": false,
+    "description": "One author."
+  }
+}
