@@ -312,6 +312,14 @@
     padding-inline-start: var(--sl-space-4);
   }
 
+  .sl-related {
+    margin-block-start: var(--sl-space-12);
+  }
+
+  .sl-related h2 {
+    font-size: var(--sl-step-lg);
+  }
+
   .sl-pager {
     display: flex;
     justify-content: space-between;

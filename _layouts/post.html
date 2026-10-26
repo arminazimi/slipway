@@ -44,6 +44,7 @@ layout: base
     {{ sl_author_cards_clean }}
   </aside>
   {%- endif %}
+  {%- include related-posts.html page=page %}
   {%- comment -%} Neighbours in the same language: site.posts is newest first, so the post seen before this one is newer. {%- endcomment %}
   {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
   {%- assign sl_newer = nil -%}

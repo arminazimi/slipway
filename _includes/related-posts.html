@@ -1,0 +1,37 @@
+{%- comment -%}
+  Up to three posts in the same language that share tags with include.page, most shared tags first, newer first on a tie.
+  Prints nothing when no post shares a tag. Each candidate becomes "<1000 - shared>-<index>" so a plain sort ranks them.
+{%- endcomment -%}
+{%- assign sl_r_page = include.page -%}
+{%- assign sl_r_lang = sl_r_page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_r_keys = '' -%}
+{%- if sl_r_page.tags and sl_r_page.tags.size > 0 -%}
+  {%- for post in site.posts -%}
+    {%- if post.url == sl_r_page.url %}{% continue %}{% endif -%}
+    {%- assign sl_r_post_lang = post.lang | default: site.lang | default: 'en' -%}
+    {%- if sl_r_post_lang != sl_r_lang %}{% continue %}{% endif -%}
+    {%- assign sl_r_shared = 0 -%}
+    {%- for tag in post.tags -%}
+      {%- if sl_r_page.tags contains tag %}{% assign sl_r_shared = sl_r_shared | plus: 1 %}{% endif -%}
+    {%- endfor -%}
+    {%- if sl_r_shared > 0 -%}
+      {%- assign sl_r_rank = 1000 | minus: sl_r_shared -%}
+      {%- capture sl_r_index %}00000{{ forloop.index0 }}{% endcapture -%}
+      {%- assign sl_r_index = sl_r_index | slice: -6, 6 -%}
+      {%- capture sl_r_keys %}{{ sl_r_keys }}{{ sl_r_rank }}-{{ sl_r_index }},{% endcapture -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- if sl_r_keys != '' -%}
+{%- assign sl_r_keys = sl_r_keys | split: ',' | sort %}
+<nav class="sl-related" aria-labelledby="sl-related-title">
+  <h2 id="sl-related-title">{% include t.html key='related_posts' %}</h2>
+  <ul class="sl-post-list">
+  {%- for key in sl_r_keys limit: 3 -%}
+    {%- assign sl_r_i = key | split: '-' | last | plus: 0 -%}
+    {%- assign sl_r_post = site.posts[sl_r_i] %}
+    {% include post-item.html post=sl_r_post %}
+  {%- endfor %}
+  </ul>
+</nav>
+{%- endif -%}
