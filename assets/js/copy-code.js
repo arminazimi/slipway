@@ -1,5 +1,3 @@
-/* Copy button for code blocks. Without JavaScript the blocks are plain and fully readable; this wraps
-   each <pre> and adds a button. */
 (function () {
   var LABELS = {
     en: { copy: "Copy", done: "Copied", fail: "Press Ctrl+C" },
@@ -8,39 +6,46 @@
 
   var DATA = { copy: "copy", done: "copied", fail: "copyFailed" };
 
-  /* Labels come from data attributes on <body> (set from _data/i18n); the built-in ones are the fallback. */
   function label(lang, state, data) {
     if (data && data[DATA[state]]) return data[DATA[state]];
     var set = LABELS[String(lang || "en").slice(0, 2).toLowerCase()] || LABELS.en;
     return set[state];
   }
 
-  function attach(pre, lang, data) {
-    var wrap = document.createElement("div");
-    var button = document.createElement("button");
-    wrap.className = "sl-code";
-    button.type = "button";
-    button.className = "sl-copy";
-    button.textContent = label(lang, "copy", data);
-    button.addEventListener("click", function () {
-      var text = pre.textContent;
-      var write = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject();
-      write.then(
-        function () { button.textContent = label(lang, "done", data); },
-        function () { button.textContent = label(lang, "fail", data); }
+  function bind(btn, lang, data, orig, act) {
+    btn.onclick = function() {
+      var clip = navigator.clipboard;
+      var p = clip && clip.writeText ? act(clip) : Promise.reject();
+      p.then(
+        function() { btn.textContent = label(lang, "done", data); },
+        function() { btn.textContent = label(lang, "fail", data); }
       );
-      setTimeout(function () { button.textContent = label(lang, "copy", data); }, 2000);
-    });
+      setTimeout(function() { btn.textContent = orig; }, 2e3);
+    };
+  }
+
+  function attach(pre, lang, data) {
+    var doc = document, wrap = doc.createElement("div"), btn = doc.createElement("button");
+    wrap.className = "sl-code";
+    btn.type = "button";
+    btn.className = "sl-copy";
+    var orig = btn.textContent = label(lang, "copy", data);
+    bind(btn, lang, data, orig, function(c) { return c.writeText(pre.textContent); });
     pre.parentNode.insertBefore(wrap, pre);
     wrap.appendChild(pre);
-    wrap.appendChild(button);
+    wrap.appendChild(btn);
   }
 
   function init() {
-    var lang = document.documentElement.lang;
-    var data = document.body && document.body.dataset;
-    var blocks = document.querySelectorAll("main pre");
-    for (var i = 0; i < blocks.length; i++) attach(blocks[i], lang, data);
+    var doc = document, lang = doc.documentElement.lang, data = doc.body && doc.body.dataset;
+    var pre = doc.querySelectorAll("main pre"), btn = doc.querySelector(".sl-copy-page");
+    for (var i = 0; i < pre.length; i++) attach(pre[i], lang, data);
+    if (btn) {
+      btn.removeAttribute("hidden");
+      bind(btn, lang, data, btn.textContent, function(c) {
+        return fetch(btn.dataset.copyPage).then(function(r) { return r.text(); }).then(function(t) { return c.writeText(t); });
+      });
+    }
   }
 
   globalThis.slipwayCopy = { label: label };

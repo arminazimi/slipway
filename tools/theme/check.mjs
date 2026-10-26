@@ -57,6 +57,12 @@ export function findSeaworthy(env = process.env, base = root) {
   return candidates.find((path) => path && existsSync(path)) ?? null;
 }
 
+/** Runs `html-validate` on a built site */
+export function runHtmlValidate(site) {
+  const result = spawnSync("npx", ["html-validate", "--config", join(root, ".htmlvalidate.cjs"), site + "/**/*.html"], { encoding: "utf8", shell: true });
+  return { ok: result.status === 0, output: `${result.stdout}${result.stderr}` };
+}
+
 /** Runs `seaworthy verify` on a built site; warnings fail the check, notes do not. */
 export function runSeaworthy(cli, site) {
   const result = spawnSync(process.execPath, [cli, "verify", site, "--fail-on", "warning"], { encoding: "utf8" });
@@ -120,6 +126,13 @@ export function main(env = process.env) {
       const label = `site/, gem mode, ${target()}`;
       const siteOut = buildExample("gem", join(work, "site", "gem"), siteDir);
       console.log(`OK: docs site builds (${label})`);
+      const htmlVal = runHtmlValidate(siteOut);
+      if (htmlVal.ok) console.log(`OK: HTML valid (${label})`);
+      else {
+        console.error(`FAIL: HTML invalid (${label})\n${htmlVal.output}`);
+        process.exitCode = 1;
+      }
+
       if (cli) {
         const { ok, output } = runSeaworthy(cli, siteOut);
         if (ok) console.log(`OK: Seaworthy (${label})`);
@@ -156,6 +169,14 @@ export function main(env = process.env) {
           console.error(`FAIL: right-to-left findings (${label})\n${rtl.map((f) => `  ${f.file}:${f.line} ${f.message}`).join("\n")}`);
           process.exitCode = 1;
         } else console.log(`OK: no right-to-left findings (${label})`);
+
+        const htmlVal = runHtmlValidate(site);
+        if (htmlVal.ok) console.log(`OK: HTML valid (${label})`);
+        else {
+          console.error(`FAIL: HTML invalid (${label})\n${htmlVal.output}`);
+          process.exitCode = 1;
+        }
+
         if (!cli) continue;
         const { ok, output } = runSeaworthy(cli, site);
         if (ok) console.log(`OK: Seaworthy (${label})`);

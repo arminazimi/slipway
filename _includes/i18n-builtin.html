@@ -5,6 +5,8 @@
 {%- when 'not_found_title' -%}صفحه پیدا نشد
 {%- when 'not_found_text' -%}این نشانی وجود ندارد یا جابه‌جا شده است. از میدان جست‌وجو استفاده کنید یا به صفحهٔ اصلی بروید.
 {%- when 'go_home' -%}رفتن به صفحهٔ اصلی
+{%- when 'home' -%}خانه
+{%- when 'breadcrumbs' -%}مسیر یابی
 {%- when 'tags' -%}برچسب‌ها
 {%- when 'categories' -%}دسته‌ها
 {%- when 'main_nav' -%}منوی اصلی
@@ -16,7 +18,6 @@
 {%- when 'mode_light' -%}روشن
 {%- when 'mode_dark' -%}تیره
 {%- when 'docs_nav' -%}مستندات
-{%- when 'breadcrumbs' -%}مسیر یابی
 {%- when 'on_this_page' -%}در این صفحه
 {%- when 'series' -%}مجموعه
 {%- when 'series_part' -%}بخش {n} از {total}
@@ -29,6 +30,7 @@
 {%- when 'min_read' -%}دقیقه مطالعه
 {%- when 'language' -%}زبان
 {%- when 'copy' -%}کپی
+{%- when 'copy_page_md' -%}کپی صفحه به صورت مارک‌داون
 {%- when 'copied' -%}کپی شد
 {%- when 'copy_failed' -%}Ctrl+C را بزنید
 {%- when 'by' -%}نوشتهٔ
@@ -37,6 +39,7 @@
 {%- when 'about_author' -%}دربارهٔ نویسنده
 {%- when 'posts' -%}نوشته‌ها
 {%- when 'related_posts' -%}نوشته‌های مرتبط
+{%- when 'translation_key' -%}کلید ترجمه
 {%- when 'edit_label' -%}ویرایش با دستیار
 {%- when 'edit_prompt' -%}فایل {source} را ویرایش کن. متن فعلی: «{text}». تغییر:
 {%- endcase -%}
@@ -46,6 +49,8 @@
 {%- when 'not_found_title' -%}الصفحة غير موجودة
 {%- when 'not_found_text' -%}هذا العنوان غير موجود أو نُقل. استخدم حقل البحث أو انتقل إلى الصفحة الرئيسية.
 {%- when 'go_home' -%}الانتقال إلى الصفحة الرئيسية
+{%- when 'home' -%}الرئيسية
+{%- when 'breadcrumbs' -%}مسار التنقل
 {%- when 'tags' -%}الوسوم
 {%- when 'categories' -%}التصنيفات
 {%- when 'main_nav' -%}القائمة الرئيسية
@@ -57,7 +62,6 @@
 {%- when 'mode_light' -%}فاتح
 {%- when 'mode_dark' -%}داكن
 {%- when 'docs_nav' -%}التوثيق
-{%- when 'breadcrumbs' -%}مسار التنقل
 {%- when 'on_this_page' -%}في هذه الصفحة
 {%- when 'series' -%}سلسلة
 {%- when 'series_part' -%}الجزء {n} من {total}
@@ -70,6 +74,7 @@
 {%- when 'min_read' -%}دقيقة قراءة
 {%- when 'language' -%}اللغة
 {%- when 'copy' -%}نسخ
+{%- when 'copy_page_md' -%}نسخ الصفحة كماركداون
 {%- when 'copied' -%}تم النسخ
 {%- when 'copy_failed' -%}اضغط Ctrl+C
 {%- when 'by' -%}بقلم
@@ -78,6 +83,7 @@
 {%- when 'about_author' -%}عن الكاتب
 {%- when 'posts' -%}التدوينات
 {%- when 'related_posts' -%}تدوينات ذات صلة
+{%- when 'translation_key' -%}مفتاح الترجمة
 {%- when 'edit_label' -%}التحرير مع وكيلك
 {%- when 'edit_prompt' -%}حرّر الملف {source}. النص الحالي: «{text}». التغيير:
 {%- endcase -%}
@@ -87,6 +93,8 @@
 {%- when 'not_found_title' -%}הדף לא נמצא
 {%- when 'not_found_text' -%}הכתובת הזאת לא קיימת או שהועברה. השתמשו בשדה החיפוש או עברו לדף הבית.
 {%- when 'go_home' -%}מעבר לדף הבית
+{%- when 'home' -%}ראשי
+{%- when 'breadcrumbs' -%}פירורי לחם
 {%- when 'tags' -%}תגיות
 {%- when 'categories' -%}קטגוריות
 {%- when 'main_nav' -%}תפריט ראשי
@@ -98,7 +106,6 @@
 {%- when 'mode_light' -%}בהיר
 {%- when 'mode_dark' -%}כהה
 {%- when 'docs_nav' -%}תיעוד
-{%- when 'breadcrumbs' -%}פירורי לחם
 {%- when 'on_this_page' -%}בדף הזה
 {%- when 'series' -%}סדרה
 {%- when 'series_part' -%}חלק {n} מתוך {total}
@@ -111,6 +118,7 @@
 {%- when 'min_read' -%}דקות קריאה
 {%- when 'language' -%}שפה
 {%- when 'copy' -%}העתקה
+{%- when 'copy_page_md' -%}העתקת הדף כ-Markdown
 {%- when 'copied' -%}הועתק
 {%- when 'copy_failed' -%}הקישו Ctrl+C
 {%- when 'by' -%}מאת
@@ -118,6 +126,7 @@
 {%- when 'comma' -%},
 {%- when 'about_author' -%}על הכותב
 {%- when 'posts' -%}פוסטים
+{%- when 'translation_key' -%}מפתח תרגום
 {%- when 'edit_label' -%}עריכה עם הסוכן שלך
 {%- when 'edit_prompt' -%}ערוך את {source}. הטקסט הנוכחי: "{text}". השינוי:
 {%- endcase -%}
@@ -127,6 +136,8 @@
 {%- when 'not_found_title' -%}Page not found
 {%- when 'not_found_text' -%}This address does not exist or has moved. Use the search field or go to the home page.
 {%- when 'go_home' -%}Go to the home page
+{%- when 'home' -%}Home
+{%- when 'breadcrumbs' -%}Breadcrumbs
 {%- when 'tags' -%}Tags
 {%- when 'categories' -%}Categories
 {%- when 'main_nav' -%}Main
@@ -138,7 +149,6 @@
 {%- when 'mode_light' -%}Light
 {%- when 'mode_dark' -%}Dark
 {%- when 'docs_nav' -%}Documentation
-{%- when 'breadcrumbs' -%}Breadcrumbs
 {%- when 'on_this_page' -%}On this page
 {%- when 'series' -%}Series
 {%- when 'series_part' -%}Part {n} of {total}
@@ -151,6 +161,7 @@
 {%- when 'min_read' -%}min read
 {%- when 'language' -%}Language
 {%- when 'copy' -%}Copy
+{%- when 'copy_page_md' -%}Copy page as Markdown
 {%- when 'copied' -%}Copied
 {%- when 'copy_failed' -%}Press Ctrl+C
 {%- when 'by' -%}By
@@ -159,6 +170,7 @@
 {%- when 'about_author' -%}About the author
 {%- when 'posts' -%}Posts
 {%- when 'related_posts' -%}Related posts
+{%- when 'translation_key' -%}Translation key
 {%- when 'edit_label' -%}Edit with your agent
 {%- when 'edit_prompt' -%}Edit {source}. Current text: "{text}". Change:
 {%- endcase -%}
