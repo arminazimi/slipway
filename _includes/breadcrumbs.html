@@ -27,13 +27,13 @@
 
 {%- if sl_bc_count > 0 -%}
 {%- assign sl_bc_label_key = 'breadcrumbs' -%}
-{%- assign sl_home_label_key = 'main_nav' -%}
+{%- assign sl_home_label_key = 'go_home' -%}
 {%- capture sl_bc_label_raw %}{% include t.html key=sl_bc_label_key %}{% endcapture -%}
 {%- capture sl_home_label_raw %}{% include t.html key=sl_home_label_key %}{% endcapture -%}
 {%- assign sl_bc_label = sl_bc_label_raw | strip -%}
 {%- assign sl_home_label = sl_home_label_raw | strip -%}
 {%- if sl_bc_label == '' %}{% assign sl_bc_label = 'Breadcrumbs' %}{% endif -%}
-{%- if sl_home_label == '' %}{% assign sl_home_label = 'Home' %}{% else %}{% assign sl_home_words = sl_home_label | split: ' ' %}{% assign sl_home_label = sl_home_words | first %}{% endif -%}
+{%- if sl_home_label == '' %}{% assign sl_home_label = 'Home' %}{% else %}{% assign sl_home_words = sl_home_label | split: ' ' %}{% assign sl_home_label = sl_home_words | first %}{% if sl_home_label == 'page' or sl_home_label == 'الرئيسية' or sl_home_label == 'اصلی' or sl_home_label == 'הבית' %}{% if sl_home_label == 'page' %}{% assign sl_home_label = 'Home' %}{% elsif sl_home_label == 'الرئيسية' %}{% assign sl_home_label = 'الرئيسية' %}{% elsif sl_home_label == 'اصلی' %}{% assign sl_home_label = 'خانه' %}{% elsif sl_home_label == 'הבית' %}{% assign sl_home_label = 'ראשי' %}{% endif %}{% endif %}{% endif -%}
 <nav class="sl-breadcrumbs" aria-label="{{ sl_bc_label | escape }}">
   <ol>
     <li>
@@ -68,5 +68,9 @@
 {%- endfor -%}
 
 {%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ page.title | jsonify }}}{%- endcapture -%}
-{%- capture sl_bc_list -%}{"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture -%}
+{%- capture sl_ld_bc_json -%}{"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture -%}
+{%- assign sl_ld_bc_json_escaped = sl_ld_bc_json | replace: '<', '\u003c' -%}
+<script type="application/ld+json">
+{"@context":"https://schema.org",{%- if sl_ld_bc_json_escaped -%}{{ sl_ld_bc_json_escaped | replace: '{"@type":"BreadcrumbList"', '"@graph":[{"@type":"BreadcrumbList"' }}]}{%- else -%}"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json | strip_newlines | replace: '<', '\u003c' }}]{%- endif -%}
+</script>
 {%- endif -%}
