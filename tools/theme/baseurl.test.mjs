@@ -13,14 +13,14 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
   try {
     const noGithubConfig = join("_site", "no_github_config.yml");
     mkdirSync("_site", { recursive: true });
-    writeFileSync(noGithubConfig, "github: { is_project_page: false }\n");
+    writeFileSync(noGithubConfig, "github: {}\n");
     buildExample("gem", docOut, "docs", { baseurl, configs: [noGithubConfig] });
     buildExample("gem", blogOut, "blog", { baseurl, configs: [noGithubConfig] });
 
     // For the custom domain case
     // We will test custom domain config by creating a temporary config overlay
     const customDomainConfig = join("_site", "custom_domain_config.yml");
-    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false }\n");
+    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: {}\n");
     buildExample("gem", customOut, "blog", { baseurl: "", configs: [customDomainConfig] });
 
     // Check generated files for hardcoded root URLs
