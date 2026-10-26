@@ -31,6 +31,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Atom feed per language and a sitemap with `hreflang` | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
 | Canonical link, Open Graph, Twitter card, and `hreflang` alternates in `<head>` | yes, in Liquid | | yes | [pub.seo](../ROADMAP.md) |
 | `llms.txt` and `llms-full.txt` (pages with `sitemap: false` are left out; `llms-full.txt` is text taken from the HTML, since Liquid cannot read the Markdown) | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
+| Post series: a series box with the parts and the previous and next part (`series` in the front matter) | yes, in Liquid | | yes | [pub.series](../ROADMAP.md) |
 | Authors from `_data/authors.yml`: byline, author box, and an author page per author (`layout: author`) | yes, in Liquid | | yes | [pub.authors](../ROADMAP.md) |
 | Verification with Seaworthy | In CI, not a gate on publishing | | In the workflow, before it deploys | [ROADMAP.md](../ROADMAP.md) |
 

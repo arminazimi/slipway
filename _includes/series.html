@@ -1,0 +1,47 @@
+{%- comment -%} The series box of a post: every post with the same `series` in the same language, oldest first, this post's part, and the previous and next part. Prints nothing when the post is alone in its series. {%- endcomment -%}
+{%- if page.series -%}
+{%- assign sl_s_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_s_all = site.posts | where: 'series', page.series | reverse -%}
+{%- assign sl_s_posts = '' | split: '' -%}
+{%- for post in sl_s_all -%}
+  {%- assign sl_s_post_lang = post.lang | default: site.lang | default: 'en' -%}
+  {%- if sl_s_post_lang == sl_s_lang %}{% assign sl_s_posts = sl_s_posts | push: post %}{% endif -%}
+{%- endfor -%}
+{%- assign sl_s_index = 0 -%}
+{%- for post in sl_s_posts -%}
+  {%- if post.url == page.url %}{% assign sl_s_index = forloop.index %}{% endif -%}
+{%- endfor -%}
+{%- if sl_s_index > 0 and sl_s_posts.size > 1 -%}
+{%- assign sl_s_prev = nil -%}
+{%- assign sl_s_next = nil -%}
+{%- if sl_s_index > 1 %}{% assign sl_s_i = sl_s_index | minus: 2 %}{% assign sl_s_prev = sl_s_posts[sl_s_i] %}{% endif -%}
+{%- if sl_s_index < sl_s_posts.size %}{% assign sl_s_next = sl_s_posts[sl_s_index] %}{% endif -%}
+{%- capture sl_s_n %}{% include num.html value=sl_s_index %}{% endcapture -%}
+{%- capture sl_s_total %}{% include num.html value=sl_s_posts.size %}{% endcapture -%}
+{%- capture sl_s_part %}{% include t.html key='series_part' %}{% endcapture -%}
+{%- assign sl_s_ph_n = '{n}' -%}
+{%- assign sl_s_ph_total = '{total}' -%}
+{%- assign sl_s_part = sl_s_part | replace: sl_s_ph_n, sl_s_n | replace: sl_s_ph_total, sl_s_total %}
+<aside class="sl-series" aria-labelledby="sl-series-title">
+  <p class="sl-series-title" id="sl-series-title"><span>{% include t.html key='series' %}</span> {{ page.series | escape }}</p>
+  <p class="sl-series-part">{{ sl_s_part }}</p>
+  <ol class="sl-series-list">
+    {%- for post in sl_s_posts %}
+    {%- if forloop.index == sl_s_index %}
+    <li aria-current="page">{{ post.title }}</li>
+    {%- else %}
+    <li><a href="{{ post.url | relative_url }}">{{ post.title }}</a></li>
+    {%- endif %}
+    {%- endfor %}
+  </ol>
+  <nav class="sl-series-pager" aria-label="{% include t.html key='series_pager' %}">
+    {%- if sl_s_prev %}
+    <a class="sl-series-prev" href="{{ sl_s_prev.url | relative_url }}"><span>{% include t.html key='previous' %}</span> {{ sl_s_prev.title }}</a>
+    {%- endif %}
+    {%- if sl_s_next %}
+    <a class="sl-series-next" href="{{ sl_s_next.url | relative_url }}"><span>{% include t.html key='next' %}</span> {{ sl_s_next.title }}</a>
+    {%- endif %}
+  </nav>
+</aside>
+{%- endif -%}
+{%- endif -%}
