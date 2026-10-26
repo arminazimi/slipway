@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- Post series: posts with the same `series` get a series box with their part, the other parts, and the previous and next part (#205).
 - Page widths: `width: narrow`, `wide`, or `full` in the front matter, and `.sl-wide` and `.sl-bleed` sections inside the reading column (#214).
 - A Markdown twin of every page at its address with `.md`, linked from the head: stubs from `npm run twins` on classic Pages, a plugin in Actions mode (#22).
 - Theme layout that works as a gem, through `remote_theme`, and after "Use this template" (#41).

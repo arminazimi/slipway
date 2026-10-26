@@ -35,6 +35,7 @@ layout: base
       {%- endif %}
     </p>
   </header>
+  {%- include series.html %}
   {% include edit-sources.html html=content %}
   {%- include author-ids.html page=page -%}
   {%- capture sl_author_cards %}{% for id in sl_ai_ids %}{% include author-card.html id=id link=true %}{% endfor %}{% endcapture %}

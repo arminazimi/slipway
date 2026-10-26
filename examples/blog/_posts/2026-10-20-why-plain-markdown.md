@@ -2,6 +2,7 @@
 title: Why plain Markdown
 description: Content that outlives the tool that renders it.
 layout: post
+series: Writing for the web
 author: sam
 permalink: /2026/10/20/why-plain-markdown.html
 tags: [writing, markdown]
@@ -15,3 +16,5 @@ Markdown files are readable in any editor, diff cleanly, and move between tools 
 ## The cost
 
 You give up some layout control. For prose, that is a fair trade.
+
+Headings, lists, tables, and code blocks still work, and anyone who opens the file, a person or an agent, can change the text without breaking the page around it.
