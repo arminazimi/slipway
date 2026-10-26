@@ -28,6 +28,12 @@ main {
   padding-inline: 0;
 }
 
+.sl-wide,
+.sl-bleed {
+  inline-size: auto;
+  margin-inline: 0;
+}
+
 h1,
 h2,
 h3 {

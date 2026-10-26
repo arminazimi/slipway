@@ -10,7 +10,8 @@
 <body{% if sl_base == 'fa' and site.slipway.persian.digits %} class="sl-fa-digits"{% elsif sl_base == 'ar' and site.slipway.arabic.digits %} class="sl-ar-digits"{% endif %} data-copy="{% include t.html key='copy' %}" data-copied="{% include t.html key='copied' %}" data-copy-failed="{% include t.html key='copy_failed' %}">
   {% include skip-link.html %}
   {% include header.html %}
-  <main id="main" class="sl-sections sl-layout-{{ page.layout }}" tabindex="-1">
+  {%- assign sl_width = page.width | downcase -%}
+  <main id="main" class="sl-sections sl-layout-{{ page.layout }}{% if sl_width == 'narrow' or sl_width == 'wide' or sl_width == 'full' %} sl-width-{{ sl_width }}{% endif %}" tabindex="-1">
     {{ content }}
   </main>
   {% include footer.html %}
