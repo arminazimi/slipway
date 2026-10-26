@@ -3,6 +3,7 @@
 import { relative, resolve, sep } from "node:path";
 import { doctor, levels } from "./doctor.mjs";
 import { describe, toSarif } from "./report.mjs";
+import { applyFixes } from "./fix.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
@@ -13,6 +14,8 @@ Options:
   --format <format>    text, json, or sarif (default: text)
   --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
   --network            fetch https schemas named in content-schemas.json
+  --fix                automatically fix safe cases (e.g., missing stubs, deprecated keys)
+  --dry-run            print a diff of what --fix would do, without changing files
   -h, --help           show this help`;
 
 const formats = ["text", "json", "sarif"];
@@ -22,7 +25,7 @@ export function parseArgs(args) {
   const [command, ...rest] = args;
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
   if (command !== "doctor") return { error: command ? `unknown command: ${command}` : "missing command" };
-  const options = { format: "text", network: false, build: null, level: null, source: null };
+  const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false };
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
     const value = () => {
@@ -36,6 +39,8 @@ export function parseArgs(args) {
       else if (arg === "--format") options.format = value();
       else if (arg === "--level") options.level = value();
       else if (arg === "--network") options.network = true;
+      else if (arg === "--fix") options.fix = true;
+      else if (arg === "--dry-run") options.dryRun = true;
       else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
       else if (options.source === null) options.source = arg;
       else return { error: `unexpected argument: ${arg}` };
@@ -101,6 +106,14 @@ export async function main(args, { log = console.log, error = console.error } = 
     error(`slipway: ${caught.message}`);
     return 2;
   }
+
+  if (options.fix || options.dryRun) {
+    const diffs = applyFixes(report, folders.source, { dryRun: options.dryRun });
+    if (diffs.length > 0) {
+      log(diffs.join("\n"));
+    }
+  }
+
   if (options.format === "json") log(JSON.stringify(report, null, 2));
   else if (options.format === "sarif") log(JSON.stringify(toSarif(report, folders), null, 2));
   else log(formatText(report, folders));

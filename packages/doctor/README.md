@@ -3,7 +3,7 @@
 Checks a static site against the [agent-editable site spec](../../spec/agent-editable/0.1.md) and prints the [conformance level](../../spec/agent-editable/levels.md) it reaches, L0 to L3. It works for any generator: it reads the source folder and, when given, the built output folder, and runs every test in [`spec/agent-editable/tests.json`](../../spec/agent-editable/tests.json). It needs Node 22 and no Ruby.
 
 ```bash
-node packages/doctor/bin/slipway.mjs doctor <source-dir> [--build <output-dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
+node packages/doctor/bin/slipway.mjs doctor <source-dir> [--build <output-dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network] [--fix] [--dry-run]
 ```
 
 Copy-paste snippet for your AGENTS.md: docs/snippets/agents-md.md
@@ -19,6 +19,8 @@ You can also run it in your CI. See [CI Recipes](../../docs/guides/ci.md) for Gi
 | `--format sarif` | Print a SARIF 2.1.0 log for GitHub code scanning. |
 | `--level <L>` | Exit 0 when the site reaches this level. Without it, exit 0 only when every MUST test passes. |
 | `--network` | Fetch `https` schemas named in `content-schemas.json`. Without it, that part of `ae.schemas.resolve` is not run. No other test uses the network. |
+| `--fix` | Automatically fix safe cases (missing stubs, deprecated keys) and print a diff. |
+| `--dry-run` | Print a diff of what `--fix` would do, without changing files. |
 
 Exit codes: `0` the target level is reached, `1` findings, `2` a usage error or a missing folder.
 

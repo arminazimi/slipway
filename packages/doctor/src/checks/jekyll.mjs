@@ -76,6 +76,8 @@ export const checks = {
         key: found.old,
         message: `is deprecated since ${found.since} and removed in ${found.removed_in}`,
         fix: `rename ${found.old} to ${found.new}`,
+        old: found.old,
+        new: found.new,
       })),
     ),
 

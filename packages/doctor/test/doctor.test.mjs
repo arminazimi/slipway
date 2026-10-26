@@ -3,7 +3,7 @@ import Ajv2020 from "ajv/dist/2020.js";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -209,6 +209,56 @@ test("cli: examples/docs prints a level and findings", () => {
   assert.equal(result.status, 1);
   assert.match(result.stdout, /^level: (none|L[0-3]) /m);
   assert.match(result.stdout, /examples\/docs\/AGENTS\.md is missing/);
+});
+
+test("cli: --fix dry-run output contains unified diffs for missing stubs and deprecations without modifying files", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-fix-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(fixture("jekyll-deprecated"), dir, { recursive: true });
+
+  // Remove AGENTS.md to trigger the stub rule
+  unlinkSync(join(dir, "AGENTS.md"));
+
+  const originalPage = readFileSync(join(dir, "fa/index.md"), "utf8");
+  assert.ok(!existsSync(join(dir, "AGENTS.md")), "AGENTS.md should not exist yet");
+
+  // Run with --fix and --dry-run
+  const result = cli("doctor", dir, "--fix", "--dry-run");
+
+  // File should still not exist
+  assert.ok(!existsSync(join(dir, "AGENTS.md")), "AGENTS.md should still not exist after dry run");
+  assert.equal(readFileSync(join(dir, "fa/index.md"), "utf8"), originalPage, "fa/index.md should not be modified after dry run");
+
+  // Output should contain diffs
+  assert.ok(result.stdout.includes("--- /dev/null\n+++ AGENTS.md"));
+  assert.ok(result.stdout.includes("--- fa/index.md\n+++ fa/index.md"));
+  assert.ok(result.stdout.includes("-fixture_kicker:"));
+  assert.ok(result.stdout.includes("+fixture_eyebrow:"));
+});
+
+test("cli: --fix applies fixes and prints unified diffs", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-fix-apply-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(fixture("jekyll-deprecated"), dir, { recursive: true });
+
+  // Remove AGENTS.md to trigger the stub rule
+  unlinkSync(join(dir, "AGENTS.md"));
+
+  const originalPage = readFileSync(join(dir, "fa/index.md"), "utf8");
+
+  // Run with --fix
+  const result = cli("doctor", dir, "--fix");
+
+  // Fixes should be applied
+  assert.ok(existsSync(join(dir, "AGENTS.md")), "AGENTS.md should exist after fix");
+  const newPage = readFileSync(join(dir, "fa/index.md"), "utf8");
+  assert.notEqual(newPage, originalPage, "fa/index.md should be modified");
+  assert.ok(newPage.includes("fixture_eyebrow:"), "Deprecated key should be replaced");
+  assert.ok(!newPage.includes("fixture_kicker:"), "Old key should be gone");
+
+  // Output should contain diffs
+  assert.ok(result.stdout.includes("--- /dev/null\n+++ AGENTS.md"));
+  assert.ok(result.stdout.includes("--- fa/index.md\n+++ fa/index.md"));
 });
 
 test("cli: json output has the spec, version, level, and the tests not run", () => {
