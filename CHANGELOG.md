@@ -5,10 +5,13 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
+- `@slipway/tokens` npm package exporting the theme's design tokens and core CSS.
 - Published the agent-editable spec as a versioned site at `/spec/0.1/` with stable JSON Schema URLs (#179).
 - Added `translation-status` layout to show which pages exist in which language.
+- Added security headers documentation (`docs/security-headers.md`) and CSP validation tests to ensure the theme works securely out-of-the-box.
 
 ### Added
+- `UPGRADING.md` to document breaking changes across releases (#176).
 - Breadcrumbs above the title of doc and page layouts for nested pages, with a `BreadcrumbList` JSON-LD block. Translated labels for Persian, Arabic, and Hebrew.
 - "Copy page as Markdown" button on pages that have a Markdown twin (#24).
 - `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
@@ -18,6 +21,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Logo and favicon configuration (`slipway.logo.light`, `slipway.logo.dark`, `favicon_svg`, `touch_icon`) in `_config.yml` (#215).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
+- Eleventy adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#236).
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
 - Home variants, picked with `variant` in the front matter: `editorial` (the default), `landing` with `features` and a closing call to action, `blog` with every post, and `docs` with the docs navigation as cards; `posts_limit` sets how many posts show (#213).
 - Post series: posts with the same `series` get a series box with their part, the other parts, and the previous and next part (#205).
