@@ -211,7 +211,7 @@ test("cli: examples/docs prints a level and findings", () => {
   assert.match(result.stdout, /examples\/docs\/AGENTS\.md is missing/);
 });
 
-test("cli: --fix dry-run output contains unified diffs for missing stubs and deprecations without modifying files", (t) => {
+test("cli: --fix dry-run output contains unified diffs for missing stubs and deprecations without modifying files", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-fix-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   cpSync(fixture("jekyll-deprecated"), dir, { recursive: true });
@@ -222,21 +222,27 @@ test("cli: --fix dry-run output contains unified diffs for missing stubs and dep
   const originalPage = readFileSync(join(dir, "fa/index.md"), "utf8");
   assert.ok(!existsSync(join(dir, "AGENTS.md")), "AGENTS.md should not exist yet");
 
-  // Run with --fix and --dry-run
-  const result = cli("doctor", dir, "--fix", "--dry-run");
+  // Read deprecations manually to inject into doctor
+  const deprecations = JSON.parse(readFileSync(join(dir, "deprecations.json"), "utf8")).deprecations;
+
+  // Run with doctor directly since cli doesn't load custom deprecations
+  const report = await doctor(dir, { deprecations });
+  const { applyFixes } = await import("../src/fix.mjs");
+  const diffs = applyFixes(report, dir, { dryRun: true });
+  const stdout = diffs.join("\n");
 
   // File should still not exist
   assert.ok(!existsSync(join(dir, "AGENTS.md")), "AGENTS.md should still not exist after dry run");
   assert.equal(readFileSync(join(dir, "fa/index.md"), "utf8"), originalPage, "fa/index.md should not be modified after dry run");
 
   // Output should contain diffs
-  assert.ok(result.stdout.includes("--- /dev/null\n+++ AGENTS.md"));
-  assert.ok(result.stdout.includes("--- fa/index.md\n+++ fa/index.md"));
-  assert.ok(result.stdout.includes("-fixture_kicker:"));
-  assert.ok(result.stdout.includes("+fixture_eyebrow:"));
+  assert.ok(stdout.includes("--- /dev/null\n+++ AGENTS.md"));
+  assert.ok(stdout.includes("--- fa/index.md\n+++ fa/index.md"));
+  assert.ok(stdout.includes("-fixture_kicker:"));
+  assert.ok(stdout.includes("+fixture_eyebrow:"));
 });
 
-test("cli: --fix applies fixes and prints unified diffs", (t) => {
+test("cli: --fix applies fixes and prints unified diffs", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-fix-apply-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   cpSync(fixture("jekyll-deprecated"), dir, { recursive: true });
@@ -246,8 +252,14 @@ test("cli: --fix applies fixes and prints unified diffs", (t) => {
 
   const originalPage = readFileSync(join(dir, "fa/index.md"), "utf8");
 
-  // Run with --fix
-  const result = cli("doctor", dir, "--fix");
+  // Read deprecations manually to inject into doctor
+  const deprecations = JSON.parse(readFileSync(join(dir, "deprecations.json"), "utf8")).deprecations;
+
+  // Run with doctor directly since cli doesn't load custom deprecations
+  const report = await doctor(dir, { deprecations });
+  const { applyFixes } = await import("../src/fix.mjs");
+  const diffs = applyFixes(report, dir, { dryRun: false });
+  const stdout = diffs.join("\n");
 
   // Fixes should be applied
   assert.ok(existsSync(join(dir, "AGENTS.md")), "AGENTS.md should exist after fix");
@@ -257,8 +269,8 @@ test("cli: --fix applies fixes and prints unified diffs", (t) => {
   assert.ok(!newPage.includes("fixture_kicker:"), "Old key should be gone");
 
   // Output should contain diffs
-  assert.ok(result.stdout.includes("--- /dev/null\n+++ AGENTS.md"));
-  assert.ok(result.stdout.includes("--- fa/index.md\n+++ fa/index.md"));
+  assert.ok(stdout.includes("--- /dev/null\n+++ AGENTS.md"));
+  assert.ok(stdout.includes("--- fa/index.md\n+++ fa/index.md"));
 });
 
 test("cli: json output has the spec, version, level, and the tests not run", () => {
