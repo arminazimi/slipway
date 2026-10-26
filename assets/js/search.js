@@ -4,9 +4,9 @@
 (function () {
   function normalize(text) {
     return String(text || "")
-      .replace(/[يى]/g, "ی")
-      .replace(/ك/g, "ک")
-      .replace(/[‌ـً-ٟ]/g, "")
+      .replace(/[يىئ]/g, "ی")
+      .replace(/[كڪ]/g, "ک")
+      .replace(/[\u200c\u200d\u0640\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed]/g, "")
       .replace(/[۰-۹]/g, function (d) { return d.charCodeAt(0) - 0x6f0; })
       .replace(/[٠-٩]/g, function (d) { return d.charCodeAt(0) - 0x660; })
       .toLowerCase();

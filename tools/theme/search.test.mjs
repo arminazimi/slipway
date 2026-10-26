@@ -24,10 +24,14 @@ const index = [
   { title: "می‌خواهم", url: "/fa/a/", description: "", text: "نوشته‌ای با ي و ك عربی و عدد ۱۲۳" },
 ];
 
-test("normalize unifies Arabic and Persian letters, drops ZWNJ and diacritics, and uses Latin digits", () => {
+test("normalize unifies Arabic and Persian letters, drops ZWNJ, ZWJ, and diacritics, and uses Latin digits", () => {
   const { normalize } = load();
   assert.equal(normalize("كيف"), "کیف");
+  assert.equal(normalize("ڪتاب"), "کتاب");
   assert.equal(normalize("می‌خواهم"), "میخواهم");
+  assert.equal(normalize("پائیز"), "پاییز");
+  assert.equal(normalize("عیسیٰ"), "عیسی");
+  assert.equal(normalize("مُطْمَئِنّ"), "مطمین");
   assert.equal(normalize("۱۲۳ ٤٥٦"), "123 456");
   assert.equal(normalize("سَلام"), "سلام");
   assert.equal(normalize("Layouts"), "layouts");
@@ -47,6 +51,7 @@ test("Persian queries match across ي/ی, ك/ک, ZWNJ, and digit sets", () => {
   assert.equal(search(index, "کیف").length, 0);
   assert.equal(search(index, "عربي")[0].title, "می‌خواهم");
   assert.equal(search(index, "123")[0].title, "می‌خواهم");
+  assert.equal(search(index, "مِى‌خْوَاهَم")[0].title, "می‌خواهم");
 });
 
 test("the script is small and the field is hidden until it runs", () => {
