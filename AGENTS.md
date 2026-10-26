@@ -16,6 +16,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
 - `node tools/release/prepare.mjs <version>`: bumps the gemspec and dates `Unreleased` in `CHANGELOG.md`; maintainers push the tag (CONTRIBUTING.md, "Releasing"). Add a `CHANGELOG.md` line in any PR a site owner would notice.
+- `docs/security-headers.md`: Documents the Content Security Policy setup and tests via `tools/theme/csp.test.mjs` (`qa.csp`).
 
 ## CI
 
