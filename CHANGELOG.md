@@ -79,3 +79,4 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
 - Guide: make any generator conform to the spec, level by level
+- Add MkDocs adapter for `slipway doctor` and Markdown twins (L2).

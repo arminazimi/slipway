@@ -1,0 +1,16 @@
+{
+  "name": "slipway-mkdocs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "MkDocs plugin that makes a site agent-editable: sourcemap.json, Markdown twins, and data-source on headings.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/slipway_mkdocs.py"
+  },
+  "files": [
+    "src",
+    "starter",
+    "pyproject.toml"
+  ]
+}
