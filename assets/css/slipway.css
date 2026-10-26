@@ -436,6 +436,60 @@
   }
 }
 
+/* Post series: the box after the post header with the parts and the previous and next part. */
+@layer components {
+  .sl-series {
+    margin-block: var(--sl-space-6);
+    padding: var(--sl-space-4);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-series-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .sl-series-title span,
+  .sl-series-part,
+  .sl-series-pager span {
+    color: var(--sl-color-muted);
+  }
+
+  .sl-series-part {
+    margin-block: 0 var(--sl-space-2);
+  }
+
+  .sl-series-list {
+    margin-block: 0;
+    padding-inline-start: var(--sl-space-6);
+  }
+
+  .sl-series-list [aria-current] {
+    font-weight: 600;
+  }
+
+  .sl-series-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sl-space-4);
+    margin-block-start: var(--sl-space-2);
+  }
+
+  .sl-series-pager a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .sl-series-next {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+}
+
 /* Authors: the byline, the author box after a post, and the author page. */
 @layer components {
   .sl-authors {
