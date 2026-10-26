@@ -2,19 +2,20 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, rmSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
-import { buildExample, target, bundleAvailable } from "./build.mjs";
+import { buildExample, bundleAvailable } from "./build.mjs";
 
 test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle not available" }, (t) => {
   const baseurl = "/slipway";
   const docOut = "_site/docs_baseurl";
   const blogOut = "_site/blog_baseurl";
   const customOut = "_site/custom_domain";
+  const pagesHost = "https://arminazimi.github.io";
 
   try {
     const noGithubConfig = join("_site", "no_github_config.yml");
     mkdirSync("_site", { recursive: true });
-    // Overriding repository url setting from jekyll-github-metadata
-    writeFileSync(noGithubConfig, "github: { is_project_page: false, url: false }\n");
+    // Pins the site url, so jekyll-github-metadata cannot pick its own (the Pages gem uses github.com here)
+    writeFileSync(noGithubConfig, `url: ${pagesHost}\ngithub: { is_project_page: false, url: false }\n`);
     buildExample("gem", docOut, "docs", { baseurl, configs: [noGithubConfig] });
     buildExample("gem", blogOut, "blog", { baseurl, configs: [noGithubConfig] });
 
@@ -87,11 +88,9 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
 
     // For Pages gem, jekyll-github-metadata sets site.url to the GH pages domain even when url is not set (if it can't, it might leave it).
     // Let's assert what the gem emits.
-    const host = target() === "jekyll4" ? "http://localhost:4000" : "https://arminazimi.github.io";
-
-    checkXmlJson(join(blogOut, "feed.xml"), baseurl, `${host}/slipway/`);
-    checkXmlJson(join(blogOut, "sitemap.xml"), baseurl, `${host}/slipway/`);
-    checkXmlJson(join(blogOut, "search.json"), baseurl, `${host}/slipway/`);
+    checkXmlJson(join(blogOut, "feed.xml"), baseurl, `${pagesHost}${baseurl}/`);
+    checkXmlJson(join(blogOut, "sitemap.xml"), baseurl, `${pagesHost}${baseurl}/`);
+    checkXmlJson(join(blogOut, "search.json"), baseurl, `${pagesHost}${baseurl}/`);
 
     // Check custom domain feed and sitemap
     checkXmlJson(join(customOut, "feed.xml"), "", "https://example.org/");
