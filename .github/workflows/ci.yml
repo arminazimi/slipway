@@ -30,6 +30,8 @@ jobs:
       LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -48,6 +50,11 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/docusaurus" --no-save --no-audit --no-fund @docusaurus/core@3.10.2 @docusaurus/preset-classic@3.10.2 react@19.2.0 react-dom@19.2.0
           echo "DOCUSAURUS_MODULES=$RUNNER_TEMP/docusaurus/node_modules" >> "$GITHUB_ENV"
+      # Eleventy, for the Eleventy adapter's tests (adapters/eleventy), which skip without it.
+      - name: Install Eleventy
+        run: |
+          npm install --prefix "$RUNNER_TEMP/eleventy" --no-save --no-audit --no-fund @11ty/eleventy@3.0.0 markdown-it@14.1.0 markdown-it-anchor@9.2.0
+          echo "ELEVENTY_MODULES=$RUNNER_TEMP/eleventy/node_modules" >> "$GITHUB_ENV"
       # Hugo, for the Hugo adapter's tests (adapters/hugo), which skip without it.
       - name: Install Hugo
         run: |
@@ -58,6 +65,9 @@ jobs:
         run: bundle exec github-pages versions
       - if: matrix.jekyll == 'pages'
         run: npm run check
+      - if: matrix.jekyll == 'pages'
+        name: Upgrade test
+        run: node tools/release/upgrade-test.mjs
       # The Jekyll 4 job builds and verifies every example, then compares the minimal one with the
       # Pages build, so it installs the Pages gem too.
       - if: matrix.jekyll == 'jekyll4'

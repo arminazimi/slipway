@@ -17,6 +17,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
 - `node tools/release/prepare.mjs <version>`: bumps the gemspec and dates `Unreleased` in `CHANGELOG.md`; maintainers push the tag (CONTRIBUTING.md, "Releasing"). Add a `CHANGELOG.md` line in any PR a site owner would notice.
+- `docs/security-headers.md`: Documents the Content Security Policy setup and tests via `tools/theme/csp.test.mjs` (`qa.csp`).
 
 ## CI
 
@@ -26,14 +27,17 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 
 ## Layout
 
+- `UPGRADING.md`: breaking changes across releases and how to fix them.
 - `ROADMAP.md`: the source of truth for planned work. Issues are generated from it; edit the roadmap, not the issues.
 - `planning/roadmap/`: parser, issue builder, GitHub sync, labels, and tests. Ported from Seaworthy.
 - `_layouts/`, `_includes/`, `assets/`, `slipway-theme.gemspec`: the theme. It works as a gem, through `remote_theme`, and after "Use this template" (the files sit at the site root).
 - `_plugins/slipway_sourcemap.rb`: the Actions-mode plugin that writes `sourcemap.json` with sections and links at their lines (ADR 0007 level 2). It also sets `page.slipway_sections`, which `_includes/edit-sources.html` turns into `data-source="path:line"` on each `h2` and `h3` for the "Edit with your agent" button (`assets/js/edit-prompt.js`). Classic Pages ignores it; `tools/sourcemap/` runs the same code for level 1. Not shipped in the gem: themes cannot ship plugins.
 - `packages/doctor/`: `slipway doctor <dir> [--build <dir>] [--format text|json|sarif]`, which checks any site's source and output against the agent-editable spec and prints the level it reaches. The JSON report follows `spec/agent-editable/report.schema.json`; `src/report.mjs` writes SARIF and moves findings on built pages to their source through `sourcemap.json`. It loads its own copy of `spec/agent-editable/tests.json` and the schemas it needs; a test fails when the copies differ, so update both. Generator-specific checks live in `packages/doctor/src/checks/` (`jekyll.mjs` for Jekyll and Slipway); they are warnings and never change the level.
 - `packages/mcp/`: `slipway-mcp`, the MCP server (stdio) with the read-only tools `list_layouts`, `read_config`, and `doctor` (runs `packages/doctor/` on the site). It reads only inside the site directory it is given. Write tools come in `agent.mcp-tools`; see its README for registering it with an agent.
+- `packages/tokens/`: `@slipway/tokens`, an npm package exporting the theme's design tokens and core CSS for other frameworks.
 - `adapters/hugo/`: the Hugo adapter, a Hugo module that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, plus `starter/` files (`AGENTS.md`, content schemas) a Hugo site copies. `test/hugo.test.mjs` builds `test/site/` and checks it reaches L2 with `slipway doctor`; it needs Hugo 0.123 or later (`HUGO`) and skips without it.
 - `packages/create-slipway/`: `npx create-slipway <dir>`, which copies `examples/bare` and `starter-files/` into a new site. Flags-only for agents (`--title`, `--lang`, `--mode`, `--yes`); it prompts only on a terminal. Not published yet.
+- `adapters/eleventy/`: the Eleventy adapter, a plugin that writes `sourcemap.json` and Markdown twins, plus `starter/` files (`AGENTS.md`, content schemas) an Eleventy site copies. `test/eleventy.test.mjs` builds `test/site/` and checks it reaches L2 with `slipway doctor`; it needs Eleventy in `ELEVENTY_MODULES` and skips without it.
 - `adapters/docusaurus/`: the Docusaurus adapter, a plugin that writes `sourcemap.json` and Markdown twins after the build, and a remark plugin (`remarkSource`) that puts `data-source` on headings, plus `starter/` files (`AGENTS.md`, content schemas) a Docusaurus site copies. `test/docusaurus.test.mjs` builds `test/site/` and checks it reaches L2 with `slipway doctor`; the build tests need Docusaurus 3 in `DOCUSAURUS_MODULES` and skip without it.
 - `action/doctor/`: the composite GitHub Action that runs the doctor on any site, prints each finding as a workflow command (`src/github.mjs`) so it annotates the pull request, and writes SARIF when asked. CI runs it on the conforming fixture and on `examples/docs`.
 - `examples/`: `bare` (only `remote_theme`, a title, and `index.md`: proves zero config works), `minimal` (the smallest themed site), `docs` (the doc layout), `blog` (posts, tags, feed, authors), and `persian` (a Persian-only, right-to-left site). `node tools/theme/build.mjs <gem|template|remote> [outDir] [example]` builds one (minimal by default) with the GitHub Pages gem (needs `bundle install` and Ruby 3.3, see `.ruby-version`).
