@@ -1,0 +1,13 @@
+source "https://rubygems.org"
+
+# Plain Jekyll 4, as on Netlify, Cloudflare Pages, or a local `jekyll build` outside GitHub Pages.
+# Select it with BUNDLE_GEMFILE=tools/theme/gemfiles/jekyll4.gemfile (see docs/jekyll-4.md).
+gem "jekyll", "~> 4.3"
+
+group :jekyll_plugins do
+  # The examples list it for their remote_theme mode; it is not needed with `theme:`.
+  gem "jekyll-remote-theme"
+end
+
+# The theme as a gem, from the local gemspec.
+gemspec path: "../../.."

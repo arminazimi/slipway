@@ -1,0 +1,3 @@
+# Overlay for Jekyll 4 builds: on GitHub Pages jekyll-github-metadata sets `url`; anywhere else the
+# site sets it, or feed and sitemap entries come out relative. Real sites put this in _config.yml.
+url: https://example.org

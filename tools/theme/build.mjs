@@ -3,6 +3,9 @@
 //   template  the theme files live in the site, as after "Use this template"
 //   remote    remote_theme: arminazimi/slipway, fetched from GitHub (needs network)
 // Usage: node tools/theme/build.mjs <gem|template|remote> [outDir] [example]
+//
+// The Jekyll comes from BUNDLE_GEMFILE, as with any `bundle exec`: the root Gemfile (the GitHub Pages
+// gem, Jekyll 3.10) by default, or tools/theme/gemfiles/jekyll4.gemfile for plain Jekyll 4.
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -21,12 +24,31 @@ export function exampleNames() {
 }
 const themeDirs = ["_layouts", "_includes", "_sass", "assets"];
 
-export function bundleAvailable() {
-  return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8" }).status === 0;
+/** The two Jekyll environments Slipway supports, each a Gemfile with its lockfile next to it. */
+export const gemfiles = {
+  pages: join(root, "Gemfile"),
+  jekyll4: join(root, "tools/theme/gemfiles/jekyll4.gemfile"),
+};
+// Outside GitHub Pages nothing sets `url` (jekyll-github-metadata does on Pages), and feeds and
+// sitemaps need absolute addresses, so a Jekyll 4 build gets one the way a real site sets it.
+const jekyll4Config = join(root, "tools/theme/gemfiles/jekyll4.config.yml");
+
+/** Which entry of `gemfiles` a BUNDLE_GEMFILE value selects; unset means the Pages gem. */
+export function target(gemfile = process.env.BUNDLE_GEMFILE) {
+  return gemfile && resolve(root, gemfile) === gemfiles.jekyll4 ? "jekyll4" : "pages";
 }
 
-/** Builds examples/<name>, or the site at `name` when it is an absolute path (a test fixture). */
-export function buildExample(mode, out, name = "minimal") {
+function bundleEnv(gemfile) {
+  return gemfile ? { ...process.env, BUNDLE_GEMFILE: resolve(root, gemfile) } : process.env;
+}
+
+export function bundleAvailable(gemfile = process.env.BUNDLE_GEMFILE) {
+  return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8", env: bundleEnv(gemfile) }).status === 0;
+}
+
+/** Builds examples/<name>, or the site at `name` when it is an absolute path (a test fixture).
+ * `gemfile` picks the Jekyll (default: BUNDLE_GEMFILE); `configs` are extra overlays. */
+export function buildExample(mode, out, name = "minimal", { gemfile = process.env.BUNDLE_GEMFILE, configs: overlays = [] } = {}) {
   const example = isAbsolute(name) ? name : join(root, "examples", name);
   if (!existsSync(example)) throw new Error(`no example site named ${name}`);
   if (!modes.includes(mode)) throw new Error(`mode must be one of ${modes.join(", ")}`);
@@ -46,6 +68,8 @@ export function buildExample(mode, out, name = "minimal") {
     configs[0] = join(source, "_config.yml");
   }
   if (mode === "remote" && existsSync(join(example, "_config.remote.yml"))) configs.push(join(example, "_config.remote.yml"));
+  if (target(gemfile) === "jekyll4") configs.push(jekyll4Config);
+  configs.push(...overlays);
 
   rmSync(out, { recursive: true, force: true });
   mkdirSync(dirname(out), { recursive: true });
@@ -58,7 +82,7 @@ export function buildExample(mode, out, name = "minimal") {
       // jekyll-github-metadata runs on every Pages build and wants a repository (it also sets a
       // baseurl, which --baseurl "" above clears so the site can be checked from its root); the theme
       // stylesheet fails to build without a UTF-8 locale (ADR 0006).
-      env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
+      env: { ...bundleEnv(gemfile), PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
     },
   );
   if (source !== example) rmSync(source, { recursive: true, force: true });

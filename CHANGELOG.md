@@ -29,6 +29,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Tags, categories, and archive pages (#59).
 - Atom feed per language and a sitemap with `hreflang` (#60).
 - `llms.txt` and `llms-full.txt` layouts: a list of every page with its description for agents, and the text of every page in one file (#21).
+- Related posts after each post: up to three in the same language that share the most tags, computed in Liquid (#206).
 - Authors from `_data/authors.yml`: a byline, an author box after each post, several authors per post, and author pages with `layout: author` (#204).
 - A 404 page with a section for every language (#61).
 - Example sites: `minimal`, `docs`, `blog`, and `persian` (#9).

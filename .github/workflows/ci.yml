@@ -14,9 +14,16 @@ concurrency:
 
 jobs:
   check:
+    name: check (${{ matrix.jekyll }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # pages: the github-pages gem (Jekyll 3.10). jekyll4: plain Jekyll 4, as on Netlify or Cloudflare Pages.
+        jekyll: [pages, jekyll4]
     env:
+      BUNDLE_GEMFILE: ${{ matrix.jekyll == 'jekyll4' && 'tools/theme/gemfiles/jekyll4.gemfile' || 'Gemfile' }}
       # Ruby and the Pages gem are part of this job, so a skipped site build is a failure.
       SLIPWAY_REQUIRE_BUILD: "1"
       SLIPWAY_REQUIRE_SEAWORTHY: "1"
@@ -47,18 +54,32 @@ jobs:
           curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_0.152.2_linux-amd64.tar.gz | tar -xz -C "$RUNNER_TEMP" hugo
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
       - run: npm ci
-      - run: bundle exec github-pages versions
-      - run: npm run check
+      - if: matrix.jekyll == 'pages'
+        run: bundle exec github-pages versions
+      - if: matrix.jekyll == 'pages'
+        run: npm run check
+      # The Jekyll 4 job builds and verifies every example, then compares the minimal one with the
+      # Pages build, so it installs the Pages gem too.
+      - if: matrix.jekyll == 'jekyll4'
+        run: bundle exec jekyll --version && npm run check:site
+      - if: matrix.jekyll == 'jekyll4'
+        run: BUNDLE_GEMFILE=Gemfile bundle install --jobs 4
+      - if: matrix.jekyll == 'jekyll4'
+        run: node --test tools/theme/jekyll4.test.mjs
+        env:
+          SLIPWAY_REQUIRE_JEKYLL4: "1"
       # The doctor Action (action/doctor) on a site that must reach L3, and as a report on examples/docs,
       # which does not reach L0 yet.
-      - uses: ./action/doctor
+      - if: matrix.jekyll == 'pages'
+        uses: ./action/doctor
         with:
           path: packages/doctor/test/fixtures/conforming
           build: packages/doctor/test/fixtures/conforming/build
           level: L3
           sarif: "true"
           setup-node: "false"
-      - uses: ./action/doctor
+      - if: matrix.jekyll == 'pages'
+        uses: ./action/doctor
         with:
           path: examples/docs
           level: none
