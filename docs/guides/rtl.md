@@ -71,12 +71,12 @@ slipway:
 
 Slipway has built-in UI strings for English (`en`) and Persian (`fa`).
 
-To add a new language, or to override the built-in text, create a YAML file in `_data/i18n/` named after the language code (for example, `_data/i18n/es.yml` for Spanish). Provide translations for the keys the theme uses, such as `search`, `menu`, or `next_post`:
+To add a new language, or to override the built-in text, create a YAML file in `_data/i18n/` named after the language code (for example, `_data/i18n/es.yml` for Spanish). Provide translations for the keys the theme uses, such as `search`, `main_nav`, or `next`:
 
 ```yaml
 search: Buscar
-menu: Menú
-next_post: Siguiente
+main_nav: Menú
+next: Siguiente
 ```
 
 If a translation is missing in your YAML file, or if the language is unknown to the theme, the interface falls back to the built-in English strings.
@@ -113,7 +113,7 @@ If you are styling components, review the available tokens in the [Theme Tokens]
 
 When writing RTL text, you may need to include English words, URLs, numbers, or code blocks. Mixed-direction content can sometimes display incorrectly if not isolated.
 
-For now, use standard HTML attributes to keep mixed content readable:
+For now, you must add standard HTML attributes manually to keep mixed content readable in the built output:
 - Wrap English words or URLs in Persian text with `<bdi>...</bdi>` (Bi-Directional Isolation) to prevent the browser from flipping punctuation.
 - For code blocks that contain English code, apply `dir="ltr"` if your layout allows it, or wrap inline code in `<bdi>`.
 
@@ -129,7 +129,7 @@ Run this command to build the `persian` example site:
 node tools/theme/build.mjs template out_persian persian
 ```
 
-*(Note: The command accepts `gem`, `template`, or `remote` mode. Use what works in your environment; features mentioned here work in all modes. See [The two modes](../modes.md) for more details.)*
+*(Note: The command accepts `gem`, `template`, or `remote` mode. Use what works in your environment. See [The two modes](../modes.md) for more details.)*
 
 Open the generated HTML files in `out_persian/` in your browser. Inspect the page source to check two things:
 1. The `<html>` tag should have `dir="rtl"` (or the appropriate direction).
