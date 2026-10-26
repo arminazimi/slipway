@@ -1,0 +1,18 @@
+{
+  "name": "@slipway/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Slipway's design tokens and core CSS.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./theme.tokens.json": "./dist/theme.tokens.json",
+    "./tokens.css": "./dist/tokens.css",
+    "./slipway.css": "./dist/slipway.css",
+    "./fonts.css": "./dist/fonts.css",
+    "./print.css": "./dist/print.css"
+  },
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}
