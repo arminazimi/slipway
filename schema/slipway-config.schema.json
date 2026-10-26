@@ -93,6 +93,17 @@
             "hijri": { "type": "boolean", "default": false, "description": "Print post dates in the Hijri calendar." }
           }
         },
+        "logo": {
+          "type": "object",
+          "description": "Site logo and favicons.",
+          "additionalProperties": false,
+          "properties": {
+            "light": { "type": "string", "description": "Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg." },
+            "dark": { "type": "string", "description": "Path to the dark-mode logo (shown when the dark theme is active), relative to the site root." },
+            "favicon_svg": { "type": "string", "description": "Path to an SVG favicon, relative to the site root." },
+            "touch_icon": { "type": "string", "description": "Path to an Apple touch icon (180x180 PNG), relative to the site root." }
+          }
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",

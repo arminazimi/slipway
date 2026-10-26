@@ -24,6 +24,11 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
 | `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.arabic.hijri` | boolean | `false` | Print post dates in the Hijri calendar. |
+| `slipway.logo` | object |  | Site logo and favicons. |
+| `slipway.logo.light` | string |  | Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg. |
+| `slipway.logo.dark` | string |  | Path to the dark-mode logo (shown when the dark theme is active), relative to the site root. |
+| `slipway.logo.favicon_svg` | string |  | Path to an SVG favicon, relative to the site root. |
+| `slipway.logo.touch_icon` | string |  | Path to an Apple touch icon (180x180 PNG), relative to the site root. |
 | `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both. |
 | `slipway.tokens.accent` | string: A hex color (#rrggbb) or an oklch() color. |  | Accent for links, marks, and filled buttons, in both light and dark. |
 | `slipway.tokens.canvas` | string: A hex color (#rrggbb) or an oklch() color. |  | Page background, in both light and dark. |

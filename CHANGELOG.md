@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- Logo and favicon configuration (`slipway.logo.light`, `slipway.logo.dark`, `favicon_svg`, `touch_icon`) in `_config.yml` (#215).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).

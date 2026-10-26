@@ -40,6 +40,10 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | --- | --- | --- |
 | `slipway.header` | yes | `header.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
+| `slipway.logo.light` | yes | `header.test.mjs` |
+| `slipway.logo.dark` | yes | `header.test.mjs` |
+| `slipway.logo.favicon_svg` | yes | `head.test.mjs` |
+| `slipway.logo.touch_icon` | yes | `head.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
 | `slipway.arabic.digits` | yes | `arabic.test.mjs` |

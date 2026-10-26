@@ -1,7 +1,16 @@
 {%- comment -%} slipway.header picks the variant: classic (title at the start, the rest at the end), centered (stacked and centered), or minimal (title, language switcher, and theme toggle only). {%- endcomment -%}
 {%- assign sl_header = site.slipway.header | default: 'classic' -%}
 <header class="sl-header{% if sl_header == 'centered' or sl_header == 'minimal' %} sl-header-{{ sl_header }}{% endif %}">
-  <a class="sl-site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  <a class="sl-site-title" href="{{ '/' | relative_url }}">
+    {%- if site.slipway.logo.light %}
+    <img src="{{ site.slipway.logo.light | relative_url }}" alt="{{ site.title | escape }}"{% if site.slipway.logo.dark %} class="sl-logo-light"{% endif %}>
+    {%- if site.slipway.logo.dark %}
+    <img src="{{ site.slipway.logo.dark | relative_url }}" alt="{{ site.title | escape }}" class="sl-logo-dark">
+    {%- endif %}
+    {%- else %}
+    {{ site.title }}
+    {%- endif %}
+  </a>
   {%- assign sl_nav_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
   {%- assign sl_nav_key = 'main_' | append: sl_nav_lang -%}
   {%- assign sl_main = site.data.navigation[sl_nav_key] | default: site.data.navigation.main -%}
