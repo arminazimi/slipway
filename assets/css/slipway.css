@@ -827,3 +827,19 @@
     margin-inline: 0;
   }
 }
+
+  .sl-social-links {
+    list-style: none;
+    padding: 0;
+    margin-block: var(--sl-space-4);
+    margin-inline: 0;
+    display: flex;
+    gap: var(--sl-space-3);
+  }
+  .sl-social-links a {
+    color: var(--sl-color-muted);
+    display: flex;
+  }
+  .sl-social-links a:hover {
+    color: var(--sl-color-accent);
+  }
