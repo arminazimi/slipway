@@ -82,7 +82,7 @@ export function buildExample(mode, out, name = "minimal", { gemfile = process.en
       // jekyll-github-metadata runs on every Pages build and wants a repository (it also sets a
       // baseurl, which --baseurl "" above clears so the site can be checked from its root); the theme
       // stylesheet fails to build without a UTF-8 locale (ADR 0006).
-      env: { ...bundleEnv(gemfile), PAGES_REPO_NWO: "arminazimi/slipway", JEKYLL_GITHUB_TOKEN: "blank", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
+      env: { ...bundleEnv(gemfile), PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
     },
   );
   if (source !== example) rmSync(source, { recursive: true, force: true });

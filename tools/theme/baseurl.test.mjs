@@ -11,14 +11,16 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
   const customOut = "_site/custom_domain";
 
   try {
-    buildExample("gem", docOut, "docs", { baseurl });
-    buildExample("gem", blogOut, "blog", { baseurl });
+    const noGithubConfig = join("_site", "no_github_config.yml");
+    mkdirSync("_site", { recursive: true });
+    writeFileSync(noGithubConfig, "github: { is_project_page: false }\n");
+    buildExample("gem", docOut, "docs", { baseurl, configs: [noGithubConfig] });
+    buildExample("gem", blogOut, "blog", { baseurl, configs: [noGithubConfig] });
 
     // For the custom domain case
     // We will test custom domain config by creating a temporary config overlay
     const customDomainConfig = join("_site", "custom_domain_config.yml");
-    mkdirSync("_site", { recursive: true });
-    writeFileSync(customDomainConfig, "url: https://example.org\n");
+    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false }\n");
     buildExample("gem", customOut, "blog", { baseurl: "", configs: [customDomainConfig] });
 
     // Check generated files for hardcoded root URLs
@@ -95,5 +97,6 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
     rmSync(blogOut, { recursive: true, force: true });
     rmSync(customOut, { recursive: true, force: true });
     rmSync("_site/custom_domain_config.yml", { force: true });
+    rmSync("_site/no_github_config.yml", { force: true });
   }
 });
