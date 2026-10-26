@@ -113,7 +113,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Group | Properties |
 | --- | --- |
 | Color | `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, `--sl-color-line`, `--sl-color-rose`, `--sl-color-rose-hover`, `--sl-color-rose-fill`, `--sl-color-on-rose-fill` |
-| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian`, `--sl-font-arabic` |
+| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian`, `--sl-font-arabic`, `--sl-font-hebrew` |
 | Type scale | `--sl-step-sm`, `--sl-step-base`, `--sl-step-lg`, `--sl-step-xl`, `--sl-step-2xl`, `--sl-step-3xl` |
 | Spacing | `--sl-space-1`, `--sl-space-2`, `--sl-space-3`, `--sl-space-4`, `--sl-space-6`, `--sl-space-8`, `--sl-space-12`, `--sl-space-16` |
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
