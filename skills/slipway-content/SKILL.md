@@ -40,7 +40,7 @@ Every key, its type, and its allowed values are in [reference/front-matter.md](r
 - `series` on a post puts it in a series: use the exact same name on every part, `series: Writing for the web`. The parts are ordered by date.
 - `permalink` starts with `/`. Leave it out on a post in the default language; the site's config sets the address.
 - Set `lang` on a page that is not in the site's default language (`lang` in `_config.yml`), and on every page that has a translation.
-- `home` only: `cta_text` and `cta_url` go together, or not at all.
+- `home` only: `cta_text` and `cta_url` go together, or not at all. `variant` picks the look: `editorial` (default), `landing` (add `features`, each with a `title`), `blog`, or `docs` (cards from the `docs` list of `_data/navigation.yml`).
 - Quote a value that contains `: ` or starts with a character YAML treats specially (`[`, `{`, `*`, `&`, `!`, `#`, `|`, `>`, `@`, or a backtick).
 
 ## 4. Write the body

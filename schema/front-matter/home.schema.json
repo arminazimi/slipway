@@ -2,12 +2,71 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/arminazimi/slipway/schema/front-matter/home.schema.json",
   "title": "Slipway front matter: home layout",
-  "description": "The landing page: a hero with an optional call to action, then the latest posts.",
+  "description": "The landing page in one of four variants: an editorial hero with the latest posts (the default), a landing page with features and a call to action, a blog index, or a docs index.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }],
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ],
   "properties": {
-    "cta_text": { "type": "string", "minLength": 1, "description": "Label of the call-to-action button. Shown only with `cta_url`." },
-    "cta_url": { "$ref": "base.schema.json#/$defs/url", "description": "Where the call-to-action button goes." }
+    "variant": {
+      "enum": [
+        "editorial",
+        "landing",
+        "blog",
+        "docs"
+      ],
+      "default": "editorial",
+      "description": "How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards."
+    },
+    "cta_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Label of the call-to-action button. Shown only with `cta_url`."
+    },
+    "cta_url": {
+      "$ref": "base.schema.json#/$defs/url",
+      "description": "Where the call-to-action button goes."
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Feature cards for the `landing` variant, in order.",
+      "items": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The card heading."
+          },
+          "text": {
+            "type": "string",
+            "description": "One or two plain sentences under the heading."
+          },
+          "url": {
+            "$ref": "base.schema.json#/$defs/url",
+            "description": "Where the heading links."
+          }
+        }
+      }
+    },
+    "posts_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How many posts the `editorial` and `blog` variants list. Defaults to 5 for `editorial` and every post for `blog`."
+    }
   },
-  "dependentRequired": { "cta_text": ["cta_url"], "cta_url": ["cta_text"] }
+  "dependentRequired": {
+    "cta_text": [
+      "cta_url"
+    ],
+    "cta_url": [
+      "cta_text"
+    ]
+  }
 }

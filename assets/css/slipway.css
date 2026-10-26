@@ -219,7 +219,7 @@
   }
 }
 
-/* Home layout: a large typographic hero and the latest-posts list. */
+/* Home layout: a large typographic hero and the latest-posts list, plus the landing, blog, and docs variants. */
 @layer components {
   .sl-hero {
     padding-block: var(--sl-space-12) var(--sl-space-8);
@@ -235,6 +235,47 @@
     margin-block: 0 var(--sl-space-4);
     font-size: var(--sl-step-lg);
     color: var(--sl-color-muted);
+  }
+
+  .sl-home-head {
+    padding-block: var(--sl-space-8) var(--sl-space-4);
+  }
+
+  .sl-home-title {
+    margin-block: 0 var(--sl-space-2);
+    font-size: var(--sl-step-2xl);
+  }
+
+  .sl-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--sl-space-4);
+    list-style: none;
+    margin-block: var(--sl-space-8);
+    padding: 0;
+  }
+
+  .sl-feature {
+    padding: var(--sl-space-4);
+    background: var(--sl-color-surface);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+  }
+
+  .sl-feature-title {
+    margin-block: 0 var(--sl-space-2);
+    font-size: var(--sl-step-lg);
+  }
+
+  .sl-feature p,
+  .sl-feature ul {
+    margin-block: 0;
+  }
+
+  .sl-cta-band {
+    padding-block: var(--sl-space-8);
+    text-align: center;
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
   }
 
   .sl-post-list {
