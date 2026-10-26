@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/data/social.schema.json",
+  "title": "Slipway social links",
+  "description": "_data/social.yml. A list of social networks with URLs.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["network", "url"],
+    "properties": {
+      "network": { "type": "string", "minLength": 1 },
+      "url": { "type": "string", "format": "uri" }
+    }
+  }
+}

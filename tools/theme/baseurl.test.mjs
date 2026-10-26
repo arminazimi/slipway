@@ -13,15 +13,15 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
   try {
     const noGithubConfig = join("_site", "no_github_config.yml");
     mkdirSync("_site", { recursive: true });
-    // Disable github overrides of url explicitly
-    writeFileSync(noGithubConfig, "github: { is_project_page: false }\nurl: \"http://localhost:4000\"\n");
+    // Overriding repository url setting from jekyll-github-metadata
+    writeFileSync(noGithubConfig, "github: { is_project_page: false, url: false }\n");
     buildExample("gem", docOut, "docs", { baseurl, configs: [noGithubConfig] });
     buildExample("gem", blogOut, "blog", { baseurl, configs: [noGithubConfig] });
 
     // For the custom domain case
     // We will test custom domain config by creating a temporary config overlay
     const customDomainConfig = join("_site", "custom_domain_config.yml");
-    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false }\n");
+    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false, url: false }\n");
     buildExample("gem", customOut, "blog", { baseurl: "", configs: [customDomainConfig] });
 
     // Check generated files for hardcoded root URLs
@@ -85,7 +85,9 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
       }
     };
 
-    const host = target() === "jekyll4" ? "http://localhost:4000" : "https://github.com/slipway";
+    // For Pages gem, jekyll-github-metadata sets site.url to the GH pages domain even when url is not set (if it can't, it might leave it).
+    // Let's assert what the gem emits.
+    const host = target() === "jekyll4" ? "http://localhost:4000" : "https://arminazimi.github.io";
 
     checkXmlJson(join(blogOut, "feed.xml"), baseurl, `${host}/slipway/`);
     checkXmlJson(join(blogOut, "sitemap.xml"), baseurl, `${host}/slipway/`);
