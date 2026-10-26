@@ -21,6 +21,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Feature | Classic | Classic + command | Actions | Source |
 | --- | :---: | :---: | :---: | --- |
 | Layouts, includes, CSS, `remote_theme`, the gem, "Use this template" | yes | | yes | [foundation.layout](../ROADMAP.md) |
+| Plain Jekyll 4 outside GitHub Pages (Netlify, Cloudflare Pages, `jekyll build`); set `url` in `_config.yml` | | | yes | [standalone.jekyll4](../ROADMAP.md) |
 | Override slots (`head-custom.html`, `footer-custom.html`, `custom.css`) | yes | | yes | [docs/overrides.md](overrides.md) |
 | Renamed config keys and front-matter fields keep working | yes, in Liquid (`compat.html`) | Warnings from `node tools/theme/deprecations.mjs <site>` | yes | [ADR 0012](adr/0012-public-api.md) |
 | Right-to-left and `direction` in front matter | yes | | yes | [ADR 0006](adr/0006-markdown-twins.md) |
@@ -45,6 +46,7 @@ Only rows with a decision record are filled in. The other planned features (sear
 - **Classic mode cannot compute exact lines in Liquid.** The result looks right in a demo and is wrong on real documents (ADR 0007). Level 0 says "this page comes from `_docs/intro.md`" and stops there.
 - **Content must not contain Liquid** (`{{` or `{%`) in either mode. Classic Jekyll 3.10 ignores `render_with_liquid: false`, and the twin has to equal the source (ADR 0006).
 - **A build on the Pages gem needs a UTF-8 locale and a `repository` setting** (or `PAGES_REPO_NWO`) locally, because `jekyll-github-metadata` runs on every build. `node tools/theme/build.mjs` sets both.
+- **Outside GitHub Pages, set `url`.** On Pages `jekyll-github-metadata` fills it in; on Jekyll 4 nothing does, and feed and sitemap entries come out relative. Use `tools/theme/gemfiles/jekyll4.gemfile` (Jekyll 4 and `jekyll-remote-theme`) as a starting Gemfile. Pages also adds a default layout and optional front matter (`jekyll-default-layout`, `jekyll-optional-front-matter`); on Jekyll 4 give each page a `layout`, which is why the Jekyll 4 check leaves out `examples/bare`.
 - **Not verified yet:** a real Pages deployment of any of this (whether the `.md` twins are served, and with which `Content-Type`), and the interaction of `remote_theme` with twins and source maps.
 
 ## Markdown twins
@@ -59,4 +61,4 @@ A page's twin is its Markdown source without the front matter, at the page's add
 
 ## How Slipway itself tests both
 
-`npm run check` builds every site in `examples/` (minimal, docs, blog, persian) with the GitHub Pages gem as a gem theme and as a template, and runs Seaworthy on each build. CI does it in the Pages environment (Ruby from `.ruby-version`, `Gemfile.lock`). The `remote_theme` build needs network and a pushed theme, so it is opt-in: `SLIPWAY_TEST_REMOTE=1 node --test tools/theme/modes.test.mjs`.
+`npm run check` builds every site in `examples/` (minimal, docs, blog, persian) with the GitHub Pages gem as a gem theme and as a template, and runs Seaworthy on each build. CI does it in the Pages environment (Ruby from `.ruby-version`, `Gemfile.lock`). CI runs it twice: on the Pages gem (Jekyll 3.10) and on plain Jekyll 4 (`BUNDLE_GEMFILE=tools/theme/gemfiles/jekyll4.gemfile npm run check:site`), and `tools/theme/jekyll4.test.mjs` checks that the minimal example's HTML and XML are the same on both, apart from the generator tag and whitespace. The `remote_theme` build needs network and a pushed theme, so it is opt-in: `SLIPWAY_TEST_REMOTE=1 node --test tools/theme/modes.test.mjs`.
