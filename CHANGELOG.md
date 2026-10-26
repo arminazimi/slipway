@@ -5,6 +5,7 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
+- `@slipway/tokens` npm package exporting the theme's design tokens and core CSS.
 - Added `translation-status` layout to show which pages exist in which language.
 
 ### Added
