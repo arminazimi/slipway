@@ -1,4 +1,16 @@
 <footer class="sl-footer">
   <p>{{ site.title }}</p>
+  {% if site.data.social %}
+  <ul class="sl-social-links">
+    {% for link in site.data.social %}
+    <li>
+      <a href="{{ link.url }}" rel="me" aria-label="{{ link.network }}">
+        {% assign icon_file = "icons/" | append: link.network | append: ".svg" %}
+        {% include {{ icon_file }} %}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
   {% include footer-custom.html %}
 </footer>
