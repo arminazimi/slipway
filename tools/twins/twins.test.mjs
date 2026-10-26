@@ -51,6 +51,7 @@ const expected = [
   { source: "_docs/intro.md", twin: "docs/intro.md", stub: "docs-intro.twin.html" },
   { source: "_posts/2026-10-20-hello.md", twin: "2026/10/20/hello.md", stub: "posts-2026-10-20-hello.twin.html" },
   { source: "about.md", twin: "about.md", stub: "about.twin.html" },
+  { source: "status.md", twin: "status/index.md", stub: "status.twin.html" },
   { source: "guide/install.md", twin: "guide/install/index.md", stub: "guide/install.twin.html" },
 ];
 
