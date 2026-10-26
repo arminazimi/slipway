@@ -3,9 +3,9 @@ title: "Migrate an Existing Jekyll Site to Slipway"
 layout: doc
 description: "A guide to switching an existing Jekyll site to Slipway, keeping permalinks and mapping front matter."
 permalink: /guides/migration/
+date: 2026-10-26
+author: Slipway
 ---
-
-# Migrate an Existing Jekyll Site to Slipway
 
 Switching an existing Jekyll site to Slipway allows you to take advantage of agent-native features, RTL support, and Seaworthy validation. This guide walks you through migrating your site while keeping your existing URLs (permalinks) and mapping your front matter.
 

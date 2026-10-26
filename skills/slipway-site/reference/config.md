@@ -24,12 +24,6 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
 | `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.arabic.hijri` | boolean | `false` | Print post dates in the Hijri calendar. |
-| `slipway.analytics` | object |  | Opt-in, privacy-friendly analytics. |
-| `slipway.analytics.plausible` | string |  | The domain name of your site to enable Plausible Analytics. |
-| `slipway.analytics.goatcounter` | string |  | Your GoatCounter endpoint URL. |
-| `slipway.analytics.umami` | object |  | Umami analytics configuration. |
-| `slipway.analytics.umami.website_id` | string | required | Your Umami website ID. |
-| `slipway.analytics.umami.url` | string |  | The URL to the Umami script. Defaults to https://analytics.umami.is/script.js. |
 | `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both. |
 | `slipway.tokens.accent` | string: A hex color (#rrggbb) or an oklch() color. |  | Accent for links, marks, and filled buttons, in both light and dark. |
 | `slipway.tokens.canvas` | string: A hex color (#rrggbb) or an oklch() color. |  | Page background, in both light and dark. |
