@@ -1,11 +1,14 @@
 {%- comment -%}
   Prints include.date as YYYY-MM-DD, or as "D Month YYYY" in the Jalali calendar when the page is Persian and
-  slipway.persian.jalali is on. Integer arithmetic of the 33-year cycle (Borkowski); digits follow slipway.persian.digits.
+  slipway.persian.jalali is on. Prints in the Hijri calendar when the page is Arabic and slipway.arabic.hijri is on.
+  Integer arithmetic of the 33-year cycle (Borkowski) for Jalali; 30-year tabular (civil epoch) for Hijri.
+  (Tabular Islamic calendar has a known offset of up to 1-2 days from Umm al-Qura).
+  Digits follow slipway.persian.digits or slipway.arabic.digits.
 {%- endcomment -%}
 {%- assign sl_d_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
 {%- capture sl_d_text -%}
-{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali -%}
-  {%- assign gy = include.date | date: '%Y' | plus: 0 -%}
+{%- assign gy = include.date | date: '%Y' | plus: 0 -%}
+{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali and gy > 0 -%}
   {%- assign gm = include.date | date: '%-m' | plus: 0 -%}
   {%- assign gd = include.date | date: '%-d' | plus: 0 -%}
   {%- assign offsets = '0,31,59,90,120,151,181,212,243,273,304,334' | split: ',' -%}
@@ -37,9 +40,51 @@
   {%- assign months = 'فروردین,اردیبهشت,خرداد,تیر,مرداد,شهریور,مهر,آبان,آذر,دی,بهمن,اسفند' | split: ',' -%}
   {%- assign mi = jm | minus: 1 -%}
   {{- jd }} {{ months[mi] }} {{ jy -}}
+{%- elsif sl_d_lang == 'ar' and site.slipway.arabic.hijri and gy > 0 -%}
+  {%- assign gm = include.date | date: '%-m' | plus: 0 -%}
+  {%- assign gd = include.date | date: '%-d' | plus: 0 -%}
+  {%- assign a = 14 | minus: gm | divided_by: 12 -%}
+  {%- assign y_p = gy | plus: 4800 | minus: a -%}
+  {%- assign m_p = a | times: 12 | plus: gm | minus: 3 -%}
+  {%- assign jd = m_p | times: 153 | plus: 2 | divided_by: 5 | plus: gd -%}
+  {%- assign y_p365 = y_p | times: 365 -%}
+  {%- assign y_p4 = y_p | divided_by: 4 -%}
+  {%- assign y_p100 = y_p | divided_by: 100 -%}
+  {%- assign y_p400 = y_p | divided_by: 400 -%}
+  {%- assign jd = jd | plus: y_p365 | plus: y_p4 | minus: y_p100 | plus: y_p400 | minus: 32045 -%}
+  {%- assign days = jd | minus: 1948440 -%}
+  {%- if days < 0 -%}
+    {{- include.date | date: '%Y-%m-%d' -}}
+    {%- assign hy = gy -%}
+  {%- else -%}
+    {%- assign cycle = days | divided_by: 10631 -%}
+    {%- assign rem = days | modulo: 10631 -%}
+    {%- assign h_year = rem | times: 30 | plus: 10646 | divided_by: 10631 -%}
+    {%- assign h_year_m1 = h_year | minus: 1 -%}
+    {%- assign days_before = h_year_m1 | times: 354 -%}
+    {%- assign leap_days = h_year | times: 11 | plus: 3 | divided_by: 30 -%}
+    {%- assign days_before = days_before | plus: leap_days -%}
+    {%- assign rem_days = rem | minus: days_before -%}
+    {%- assign hm = rem_days | times: 11 | plus: 330 | divided_by: 325 -%}
+    {%- assign hm_m1 = hm | minus: 1 -%}
+    {%- assign days_in_prev = hm_m1 | times: 29 -%}
+    {%- assign days_in_prev_leap = hm | divided_by: 2 -%}
+    {%- assign days_in_prev = days_in_prev | plus: days_in_prev_leap -%}
+    {%- assign hd = rem_days | minus: days_in_prev | plus: 1 -%}
+    {%- assign hy = cycle | times: 30 | plus: h_year -%}
+    {%- assign months = 'محرم,صفر,ربيع الأول,ربيع الثاني,جمادى الأولى,جمادى الآخرة,رجب,شعبان,رمضان,شوال,ذو القعدة,ذو الحجة' | split: ',' -%}
+    {%- assign mi = hm | minus: 1 -%}
+    {{- hd }} {{ months[mi] }} {{ hy -}}
+  {%- endif -%}
 {%- else -%}
   {{- include.date | date: '%Y-%m-%d' -}}
 {%- endif -%}
 {%- endcapture -%}
-{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali -%}{%- assign sl_d_year = jy -%}{%- else -%}{%- assign sl_d_year = include.date | date: '%Y' -%}{%- endif -%}
+{%- if sl_d_lang == 'fa' and site.slipway.persian.jalali and gy > 0 -%}
+  {%- assign sl_d_year = jy -%}
+{%- elsif sl_d_lang == 'ar' and site.slipway.arabic.hijri and gy > 0 and hy -%}
+  {%- assign sl_d_year = hy -%}
+{%- else -%}
+  {%- assign sl_d_year = include.date | date: '%Y' -%}
+{%- endif -%}
 {%- include num.html value=sl_d_text -%}

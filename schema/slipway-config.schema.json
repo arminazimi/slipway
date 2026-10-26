@@ -89,7 +89,8 @@
           "description": "Opt-in Arabic conventions for pages whose lang is ar.",
           "additionalProperties": false,
           "properties": {
-            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Arabic-Indic digits." }
+            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Arabic-Indic digits." },
+            "hijri": { "type": "boolean", "default": false, "description": "Print post dates in the Hijri calendar." }
           }
         },
         "tokens": {
