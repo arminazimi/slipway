@@ -33,7 +33,7 @@ test("breadcrumbs and BreadcrumbList JSON-LD are generated for nested pages", { 
 
   // Verify JSON-LD BreadcrumbList
   const blocks = jsonLd(nestedPageHTML);
-  const breadcrumbBlock = blocks.find(b => b["@type"] === "BreadcrumbList");
+  const breadcrumbBlock = blocks[0]["@graph"] ? blocks[0]["@graph"].find(b => b["@type"] === "BreadcrumbList") : blocks.find(b => b["@type"] === "BreadcrumbList");
   assert.ok(breadcrumbBlock, "Expected BreadcrumbList JSON-LD block");
 
   assert.equal(breadcrumbBlock.itemListElement.length, 3);

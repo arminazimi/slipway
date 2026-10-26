@@ -68,9 +68,5 @@
 {%- endfor -%}
 
 {%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ page.title | jsonify }}}{%- endcapture -%}
-{%- capture sl_ld_bc_json -%}{"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture -%}
-{%- assign sl_ld_bc_json_escaped = sl_ld_bc_json | replace: '<', '\u003c' -%}
-<script type="application/ld+json">
-{"@context":"https://schema.org",{%- if sl_ld_bc_json_escaped -%}{{ sl_ld_bc_json_escaped | replace: '{"@type":"BreadcrumbList"', '"@graph":[{"@type":"BreadcrumbList"' }}]}{%- else -%}"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json | strip_newlines | replace: '<', '\u003c' }}]{%- endif -%}
-</script>
+{%- capture sl_bc_list -%}{"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture -%}
 {%- endif -%}
