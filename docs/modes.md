@@ -45,7 +45,7 @@ Only rows with a decision record are filled in. The other planned features (sear
 - **Classic mode cannot compute exact lines in Liquid.** The result looks right in a demo and is wrong on real documents (ADR 0007). Level 0 says "this page comes from `_docs/intro.md`" and stops there.
 - **Content must not contain Liquid** (`{{` or `{%`) in either mode. Classic Jekyll 3.10 ignores `render_with_liquid: false`, and the twin has to equal the source (ADR 0006).
 - **A build on the Pages gem needs a UTF-8 locale and a `repository` setting** (or `PAGES_REPO_NWO`) locally, because `jekyll-github-metadata` runs on every build. `node tools/theme/build.mjs` sets both.
-- **Outside GitHub Pages, set `url`.** On Pages `jekyll-github-metadata` fills it in; on Jekyll 4 nothing does, and feed and sitemap entries come out relative. Use `tools/theme/gemfiles/jekyll4.gemfile` (Jekyll 4 and `jekyll-remote-theme`) as a starting Gemfile.
+- **Outside GitHub Pages, set `url`.** On Pages `jekyll-github-metadata` fills it in; on Jekyll 4 nothing does, and feed and sitemap entries come out relative. Use `tools/theme/gemfiles/jekyll4.gemfile` (Jekyll 4 and `jekyll-remote-theme`) as a starting Gemfile. Pages also adds a default layout and optional front matter (`jekyll-default-layout`, `jekyll-optional-front-matter`); on Jekyll 4 give each page a `layout`, which is why the Jekyll 4 check leaves out `examples/bare`.
 - **Not verified yet:** a real Pages deployment of any of this (whether the `.md` twins are served, and with which `Content-Type`), and the interaction of `remote_theme` with twins and source maps.
 
 ## Markdown twins

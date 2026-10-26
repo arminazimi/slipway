@@ -116,6 +116,12 @@ export function main(env = process.env) {
   const work = mkdtempSync(join(tmpdir(), "slipway-check-"));
   try {
     for (const name of exampleNames()) {
+      // examples/bare relies on the Pages gem's default layout and front matter plugins (zero config on
+      // GitHub Pages); plain Jekyll 4 has neither, so a site there names its layouts.
+      if (name === "bare" && target() === "jekyll4") {
+        console.log(`SKIP: bare needs GitHub Pages' default plugins (${target()})`);
+        continue;
+      }
       for (const mode of checkedModes) {
         const label = `${name}, ${mode} mode, ${target()}`;
         const site = buildExample(mode, join(work, name, mode), name);
