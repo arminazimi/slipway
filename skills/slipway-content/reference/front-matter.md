@@ -12,7 +12,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `page`, `default`, `tags`, `not-found` |  | `page.schema.json` | A plain page: a title, a description, and text. Also used by the default, tags, and not-found layouts. |
 | `doc` | `_docs/` | `doc.schema.json` | A documentation page with the sidebar from _data/navigation.yml, a table of contents, and previous and next links. |
 | `post` | `_posts/` | `post.schema.json` | A dated post. The date and slug come from the file name (YYYY-MM-DD-slug.md); `date` in the front matter overrides the date. |
-| `home` |  | `home.schema.json` | The landing page: a hero with an optional call to action, then the latest posts. |
+| `home` |  | `home.schema.json` | The landing page in one of four variants: an editorial hero with the latest posts (the default), a landing page with features and a call to action, a blog index, or a docs index. |
 | `archive` |  | `archive.schema.json` | Every post, grouped by year. |
 | `author` |  | `author.schema.json` | One author's page: the avatar, bio, and links from `_data/authors.yml`, then that author's posts in the page's language. Bylines link here. |
 
@@ -41,14 +41,18 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
+| `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
 | `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
 
 ## Only in `home`
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
+| `variant` | `editorial` or `landing` or `blog` or `docs` |  |  | How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards. |
 | `cta_text` | string |  | not empty | Label of the call-to-action button. Shown only with `cta_url`. Set together with `cta_url`. |
 | `cta_url` | string |  | `^(/\|https://)[^\s"<>]*$` | Where the call-to-action button goes. Set together with `cta_text`. |
+| `features` | list |  |  | Feature cards for the `landing` variant, in order. |
+| `posts_limit` | integer |  |  | How many posts the `editorial` and `blog` variants list. Defaults to 5 for `editorial` and every post for `blog`. |
 
 ## Only in `author`
 

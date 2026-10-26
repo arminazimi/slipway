@@ -2,6 +2,7 @@
 title: Notes on type
 description: Choosing a reading size and line length.
 layout: post
+series: Writing for the web
 author: ada
 permalink: /2026/08/03/notes-on-type.html
 tags: [typography]

@@ -219,7 +219,7 @@
   }
 }
 
-/* Home layout: a large typographic hero and the latest-posts list. */
+/* Home layout: a large typographic hero and the latest-posts list, plus the landing, blog, and docs variants. */
 @layer components {
   .sl-hero {
     padding-block: var(--sl-space-12) var(--sl-space-8);
@@ -235,6 +235,47 @@
     margin-block: 0 var(--sl-space-4);
     font-size: var(--sl-step-lg);
     color: var(--sl-color-muted);
+  }
+
+  .sl-home-head {
+    padding-block: var(--sl-space-8) var(--sl-space-4);
+  }
+
+  .sl-home-title {
+    margin-block: 0 var(--sl-space-2);
+    font-size: var(--sl-step-2xl);
+  }
+
+  .sl-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--sl-space-4);
+    list-style: none;
+    margin-block: var(--sl-space-8);
+    padding: 0;
+  }
+
+  .sl-feature {
+    padding: var(--sl-space-4);
+    background: var(--sl-color-surface);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+  }
+
+  .sl-feature-title {
+    margin-block: 0 var(--sl-space-2);
+    font-size: var(--sl-step-lg);
+  }
+
+  .sl-feature p,
+  .sl-feature ul {
+    margin-block: 0;
+  }
+
+  .sl-cta-band {
+    padding-block: var(--sl-space-8);
+    text-align: center;
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
   }
 
   .sl-post-list {
@@ -392,6 +433,60 @@
     padding-inline: var(--sl-space-2);
     border: var(--sl-rule) solid var(--sl-color-line);
     border-radius: var(--sl-radius-compact);
+  }
+}
+
+/* Post series: the box after the post header with the parts and the previous and next part. */
+@layer components {
+  .sl-series {
+    margin-block: var(--sl-space-6);
+    padding: var(--sl-space-4);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-series-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .sl-series-title span,
+  .sl-series-part,
+  .sl-series-pager span {
+    color: var(--sl-color-muted);
+  }
+
+  .sl-series-part {
+    margin-block: 0 var(--sl-space-2);
+  }
+
+  .sl-series-list {
+    margin-block: 0;
+    padding-inline-start: var(--sl-space-6);
+  }
+
+  .sl-series-list [aria-current] {
+    font-weight: 600;
+  }
+
+  .sl-series-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sl-space-4);
+    margin-block-start: var(--sl-space-2);
+  }
+
+  .sl-series-pager a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .sl-series-next {
+    margin-inline-start: auto;
+    text-align: end;
   }
 }
 
