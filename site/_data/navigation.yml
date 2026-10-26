@@ -6,6 +6,8 @@ items:
     url: /install/
   - title: Configuration
     url: /config/
+  - title: Recipes
+    url: /recipes/
   - title: Migration
     url: /guides/migration/
   - title: The Spec

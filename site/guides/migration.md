@@ -2,6 +2,7 @@
 title: "Migrate an Existing Jekyll Site to Slipway"
 layout: doc
 description: "A guide to switching an existing Jekyll site to Slipway, keeping permalinks and mapping front matter."
+permalink: /guides/migration/
 ---
 
 # Migrate an Existing Jekyll Site to Slipway
