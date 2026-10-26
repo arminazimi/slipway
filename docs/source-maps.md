@@ -70,6 +70,8 @@ permalink: /sourcemap.json
 
 ### Hugo
 
+The [Hugo adapter](../adapters/hugo/README.md) does all of this and adds sections and links with their lines. To write a level 0 map by hand instead:
+
 Add an output format for the home page in `hugo.toml`:
 
 ```toml

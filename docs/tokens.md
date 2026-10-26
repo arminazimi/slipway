@@ -70,6 +70,7 @@ An override applies to both light and dark, so check its contrast in both. The s
 | `font.mono` | `--sl-font-mono` | Code. | `"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace` | same |
 | `font.persian` | `--sl-font-persian` | All Persian text. | `Vazirmatn, "Source Serif 4", Tahoma, sans-serif` | same |
 | `font.arabic` | `--sl-font-arabic` | All Arabic text. | `Vazirmatn, "Source Serif 4", "Geeza Pro", "Segoe UI", Tahoma, sans-serif` | same |
+| `font.hebrew` | `--sl-font-hebrew` | All Hebrew text. | `"Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif` | same |
 
 ## Type scale
 
