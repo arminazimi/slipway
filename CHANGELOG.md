@@ -6,6 +6,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ## [Unreleased]
 - Added `translation-status` layout to show which pages exist in which language.
+- Added cross-browser testing with Playwright.
 
 ### Added
 - Breadcrumbs above the title of doc and page layouts for nested pages, with a `BreadcrumbList` JSON-LD block. Translated labels for Persian, Arabic, and Hebrew.

@@ -12,6 +12,7 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 - `BUNDLE_GEMFILE=tools/theme/gemfiles/jekyll4.gemfile npm run check:site` builds and checks the examples on plain Jekyll 4 instead of the Pages gem (run `bundle install` with the same variable first). CI does both.
 - `npm run sourcemap -- [site] [--check]`: writes `<site>/sourcemap.json` with exact lines (ADR 0007 level 1) using the Actions plugin's code and the Pages gem's kramdown; `--check` fails when the committed file is stale. Needs Ruby and `bundle install`.
 - `npm run twins -- [site] [--check]`: writes the Markdown twin stubs of a classic-Pages site (`*.twin.html`, ADR 0006) with the Actions plugin's code (`_plugins/slipway_twins.rb`); `--check` fails when one is missing, stale, or left over. Needs Ruby and `bundle install`. Run it after you add, move, or delete a page in `examples/`; `tools/twins/twins.test.mjs` fails otherwise.
+- `node tools/browser/run.mjs`: runs cross-browser Playwright tests (skips if not installed).
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: dry run of the GitHub sync. `-- --apply` writes to GitHub; maintainers only. Add `--rebuild-state` to rebuild `out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
 
