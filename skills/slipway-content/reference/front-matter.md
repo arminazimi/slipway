@@ -41,6 +41,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
+| `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
 | `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
 
 ## Only in `home`

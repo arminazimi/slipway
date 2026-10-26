@@ -71,6 +71,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `date`, `tags`, `categories` | `post` | yes | `post-layout.test.mjs`, `taxonomy.test.mjs` |
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
 | `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
+| `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
 | `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
