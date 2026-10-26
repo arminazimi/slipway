@@ -1,6 +1,6 @@
 # Override slots
 
-Three files let a site add to the theme without forking it or copying a theme file. The theme ships the two includes empty and has no `custom.css`; a site fills a slot by creating the file at the same path. Your file replaces the theme's, and upgrades leave it alone.
+Four files let a site add to the theme without forking it or copying a theme file. The theme ships the two includes empty, has no `custom.css`, and ships a plain `social.png`; a site fills a slot by creating the file at the same path. Your file replaces the theme's, and upgrades leave it alone.
 
 They work the same with `remote_theme`, the gem, and "Use this template" (where the files already sit in your site, so you edit them in place).
 
@@ -9,6 +9,7 @@ They work the same with `remote_theme`, the gem, and "Use this template" (where 
 | `_includes/head-custom.html` | At the end of `<head>`, on every page | Meta tags, an analytics snippet, a font or stylesheet link |
 | `_includes/footer-custom.html` | Inside `<footer>`, after the site title, on every page | An extra line or link, a deferred script |
 | `assets/css/custom.css` | Linked after the theme styles and the `slipway.tokens` config, on every page | Overriding tokens or styling your own content |
+| `assets/images/social.png` | The `og:image` of every page, the picture shown when a link to the site is shared | Your own 1200 × 630 image |
 
 ## Examples
 

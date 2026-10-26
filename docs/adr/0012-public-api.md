@@ -50,7 +50,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.tokens.font_body` | yes | `config.test.mjs` |
 | `slipway.tokens.radius` | yes | `config.test.mjs` |
 
-Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `description` (the site summary in `llms.txt`) is public (`llms.test.mjs`). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all seven, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
+Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `description` (the site summary in `llms.txt`) is public (`llms.test.mjs`). `direction` is public (`not-found.test.mjs`). `author` (feed and JSON-LD author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all seven, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
 
 ### Data files
 
@@ -70,6 +70,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `permalink` | all (Jekyll's) | yes | `doc-layout.test.mjs` |
 | `date`, `tags`, `categories` | `post` | yes | `post-layout.test.mjs`, `taxonomy.test.mjs` |
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
+| `variant`, `features`, `posts_limit` | `home` | yes | `home-layout.test.mjs` |
 | `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
 | `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
 | `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
@@ -108,7 +109,7 @@ Includes are internal, so the theme can restructure its markup. One is public, b
 | `head-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<head>` | yes | `overrides.test.mjs` |
 | `footer-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<footer>` | yes | `overrides.test.mjs` |
 
-The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). Shadowing any other include works but is unsupported: it may break in a minor release.
+The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). The fourth is `assets/images/social.png`, the `og:image` of every page (`seo.test.mjs`); the theme ships a plain one. Shadowing any other include works but is unsupported: it may break in a minor release.
 
 ### CSS custom properties
 

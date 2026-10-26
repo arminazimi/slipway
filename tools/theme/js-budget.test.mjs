@@ -31,6 +31,7 @@ test("every script in the folder counts, including ones added later", () => {
 test("pageProblems flags blocking scripts, visible controls, and noscript", () => {
   assert.deepEqual(pageProblems('<script src="/a.js" defer></script><form data-search="/s.json" hidden></form><button data-theme-toggle hidden>'), []);
   assert.equal(pageProblems('<script src="/a.js"></script>').length, 1);
+  assert.deepEqual(pageProblems('<script type="application/ld+json">{}</script>'), []);
   assert.equal(pageProblems('<form data-search="/s.json"></form>').length, 1);
   assert.equal(pageProblems("<button data-theme-toggle>Theme</button>").length, 1);
   assert.equal(pageProblems("<noscript>Enable JavaScript</noscript>").length, 1);

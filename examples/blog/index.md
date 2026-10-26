@@ -2,6 +2,7 @@
 title: Notes from the slipway
 description: A small blog with posts, tags, categories, an archive, and a feed.
 layout: home
+variant: blog
 cta_text: Read the latest post
 cta_url: /2026/10/20/why-plain-markdown.html
 ---

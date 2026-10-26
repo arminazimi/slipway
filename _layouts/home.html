@@ -1,7 +1,27 @@
 ---
 layout: base
 ---
-<section class="sl-hero">
+{%- comment -%}
+  Four variants, picked by `variant` in the front matter:
+  editorial (the default): a large hero, the body, then the latest posts;
+  landing: the hero, the body, a grid of `features`, and the call to action again;
+  blog: a compact heading, the body, then every post (or `posts_limit` of them);
+  docs: the hero, the body, then the docs navigation as cards.
+{%- endcomment -%}
+{%- assign sl_variant = page.variant | default: 'editorial' -%}
+{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- if sl_variant == 'blog' %}
+<header class="sl-home-head">
+  <h1 class="sl-home-title">{{ page.title }}</h1>
+  {%- if page.description %}
+  <p class="sl-hero-lead">{{ page.description }}</p>
+  {%- endif %}
+  {%- if page.cta_text and page.cta_url %}
+  <p><a class="sl-button" href="{{ page.cta_url | relative_url }}">{{ page.cta_text }}</a></p>
+  {%- endif %}
+</header>
+{%- else %}
+<section class="sl-hero sl-hero-{{ sl_variant }}">
   <h1 class="sl-hero-title">{{ page.title }}</h1>
   {%- if page.description %}
   <p class="sl-hero-lead">{{ page.description }}</p>
@@ -10,19 +30,67 @@ layout: base
   <p><a class="sl-button" href="{{ page.cta_url | relative_url }}">{{ page.cta_text }}</a></p>
   {%- endif %}
 </section>
+{%- endif %}
 {{ content }}
-{%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- if sl_variant == 'landing' %}
+{%- if page.features.size > 0 %}
+<ul class="sl-features">
+  {%- for feature in page.features %}
+  <li class="sl-feature">
+    <h2 class="sl-feature-title">{% if feature.url %}<a href="{{ feature.url | relative_url }}">{{ feature.title }}</a>{% else %}{{ feature.title }}{% endif %}</h2>
+    {%- if feature.text %}
+    <p>{{ feature.text }}</p>
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
+{%- if page.cta_text and page.cta_url %}
+<p class="sl-cta-band"><a class="sl-button" href="{{ page.cta_url | relative_url }}">{{ page.cta_text }}</a></p>
+{%- endif %}
+{%- elsif sl_variant == 'docs' %}
+{%- assign sl_nav_lang = sl_lang | split: '-' | first -%}
+{%- assign sl_nav_key = 'docs_' | append: sl_nav_lang -%}
+{%- assign sl_tree = site.data.navigation[sl_nav_key] | default: site.data.navigation.docs -%}
+{%- if sl_tree.size > 0 %}
+<nav class="sl-doc-index" aria-labelledby="sl-doc-index-title">
+  <h2 id="sl-doc-index-title">{% include t.html key='docs_nav' %}</h2>
+  <ul class="sl-features">
+    {%- for item in sl_tree %}
+    <li class="sl-feature">
+      {%- if item.children %}
+      <h3 class="sl-feature-title">{{ item.title }}</h3>
+      <ul>
+        {%- for child in item.children %}
+        <li><a href="{{ child.url | relative_url }}">{{ child.title }}</a></li>
+        {%- endfor %}
+      </ul>
+      {%- else %}
+      <h3 class="sl-feature-title"><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
+      {%- endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</nav>
+{%- endif %}
+{%- else %}
+{%- if sl_variant == 'blog' -%}
+  {%- assign sl_limit = page.posts_limit | default: site.posts.size -%}
+{%- else -%}
+  {%- assign sl_limit = page.posts_limit | default: 5 -%}
+{%- endif -%}
 {%- assign sl_shown = 0 -%}
 {%- capture sl_items -%}
   {%- for post in site.posts -%}
     {%- if post.lang and post.lang != sl_lang %}{% continue %}{% endif -%}
-    {%- if sl_shown == 5 %}{% break %}{% endif -%}
+    {%- if sl_shown >= sl_limit %}{% break %}{% endif -%}
     {%- assign sl_shown = sl_shown | plus: 1 %}
   {% include post-item.html post=post %}
   {%- endfor -%}
 {%- endcapture -%}
 {%- if sl_shown > 0 %}
-<h2>{% include t.html key='latest_posts' %}</h2>
+<h2>{% if sl_variant == 'blog' %}{% include t.html key='posts' %}{% else %}{% include t.html key='latest_posts' %}{% endif %}</h2>
 <ul class="sl-post-list">{{ sl_items }}
 </ul>
+{%- endif %}
 {%- endif %}

@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- Home variants, picked with `variant` in the front matter: `editorial` (the default), `landing` with `features` and a closing call to action, `blog` with every post, and `docs` with the docs navigation as cards; `posts_limit` sets how many posts show (#213).
 - Post series: posts with the same `series` get a series box with their part, the other parts, and the previous and next part (#205).
 - Page widths: `width: narrow`, `wide`, or `full` in the front matter, and `.sl-wide` and `.sl-bleed` sections inside the reading column (#214).
 - A Markdown twin of every page at its address with `.md`, linked from the head: stubs from `npm run twins` on classic Pages, a plugin in Actions mode (#22).
@@ -16,6 +17,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Dark mode without a flash and a manual toggle (#5).
 - Editorial signature with self-hosted Latin and Persian fonts and numbered sections (#7).
 - WCAG AA contrast tests for every text token pair in light and dark (#56).
+- SEO and social meta in `<head>`: a canonical link, Open Graph, a Twitter card, and `hreflang` alternates of a page's translations, with no plugin. Replace `assets/images/social.png` to set the shared image (#202).
 - Print stylesheet (#57).
 - Layouts: `default` with landmarks, skip link, and theme toggle (#10), `home` (#11), `doc` with sidebar, table of contents, and pager (#12), `post` (#13), and `page` (#14).
 - Code block styles and a copy button (#15).
@@ -53,6 +55,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - `AGENTS.md` for every new site (`starter-files/AGENTS.md`): where content lives, the schemas, how to add a page, a post, a menu item, and a translation, how to check an edit, and a Never list (#75).
 - Agent Skill `skills/slipway-site` for creating and customizing a site, with a config reference generated from the schema (#76).
 - Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
+- JSON-LD structured data on every page, typed by layout: `WebSite` on `home`, `BlogPosting` on `post`, `TechArticle` on `doc`, `CollectionPage` on `archive` and `tags`, `WebPage` elsewhere (#23).
 - Header variants chosen with `slipway.header` in `_config.yml`: `classic`, `centered`, and `minimal` (#212).
 - Arabic: a font stack (`--sl-font-arabic`), Persian-style line height and no italics, built-in UI strings, and opt-in Arabic-Indic digits with `slipway.arabic.digits` (#222).
 - Hebrew: a font stack (`--sl-font-hebrew`) and built-in UI strings, so `lang: he` pages read right to left with Hebrew labels (#223).
