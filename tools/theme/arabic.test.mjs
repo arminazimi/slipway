@@ -9,10 +9,10 @@ import { root } from "./tokens.mjs";
 const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
 
-test("the arabic setting accepts digits and nothing else", () => {
-  assert.ok(validateConfig({ slipway: { arabic: { digits: true } } }).ok);
+test("the arabic setting accepts digits and hijri and nothing else", () => {
+  assert.ok(validateConfig({ slipway: { arabic: { digits: true, hijri: true } } }).ok);
   assert.ok(!validateConfig({ slipway: { arabic: { digits: "yes" } } }).ok);
-  assert.ok(!validateConfig({ slipway: { arabic: { hijri: true } } }).ok);
+  assert.ok(!validateConfig({ slipway: { arabic: { something: true } } }).ok);
 });
 
 test("Arabic text has its own font stack, taller lines, no italics, and Arabic-Indic section numbers behind the opt-in class", () => {

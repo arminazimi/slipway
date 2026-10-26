@@ -43,6 +43,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
 | `slipway.arabic.digits` | yes | `arabic.test.mjs` |
+| `slipway.arabic.hijri` | yes | `hijri.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
 | `slipway.tokens.text` | yes | `config.test.mjs` |
