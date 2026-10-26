@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Eleventy Front Matter",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "date": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "permalink": { "type": "string" },
+    "layout": { "type": "string" }
+  },
+  "additionalProperties": true
+}
