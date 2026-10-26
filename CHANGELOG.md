@@ -7,6 +7,8 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 ## [Unreleased]
 
 ### Added
+- `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
+
 - Social links from `_data/social.yml` shown in the footer with an inline SVG icon set (#208).
 
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
