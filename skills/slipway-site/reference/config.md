@@ -29,12 +29,6 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.logo.dark` | string |  | Path to the dark-mode logo (shown when the dark theme is active), relative to the site root. |
 | `slipway.logo.favicon_svg` | string |  | Path to an SVG favicon, relative to the site root. |
 | `slipway.logo.touch_icon` | string |  | Path to an Apple touch icon (180x180 PNG), relative to the site root. |
-| `slipway.analytics` | object |  | Opt-in, privacy-friendly analytics. |
-| `slipway.analytics.plausible` | string |  | The domain name of your site to enable Plausible Analytics. |
-| `slipway.analytics.goatcounter` | string |  | Your GoatCounter endpoint URL. |
-| `slipway.analytics.umami` | object |  | Umami analytics configuration. |
-| `slipway.analytics.umami.website_id` | string | required | Your Umami website ID. |
-| `slipway.analytics.umami.url` | string |  | The URL to the Umami script. Defaults to https://analytics.umami.is/script.js. |
 | `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both. |
 | `slipway.tokens.accent` | string: A hex color (#rrggbb) or an oklch() color. |  | Accent for links, marks, and filled buttons, in both light and dark. |
 | `slipway.tokens.canvas` | string: A hex color (#rrggbb) or an oklch() color. |  | Page background, in both light and dark. |
