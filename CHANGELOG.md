@@ -37,6 +37,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Generator detection for `slipway doctor`: `detect()` names the generator (Jekyll, Hugo, Astro, Docusaurus, MkDocs, Eleventy) and its source and output folders from marker files (#182).
 - `slipway doctor` right-to-left checks: `dir` matches `lang`, and titles, `h1` headings, and nav links that mix directions isolate one of them (#184).
 - `slipway doctor` Jekyll and Slipway checks: missing starter files, deprecated keys, Liquid in content, missing translations, and missing UI strings, each with a fix (#183).
+- A `slipway doctor` GitHub Action (`action/doctor`) that annotates pull requests and can write SARIF (#186).
 - `slipway doctor --format json` and `--format sarif` for agents and GitHub code scanning; a finding on a built page names its Markdown file and line (#185).
 - An RFC process for spec changes, with a template, a 14-day review window, and `spec/CHANGELOG.md` (#180).
 - Spec 0.1 "agent-editable site" and the `content-schemas.json` index schema (#177).
