@@ -28,7 +28,7 @@ test("breadcrumbs and BreadcrumbList JSON-LD are generated for nested pages", { 
 
   // Verify HTML breadcrumbs
   assert.match(nestedPageHTML, /<nav class="sl-breadcrumbs"/);
-  assert.match(nestedPageHTML, /Guide/);
+  assert.match(nestedPageHTML, /Overview/);
   assert.match(nestedPageHTML, /Home/);
 
   // Verify JSON-LD BreadcrumbList
@@ -38,6 +38,6 @@ test("breadcrumbs and BreadcrumbList JSON-LD are generated for nested pages", { 
 
   assert.equal(breadcrumbBlock.itemListElement.length, 3);
   assert.equal(breadcrumbBlock.itemListElement[0].name, "Home");
-  assert.equal(breadcrumbBlock.itemListElement[1].name, "Guide");
+  assert.equal(breadcrumbBlock.itemListElement[1].name, "Overview");
   assert.equal(breadcrumbBlock.itemListElement[2].name, "Install");
 });
