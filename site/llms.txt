@@ -1,4 +1,4 @@
-Slipway
+# Slipway
 > An editorial, RTL-ready, agent-native site template, verified by Seaworthy.
 
 - [Home](/): Slipway is an editorial, RTL-ready, agent-native site template.
