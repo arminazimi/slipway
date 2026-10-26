@@ -6,6 +6,8 @@ Checks a static site against the [agent-editable site spec](../../spec/agent-edi
 node packages/doctor/bin/slipway.mjs doctor <source-dir> [--build <output-dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
 ```
 
+Copy-paste snippet for your AGENTS.md: docs/snippets/agents-md.md
+
 Once the package is published, `npx slipway doctor` runs the same command. Until then, run it from a clone of this repository after `npm ci`.
 
 | Option | Meaning |
