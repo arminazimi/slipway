@@ -2,6 +2,9 @@
 title: Install and quickstart
 description: Get started with Slipway in three ways.
 layout: doc
+permalink: /install/
+date: 2026-10-26
+author: Slipway
 ---
 
 ## Install
@@ -13,7 +16,7 @@ You can install Slipway in three ways:
 The fastest way is to use Slipway as a `remote_theme` on GitHub Pages. Create a `_config.yml` with:
 
 ```yaml
-theme: slipway-theme
+remote_theme: arminazimi/slipway
 plugins:
   - jekyll-remote-theme
 ```

@@ -28,13 +28,24 @@ test("site builds with GitHub Pages gem and internal links resolve", { skip }, (
 
   assert.ok(existsSync(join(out, "index.html")), "index.html should be built");
 
-  // A simple check that internal links resolve to files.
-  // The home page has a link to /install/ and /spec/ in our docs.
   const indexHtml = readFileSync(join(out, "index.html"), "utf8");
-  assert.match(indexHtml, /href="\/install\/"/, "index.html should link to install");
-  assert.match(indexHtml, /href="\/spec\/"/, "index.html should link to spec");
 
-  assert.ok(existsSync(join(out, "install/index.html")), "install page should be built");
-  assert.ok(existsSync(join(out, "config/index.html")), "config page should be built");
-  assert.ok(existsSync(join(out, "spec/index.html")), "spec page should be built");
+  // Find all internal links starting with /
+  const matches = [...indexHtml.matchAll(/href="(\/[^"]*)"/g)];
+  assert.ok(matches.length > 0, "should have some internal links");
+
+  for (const match of matches) {
+    let urlPath = match[1];
+    if (urlPath === "/") continue;
+
+    // Convert /install/ to /install/index.html
+    let filePath = urlPath.endsWith("/") ? urlPath + "index.html" : urlPath;
+    if (!filePath.endsWith(".html") && !filePath.endsWith(".xml") && !filePath.endsWith(".txt") && !filePath.endsWith(".json")) {
+      // It's a directory link without trailing slash, e.g. /install
+      filePath = filePath + "/index.html";
+    }
+
+    const diskPath = join(out, filePath);
+    assert.ok(existsSync(diskPath), `Link to ${urlPath} points to a page that does not exist at ${diskPath}`);
+  }
 });

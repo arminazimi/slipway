@@ -29,6 +29,8 @@ jobs:
           JEKYLL_ENV: production
         run: bundle exec jekyll build --source site --destination _site --baseurl ""
       - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
   deploy:
     environment:
