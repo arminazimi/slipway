@@ -1,0 +1,7 @@
+{{- $source := partial "slipway/source.html" .Page -}}
+{{- $line := partial "slipway/heading-line.html" . -}}
+{{- if $line -}}
+  {{- .Page.Store.SetInMap "slipwaySections" .Anchor (dict "id" .Anchor "level" .Level "line" $line "text" (partial "slipway/heading-text.html" .)) -}}
+{{- end -}}
+<h{{ .Level }} id="{{ .Anchor }}"{{ range $name, $value := .Attributes }}{{ if ne $name "id" }} {{ $name }}="{{ $value }}"{{ end }}{{ end }}{{ if $line }} data-source="{{ $source }}:{{ $line }}"{{ end }}>{{ .Text | safeHTML }}</h{{ .Level }}>
+{{- /* This line keeps the template from adding a newline after the heading. */ -}}
