@@ -115,6 +115,21 @@ export function main(env = process.env) {
   }
   const work = mkdtempSync(join(tmpdir(), "slipway-check-"));
   try {
+    const siteDir = join(root, "site");
+    if (existsSync(siteDir)) {
+      const label = `site/, gem mode, ${target()}`;
+      const siteOut = buildExample("gem", join(work, "site", "gem"), siteDir);
+      console.log(`OK: docs site builds (${label})`);
+      if (cli) {
+        const { ok, output } = runSeaworthy(cli, siteOut);
+        if (ok) console.log(`OK: Seaworthy (${label})`);
+        else {
+          console.error(`FAIL: Seaworthy (${label})\n${output}`);
+          process.exitCode = 1;
+        }
+      }
+    }
+
     for (const name of exampleNames()) {
       // examples/bare relies on the Pages gem's default layout and front matter plugins (zero config on
       // GitHub Pages); plain Jekyll 4 has neither, so a site there names its layouts.
