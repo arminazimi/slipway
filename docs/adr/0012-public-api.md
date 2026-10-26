@@ -38,7 +38,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 
 | Key | Public | Tested by |
 | --- | --- | --- |
-| `slipway.header` | yes | `header.test.mjs` |
+| `slipway.fonts`, `slipway.header` | yes | `header.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |

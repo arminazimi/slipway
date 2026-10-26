@@ -11,7 +11,9 @@
   {%- endif %}
   {%- include jsonld.html %}
   {%- include seo.html %}
+  {%- if site.slipway.fonts != "system" %}
   <link rel="preload" href="{{ '/assets/fonts/source-serif-4-latin-wght-normal.woff2' | relative_url }}" as="font" type="font/woff2" crossorigin>
+  {%- endif %}
   {%- capture sl_feed_url %}{% include layout-url.html layout='feed' %}{% endcapture %}
   {%- assign sl_feed_url = sl_feed_url | strip %}
   {%- if sl_feed_url != '' %}
@@ -23,7 +25,9 @@
   {%- if sl_twin %}
   <link rel="alternate" type="text/markdown" href="{{ sl_twin | relative_url }}">
   {%- endif %}
+  {%- if site.slipway.fonts != "system" %}
   <link rel="stylesheet" href="{{ '/assets/css/fonts.css' | relative_url }}">
+  {%- endif %}
   <link rel="stylesheet" href="{{ '/assets/css/tokens.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/slipway.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/print.css' | relative_url }}" media="print">

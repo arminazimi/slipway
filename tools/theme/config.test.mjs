@@ -76,7 +76,7 @@ test("the top-level keys the theme reads are checked, and other keys pass", () =
 test("every site key read in a layout or include is in the schema", () => {
   assert.deepEqual(undocumentedSiteKeys(), []);
   const dir = mkdtempSync(join(tmpdir(), "slipway-layout-"));
-  writeFileSync(join(dir, "x.html"), "{{ site.title }} {{ site.posts.size }} {{ site.slipway.languages.size }} {{ site.slipway.sidebar }} {{ site.footer_text }}");
+  writeFileSync(join(dir, "x.html"), "{{ site.title }} {{ site.posts.size }} {{ site.slipway.languages.size }} {{ site.slipway.sidebar }} {{ site.footer_text }} {{ site.slipway.fonts }}");
   assert.deepEqual(undocumentedSiteKeys([dir]), ["footer_text", "slipway.sidebar"]);
 });
 
