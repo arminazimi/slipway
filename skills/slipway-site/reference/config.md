@@ -36,3 +36,4 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.tokens.font_display` | string: A CSS font-family list. | `"Instrument Serif", Georgia, "Times New Roman", serif` | Large headings (Latin). |
 | `slipway.tokens.font_body` | string: A CSS font-family list. | `"Source Serif 4", Georgia, serif` | Reading text (Latin). |
 | `slipway.tokens.radius` | string: A CSS length in rem, em, or px. | `0.75rem` | Corner radius of cards. |
+| `slipway.fonts` | `default` or `system` | `default` | Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts. |

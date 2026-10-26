@@ -10,7 +10,7 @@ import { root } from "./tokens.mjs";
 const fixtures = join(root, "tools/theme/fixtures/deprecations");
 const fixtureList = loadDeprecations(join(fixtures, "deprecations.json"));
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
-const theme = ["_layouts", "_includes"].flatMap((dir) => readdirSync(join(root, dir)).map((file) => readFileSync(join(root, dir, file), "utf8"))).join("\n");
+const theme = ["_layouts", "_includes"].flatMap((dir) => readdirSync(join(root, dir), { withFileTypes: true }).filter((dirent) => dirent.isFile()).map((dirent) => readFileSync(join(root, dir, dirent.name), "utf8"))).join("\n");
 
 /** Negative when version a comes before b. */
 function compareVersions(a, b) {

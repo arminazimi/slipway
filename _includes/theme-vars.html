@@ -1,6 +1,12 @@
 {%- assign t = site.slipway.tokens -%}
-{%- if t -%}
+{%- assign fonts = site.slipway.fonts -%}
+{%- if t or fonts == "system" -%}
 <style>:root {
+{%- if fonts == "system" -%}
+  --sl-font-display: var(--sl-font-ui);
+  --sl-font-body: var(--sl-font-ui);
+  --sl-font-persian: var(--sl-font-arabic);
+{%- endif -%}
 {%- include theme-var.html name="--sl-color-rose" value=t.accent -%}
 {%- include theme-var.html name="--sl-color-rose-fill" value=t.accent -%}
 {%- include theme-var.html name="--sl-color-canvas" value=t.canvas -%}
