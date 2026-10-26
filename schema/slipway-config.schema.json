@@ -141,6 +141,17 @@
             }
           }
         },
+        "logo": {
+          "type": "object",
+          "description": "Site logo and favicons.",
+          "additionalProperties": false,
+          "properties": {
+            "light": { "type": "string", "description": "Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg." },
+            "dark": { "type": "string", "description": "Path to the dark-mode logo (shown when the dark theme is active), relative to the site root." },
+            "favicon_svg": { "type": "string", "description": "Path to an SVG favicon, relative to the site root." },
+            "touch_icon": { "type": "string", "description": "Path to an Apple touch icon (180x180 PNG), relative to the site root." }
+          }
+        },
         "analytics": {
           "type": "object",
           "description": "Opt-in, privacy-friendly analytics.",

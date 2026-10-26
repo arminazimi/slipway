@@ -132,6 +132,34 @@
     font-size: var(--sl-step-lg);
     color: var(--sl-color-heading);
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .sl-site-title img {
+    block-size: calc(1.5 * var(--sl-step-lg));
+    inline-size: auto;
+  }
+
+  .sl-logo-dark {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .sl-logo-light {
+      display: none;
+    }
+    :root:not([data-theme="light"]) .sl-logo-dark {
+      display: block;
+    }
+  }
+
+  :root[data-theme="dark"] .sl-logo-light {
+    display: none;
+  }
+
+  :root[data-theme="dark"] .sl-logo-dark {
+    display: block;
   }
 
   .sl-skip-link {

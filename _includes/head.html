@@ -19,6 +19,12 @@
   {%- if sl_feed_url != '' %}
   <link rel="alternate" type="application/atom+xml" href="{{ sl_feed_url }}" title="{{ site.title | escape }}">
   {%- endif %}
+  {%- if site.slipway.logo.favicon_svg %}
+  <link rel="icon" href="{{ site.slipway.logo.favicon_svg | relative_url }}" type="image/svg+xml">
+  {%- endif %}
+  {%- if site.slipway.logo.touch_icon %}
+  <link rel="apple-touch-icon" href="{{ site.slipway.logo.touch_icon | relative_url }}">
+  {%- endif %}
   {%- comment %} The Markdown twin (ADR 0006): set by the Actions plugin, or the stub page from `npm run twins` on classic Pages. {% endcomment %}
   {%- assign sl_twin = page.slipway_twin %}
   {%- unless sl_twin %}{% assign sl_twin = site.pages | where: 'twin_of', page.path | map: 'url' | first %}{% endunless %}

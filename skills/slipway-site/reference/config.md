@@ -24,6 +24,11 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
 | `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.arabic.hijri` | boolean | `false` | Print post dates in the Hijri calendar. |
+| `slipway.logo` | object |  | Site logo and favicons. |
+| `slipway.logo.light` | string |  | Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg. |
+| `slipway.logo.dark` | string |  | Path to the dark-mode logo (shown when the dark theme is active), relative to the site root. |
+| `slipway.logo.favicon_svg` | string |  | Path to an SVG favicon, relative to the site root. |
+| `slipway.logo.touch_icon` | string |  | Path to an Apple touch icon (180x180 PNG), relative to the site root. |
 | `slipway.analytics` | object |  | Opt-in, privacy-friendly analytics. |
 | `slipway.analytics.plausible` | string |  | The domain name of your site to enable Plausible Analytics. |
 | `slipway.analytics.goatcounter` | string |  | Your GoatCounter endpoint URL. |
