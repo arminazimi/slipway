@@ -48,7 +48,7 @@ export function bundleAvailable(gemfile = process.env.BUNDLE_GEMFILE) {
 
 /** Builds examples/<name>, or the site at `name` when it is an absolute path (a test fixture).
  * `gemfile` picks the Jekyll (default: BUNDLE_GEMFILE); `configs` are extra overlays. */
-export function buildExample(mode, out, name = "minimal", { gemfile = process.env.BUNDLE_GEMFILE, configs: overlays = [] } = {}) {
+export function buildExample(mode, out, name = "minimal", { gemfile = process.env.BUNDLE_GEMFILE, baseurl = "", configs: overlays = [] } = {}) {
   const example = isAbsolute(name) ? name : join(root, "examples", name);
   if (!existsSync(example)) throw new Error(`no example site named ${name}`);
   if (!modes.includes(mode)) throw new Error(`mode must be one of ${modes.join(", ")}`);
@@ -75,7 +75,7 @@ export function buildExample(mode, out, name = "minimal", { gemfile = process.en
   mkdirSync(dirname(out), { recursive: true });
   const result = spawnSync(
     "bundle",
-    ["exec", "jekyll", "build", "--source", source, "--destination", out, "--baseurl", "", "--config", configs.join(",")],
+    ["exec", "jekyll", "build", "--source", source, "--destination", out, "--baseurl", baseurl, "--config", configs.join(",")],
     {
       cwd: root,
       encoding: "utf8",
