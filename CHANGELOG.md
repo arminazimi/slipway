@@ -16,6 +16,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Dark mode without a flash and a manual toggle (#5).
 - Editorial signature with self-hosted Latin and Persian fonts and numbered sections (#7).
 - WCAG AA contrast tests for every text token pair in light and dark (#56).
+- SEO and social meta in `<head>`: a canonical link, Open Graph, a Twitter card, and `hreflang` alternates of a page's translations, with no plugin. Replace `assets/images/social.png` to set the shared image (#202).
 - Print stylesheet (#57).
 - Layouts: `default` with landmarks, skip link, and theme toggle (#10), `home` (#11), `doc` with sidebar, table of contents, and pager (#12), `post` (#13), and `page` (#14).
 - Code block styles and a copy button (#15).
