@@ -30,6 +30,8 @@ jobs:
       LANG: C.UTF-8
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -58,6 +60,9 @@ jobs:
         run: bundle exec github-pages versions
       - if: matrix.jekyll == 'pages'
         run: npm run check
+      - if: matrix.jekyll == 'pages'
+        name: Upgrade test
+        run: node tools/release/upgrade-test.mjs
       # The Jekyll 4 job builds and verifies every example, then compares the minimal one with the
       # Pages build, so it installs the Pages gem too.
       - if: matrix.jekyll == 'jekyll4'

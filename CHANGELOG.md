@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Added `translation-status` layout to show which pages exist in which language.
 
 ### Added
+- `UPGRADING.md` to document breaking changes across releases (#176).
 - Breadcrumbs above the title of doc and page layouts for nested pages, with a `BreadcrumbList` JSON-LD block. Translated labels for Persian, Arabic, and Hebrew.
 - "Copy page as Markdown" button on pages that have a Markdown twin (#24).
 - `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
