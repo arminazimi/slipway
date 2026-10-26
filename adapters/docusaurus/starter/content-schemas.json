@@ -1,0 +1,10 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["docs/**/_category_.json", "docs/**/_category_.yml", "docs/**/_category_.yaml"], "target": "file", "schema": "schema/category.schema.json" },
+    { "files": ["blog/authors.yml", "blog/authors.yaml", "blog/authors.json"], "target": "file", "schema": "schema/authors.schema.json" },
+    { "files": ["docs/**/*.md", "docs/**/*.mdx", "versioned_docs/**/*.md", "versioned_docs/**/*.mdx"], "target": "front-matter", "schema": "schema/doc.schema.json" },
+    { "files": ["blog/**/*.md", "blog/**/*.mdx"], "target": "front-matter", "schema": "schema/blog-post.schema.json" },
+    { "files": ["src/pages/**/*.md", "src/pages/**/*.mdx"], "target": "front-matter", "schema": "schema/page.schema.json" }
+  ]
+}
