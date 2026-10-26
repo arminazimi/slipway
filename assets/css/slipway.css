@@ -56,7 +56,6 @@
 
   a {
     color: var(--sl-color-rose);
-    transition: color var(--sl-motion-fast);
   }
 
   a:hover {
@@ -175,7 +174,6 @@
     border-radius: var(--sl-radius-compact);
     padding: var(--sl-space-1) var(--sl-space-3);
     cursor: pointer;
-    transition: color var(--sl-motion-fast);
   }
 
   .sl-theme-toggle:hover {
@@ -184,12 +182,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-  }
-
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
@@ -580,7 +572,6 @@
     border: var(--sl-rule) solid var(--sl-color-line);
     border-radius: var(--sl-radius-compact);
     cursor: pointer;
-    transition: color var(--sl-motion-fast);
   }
 
   .sl-copy:hover {
@@ -600,7 +591,6 @@
     border: var(--sl-rule) solid var(--sl-color-line);
     border-radius: var(--sl-radius-compact);
     cursor: pointer;
-    transition: color var(--sl-motion-fast);
   }
 
   .sl-edit:hover {
@@ -754,7 +744,6 @@
   .sl-main-nav a {
     color: var(--sl-color-muted);
     text-decoration: none;
-    transition: color var(--sl-motion-fast);
   }
 
   .sl-main-nav a:hover,
@@ -772,7 +761,6 @@
   a.sl-tag {
     color: inherit;
     text-decoration: none;
-    transition: color var(--sl-motion-fast);
   }
 
   a.sl-tag:hover {
@@ -881,19 +869,3 @@
     color: var(--sl-color-line);
   }
 }
-
-  .sl-social-links {
-    list-style: none;
-    padding: 0;
-    margin-block: var(--sl-space-4);
-    margin-inline: 0;
-    display: flex;
-    gap: var(--sl-space-3);
-  }
-  .sl-social-links a {
-    color: var(--sl-color-muted);
-    display: flex;
-  }
-  .sl-social-links a:hover {
-    color: var(--sl-color-accent);
-  }

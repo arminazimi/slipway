@@ -6,7 +6,5 @@ items:
     url: /install/
   - title: Configuration
     url: /config/
-  - title: Recipes
-    url: /recipes/
   - title: The Spec
     url: /spec/

@@ -7,11 +7,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 ## [Unreleased]
 
 ### Added
-- `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
-- Social links from `_data/social.yml` shown in the footer with an inline SVG icon set (#208).
 
-
-- Motion tokens (`--sl-motion-fast`) and hover transitions on interactive elements, respecting `prefers-reduced-motion` (#218).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
@@ -65,7 +61,6 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - JSON-LD structured data on every page, typed by layout: `WebSite` on `home`, `BlogPosting` on `post`, `TechArticle` on `doc`, `CollectionPage` on `archive` and `tags`, `WebPage` elsewhere (#23).
 - Breadcrumbs for `doc` and `page` layouts with `BreadcrumbList` JSON-LD (#220).
 - Header variants chosen with `slipway.header` in `_config.yml`: `classic`, `centered`, and `minimal` (#212).
-- Opt-in, privacy-friendly analytics (GoatCounter, Plausible, Umami) with one config key (`slipway.analytics`) (#210).
 - Arabic: a font stack (`--sl-font-arabic`), Persian-style line height and no italics, built-in UI strings, and opt-in Arabic-Indic digits with `slipway.arabic.digits` (#222).
 - Opt-in Hijri calendar for Arabic pages with `slipway.arabic.hijri` (#225).
 - Hebrew: a font stack (`--sl-font-hebrew`) and built-in UI strings, so `lang: he` pages read right to left with Hebrew labels (#223).
@@ -76,4 +71,3 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Quotes in font stack overrides are kept (#134).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
-- Guide: make any generator conform to the spec, level by level

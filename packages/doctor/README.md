@@ -10,8 +10,6 @@ Copy-paste snippet for your AGENTS.md: docs/snippets/agents-md.md
 
 Once the package is published, `npx slipway doctor` runs the same command. Until then, run it from a clone of this repository after `npm ci`.
 
-You can also run it in your CI. See [CI Recipes](../../docs/guides/ci.md) for GitLab CI, Netlify, Cloudflare Pages, Vercel, and pre-commit.
-
 | Option | Meaning |
 | --- | --- |
 | `--build <dir>` | The built output folder. Tests on the output (the source map, headings, the skills index) fail without it, because the site has not shown it meets them. |

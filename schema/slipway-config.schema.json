@@ -22,31 +22,19 @@
     },
     "direction": {
       "type": "string",
-      "enum": [
-        "ltr",
-        "rtl"
-      ],
+      "enum": ["ltr", "rtl"],
       "description": "Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins."
     },
     "author": {
       "description": "Author of the site, used in the feed and as the author in the JSON-LD of posts and docs. Either a name or an object with a name.",
       "anyOf": [
-        {
-          "type": "string",
-          "minLength": 1
-        },
+        { "type": "string", "minLength": 1 },
         {
           "type": "object",
           "additionalProperties": true,
-          "required": [
-            "name"
-          ],
+          "required": ["name"],
           "properties": {
-            "name": {
-              "type": "string",
-              "minLength": 1,
-              "description": "Author name, shown in the feed and the JSON-LD."
-            }
+            "name": { "type": "string", "minLength": 1, "description": "Author name, shown in the feed and the JSON-LD." }
           }
         }
       ]
@@ -68,11 +56,7 @@
       "properties": {
         "header": {
           "type": "string",
-          "enum": [
-            "classic",
-            "centered",
-            "minimal"
-          ],
+          "enum": ["classic", "centered", "minimal"],
           "default": "classic",
           "description": "Header layout. classic puts the title at the start and navigation, search, and the toggles at the end; centered stacks them on the middle axis; minimal shows only the title, the language switcher, and the theme toggle."
         },
@@ -83,27 +67,11 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "code",
-              "name",
-              "prefix"
-            ],
+            "required": ["code", "name", "prefix"],
             "properties": {
-              "code": {
-                "type": "string",
-                "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$",
-                "description": "Language tag that pages use in their lang front matter, such as en or fa."
-              },
-              "name": {
-                "type": "string",
-                "minLength": 1,
-                "description": "Name of the language in that language, shown in the switcher, such as \u0641\u0627\u0631\u0633\u06cc."
-              },
-              "prefix": {
-                "type": "string",
-                "pattern": "^(/[a-z0-9-]+)?$",
-                "description": "URL folder of the language home, such as /fa; '' for the default language."
-              }
+              "code": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)?$", "description": "Language tag that pages use in their lang front matter, such as en or fa." },
+              "name": { "type": "string", "minLength": 1, "description": "Name of the language in that language, shown in the switcher, such as فارسی." },
+              "prefix": { "type": "string", "pattern": "^(/[a-z0-9-]+)?$", "description": "URL folder of the language home, such as /fa; '' for the default language." }
             }
           }
         },
@@ -112,16 +80,8 @@
           "description": "Opt-in Persian conventions for pages whose lang is fa.",
           "additionalProperties": false,
           "properties": {
-            "digits": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print dates, reading time, and section numbers with Persian digits."
-            },
-            "jalali": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print post dates in the Jalali calendar."
-            }
+            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Persian digits." },
+            "jalali": { "type": "boolean", "default": false, "description": "Print post dates in the Jalali calendar." }
           }
         },
         "arabic": {
@@ -129,35 +89,8 @@
           "description": "Opt-in Arabic conventions for pages whose lang is ar.",
           "additionalProperties": false,
           "properties": {
-            "digits": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print dates, reading time, and section numbers with Arabic-Indic digits."
-            },
-            "hijri": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print post dates in the Hijri calendar."
-            }
-          }
-        },
-        "analytics": {
-          "type": "object",
-          "description": "Opt-in, privacy-friendly analytics.",
-          "additionalProperties": false,
-          "properties": {
-            "plausible": { "type": "string", "description": "The domain name of your site to enable Plausible Analytics." },
-            "goatcounter": { "type": "string", "description": "Your GoatCounter endpoint URL." },
-            "umami": {
-              "type": "object",
-              "description": "Umami analytics configuration.",
-              "additionalProperties": false,
-              "required": ["website_id"],
-              "properties": {
-                "website_id": { "type": "string", "description": "Your Umami website ID." },
-                "url": { "type": "string", "description": "The URL to the Umami script. Defaults to https://analytics.umami.is/script.js." }
-              }
-            }
+            "digits": { "type": "boolean", "default": false, "description": "Print dates, reading time, and section numbers with Arabic-Indic digits." },
+            "hijri": { "type": "boolean", "default": false, "description": "Print post dates in the Hijri calendar." }
           }
         },
         "tokens": {
@@ -165,43 +98,13 @@
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",
           "additionalProperties": false,
           "properties": {
-            "accent": {
-              "$ref": "#/$defs/color",
-              "description": "Accent for links, marks, and filled buttons, in both light and dark."
-            },
-            "canvas": {
-              "$ref": "#/$defs/color",
-              "description": "Page background, in both light and dark."
-            },
-            "text": {
-              "$ref": "#/$defs/color",
-              "description": "Body text color, in both light and dark."
-            },
-            "font_display": {
-              "$ref": "#/$defs/fontStack",
-              "default": "\"Instrument Serif\", Georgia, \"Times New Roman\", serif",
-              "description": "Large headings (Latin)."
-            },
-            "font_body": {
-              "$ref": "#/$defs/fontStack",
-              "default": "\"Source Serif 4\", Georgia, serif",
-              "description": "Reading text (Latin)."
-            },
-            "radius": {
-              "$ref": "#/$defs/length",
-              "default": "0.75rem",
-              "description": "Corner radius of cards."
-            }
+            "accent": { "$ref": "#/$defs/color", "description": "Accent for links, marks, and filled buttons, in both light and dark." },
+            "canvas": { "$ref": "#/$defs/color", "description": "Page background, in both light and dark." },
+            "text": { "$ref": "#/$defs/color", "description": "Body text color, in both light and dark." },
+            "font_display": { "$ref": "#/$defs/fontStack", "default": "\"Instrument Serif\", Georgia, \"Times New Roman\", serif", "description": "Large headings (Latin)." },
+            "font_body": { "$ref": "#/$defs/fontStack", "default": "\"Source Serif 4\", Georgia, serif", "description": "Reading text (Latin)." },
+            "radius": { "$ref": "#/$defs/length", "default": "0.75rem", "description": "Corner radius of cards." }
           }
-        },
-        "fonts": {
-          "type": "string",
-          "enum": [
-            "default",
-            "system"
-          ],
-          "default": "default",
-          "description": "Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts."
         }
       }
     }
@@ -210,24 +113,9 @@
     "color": {
       "type": "string",
       "description": "A hex color (#rrggbb) or an oklch() color.",
-      "anyOf": [
-        {
-          "pattern": "^#[0-9a-fA-F]{6}$"
-        },
-        {
-          "pattern": "^oklch\\([0-9. %/]+\\)$"
-        }
-      ]
+      "anyOf": [{ "pattern": "^#[0-9a-fA-F]{6}$" }, { "pattern": "^oklch\\([0-9. %/]+\\)$" }]
     },
-    "fontStack": {
-      "type": "string",
-      "description": "A CSS font-family list.",
-      "pattern": "^[A-Za-z0-9 ,'\"_-]{1,200}$"
-    },
-    "length": {
-      "type": "string",
-      "description": "A CSS length in rem, em, or px.",
-      "pattern": "^[0-9]+(\\.[0-9]+)?(rem|em|px)$"
-    }
+    "fontStack": { "type": "string", "description": "A CSS font-family list.", "pattern": "^[A-Za-z0-9 ,'\"_-]{1,200}$" },
+    "length": { "type": "string", "description": "A CSS length in rem, em, or px.", "pattern": "^[0-9]+(\\.[0-9]+)?(rem|em|px)$" }
   }
 }

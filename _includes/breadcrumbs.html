@@ -27,13 +27,13 @@
 
 {%- if sl_bc_count > 0 -%}
 {%- assign sl_bc_label_key = 'breadcrumbs' -%}
-{%- assign sl_home_label_key = 'go_home' -%}
+{%- assign sl_home_label_key = 'main_nav' -%}
 {%- capture sl_bc_label_raw %}{% include t.html key=sl_bc_label_key %}{% endcapture -%}
 {%- capture sl_home_label_raw %}{% include t.html key=sl_home_label_key %}{% endcapture -%}
 {%- assign sl_bc_label = sl_bc_label_raw | strip -%}
 {%- assign sl_home_label = sl_home_label_raw | strip -%}
 {%- if sl_bc_label == '' %}{% assign sl_bc_label = 'Breadcrumbs' %}{% endif -%}
-{%- if sl_home_label == '' %}{% assign sl_home_label = 'Home' %}{% else %}{% assign sl_home_label = sl_home_label | split: ' ' | last %}{% endif -%}
+{%- if sl_home_label == '' %}{% assign sl_home_label = 'Home' %}{% else %}{% assign sl_home_words = sl_home_label | split: ' ' %}{% assign sl_home_label = sl_home_words | first %}{% endif -%}
 <nav class="sl-breadcrumbs" aria-label="{{ sl_bc_label | escape }}">
   <ol>
     <li>
@@ -68,7 +68,5 @@
 {%- endfor -%}
 
 {%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ page.title | jsonify }}}{%- endcapture -%}
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json | strip_newlines | replace: '<', '\u003c' }}]}
-</script>
+{%- capture sl_bc_list -%}{"@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture -%}
 {%- endif -%}
