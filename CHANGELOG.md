@@ -17,6 +17,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Logo and favicon configuration (`slipway.logo.light`, `slipway.logo.dark`, `favicon_svg`, `touch_icon`) in `_config.yml` (#215).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
+- Eleventy adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#236).
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
 - Home variants, picked with `variant` in the front matter: `editorial` (the default), `landing` with `features` and a closing call to action, `blog` with every post, and `docs` with the docs navigation as cards; `posts_limit` sets how many posts show (#213).
 - Post series: posts with the same `series` get a series box with their part, the other parts, and the previous and next part (#205).
