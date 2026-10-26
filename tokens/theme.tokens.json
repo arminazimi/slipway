@@ -95,5 +95,8 @@
     "bg": { "$type": "color", "$value": "{color.rose-fill}", "$description": "Filled button background." },
     "fg": { "$type": "color", "$value": "{color.on-rose-fill}", "$description": "Filled button text." },
     "radius": { "$type": "dimension", "$value": "{radius.compact}", "$description": "Button corner radius." }
+  },
+  "motion": {
+    "fast": { "$type": "duration", "$value": "150ms", "$description": "Fast transition duration." }
   }
 }

@@ -134,3 +134,9 @@ An override applies to both light and dark, so check its contrast in both. The s
 | `button.bg` | `--sl-button-bg` | Filled button background. | `#7a4f4f` | `#7a5558` |
 | `button.fg` | `--sl-button-fg` | Filled button text. | `#f6efe8` | `#efe8e8` |
 | `button.radius` | `--sl-button-radius` | Button corner radius. | `0.375rem` | same |
+
+## Motion
+
+| Token | CSS variable | Purpose | Light | Dark |
+| --- | --- | --- | --- | --- |
+| `motion.fast` | `--sl-motion-fast` | Fast transition duration. | `150ms` | same |

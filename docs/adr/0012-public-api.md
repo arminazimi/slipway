@@ -38,7 +38,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 
 | Key | Public | Tested by |
 | --- | --- | --- |
-| `slipway.header` | yes | `header.test.mjs` |
+| `slipway.fonts`, `slipway.header` | yes | `header.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
@@ -125,6 +125,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
 | Measure and rule | `--sl-measure`, `--sl-measure-narrow`, `--sl-measure-wide`, `--sl-rule` |
 | Button | `--sl-button-bg`, `--sl-button-fg`, `--sl-button-radius` |
+| Motion | `--sl-motion-fast` |
 
 ### Generated URLs
 
