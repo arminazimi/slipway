@@ -1,0 +1,67 @@
+{%- assign sl_bc_parts = page.url | split: '/' -%}
+{%- assign sl_bc_url = '' -%}
+{%- assign sl_bc_items = '' -%}
+{%- assign sl_bc_count = 0 -%}
+{%- assign sl_all = site.pages | concat: site.documents -%}
+
+{%- for part in sl_bc_parts -%}
+  {%- if part != '' and forloop.last == false -%}
+    {%- assign sl_bc_url = sl_bc_url | append: '/' | append: part -%}
+    {%- assign sl_bc_full = sl_bc_url | append: '/' -%}
+    {%- assign sl_bc_page = sl_all | where: 'url', sl_bc_full | first -%}
+    {%- unless sl_bc_page -%}
+      {%- assign sl_bc_page = sl_all | where: 'url', sl_bc_url | first -%}
+    {%- endunless -%}
+    {%- if sl_bc_page -%}
+      {%- capture sl_bc_item -%}
+        <li>
+          <a href="{{ sl_bc_page.url | relative_url }}">{{ sl_bc_page.title }}</a>
+          <span class="sl-breadcrumb-separator" aria-hidden="true">/</span>
+        </li>
+      {%- endcapture -%}
+      {%- assign sl_bc_items = sl_bc_items | append: sl_bc_item -%}
+      {%- assign sl_bc_count = sl_bc_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- if sl_bc_count > 0 -%}
+{%- capture sl_bc_label %}{% include t.html key='breadcrumbs' %}{% endcapture -%}
+{%- capture sl_home_label %}{% include t.html key='home' %}{% endcapture -%}
+<nav class="sl-breadcrumbs" aria-label="{{ sl_bc_label | strip | escape }}">
+  <ol>
+    <li>
+      <a href="{{ '/' | relative_url }}">{{ sl_home_label | strip }}</a>
+      <span class="sl-breadcrumb-separator" aria-hidden="true">/</span>
+    </li>
+    {{ sl_bc_items }}
+    <li aria-current="page">{{ page.title }}</li>
+  </ol>
+</nav>
+
+{%- assign sl_bc_url = '' -%}
+{%- assign sl_bc_pos = 1 -%}
+{%- capture sl_bc_json -%}
+{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ sl_home_label | strip | jsonify }},"item":{{ '/' | absolute_url | jsonify }}}
+{%- endcapture -%}
+{%- assign sl_bc_pos = sl_bc_pos | plus: 1 -%}
+
+{%- for part in sl_bc_parts -%}
+  {%- if part != '' and forloop.last == false -%}
+    {%- assign sl_bc_url = sl_bc_url | append: '/' | append: part -%}
+    {%- assign sl_bc_full = sl_bc_url | append: '/' -%}
+    {%- assign sl_bc_page = sl_all | where: 'url', sl_bc_full | first -%}
+    {%- unless sl_bc_page -%}
+      {%- assign sl_bc_page = sl_all | where: 'url', sl_bc_url | first -%}
+    {%- endunless -%}
+    {%- if sl_bc_page -%}
+      {%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ sl_bc_page.title | jsonify }},"item":{{ sl_bc_page.url | absolute_url | jsonify }}}{%- endcapture -%}
+      {%- assign sl_bc_pos = sl_bc_pos | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ page.title | jsonify }}}{%- endcapture -%}
+{%- capture sl_bc_list -%}{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture %}
+<script type="application/ld+json">{{ sl_bc_list | strip_newlines | replace: '<', '\u003c' }}</script>
+{%- endif -%}

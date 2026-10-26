@@ -41,8 +41,8 @@ test("every page of every example has valid JSON-LD of its layout's type, and th
         assert.equal(blocks.length, 0, `${name}/${page}`);
         continue;
       }
-      assert.equal(blocks.length, 1, `${name}/${page}`);
-      const [ld] = blocks;
+      assert.ok(blocks.length >= 1, `${name}/${page}`);
+      const ld = blocks.find((b) => b["@type"] !== "BreadcrumbList");
       assert.equal(ld["@context"], "https://schema.org", `${name}/${page}`);
       assert.match(ld.url, /^https?:\/\//, `${name}/${page}`);
       assert.ok(ld.inLanguage, `${name}/${page}`);
@@ -50,7 +50,7 @@ test("every page of every example has valid JSON-LD of its layout's type, and th
       if (ld["@type"] !== "WebSite") assert.equal(ld.isPartOf["@type"], "WebSite", `${name}/${page}`);
     }
     if (name !== "minimal") continue;
-    const get = (p) => jsonLd(readFileSync(join(out, p), "utf8"))[0];
+    const get = (p) => jsonLd(readFileSync(join(out, p), "utf8")).find((b) => b["@type"] !== "BreadcrumbList");
     assert.equal(get("home.html")["@type"], "WebSite");
     const post = get("2026/10/18/hello-world.html");
     assert.equal(post["@type"], "BlogPosting");
