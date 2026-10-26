@@ -19,7 +19,7 @@ module Slipway
     STUB_SUFFIX = ".twin.html"
     # Layouts that write most of the page themselves (post lists, tag and author pages, the 404 page). Their
     # source is a title and an intro, not the page, so they get no twin.
-    LISTING_LAYOUTS = %w(home archive tags author not-found).freeze
+    LISTING_LAYOUTS = %w(home archive tags author not-found translation-status).freeze
 
     module_function
 
