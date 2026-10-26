@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- Home variants, picked with `variant` in the front matter: `editorial` (the default), `landing` with `features` and a closing call to action, `blog` with every post, and `docs` with the docs navigation as cards; `posts_limit` sets how many posts show (#213).
 - A Markdown twin of every page at its address with `.md`, linked from the head: stubs from `npm run twins` on classic Pages, a plugin in Actions mode (#22).
 - Theme layout that works as a gem, through `remote_theme`, and after "Use this template" (#41).
 - Design tokens with a desert rose palette, mapped from `_config.yml` to CSS variables with a JSON Schema (#4).
