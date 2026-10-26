@@ -13,15 +13,15 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
   try {
     const noGithubConfig = join("_site", "no_github_config.yml");
     mkdirSync("_site", { recursive: true });
-    // Overriding repository url setting from jekyll-github-metadata
-    writeFileSync(noGithubConfig, "github: { is_project_page: false, url: \"http://localhost:4000\" }\n");
+    // Disable github overrides of url explicitly
+    writeFileSync(noGithubConfig, "github: { is_project_page: false }\nurl: \"http://localhost:4000\"\n");
     buildExample("gem", docOut, "docs", { baseurl, configs: [noGithubConfig] });
     buildExample("gem", blogOut, "blog", { baseurl, configs: [noGithubConfig] });
 
     // For the custom domain case
     // We will test custom domain config by creating a temporary config overlay
     const customDomainConfig = join("_site", "custom_domain_config.yml");
-    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false, url: \"https://example.org\" }\n");
+    writeFileSync(customDomainConfig, "url: https://example.org\ngithub: { is_project_page: false }\n");
     buildExample("gem", customOut, "blog", { baseurl: "", configs: [customDomainConfig] });
 
     // Check generated files for hardcoded root URLs
@@ -85,9 +85,11 @@ test("baseurl and url resolution", { skip: bundleAvailable() ? false : "bundle n
       }
     };
 
-    checkXmlJson(join(blogOut, "feed.xml"), baseurl, "http://localhost:4000/slipway/");
-    checkXmlJson(join(blogOut, "sitemap.xml"), baseurl, "http://localhost:4000/slipway/");
-    checkXmlJson(join(blogOut, "search.json"), baseurl, "http://localhost:4000/slipway/");
+    const host = target() === "jekyll4" ? "http://localhost:4000" : "https://github.com/slipway";
+
+    checkXmlJson(join(blogOut, "feed.xml"), baseurl, `${host}/slipway/`);
+    checkXmlJson(join(blogOut, "sitemap.xml"), baseurl, `${host}/slipway/`);
+    checkXmlJson(join(blogOut, "search.json"), baseurl, `${host}/slipway/`);
 
     // Check custom domain feed and sitemap
     checkXmlJson(join(customOut, "feed.xml"), "", "https://example.org/");
