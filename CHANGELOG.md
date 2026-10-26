@@ -7,9 +7,12 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 ## [Unreleased]
 
 ### Added
+- Added a guide for migrating an existing Jekyll site to Slipway.
 - `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
+- Social links from `_data/social.yml` shown in the footer with an inline SVG icon set (#208).
 
 
+- Motion tokens (`--sl-motion-fast`) and hover transitions on interactive elements, respecting `prefers-reduced-motion` (#218).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
@@ -72,3 +75,4 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Quotes in font stack overrides are kept (#134).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
+- Guide: make any generator conform to the spec, level by level
