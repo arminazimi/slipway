@@ -109,6 +109,18 @@ An override applies to both light and dark, so check its contrast in both. The s
 | --- | --- | --- | --- | --- |
 | `measure` | `--sl-measure` | Maximum width of reading text. | `42rem` | same |
 
+## Measure-narrow
+
+| Token | CSS variable | Purpose | Light | Dark |
+| --- | --- | --- | --- | --- |
+| `measure-narrow` | `--sl-measure-narrow` | Page width for `width: narrow`: short notes and forms. | `34rem` | same |
+
+## Measure-wide
+
+| Token | CSS variable | Purpose | Light | Dark |
+| --- | --- | --- | --- | --- |
+| `measure-wide` | `--sl-measure-wide` | Page width for `width: wide`, and the width of `.sl-wide` sections. | `64rem` | same |
+
 ## Rule
 
 | Token | CSS variable | Purpose | Light | Dark |

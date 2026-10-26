@@ -72,9 +72,12 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
 | `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
 | `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
+| `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
 | `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
+
+Two classes are public too, because page bodies use them: `sl-wide` widens an element to `--sl-measure-wide` and `sl-bleed` takes it edge to edge (`widths.test.mjs`). The `doc` layout keeps both in its column.
 
 Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home`, `archive`, and `author`. `front-matter.test.mjs` fails when a schema field is missing from this table.
 
@@ -118,7 +121,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Type scale | `--sl-step-sm`, `--sl-step-base`, `--sl-step-lg`, `--sl-step-xl`, `--sl-step-2xl`, `--sl-step-3xl` |
 | Spacing | `--sl-space-1`, `--sl-space-2`, `--sl-space-3`, `--sl-space-4`, `--sl-space-6`, `--sl-space-8`, `--sl-space-12`, `--sl-space-16` |
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
-| Measure and rule | `--sl-measure`, `--sl-rule` |
+| Measure and rule | `--sl-measure`, `--sl-measure-narrow`, `--sl-measure-wide`, `--sl-rule` |
 | Button | `--sl-button-bg`, `--sl-button-fg`, `--sl-button-radius` |
 
 ### Generated URLs
