@@ -10,7 +10,7 @@ An [MCP](https://modelcontextprotocol.io) server for a Slipway site, so an agent
 
 The server serves the site directory given as its first argument, or the current directory. It never reads outside it: a path that leaves the site, directly or through a symlink, is refused. Failures come back as tool results with `isError`, so the server keeps running. Editing tools come later (`agent.mcp-tools` in the [roadmap](../../ROADMAP.md)).
 
-The package is not published yet. Run it from a clone of this repository after `npm ci`.
+Run the server with no install using `npx slipway mcp`.
 
 The [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) tells an agent when to call `doctor` and how to act on its findings.
 
@@ -19,7 +19,7 @@ The [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) tells a
 Claude Code, from the site directory:
 
 ```bash
-claude mcp add slipway -- node /path/to/slipway/packages/mcp/bin/slipway-mcp.mjs .
+claude mcp add slipway -- npx -y slipway mcp .
 ```
 
 Or in the site's `.mcp.json`:
@@ -28,8 +28,8 @@ Or in the site's `.mcp.json`:
 {
   "mcpServers": {
     "slipway": {
-      "command": "node",
-      "args": ["/path/to/slipway/packages/mcp/bin/slipway-mcp.mjs", "."]
+      "command": "npx",
+      "args": ["-y", "slipway", "mcp", "."]
     }
   }
 }
@@ -39,8 +39,8 @@ Codex, in `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.slipway]
-command = "node"
-args = ["/path/to/slipway/packages/mcp/bin/slipway-mcp.mjs", "/path/to/your/site"]
+command = "npx"
+args = ["-y", "slipway", "mcp", "/path/to/your/site"]
 ```
 
 ## Test

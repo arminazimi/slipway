@@ -22,7 +22,7 @@ You can also run it in your CI. See [CI Recipes](../../docs/guides/ci.md) for Gi
 
 Exit codes: `0` the target level is reached, `1` findings, `2` a usage error or a missing folder.
 
-Agents can run it without a shell: the [MCP server](../mcp/README.md) has a `doctor` tool that returns the JSON report, and the [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) says when to run it and how to fix what it finds.
+Agents can run it without a shell: start the [MCP server](../mcp/README.md) with `npx slipway mcp`. It has a `doctor` tool that returns the JSON report, and the [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) says when to run it and how to fix what it finds.
 
 ## Output
 

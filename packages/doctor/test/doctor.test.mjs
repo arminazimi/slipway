@@ -326,3 +326,13 @@ test("cli: --format sarif prints a valid log with paths from the current folder"
   assert.ok(validateSarif(sarif), JSON.stringify(validateSarif.errors));
   assert.ok(sarif.runs[0].results.some((r) => r.locations?.[0].physicalLocation.artifactLocation.uri === `${dir}/pages/index.md`));
 });
+
+test("cli: slipway mcp spawns the MCP server", () => {
+  const result = spawnSync(process.execPath, [bin, "mcp"], {
+    cwd: repo,
+    encoding: "utf8",
+    env: { ...process.env, SLIPWAY_TEST_MOCK_MCP: "1" }
+  });
+  assert.equal(result.stdout.trim(), "mock mcp started");
+  assert.equal(result.status, 0);
+});

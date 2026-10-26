@@ -13,7 +13,11 @@ Options:
   --format <format>    text, json, or sarif (default: text)
   --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
   --network            fetch https schemas named in content-schemas.json
-  -h, --help           show this help`;
+  -h, --help           show this help
+
+Usage: slipway mcp [site-directory]
+
+Starts the MCP server for a Slipway site over stdio.`;
 
 const formats = ["text", "json", "sarif"];
 
