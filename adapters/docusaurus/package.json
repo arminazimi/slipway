@@ -1,0 +1,21 @@
+{
+  "name": "slipway-docusaurus",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Docusaurus plugin that makes a site agent-editable: sourcemap.json, Markdown twins, and data-source on headings.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src",
+    "starter"
+  ],
+  "peerDependencies": {
+    "@docusaurus/core": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

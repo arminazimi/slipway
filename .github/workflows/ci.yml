@@ -43,6 +43,11 @@ jobs:
         with:
           path: .seaworthy
           key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
+      # Docusaurus, for the Docusaurus adapter's tests (adapters/docusaurus), which skip without it.
+      - name: Install Docusaurus
+        run: |
+          npm install --prefix "$RUNNER_TEMP/docusaurus" --no-save --no-audit --no-fund @docusaurus/core@3.10.2 @docusaurus/preset-classic@3.10.2 react@19.2.0 react-dom@19.2.0
+          echo "DOCUSAURUS_MODULES=$RUNNER_TEMP/docusaurus/node_modules" >> "$GITHUB_ENV"
       # Hugo, for the Hugo adapter's tests (adapters/hugo), which skip without it.
       - name: Install Hugo
         run: |

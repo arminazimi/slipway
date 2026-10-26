@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
 - Home variants, picked with `variant` in the front matter: `editorial` (the default), `landing` with `features` and a closing call to action, `blog` with every post, and `docs` with the docs navigation as cards; `posts_limit` sets how many posts show (#213).
 - Post series: posts with the same `series` get a series box with their part, the other parts, and the previous and next part (#205).
 - Page widths: `width: narrow`, `wide`, or `full` in the front matter, and `.sl-wide` and `.sl-bleed` sections inside the reading column (#214).
