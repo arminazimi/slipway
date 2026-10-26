@@ -43,6 +43,11 @@ jobs:
         with:
           path: .seaworthy
           key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
+      # Hugo, for the Hugo adapter's tests (adapters/hugo), which skip without it.
+      - name: Install Hugo
+        run: |
+          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_0.152.2_linux-amd64.tar.gz | tar -xz -C "$RUNNER_TEMP" hugo
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
       - run: npm ci
       - if: matrix.jekyll == 'pages'
         run: bundle exec github-pages versions
@@ -58,3 +63,19 @@ jobs:
         run: node --test tools/theme/jekyll4.test.mjs
         env:
           SLIPWAY_REQUIRE_JEKYLL4: "1"
+      # The doctor Action (action/doctor) on a site that must reach L3, and as a report on examples/docs,
+      # which does not reach L0 yet.
+      - if: matrix.jekyll == 'pages'
+        uses: ./action/doctor
+        with:
+          path: packages/doctor/test/fixtures/conforming
+          build: packages/doctor/test/fixtures/conforming/build
+          level: L3
+          sarif: "true"
+          setup-node: "false"
+      - if: matrix.jekyll == 'pages'
+        uses: ./action/doctor
+        with:
+          path: examples/docs
+          level: none
+          setup-node: "false"

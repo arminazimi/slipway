@@ -1,0 +1,34 @@
+{{- /* The Markdown headings of a source file, in order: a slice of dicts with "line" (1-based, front
+   matter included), "level", and "key" (the heading's letters and digits, lowercased). ATX and setext
+   headings count; lines in front matter and fenced code blocks do not. */ -}}
+{{- $headings := slice -}}
+{{- with . -}}
+  {{- $lines := split (replace (os.ReadFile .) "\r\n" "\n") "\n" -}}
+  {{- $count := len $lines -}}
+  {{- $frontMatter := "" -}}
+  {{- with index $lines 0 -}}
+    {{- if in (slice "---" "+++") (strings.TrimRight " \t" .) -}}{{- $frontMatter = strings.TrimRight " \t" . -}}{{- end -}}
+  {{- end -}}
+  {{- $fence := "" -}}
+  {{- range $i, $line := $lines -}}
+    {{- if $frontMatter -}}
+      {{- if and (gt $i 0) (eq (strings.TrimRight " \t" $line) $frontMatter) -}}{{- $frontMatter = "" -}}{{- end -}}
+    {{- else if $fence -}}
+      {{- if findRE (printf `^ {0,3}%s+[ \t]*$` $fence) $line -}}{{- $fence = "" -}}{{- end -}}
+    {{- else if findRE "^ {0,3}(```|~~~)" $line -}}
+      {{- $fence = replaceRE "^ {0,3}((`|~){3}).*$" "${1}" $line -}}
+    {{- else if findRE `^ {0,3}#{1,6}([ \t]|$)` $line -}}
+      {{- $level := len (replaceRE `^ {0,3}(#{1,6}).*$` "${1}" $line) -}}
+      {{- $text := replaceRE `^ {0,3}#{1,6}` "" $line | replaceRE `[ \t]+#+[ \t]*$` "" | replaceRE `\{[^}]*\}[ \t]*$` "" -}}
+      {{- $headings = $headings | append (dict "line" (add $i 1) "level" $level "key" (partial "slipway/key.html" $text)) -}}
+    {{- else if and (lt (add $i 1) $count) (findRE `\S` $line) (not (findRE `^ {0,3}([-*_][ \t]*){3,}$` $line)) -}}
+      {{- $next := index $lines (add $i 1) -}}
+      {{- if findRE `^ {0,3}(=+|-+)[ \t]*$` $next -}}
+        {{- $level := cond (hasPrefix (strings.TrimLeft " " $next) "=") 1 2 -}}
+        {{- $text := replaceRE `\{[^}]*\}[ \t]*$` "" $line -}}
+        {{- $headings = $headings | append (dict "line" (add $i 1) "level" $level "key" (partial "slipway/key.html" $text)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $headings -}}

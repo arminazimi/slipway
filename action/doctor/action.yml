@@ -1,0 +1,62 @@
+name: slipway doctor
+description: Checks a static site against the agent-editable site spec and annotates the pull request with each finding.
+author: Slipway
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  path:
+    description: The site's source folder, relative to the repository root.
+    default: "."
+  build:
+    description: The built output folder. Without it, the tests on the output fail.
+    default: ""
+  level:
+    description: Fail the step unless the site reaches this level (L0, L1, L2, or L3). `none` reports without failing.
+    default: L1
+  format:
+    description: The log output, text or json.
+    default: text
+  sarif:
+    description: Also write a SARIF 2.1.0 file for github/codeql-action/upload-sarif.
+    default: "false"
+  sarif-file:
+    description: Where to write the SARIF file, relative to the repository root.
+    default: slipway.sarif
+  setup-node:
+    description: Install Node 22 with actions/setup-node. Set to false when the job already has Node 22 or later.
+    default: "true"
+
+outputs:
+  level:
+    description: The level the site reaches, L0 to L3, or none.
+    value: ${{ steps.doctor.outputs.level }}
+  sarif-file:
+    description: The SARIF file, when `sarif` is true.
+    value: ${{ steps.doctor.outputs.sarif-file }}
+
+runs:
+  using: composite
+  steps:
+    - if: inputs.setup-node == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    # The doctor's dependencies, installed in the Action's own checkout, never in the site's.
+    - shell: bash
+      working-directory: ${{ github.action_path }}/../..
+      run: |
+        if [ ! -d node_modules/ajv ] || [ ! -d node_modules/yaml ]; then
+          npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+        fi
+    - id: doctor
+      shell: bash
+      env:
+        SLIPWAY_PATH: ${{ inputs.path }}
+        SLIPWAY_BUILD: ${{ inputs.build }}
+        SLIPWAY_LEVEL: ${{ inputs.level }}
+        SLIPWAY_FORMAT: ${{ inputs.format }}
+        SLIPWAY_SARIF: ${{ inputs.sarif }}
+        SLIPWAY_SARIF_FILE: ${{ inputs.sarif-file }}
+      run: node "$GITHUB_ACTION_PATH/run.mjs"

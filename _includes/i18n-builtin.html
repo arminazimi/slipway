@@ -17,6 +17,9 @@
 {%- when 'mode_dark' -%}تیره
 {%- when 'docs_nav' -%}مستندات
 {%- when 'on_this_page' -%}در این صفحه
+{%- when 'series' -%}مجموعه
+{%- when 'series_part' -%}بخش {n} از {total}
+{%- when 'series_pager' -%}بخش قبل و بعد این مجموعه
 {%- when 'previous' -%}قبلی
 {%- when 'next' -%}بعدی
 {%- when 'pager' -%}صفحهٔ قبل و بعد
@@ -27,6 +30,91 @@
 {%- when 'copy' -%}کپی
 {%- when 'copied' -%}کپی شد
 {%- when 'copy_failed' -%}Ctrl+C را بزنید
+{%- when 'by' -%}نوشتهٔ
+{%- when 'and' -%}و
+{%- when 'comma' -%}،
+{%- when 'about_author' -%}دربارهٔ نویسنده
+{%- when 'posts' -%}نوشته‌ها
+{%- when 'edit_label' -%}ویرایش با دستیار
+{%- when 'edit_prompt' -%}فایل {source} را ویرایش کن. متن فعلی: «{text}». تغییر:
+{%- endcase -%}
+{%- elsif include.lang == 'ar' -%}
+{%- case include.key -%}
+{%- when 'skip' -%}انتقال إلى المحتوى
+{%- when 'not_found_title' -%}الصفحة غير موجودة
+{%- when 'not_found_text' -%}هذا العنوان غير موجود أو نُقل. استخدم حقل البحث أو انتقل إلى الصفحة الرئيسية.
+{%- when 'go_home' -%}الانتقال إلى الصفحة الرئيسية
+{%- when 'tags' -%}الوسوم
+{%- when 'categories' -%}التصنيفات
+{%- when 'main_nav' -%}القائمة الرئيسية
+{%- when 'search' -%}بحث
+{%- when 'search_none' -%}لا توجد نتائج
+{%- when 'search_count' -%}{n} نتيجة
+{%- when 'theme' -%}المظهر
+{%- when 'mode_auto' -%}تلقائي
+{%- when 'mode_light' -%}فاتح
+{%- when 'mode_dark' -%}داكن
+{%- when 'docs_nav' -%}التوثيق
+{%- when 'on_this_page' -%}في هذه الصفحة
+{%- when 'series' -%}سلسلة
+{%- when 'series_part' -%}الجزء {n} من {total}
+{%- when 'series_pager' -%}الجزء السابق والتالي من السلسلة
+{%- when 'previous' -%}السابق
+{%- when 'next' -%}التالي
+{%- when 'pager' -%}الصفحة السابقة والتالية
+{%- when 'post_pager' -%}التدوينة السابقة والتالية
+{%- when 'latest_posts' -%}أحدث التدوينات
+{%- when 'min_read' -%}دقيقة قراءة
+{%- when 'language' -%}اللغة
+{%- when 'copy' -%}نسخ
+{%- when 'copied' -%}تم النسخ
+{%- when 'copy_failed' -%}اضغط Ctrl+C
+{%- when 'by' -%}بقلم
+{%- when 'and' -%}و
+{%- when 'comma' -%}،
+{%- when 'about_author' -%}عن الكاتب
+{%- when 'posts' -%}التدوينات
+{%- when 'edit_label' -%}التحرير مع وكيلك
+{%- when 'edit_prompt' -%}حرّر الملف {source}. النص الحالي: «{text}». التغيير:
+{%- endcase -%}
+{%- elsif include.lang == 'he' -%}
+{%- case include.key -%}
+{%- when 'skip' -%}דילוג לתוכן
+{%- when 'not_found_title' -%}הדף לא נמצא
+{%- when 'not_found_text' -%}הכתובת הזאת לא קיימת או שהועברה. השתמשו בשדה החיפוש או עברו לדף הבית.
+{%- when 'go_home' -%}מעבר לדף הבית
+{%- when 'tags' -%}תגיות
+{%- when 'categories' -%}קטגוריות
+{%- when 'main_nav' -%}תפריט ראשי
+{%- when 'search' -%}חיפוש
+{%- when 'search_none' -%}לא נמצאו תוצאות
+{%- when 'search_count' -%}{n} תוצאות
+{%- when 'theme' -%}ערכת נושא
+{%- when 'mode_auto' -%}אוטומטי
+{%- when 'mode_light' -%}בהיר
+{%- when 'mode_dark' -%}כהה
+{%- when 'docs_nav' -%}תיעוד
+{%- when 'on_this_page' -%}בדף הזה
+{%- when 'series' -%}סדרה
+{%- when 'series_part' -%}חלק {n} מתוך {total}
+{%- when 'series_pager' -%}החלק הקודם והבא בסדרה
+{%- when 'previous' -%}הקודם
+{%- when 'next' -%}הבא
+{%- when 'pager' -%}הדף הקודם והבא
+{%- when 'post_pager' -%}הפוסט הקודם והבא
+{%- when 'latest_posts' -%}פוסטים אחרונים
+{%- when 'min_read' -%}דקות קריאה
+{%- when 'language' -%}שפה
+{%- when 'copy' -%}העתקה
+{%- when 'copied' -%}הועתק
+{%- when 'copy_failed' -%}הקישו Ctrl+C
+{%- when 'by' -%}מאת
+{%- when 'and' -%}וגם
+{%- when 'comma' -%},
+{%- when 'about_author' -%}על הכותב
+{%- when 'posts' -%}פוסטים
+{%- when 'edit_label' -%}עריכה עם הסוכן שלך
+{%- when 'edit_prompt' -%}ערוך את {source}. הטקסט הנוכחי: "{text}". השינוי:
 {%- endcase -%}
 {%- else -%}
 {%- case include.key -%}
@@ -46,6 +134,9 @@
 {%- when 'mode_dark' -%}Dark
 {%- when 'docs_nav' -%}Documentation
 {%- when 'on_this_page' -%}On this page
+{%- when 'series' -%}Series
+{%- when 'series_part' -%}Part {n} of {total}
+{%- when 'series_pager' -%}Previous and next in this series
 {%- when 'previous' -%}Previous
 {%- when 'next' -%}Next
 {%- when 'pager' -%}Previous and next
@@ -56,5 +147,12 @@
 {%- when 'copy' -%}Copy
 {%- when 'copied' -%}Copied
 {%- when 'copy_failed' -%}Press Ctrl+C
+{%- when 'by' -%}By
+{%- when 'and' -%}and
+{%- when 'comma' -%},
+{%- when 'about_author' -%}About the author
+{%- when 'posts' -%}Posts
+{%- when 'edit_label' -%}Edit with your agent
+{%- when 'edit_prompt' -%}Edit {source}. Current text: "{text}". Change:
 {%- endcase -%}
 {%- endif -%}

@@ -1,0 +1,17 @@
+{
+  "version": 0,
+  "pages": [
+    {
+      "url": "/",
+      "source": "pages/index.md",
+      "sections": [{ "id": "welcome", "level": 1, "line": 6, "text": "Welcome" }],
+      "links": [{ "href": "/guide/", "line": 8 }]
+    },
+    {
+      "url": "/guide/",
+      "source": "pages/guide.md",
+      "sections": [{ "id": "getting-started", "level": 1, "line": 6, "text": "Getting started" }],
+      "links": [{ "href": "https://example.com/spec", "line": 8 }]
+    }
+  ]
+}

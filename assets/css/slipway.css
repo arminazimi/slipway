@@ -17,6 +17,16 @@
     font-family: var(--sl-font-persian);
   }
 
+  :lang(ar),
+  :lang(ar) :is(h1, h2, h3) {
+    font-family: var(--sl-font-arabic);
+  }
+
+  :lang(he),
+  :lang(he) :is(h1, h2, h3) {
+    font-family: var(--sl-font-hebrew);
+  }
+
   main {
     max-inline-size: var(--sl-measure);
     margin-inline: auto;
@@ -94,6 +104,26 @@
     align-items: center;
     gap: var(--sl-space-3);
     padding: var(--sl-space-3) var(--sl-space-4);
+  }
+
+  /* Header variants (slipway.header): centered stacks everything on the middle axis; minimal is one quiet row. */
+  .sl-header-centered {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sl-header-centered .sl-main-nav ul {
+    justify-content: center;
+  }
+
+  .sl-header-minimal {
+    padding-block: var(--sl-space-2);
+  }
+
+  .sl-header-minimal .sl-site-title {
+    margin-inline-end: auto;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-base);
   }
 
   .sl-site-title {
@@ -365,6 +395,107 @@
   }
 }
 
+/* Post series: the box after the post header with the parts and the previous and next part. */
+@layer components {
+  .sl-series {
+    margin-block: var(--sl-space-6);
+    padding: var(--sl-space-4);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+
+  .sl-series-title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .sl-series-title span,
+  .sl-series-part,
+  .sl-series-pager span {
+    color: var(--sl-color-muted);
+  }
+
+  .sl-series-part {
+    margin-block: 0 var(--sl-space-2);
+  }
+
+  .sl-series-list {
+    margin-block: 0;
+    padding-inline-start: var(--sl-space-6);
+  }
+
+  .sl-series-list [aria-current] {
+    font-weight: 600;
+  }
+
+  .sl-series-pager {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sl-space-4);
+    margin-block-start: var(--sl-space-2);
+  }
+
+  .sl-series-pager a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .sl-series-next {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+}
+
+/* Authors: the byline, the author box after a post, and the author page. */
+@layer components {
+  .sl-authors {
+    display: grid;
+    gap: var(--sl-space-4);
+    margin-block: var(--sl-space-6);
+    padding-block-start: var(--sl-space-4);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  .sl-author {
+    display: flex;
+    gap: var(--sl-space-4);
+    align-items: flex-start;
+  }
+
+  .sl-avatar {
+    flex: none;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .sl-author-name {
+    margin: 0;
+    font-family: var(--sl-font-ui);
+    font-weight: 600;
+  }
+
+  .sl-author-bio {
+    margin-block: var(--sl-space-1) 0;
+    color: var(--sl-color-muted);
+  }
+
+  .sl-author-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sl-space-3);
+    margin: var(--sl-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+  }
+}
+
 /* Page layout: title, optional lead, and text at reading width. */
 @layer components {
   .sl-page-lead {
@@ -395,6 +526,25 @@
   }
 
   .sl-copy:hover {
+    color: var(--sl-color-text);
+  }
+
+  /* "Edit with your agent" (assets/js/edit-prompt.js), added to h2 and h3 by the script. */
+  .sl-edit {
+    margin-inline-start: var(--sl-space-2);
+    padding: 0 var(--sl-space-2);
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
+    font-weight: normal;
+    vertical-align: middle;
+    color: var(--sl-color-muted);
+    background: var(--sl-color-canvas);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    border-radius: var(--sl-radius-compact);
+    cursor: pointer;
+  }
+
+  .sl-edit:hover {
     color: var(--sl-color-text);
   }
 
@@ -429,33 +579,42 @@
   }
 }
 
-/* Persian: taller lines, no italics (the script has none), and Persian digits in section numbers when opted in. */
+/* Persian and Arabic: taller lines, no italics (the script has none), and native digits in section numbers when opted in. */
 @layer components {
   @counter-style sl-persian-padded {
     system: extends persian;
     pad: 2 "۰";
   }
 
-  :lang(fa) body,
-  body:lang(fa) {
+  @counter-style sl-arabic-padded {
+    system: extends arabic-indic;
+    pad: 2 "٠";
+  }
+
+  :is(:lang(fa), :lang(ar)) body,
+  body:is(:lang(fa), :lang(ar)) {
     line-height: 1.9;
   }
 
-  :lang(fa) :is(h1, h2, h3) {
+  :is(:lang(fa), :lang(ar)) :is(h1, h2, h3) {
     line-height: 1.4;
     font-weight: 700;
   }
 
-  :lang(fa) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
+  :is(:lang(fa), :lang(ar)) :is(em, i, .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs, .highlight .s, .highlight .s1, .highlight .s2) {
     font-style: normal;
   }
 
-  :lang(fa) :is(.sl-doc-group, .sl-sections > h2::before) {
+  :is(:lang(fa), :lang(ar)) :is(.sl-doc-group, .sl-sections > h2::before) {
     letter-spacing: 0;
   }
 
   .sl-fa-digits .sl-sections > h2::before {
     content: counter(sl-section, sl-persian-padded);
+  }
+
+  .sl-ar-digits .sl-sections > h2::before {
+    content: counter(sl-section, sl-arabic-padded);
   }
 }
 
@@ -579,5 +738,43 @@
   .sl-not-found section {
     padding-block: var(--sl-space-4);
     border-block-end: var(--sl-rule) solid var(--sl-color-line);
+  }
+}
+
+/* Page widths (front matter `width`) and wide or full-bleed sections inside the reading column. */
+@layer components {
+  body {
+    overflow-x: clip;
+  }
+
+  .sl-width-narrow {
+    max-inline-size: var(--sl-measure-narrow);
+  }
+
+  .sl-width-wide {
+    max-inline-size: var(--sl-measure-wide);
+  }
+
+  .sl-width-full {
+    max-inline-size: none;
+  }
+
+  .sl-wide {
+    --sl-wide-size: max(100%, min(var(--sl-measure-wide), 100vw - 2 * var(--sl-space-4)));
+    box-sizing: border-box;
+    inline-size: var(--sl-wide-size);
+    margin-inline: calc((100% - var(--sl-wide-size)) / 2);
+  }
+
+  .sl-bleed {
+    box-sizing: border-box;
+    margin-inline: calc(50% - 50vw);
+    padding-inline: var(--sl-space-4);
+  }
+
+  /* The doc column sits beside the sidebar, not in the middle of the screen. */
+  .sl-layout-doc :is(.sl-wide, .sl-bleed) {
+    inline-size: auto;
+    margin-inline: 0;
   }
 }

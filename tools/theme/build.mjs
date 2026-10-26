@@ -9,7 +9,7 @@
 import { spawnSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -46,23 +46,28 @@ export function bundleAvailable(gemfile = process.env.BUNDLE_GEMFILE) {
   return spawnSync("bundle", ["exec", "jekyll", "--version"], { cwd: root, encoding: "utf8", env: bundleEnv(gemfile) }).status === 0;
 }
 
-/** Builds one example. `gemfile` picks the Jekyll (default: BUNDLE_GEMFILE); `configs` are extra overlays. */
+/** Builds examples/<name>, or the site at `name` when it is an absolute path (a test fixture).
+ * `gemfile` picks the Jekyll (default: BUNDLE_GEMFILE); `configs` are extra overlays. */
 export function buildExample(mode, out, name = "minimal", { gemfile = process.env.BUNDLE_GEMFILE, configs: overlays = [] } = {}) {
-  const example = join(root, "examples", name);
+  const example = isAbsolute(name) ? name : join(root, "examples", name);
   if (!existsSync(example)) throw new Error(`no example site named ${name}`);
   if (!modes.includes(mode)) throw new Error(`mode must be one of ${modes.join(", ")}`);
   let source = example;
   const configs = [join(example, "_config.yml")];
 
-  if (mode === "template") {
-    source = mkdtempSync(join(realpathSync(tmpdir()), "slipway-template-"));
+  const original = readFileSync(join(example, "_config.yml"), "utf8");
+  // A site that names only remote_theme (examples/bare) builds against this checkout in gem mode, not GitHub's copy.
+  const remoteOnly = mode === "gem" && /^remote_theme:/m.test(original);
+  if (mode === "template" || remoteOnly) {
+    source = mkdtempSync(join(realpathSync(tmpdir()), `slipway-${mode}-`));
     cpSync(example, source, { recursive: true });
-    for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true });
-    const config = readFileSync(join(example, "_config.yml"), "utf8").replace(/^theme:.*\n/m, "");
+    // force: false keeps the site's own files, so an override slot the example fills wins, as it does after "Use this template".
+    if (mode === "template") for (const dir of themeDirs) if (existsSync(join(root, dir))) cpSync(join(root, dir), join(source, dir), { recursive: true, force: false });
+    const config = remoteOnly ? original.replace(/^remote_theme:.*$/m, "theme: slipway-theme") : original.replace(/^(remote_)?theme:.*\n/gm, "");
     writeFileSync(join(source, "_config.yml"), config);
     configs[0] = join(source, "_config.yml");
   }
-  if (mode === "remote") configs.push(join(example, "_config.remote.yml"));
+  if (mode === "remote" && existsSync(join(example, "_config.remote.yml"))) configs.push(join(example, "_config.remote.yml"));
   if (target(gemfile) === "jekyll4") configs.push(jekyll4Config);
   configs.push(...overlays);
 
@@ -80,7 +85,7 @@ export function buildExample(mode, out, name = "minimal", { gemfile = process.en
       env: { ...bundleEnv(gemfile), PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
     },
   );
-  if (mode === "template") rmSync(source, { recursive: true, force: true });
+  if (source !== example) rmSync(source, { recursive: true, force: true });
   if (result.status !== 0) throw new Error(`jekyll build (${mode}) failed:\n${result.stdout}\n${result.stderr}`);
   return out;
 }

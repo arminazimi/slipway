@@ -69,6 +69,8 @@ An override applies to both light and dark, so check its contrast in both. The s
 | `font.ui` | `--sl-font-ui` | Interface chrome: header, navigation, badges, buttons. | `system-ui, -apple-system, "Segoe UI", sans-serif` | same |
 | `font.mono` | `--sl-font-mono` | Code. | `"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace` | same |
 | `font.persian` | `--sl-font-persian` | All Persian text. | `Vazirmatn, "Source Serif 4", Tahoma, sans-serif` | same |
+| `font.arabic` | `--sl-font-arabic` | All Arabic text. | `Vazirmatn, "Source Serif 4", "Geeza Pro", "Segoe UI", Tahoma, sans-serif` | same |
+| `font.hebrew` | `--sl-font-hebrew` | All Hebrew text. | `"Noto Sans Hebrew", "Arial Hebrew", "Segoe UI", Arial, sans-serif` | same |
 
 ## Type scale
 
@@ -106,6 +108,18 @@ An override applies to both light and dark, so check its contrast in both. The s
 | Token | CSS variable | Purpose | Light | Dark |
 | --- | --- | --- | --- | --- |
 | `measure` | `--sl-measure` | Maximum width of reading text. | `42rem` | same |
+
+## Measure-narrow
+
+| Token | CSS variable | Purpose | Light | Dark |
+| --- | --- | --- | --- | --- |
+| `measure-narrow` | `--sl-measure-narrow` | Page width for `width: narrow`: short notes and forms. | `34rem` | same |
+
+## Measure-wide
+
+| Token | CSS variable | Purpose | Light | Dark |
+| --- | --- | --- | --- | --- |
+| `measure-wide` | `--sl-measure-wide` | Page width for `width: wide`, and the width of `.sl-wide` sections. | `64rem` | same |
 
 ## Rule
 

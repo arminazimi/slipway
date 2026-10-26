@@ -1,0 +1,41 @@
+{%- comment -%}
+  Structured data (schema.org JSON-LD) for the page's layout: WebSite on home, BlogPosting on post,
+  TechArticle on doc, CollectionPage on archive and tags, WebPage on the rest, nothing on not-found.
+  Every string goes through jsonify, and "<" becomes \u003c so no value can end the script element.
+  Plain Liquid: it needs no plugin, so classic GitHub Pages builds it too.
+{%- endcomment -%}
+{%- assign sl_ld_layout = page.layout -%}
+{%- unless sl_ld_layout == 'not-found' -%}
+{%- case sl_ld_layout -%}
+  {%- when 'home' -%}{%- assign sl_ld_type = 'WebSite' -%}
+  {%- when 'post' -%}{%- assign sl_ld_type = 'BlogPosting' -%}
+  {%- when 'doc' -%}{%- assign sl_ld_type = 'TechArticle' -%}
+  {%- when 'archive' or 'tags' -%}{%- assign sl_ld_type = 'CollectionPage' -%}
+  {%- else -%}{%- assign sl_ld_type = 'WebPage' -%}
+{%- endcase -%}
+{%- assign sl_ld_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_ld_title = page.title | default: site.title -%}
+{%- assign sl_ld_author = site.author.name | default: site.author -%}
+{%- capture sl_ld_site -%}{"@type":"WebSite","name":{{ site.title | default: sl_ld_title | jsonify }},"url":{{ '/' | absolute_url | jsonify }}}{%- endcapture -%}
+{%- capture sl_ld -%}
+{"@context":"https://schema.org","@type":"{{ sl_ld_type }}"
+{%- if sl_ld_type == 'WebSite' -%}
+,"name":{{ site.title | default: sl_ld_title | jsonify }}
+{%- elsif sl_ld_type == 'BlogPosting' or sl_ld_type == 'TechArticle' -%}
+,"headline":{{ sl_ld_title | jsonify }},"mainEntityOfPage":{{ page.url | absolute_url | jsonify }},"isPartOf":{{ sl_ld_site }}
+{%- else -%}
+,"name":{{ sl_ld_title | jsonify }},"isPartOf":{{ sl_ld_site }}
+{%- endif -%}
+,"url":{{ page.url | absolute_url | jsonify }},"inLanguage":{{ sl_ld_lang | jsonify }}
+{%- if sl_desc and sl_desc != '' -%},"description":{{ sl_desc | jsonify }}{%- endif -%}
+{%- if sl_ld_type == 'BlogPosting' and page.date -%}
+,"datePublished":{{ page.date | date_to_xmlschema | jsonify }},"dateModified":{{ page.date | date_to_xmlschema | jsonify }}
+{%- endif -%}
+{%- if sl_ld_type == 'BlogPosting' or sl_ld_type == 'TechArticle' -%}
+{%- if sl_ld_author -%},"author":{"@type":"Person","name":{{ sl_ld_author | jsonify }}}{%- endif -%}
+{%- if page.tags and page.tags.size > 0 -%},"keywords":{{ page.tags | jsonify }}{%- endif -%}
+{%- endif -%}
+}
+{%- endcapture %}
+  <script type="application/ld+json">{{ sl_ld | strip_newlines | replace: '<', '\u003c' }}</script>
+{%- endunless -%}

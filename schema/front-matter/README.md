@@ -1,0 +1,35 @@
+# Front matter schemas
+
+JSON Schemas (draft 2020-12) for the front matter of Slipway pages, from the content model in [ADR 0003](../../docs/adr/0003-content-model.md). `base.schema.json` holds the keys every page may set; each layout schema builds on it. Unknown keys are kept and ignored, never rejected, so a site can add its own.
+
+`node tools/theme/front-matter.mjs [file or folder ...]` validates Markdown files (every example site by default) and prints the file, the key, and the allowed values for each problem.
+
+## Which schema a page uses
+
+The `layout` key picks the schema. A page without `layout` gets the schema of its collection folder, and a page outside a collection gets `page`.
+
+| Layout | Collection folder | Schema | Keys beyond `base` |
+|---|---|---|---|
+| `page`, `default`, `tags`, `not-found` | (any other folder) | [`page.schema.json`](page.schema.json) | none |
+| `doc` | `_docs/` | [`doc.schema.json`](doc.schema.json) | none |
+| `post` | `_posts/` | [`post.schema.json`](post.schema.json) | `author`: one id or a list of ids from `_data/authors.yml`; the date and slug come from the `YYYY-MM-DD-slug.md` file name |
+| `home` | | [`home.schema.json`](home.schema.json) | `cta_text` and `cta_url`, set together |
+| `archive` | | [`archive.schema.json`](archive.schema.json) | none |
+| `author` | | [`author.schema.json`](author.schema.json) | `author`, required: the id of the author in `_data/authors.yml` |
+| any other layout (your own) | | [`base.schema.json`](base.schema.json) | |
+
+## Shared keys
+
+| Key | Type | Allowed values |
+|---|---|---|
+| `title` | string, required | not empty |
+| `description` | string | |
+| `lang` | string | a BCP 47 tag such as `en`, `fa`, `pt-BR` |
+| `dir`, `direction` | string | `ltr`, `rtl` (`direction` is what the base layout reads today) |
+| `date` | string | `YYYY-MM-DD`, optionally with a time and offset |
+| `tags`, `categories` | list or string | a list, or one space-separated string |
+| `nav_order` | number | |
+| `layout` | string | a layout name |
+| `permalink` | string | a path starting with `/`, or `pretty`, `date`, `ordinal`, `weekdate`, `none` |
+| `published`, `sitemap`, `search` | boolean | `true`, `false` |
+| `translation_key` | string | not empty; the same key on every translation of a page |

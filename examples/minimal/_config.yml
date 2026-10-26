@@ -1,4 +1,6 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
 title: Slipway minimal
+description: The smallest site that uses every Slipway layout.
 lang: en
 # The sample posts are dated at the edges of the Jalali year; publish them whatever the clock says.
 future: true
@@ -11,6 +13,8 @@ slipway:
   persian:
     digits: true
     jalali: true
+  arabic:
+    digits: true
   languages:
     - { code: en, name: English, prefix: "" }
     - { code: fa, name: فارسی, prefix: /fa }

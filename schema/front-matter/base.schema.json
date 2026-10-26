@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/base.schema.json",
+  "title": "Slipway front matter: shared keys",
+  "description": "The keys every page may set (ADR 0003, decision 2). Unknown keys are kept and ignored, never rejected. The layout schemas build on this one.",
+  "type": "object",
+  "required": ["title"],
+  "properties": {
+    "title": { "type": "string", "minLength": 1, "description": "The page title, used in the heading, the tab, and feeds." },
+    "description": { "type": "string", "description": "One sentence for search results and link previews." },
+    "lang": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$", "description": "BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language." },
+    "dir": { "enum": ["ltr", "rtl"], "description": "Text direction (ADR 0003). Defaults to the direction of `lang`." },
+    "direction": { "enum": ["ltr", "rtl"], "description": "Text direction as the base layout reads it today; same meaning as `dir`." },
+    "date": { "$ref": "#/$defs/date" },
+    "tags": { "$ref": "#/$defs/terms", "description": "Tags: a list, or one space-separated string as Jekyll allows." },
+    "categories": { "$ref": "#/$defs/terms", "description": "Categories: a list, or one space-separated string as Jekyll allows." },
+    "width": { "enum": ["narrow", "wide", "full"], "description": "Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it." },
+    "nav_order": { "type": "number", "description": "Sort order in generated navigation." },
+    "layout": { "type": "string", "minLength": 1, "description": "The layout that renders the page. Picks the schema in schema/front-matter/README.md." },
+    "permalink": { "type": "string", "pattern": "^(/|(pretty|date|ordinal|weekdate|none)$)", "description": "The output URL: a path starting with `/`, or one of Jekyll's built-in styles." },
+    "published": { "type": "boolean", "description": "`false` leaves the page out of the build." },
+    "translation_key": { "type": "string", "minLength": 1, "description": "Links the translations of one page; pages with the same key are alternates of each other." },
+    "sitemap": { "type": "boolean", "description": "`false` leaves the page out of sitemap.xml." },
+    "search": { "type": "boolean", "description": "`false` leaves the page out of the search index." }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "date": {
+      "description": "YYYY-MM-DD, optionally with a time and a UTC offset (`2026-10-18 09:30:00 +0330`).",
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}([ T]\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?( ?(Z|[+-]\\d{2}:?\\d{2}))?)?$"
+    },
+    "terms": {
+      "oneOf": [
+        { "type": "array", "items": { "anyOf": [{ "type": "string" }, { "type": "number" }] } },
+        { "type": "string" }
+      ]
+    },
+    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." },
+    "authorId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$", "description": "A key of `_data/authors.yml`." }
+  }
+}

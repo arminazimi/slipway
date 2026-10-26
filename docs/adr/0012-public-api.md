@@ -26,6 +26,8 @@ Sites pin a version with `remote_theme: arminazimi/slipway@vX.Y.Z` or the `slipw
 
    Example: `1.3.0` renames `slipway.tokens.radius` to `slipway.tokens.radius_card`. In `1.3.0` both keys work, the new one wins when both are set, and the build prints `_config.yml:14 slipway.tokens.radius is deprecated since 1.3.0, use slipway.tokens.radius_card`. The old key is removed no earlier than `2.0.0`.
 
+   The renames live in [`schema/deprecations.json`](../../schema/deprecations.json). The layouts read each one through `_includes/compat.html`, which works on classic Pages because it is Liquid; `tools/theme/deprecations.mjs <site>` prints the warnings, since classic Pages runs no plugin that could.
+
 5. **Visual changes are not breaking.** A new default colour, spacing, or font within the same tokens is a minor change. Removing or renaming a token is not.
 
 ## The public surface
@@ -36,9 +38,11 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 
 | Key | Public | Tested by |
 | --- | --- | --- |
+| `slipway.header` | yes | `header.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
+| `slipway.arabic.digits` | yes | `arabic.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
 | `slipway.tokens.text` | yes | `config.test.mjs` |
@@ -46,7 +50,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.tokens.font_body` | yes | `config.test.mjs` |
 | `slipway.tokens.radius` | yes | `config.test.mjs` |
 
-Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `direction` is public (`not-found.test.mjs`). `author` (feed author name) is public, *not yet tested*.
+Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `description` (the site summary in `llms.txt`) is public (`llms.test.mjs`). `direction` is public (`not-found.test.mjs`). `author` (feed and JSON-LD author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all seven, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
 
 ### Data files
 
@@ -54,6 +58,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | --- | --- | --- |
 | `_data/navigation.yml`: `main`, `docs`, and `main_<lang>`, `docs_<lang>` | yes | `navigation.test.mjs`, `doc-layout.test.mjs` |
 | `_data/i18n/<lang>.yml`: the keys of `_includes/i18n-builtin.html` | yes | `i18n.test.mjs` |
+| `_data/authors.yml`: per id, `name`, `bio`, `avatar`, and `links` (`title`, `url`), described by [`schema/authors.schema.json`](../../schema/authors.schema.json) | yes | `authors.test.mjs` |
 
 ### Front matter
 
@@ -65,10 +70,16 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `permalink` | all (Jekyll's) | yes | `doc-layout.test.mjs` |
 | `date`, `tags`, `categories` | `post` | yes | `post-layout.test.mjs`, `taxonomy.test.mjs` |
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
+| `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
+| `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
+| `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
+| `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
 
-Collections and their schemas are added by `schema.front-matter`; this table grows with it.
+Two classes are public too, because page bodies use them: `sl-wide` widens an element to `--sl-measure-wide` and `sl-bleed` takes it edge to edge (`widths.test.mjs`). The `doc` layout keeps both in its column.
+
+Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home`, `archive`, and `author`. `front-matter.test.mjs` fails when a schema field is missing from this table.
 
 ### Layouts
 
@@ -79,9 +90,12 @@ Collections and their schemas are added by `schema.front-matter`; this table gro
 | `doc` | yes | `doc-layout.test.mjs` |
 | `post` | yes | `post-layout.test.mjs` |
 | `archive`, `tags` | yes | `taxonomy.test.mjs` |
+| `author` | yes | `authors.test.mjs` |
 | `not-found` | yes | `not-found.test.mjs` |
 | `feed`, `sitemap` | yes | `feed.test.mjs` |
 | `search-index` | yes | `search.test.mjs` |
+| `sourcemap` | yes | `sourcemap.test.mjs` |
+| `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes
@@ -91,8 +105,10 @@ Includes are internal, so the theme can restructure its markup. One is public, b
 | Include | Parameters | Public | Tested by |
 | --- | --- | --- | --- |
 | `t.html` | `key` (required), `lang` (defaults to the page's) | yes | `i18n.test.mjs` |
+| `head-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<head>` | yes | `overrides.test.mjs` |
+| `footer-custom.html` | none: an override slot, empty in the theme, rendered at the end of `<footer>` | yes | `overrides.test.mjs` |
 
-The override slots `head-custom.html` and `footer-custom.html` become public with `standalone.overrides`. Shadowing any other include works but is unsupported: it may break in a minor release.
+The third override slot is the path `assets/css/custom.css`: when a site has that file, every page links it after the theme styles (`overrides.test.mjs`). The slots are documented in [docs/overrides.md](../overrides.md). The fourth is `assets/images/social.png`, the `og:image` of every page (`seo.test.mjs`); the theme ships a plain one. Shadowing any other include works but is unsupported: it may break in a minor release.
 
 ### CSS custom properties
 
@@ -101,11 +117,11 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Group | Properties |
 | --- | --- |
 | Color | `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, `--sl-color-line`, `--sl-color-rose`, `--sl-color-rose-hover`, `--sl-color-rose-fill`, `--sl-color-on-rose-fill` |
-| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian` |
+| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian`, `--sl-font-arabic`, `--sl-font-hebrew` |
 | Type scale | `--sl-step-sm`, `--sl-step-base`, `--sl-step-lg`, `--sl-step-xl`, `--sl-step-2xl`, `--sl-step-3xl` |
 | Spacing | `--sl-space-1`, `--sl-space-2`, `--sl-space-3`, `--sl-space-4`, `--sl-space-6`, `--sl-space-8`, `--sl-space-12`, `--sl-space-16` |
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
-| Measure and rule | `--sl-measure`, `--sl-rule` |
+| Measure and rule | `--sl-measure`, `--sl-measure-narrow`, `--sl-measure-wide`, `--sl-rule` |
 | Button | `--sl-button-bg`, `--sl-button-fg`, `--sl-button-radius` |
 
 ### Generated URLs
@@ -116,13 +132,15 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | `/sitemap.xml` | yes | `feed.test.mjs` |
 | `/search.json` (the URL, not its format) | yes | `search.test.mjs` |
 | `/404.html` | yes | `not-found.test.mjs` |
+| `/sourcemap.json` (format: [spec/sourcemap/v0.md](../../spec/sourcemap/v0.md)) | yes | `sourcemap.test.mjs` |
+| `/llms.txt` and `/llms-full.txt` (the URLs; `llms.txt` follows [llmstxt.org](https://llmstxt.org)) | yes | `llms.test.mjs` |
 | Language homes at each `prefix` of `slipway.languages` | yes | `i18n.test.mjs` |
 
 `tools/theme/public-api.test.mjs` fails when a key in the config schema or a custom property in `tokens.css` is missing from this ADR, so the list cannot fall behind silently.
 
 ## Consequences
 
-- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and `docs/overrides.md` (`standalone.overrides`) will say so.
+- Class names, include files, and markup can be refactored freely; a site that styles `.sl-*` classes or shadows an internal include does so at its own risk, and [docs/overrides.md](../overrides.md) says so.
 - Adding a config key, front-matter field, layout, or token means adding a row here in the same pull request.
 - Items marked *not yet tested* get tests before `1.0.0` (the `1.0 readiness review` task checks this).
 - `standalone.deprecations` and `standalone.upgrade-test` implement rule 4.

@@ -1,15 +1,22 @@
 ---
 layout: base
 ---
+{%- capture sl_edit_label %}{% include t.html key='edit_label' %}{% endcapture -%}
+{%- capture sl_edit_prompt %}{% include t.html key='edit_prompt' %}{% endcapture -%}
 {%- assign sl_words = content | number_of_words -%}
 {%- assign sl_minutes = sl_words | divided_by: 200.0 | ceil -%}
 {%- if sl_minutes < 1 %}{% assign sl_minutes = 1 %}{% endif -%}
-<article class="sl-post">
+<article class="sl-post" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
   <header class="sl-post-header">
     <h1>{{ page.title }}</h1>
     <p class="sl-post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{% include date.html date=page.date %}</time>
       <span>{% include num.html value=sl_minutes %} {% include t.html key='min_read' %}</span>
+      {%- capture sl_byline %}{% include byline.html page=page %}{% endcapture %}
+      {%- assign sl_byline = sl_byline | strip %}
+      {%- if sl_byline != '' %}
+      {{ sl_byline }}
+      {%- endif %}
       {%- capture sl_tags_url %}{% include layout-url.html layout='tags' %}{% endcapture %}
       {%- assign sl_tags_url = sl_tags_url | strip %}
       {%- if page.tags and page.tags.size > 0 %}
@@ -28,7 +35,16 @@ layout: base
       {%- endif %}
     </p>
   </header>
-  {{ content }}
+  {%- include series.html %}
+  {% include edit-sources.html html=content %}
+  {%- include author-ids.html page=page -%}
+  {%- capture sl_author_cards %}{% for id in sl_ai_ids %}{% include author-card.html id=id link=true %}{% endfor %}{% endcapture %}
+  {%- assign sl_author_cards_clean = sl_author_cards | strip %}
+  {%- if sl_author_cards_clean != '' %}
+  <aside class="sl-authors" aria-label="{% include t.html key='about_author' %}">
+    {{ sl_author_cards_clean }}
+  </aside>
+  {%- endif %}
   {%- comment -%} Neighbours in the same language: site.posts is newest first, so the post seen before this one is newer. {%- endcomment %}
   {%- assign sl_lang = page.lang | default: site.lang | default: 'en' -%}
   {%- assign sl_newer = nil -%}
