@@ -60,6 +60,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
 - JSON-LD structured data on every page, typed by layout: `WebSite` on `home`, `BlogPosting` on `post`, `TechArticle` on `doc`, `CollectionPage` on `archive` and `tags`, `WebPage` elsewhere (#23).
 - Header variants chosen with `slipway.header` in `_config.yml`: `classic`, `centered`, and `minimal` (#212).
+- Opt-in, privacy-friendly analytics (GoatCounter, Plausible, Umami) with one config key (`slipway.analytics`) (#210).
 - Arabic: a font stack (`--sl-font-arabic`), Persian-style line height and no italics, built-in UI strings, and opt-in Arabic-Indic digits with `slipway.arabic.digits` (#222).
 - Opt-in Hijri calendar for Arabic pages with `slipway.arabic.hijri` (#225).
 - Hebrew: a font stack (`--sl-font-hebrew`) and built-in UI strings, so `lang: he` pages read right to left with Hebrew labels (#223).
