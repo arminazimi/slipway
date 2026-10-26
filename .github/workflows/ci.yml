@@ -41,6 +41,25 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/docusaurus" --no-save --no-audit --no-fund @docusaurus/core@3.10.2 @docusaurus/preset-classic@3.10.2 react@19.2.0 react-dom@19.2.0
           echo "DOCUSAURUS_MODULES=$RUNNER_TEMP/docusaurus/node_modules" >> "$GITHUB_ENV"
+      # Hugo, for the Hugo adapter's tests (adapters/hugo), which skip without it.
+      - name: Install Hugo
+        run: |
+          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_0.152.2_linux-amd64.tar.gz | tar -xz -C "$RUNNER_TEMP" hugo
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
       - run: npm ci
       - run: bundle exec github-pages versions
       - run: npm run check
+      # The doctor Action (action/doctor) on a site that must reach L3, and as a report on examples/docs,
+      # which does not reach L0 yet.
+      - uses: ./action/doctor
+        with:
+          path: packages/doctor/test/fixtures/conforming
+          build: packages/doctor/test/fixtures/conforming/build
+          level: L3
+          sarif: "true"
+          setup-node: "false"
+      - uses: ./action/doctor
+        with:
+          path: examples/docs
+          level: none
+          setup-node: "false"

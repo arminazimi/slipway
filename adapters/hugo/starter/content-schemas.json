@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["hugo.toml", "hugo.yaml", "hugo.yml", "hugo.json"], "target": "file", "schema": "schema/hugo-config.schema.json" },
+    { "files": ["content/**/*.md"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}

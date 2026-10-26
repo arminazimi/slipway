@@ -1,0 +1,2 @@
+{{- /* Letters and digits only, lowercased: how a heading's source text is matched to its rendered text. */ -}}
+{{- return lower (replaceRE `[^\p{L}\p{N}]+` "" (htmlUnescape .)) -}}

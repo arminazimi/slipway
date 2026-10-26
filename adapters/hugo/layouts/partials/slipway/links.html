@@ -1,0 +1,26 @@
+{{- /* The inline links of a source file, in order: a slice of dicts with "href" as written and "line".
+   Images, reference-style links, and lines in front matter and fenced code blocks are left out. */ -}}
+{{- $links := slice -}}
+{{- with . -}}
+  {{- $lines := split (replace (os.ReadFile .) "\r\n" "\n") "\n" -}}
+  {{- $frontMatter := "" -}}
+  {{- with index $lines 0 -}}
+    {{- if in (slice "---" "+++") (strings.TrimRight " \t" .) -}}{{- $frontMatter = strings.TrimRight " \t" . -}}{{- end -}}
+  {{- end -}}
+  {{- $fence := "" -}}
+  {{- range $i, $line := $lines -}}
+    {{- if $frontMatter -}}
+      {{- if and (gt $i 0) (eq (strings.TrimRight " \t" $line) $frontMatter) -}}{{- $frontMatter = "" -}}{{- end -}}
+    {{- else if $fence -}}
+      {{- if findRE (printf `^ {0,3}%s+[ \t]*$` $fence) $line -}}{{- $fence = "" -}}{{- end -}}
+    {{- else if findRE "^ {0,3}(```|~~~)" $line -}}
+      {{- $fence = replaceRE "^ {0,3}((`|~){3}).*$" "${1}" $line -}}
+    {{- else -}}
+      {{- $code := replaceRE "`[^`]*`" "" $line -}}
+      {{- range findRE `(^|[^!])\[[^\]]*\]\([ \t]*<?[^)\s>]+` $code -}}
+        {{- $links = $links | append (dict "href" (replaceRE `^.*\]\([ \t]*<?` "" .) "line" (add $i 1)) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $links -}}

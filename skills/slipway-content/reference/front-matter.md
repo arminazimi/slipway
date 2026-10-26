@@ -28,6 +28,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | YYYY-MM-DD, optionally with a time and a UTC offset (`2026-10-18 09:30:00 +0330`). |
 | `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
 | `categories` | list or string |  |  | Categories: a list, or one space-separated string as Jekyll allows. |
+| `width` | `narrow` or `wide` or `full` |  |  | Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it. |
 | `nav_order` | number |  |  | Sort order in generated navigation. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
 | `permalink` | string |  | `^(/\|(pretty\|date\|ordinal\|weekdate\|none)$)` | The output URL: a path starting with `/`, or one of Jekyll's built-in styles. |

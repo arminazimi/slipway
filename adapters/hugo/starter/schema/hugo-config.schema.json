@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hugo site configuration",
+  "description": "The site's hugo.toml (or .yaml, .json). Hugo reads many more keys than these, so other keys are allowed; these are the ones an edit usually touches.",
+  "type": "object",
+  "required": ["baseURL", "title"],
+  "properties": {
+    "baseURL": { "type": "string", "description": "The address the site is served at, ending in /." },
+    "title": { "type": "string", "minLength": 1, "description": "The site title." },
+    "languageCode": { "type": "string", "description": "The site language as a tag such as en-US or fa-IR." },
+    "defaultContentLanguage": { "type": "string", "description": "The language of content files with no language in their name." },
+    "theme": { "description": "The theme or themes the site uses, by folder or module path." },
+    "params": { "type": "object", "description": "The theme's and the site's own settings, read in templates as site.Params." },
+    "menus": { "type": "object", "description": "Menus defined in the configuration instead of in front matter." },
+    "languages": { "type": "object", "description": "One entry per language: its name, weight, direction, and settings." },
+    "module": { "type": "object", "description": "Hugo modules: imports (such as the Slipway adapter), mounts, and replacements." },
+    "outputs": { "type": "object", "description": "The output formats per page kind; the Slipway adapter needs sourcemap on home and markdown on pages." },
+    "outputFormats": { "type": "object", "description": "Custom output formats." },
+    "taxonomies": { "type": "object", "description": "The taxonomies, such as tag = \"tags\"." },
+    "disableKinds": { "type": "array", "items": { "type": "string" }, "description": "Page kinds Hugo does not build, such as taxonomy or RSS." },
+    "markup": { "type": "object", "description": "Markdown and syntax-highlighting settings." }
+  },
+  "additionalProperties": true
+}

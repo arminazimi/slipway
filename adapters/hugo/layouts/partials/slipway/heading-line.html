@@ -1,0 +1,17 @@
+{{- /* The source line of the heading a render hook is drawing, or 0 when no source heading matches.
+   It takes the first heading of the same level whose letters contain the rendered ones and that no
+   other heading on the page has taken. Hooks run in document order, so a repeated title takes the
+   next line each time. */ -}}
+{{- $line := 0 -}}
+{{- with partial "slipway/source.html" .Page -}}
+  {{- $key := partial "slipway/key.html" (partial "slipway/heading-text.html" $) -}}
+  {{- $taken := $.Page.Store.Get "slipwayLines" | default dict -}}
+  {{- range partialCached "slipway/headings.html" . . -}}
+    {{- $owner := index $taken (string .line) -}}
+    {{- if and (not $line) (eq .level $.Level) (strings.Contains .key $key) (or (not $owner) (eq $owner $.Anchor)) -}}
+      {{- $line = .line -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with $line -}}{{- $.Page.Store.SetInMap "slipwayLines" (string .) $.Anchor -}}{{- end -}}
+{{- end -}}
+{{- return $line -}}
