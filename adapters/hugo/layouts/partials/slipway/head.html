@@ -1,0 +1,4 @@
+{{- /* Links the page's Markdown twin from <head>. Call it from your theme's head: {{ partial "slipway/head.html" . }} */ -}}
+{{- with .OutputFormats.Get "markdown" }}
+<link rel="alternate" type="text/markdown" href="{{ .RelPermalink }}">
+{{- end -}}
