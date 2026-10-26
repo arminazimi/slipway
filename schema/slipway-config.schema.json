@@ -54,6 +54,12 @@
       "description": "Slipway's own settings. Unknown keys here are rejected, so a typo fails instead of being ignored.",
       "additionalProperties": false,
       "properties": {
+        "header": {
+          "type": "string",
+          "enum": ["classic", "centered", "minimal"],
+          "default": "classic",
+          "description": "Header layout. classic puts the title at the start and navigation, search, and the toggles at the end; centered stacks them on the middle axis; minimal shows only the title, the language switcher, and the theme toggle."
+        },
         "languages": {
           "type": "array",
           "default": [],

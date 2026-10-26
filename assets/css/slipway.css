@@ -101,6 +101,26 @@
     padding: var(--sl-space-3) var(--sl-space-4);
   }
 
+  /* Header variants (slipway.header): centered stacks everything on the middle axis; minimal is one quiet row. */
+  .sl-header-centered {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .sl-header-centered .sl-main-nav ul {
+    justify-content: center;
+  }
+
+  .sl-header-minimal {
+    padding-block: var(--sl-space-2);
+  }
+
+  .sl-header-minimal .sl-site-title {
+    margin-inline-end: auto;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-base);
+  }
+
   .sl-site-title {
     font-family: var(--sl-font-display);
     font-size: var(--sl-step-lg);
@@ -367,6 +387,53 @@
     padding-inline: var(--sl-space-2);
     border: var(--sl-rule) solid var(--sl-color-line);
     border-radius: var(--sl-radius-compact);
+  }
+}
+
+/* Authors: the byline, the author box after a post, and the author page. */
+@layer components {
+  .sl-authors {
+    display: grid;
+    gap: var(--sl-space-4);
+    margin-block: var(--sl-space-6);
+    padding-block-start: var(--sl-space-4);
+    border-block-start: var(--sl-rule) solid var(--sl-color-line);
+  }
+
+  .sl-author {
+    display: flex;
+    gap: var(--sl-space-4);
+    align-items: flex-start;
+  }
+
+  .sl-avatar {
+    flex: none;
+    inline-size: 4rem;
+    block-size: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .sl-author-name {
+    margin: 0;
+    font-family: var(--sl-font-ui);
+    font-weight: 600;
+  }
+
+  .sl-author-bio {
+    margin-block: var(--sl-space-1) 0;
+    color: var(--sl-color-muted);
+  }
+
+  .sl-author-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sl-space-3);
+    margin: var(--sl-space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--sl-font-ui);
+    font-size: var(--sl-step-sm);
   }
 }
 

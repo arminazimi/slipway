@@ -4,5 +4,14 @@
   "title": "Slipway front matter: post layout",
   "description": "A dated post. The date and slug come from the file name (YYYY-MM-DD-slug.md); `date` in the front matter overrides the date.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }]
+  "allOf": [{ "$ref": "base.schema.json" }],
+  "properties": {
+    "author": {
+      "description": "Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each.",
+      "oneOf": [
+        { "$ref": "base.schema.json#/$defs/authorId" },
+        { "type": "array", "minItems": 1, "items": { "$ref": "base.schema.json#/$defs/authorId" } }
+      ]
+    }
+  }
 }

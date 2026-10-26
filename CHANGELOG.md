@@ -8,6 +8,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 ### Added
 
+- A Markdown twin of every page at its address with `.md`, linked from the head: stubs from `npm run twins` on classic Pages, a plugin in Actions mode (#22).
 - Theme layout that works as a gem, through `remote_theme`, and after "Use this template" (#41).
 - Design tokens with a desert rose palette, mapped from `_config.yml` to CSS variables with a JSON Schema (#4).
 - Dark mode without a flash and a manual toggle (#5).
@@ -23,6 +24,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Tags, categories, and archive pages (#59).
 - Atom feed per language and a sitemap with `hreflang` (#60).
 - `llms.txt` and `llms-full.txt` layouts: a list of every page with its description for agents, and the text of every page in one file (#21).
+- Authors from `_data/authors.yml`: a byline, an author box after each post, several authors per post, and author pages with `layout: author` (#204).
 - A 404 page with a section for every language (#61).
 - Example sites: `minimal`, `docs`, `blog`, and `persian` (#9).
 - `sourcemap.json` format v0 and its schema (#66).
@@ -47,6 +49,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - `AGENTS.md` for every new site (`starter-files/AGENTS.md`): where content lives, the schemas, how to add a page, a post, a menu item, and a translation, how to check an edit, and a Never list (#75).
 - Agent Skill `skills/slipway-site` for creating and customizing a site, with a config reference generated from the schema (#76).
 - Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
+- Header variants chosen with `slipway.header` in `_config.yml`: `classic`, `centered`, and `minimal` (#212).
 - Arabic: a font stack (`--sl-font-arabic`), Persian-style line height and no italics, built-in UI strings, and opt-in Arabic-Indic digits with `slipway.arabic.digits` (#222).
 - `slipway doctor` as a `doctor` tool in `slipway-mcp` and an Agent Skill, `skills/slipway-doctor`, so agents check their own edits (#189).
 
