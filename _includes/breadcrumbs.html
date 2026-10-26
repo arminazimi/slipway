@@ -26,10 +26,18 @@
 {%- endfor -%}
 
 {%- if sl_bc_count > 0 -%}
-<nav class="sl-breadcrumbs" aria-label="{% include t.html key='breadcrumbs' | default: 'Breadcrumbs' %}">
+{%- assign sl_bc_label_key = 'breadcrumbs' -%}
+{%- assign sl_home_label_key = 'go_home' -%}
+{%- capture sl_bc_label_raw %}{% include t.html key=sl_bc_label_key %}{% endcapture -%}
+{%- capture sl_home_label_raw %}{% include t.html key=sl_home_label_key %}{% endcapture -%}
+{%- assign sl_bc_label = sl_bc_label_raw | strip -%}
+{%- assign sl_home_label = sl_home_label_raw | strip -%}
+{%- if sl_bc_label == '' %}{% assign sl_bc_label = 'Breadcrumbs' %}{% endif -%}
+{%- if sl_home_label == '' %}{% assign sl_home_label = 'Home' %}{% else %}{% assign sl_home_label = sl_home_label | split: ' ' | last %}{% endif -%}
+<nav class="sl-breadcrumbs" aria-label="{{ sl_bc_label | escape }}">
   <ol>
     <li>
-      <a href="{{ '/' | relative_url }}">{% include t.html key='go_home' | split: ' ' | last | default: 'Home' %}</a>
+      <a href="{{ '/' | relative_url }}">{{ sl_home_label }}</a>
       <span class="sl-breadcrumb-separator" aria-hidden="true">/</span>
     </li>
     {{ sl_bc_items }}
@@ -39,9 +47,8 @@
 
 {%- assign sl_bc_url = '' -%}
 {%- assign sl_bc_pos = 1 -%}
-{%- capture sl_home_name -%}{% include t.html key='go_home' | split: ' ' | last | default: 'Home' %}{%- endcapture -%}
 {%- capture sl_bc_json -%}
-{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ sl_home_name | strip | jsonify }},"item":{{ '/' | absolute_url | jsonify }}}
+{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ sl_home_label | strip | jsonify }},"item":{{ '/' | absolute_url | jsonify }}}
 {%- endcapture -%}
 {%- assign sl_bc_pos = sl_bc_pos | plus: 1 -%}
 
