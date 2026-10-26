@@ -73,6 +73,42 @@
 {%- when 'edit_label' -%}التحرير مع وكيلك
 {%- when 'edit_prompt' -%}حرّر الملف {source}. النص الحالي: «{text}». التغيير:
 {%- endcase -%}
+{%- elsif include.lang == 'he' -%}
+{%- case include.key -%}
+{%- when 'skip' -%}דילוג לתוכן
+{%- when 'not_found_title' -%}הדף לא נמצא
+{%- when 'not_found_text' -%}הכתובת הזאת לא קיימת או שהועברה. השתמשו בשדה החיפוש או עברו לדף הבית.
+{%- when 'go_home' -%}מעבר לדף הבית
+{%- when 'tags' -%}תגיות
+{%- when 'categories' -%}קטגוריות
+{%- when 'main_nav' -%}תפריט ראשי
+{%- when 'search' -%}חיפוש
+{%- when 'search_none' -%}לא נמצאו תוצאות
+{%- when 'search_count' -%}{n} תוצאות
+{%- when 'theme' -%}ערכת נושא
+{%- when 'mode_auto' -%}אוטומטי
+{%- when 'mode_light' -%}בהיר
+{%- when 'mode_dark' -%}כהה
+{%- when 'docs_nav' -%}תיעוד
+{%- when 'on_this_page' -%}בדף הזה
+{%- when 'previous' -%}הקודם
+{%- when 'next' -%}הבא
+{%- when 'pager' -%}הדף הקודם והבא
+{%- when 'post_pager' -%}הפוסט הקודם והבא
+{%- when 'latest_posts' -%}פוסטים אחרונים
+{%- when 'min_read' -%}דקות קריאה
+{%- when 'language' -%}שפה
+{%- when 'copy' -%}העתקה
+{%- when 'copied' -%}הועתק
+{%- when 'copy_failed' -%}הקישו Ctrl+C
+{%- when 'by' -%}מאת
+{%- when 'and' -%}וגם
+{%- when 'comma' -%},
+{%- when 'about_author' -%}על הכותב
+{%- when 'posts' -%}פוסטים
+{%- when 'edit_label' -%}עריכה עם הסוכן שלך
+{%- when 'edit_prompt' -%}ערוך את {source}. הטקסט הנוכחי: "{text}". השינוי:
+{%- endcase -%}
 {%- else -%}
 {%- case include.key -%}
 {%- when 'skip' -%}Skip to content
