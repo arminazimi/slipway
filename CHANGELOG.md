@@ -5,6 +5,7 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
+- Added `translation-status` layout to show which pages exist in which language.
 
 ### Added
 - `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)

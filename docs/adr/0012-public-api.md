@@ -102,6 +102,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `archive`, `tags` | yes | `taxonomy.test.mjs` |
 | `author` | yes | `authors.test.mjs` |
 | `not-found` | yes | `not-found.test.mjs` |
+| `translation-status` | yes | `translation-status.test.mjs` |
 | `feed`, `sitemap` | yes | `feed.test.mjs` |
 | `search-index` | yes | `search.test.mjs` |
 | `sourcemap` | yes | `sourcemap.test.mjs` |
