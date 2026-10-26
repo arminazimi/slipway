@@ -1,0 +1,11 @@
+{%- comment -%} Prints the url of the author page (layout author) for include.id, in the current language when there is one, or nothing. {%- endcomment -%}
+{%- assign sl_au_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_au_url = '' -%}
+{%- for p in site.pages -%}
+  {%- if p.layout == 'author' and p.author == include.id -%}
+    {%- assign sl_au_page_lang = p.lang | default: site.lang | default: 'en' -%}
+    {%- if sl_au_page_lang == sl_au_lang -%}{%- assign sl_au_url = p.url | relative_url -%}{%- break -%}{%- endif -%}
+    {%- if sl_au_url == '' -%}{%- assign sl_au_url = p.url | relative_url -%}{%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+{{ sl_au_url }}

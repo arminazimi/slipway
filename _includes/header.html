@@ -1,9 +1,11 @@
-<header class="sl-header">
+{%- comment -%} slipway.header picks the variant: classic (title at the start, the rest at the end), centered (stacked and centered), or minimal (title, language switcher, and theme toggle only). {%- endcomment -%}
+{%- assign sl_header = site.slipway.header | default: 'classic' -%}
+<header class="sl-header{% if sl_header == 'centered' or sl_header == 'minimal' %} sl-header-{{ sl_header }}{% endif %}">
   <a class="sl-site-title" href="{{ '/' | relative_url }}">{{ site.title }}</a>
   {%- assign sl_nav_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
   {%- assign sl_nav_key = 'main_' | append: sl_nav_lang -%}
   {%- assign sl_main = site.data.navigation[sl_nav_key] | default: site.data.navigation.main -%}
-  {%- if sl_main.size > 0 %}
+  {%- if sl_main.size > 0 and sl_header != 'minimal' %}
   <nav class="sl-main-nav" aria-label="{% include t.html key='main_nav' %}">
     <ul>
       {%- for item in sl_main %}
@@ -14,7 +16,7 @@
     </ul>
   </nav>
   {%- endif %}
-  {% include search.html %}
+  {% unless sl_header == 'minimal' %}{% include search.html %}{% endunless %}
   {% include lang-switcher.html %}
   <button type="button" class="sl-theme-toggle" data-theme-toggle data-label-auto="{% include t.html key='mode_auto' %}" data-label-light="{% include t.html key='mode_light' %}" data-label-dark="{% include t.html key='mode_dark' %}" hidden>{% include t.html key='theme' %}</button>
 </header>

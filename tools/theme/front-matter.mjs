@@ -21,6 +21,7 @@ export const layoutSchemas = {
   post: "post",
   home: "home",
   archive: "archive",
+  author: "author",
 };
 
 /** Collection folder to schema name, for pages without `layout`. */

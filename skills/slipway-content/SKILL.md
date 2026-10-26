@@ -36,6 +36,7 @@ Every key, its type, and its allowed values are in [reference/front-matter.md](r
 - `title` is required and must not be empty. The layout prints it as the page heading.
 - Add `description`: one sentence for search results and link previews.
 - `tags` and `categories` are a list: `tags: [release, notes]`.
+- `author` on a post is a key of `_data/authors.yml`, or a list of keys for several authors: `author: [ada, sam]`. If the key is missing from that file, add the author there first.
 - `permalink` starts with `/`. Leave it out on a post in the default language; the site's config sets the address.
 - Set `lang` on a page that is not in the site's default language (`lang` in `_config.yml`), and on every page that has a translation.
 - `home` only: `cta_text` and `cta_url` go together, or not at all.
@@ -48,6 +49,7 @@ Every key, its type, and its allowed values are in [reference/front-matter.md](r
 - Keep heading levels in order (`##`, then `###`), so the table of contents and the "Edit with your agent" button find every section.
 - Link to other pages by address, not file: `[Install](/docs/install/)`, `[About](/about.html)`.
 - Images live in `assets/`; give each one alt text: `![A chart of build times](/assets/build-times.png)`.
+- For a wider page, set `width: narrow`, `wide`, or `full` in the front matter. To widen one block instead (a table, an image, a figure), wrap it in an HTML element with the class `sl-wide` (up to 64rem) or `sl-bleed` (edge to edge): `<figure class="sl-wide"><img src="/assets/map.png" alt="A map of the route"></figure>`. The `doc` layout keeps sections in its column.
 - Give code blocks a language (` ```yaml `), so they highlight and read left to right in a right-to-left page.
 
 Examples that pass the schemas:

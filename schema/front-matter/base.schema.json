@@ -14,6 +14,7 @@
     "date": { "$ref": "#/$defs/date" },
     "tags": { "$ref": "#/$defs/terms", "description": "Tags: a list, or one space-separated string as Jekyll allows." },
     "categories": { "$ref": "#/$defs/terms", "description": "Categories: a list, or one space-separated string as Jekyll allows." },
+    "width": { "enum": ["narrow", "wide", "full"], "description": "Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it." },
     "nav_order": { "type": "number", "description": "Sort order in generated navigation." },
     "layout": { "type": "string", "minLength": 1, "description": "The layout that renders the page. Picks the schema in schema/front-matter/README.md." },
     "permalink": { "type": "string", "pattern": "^(/|(pretty|date|ordinal|weekdate|none)$)", "description": "The output URL: a path starting with `/`, or one of Jekyll's built-in styles." },
@@ -35,6 +36,7 @@
         { "type": "string" }
       ]
     },
-    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." }
+    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." },
+    "authorId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$", "description": "A key of `_data/authors.yml`." }
   }
 }

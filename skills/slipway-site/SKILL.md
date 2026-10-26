@@ -41,9 +41,10 @@ Those two files are a working site. Add a page below for each feature the site n
 | `search.json` | Search in the header | `layout: search-index`, `lang: en`, `permalink: /search.json` |
 | `feed.xml` | The Atom feed | `layout: feed`, `lang: en`, `permalink: /feed.xml` |
 | `sitemap.xml` | The sitemap | `layout: sitemap`, `permalink: /sitemap.xml` |
+| `llms.txt`, `llms-full.txt` | A page list for agents ([llmstxt.org](https://llmstxt.org)) and every page's text in one file | `layout: llms`, `permalink: /llms.txt`; `layout: llms-full`, `permalink: /llms-full.txt` |
 | `404.md` | A styled not-found page | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
 
-Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files.
+Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files. For post authors, add `_data/authors.yml` (each key is an id with a `name`, and optionally `bio`, `avatar`, and `links`) and one page per author with `layout: author` and `author: <id>`; `examples/blog` has both.
 
 To publish, the owner turns on GitHub Pages for the repository (Settings, Pages, deploy from a branch). That is a repository setting: ask the owner, do not change it yourself. Leave `url` and `baseurl` unset on GitHub Pages; Pages fills them in. Set `baseurl` (such as `/my-project`, no trailing slash) only to preview a project site locally.
 
@@ -106,7 +107,7 @@ slipway:
     radius: 0.5rem
 ```
 
-Colors are `#rrggbb` or `oklch()`. A color you set applies to both light and dark, so check it reads in both. The keys and their defaults are in [reference/config.md](reference/config.md); what each token does is in https://github.com/arminazimi/slipway/blob/main/docs/tokens.md.
+Colors are `#rrggbb` or `oklch()`. A color you set applies to both light and dark, so check it reads in both. The keys and their defaults are in [reference/config.md](reference/config.md); what each token does is in https://github.com/arminazimi/slipway/blob/main/docs/tokens.md. Pick a header layout with `slipway.header`: `classic` (the default), `centered`, or `minimal` (title, language switcher, and theme toggle only, no navigation or search).
 
 ## 5. Add to the theme with override slots
 

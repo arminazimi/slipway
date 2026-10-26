@@ -38,9 +38,11 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 
 | Key | Public | Tested by |
 | --- | --- | --- |
+| `slipway.header` | yes | `header.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
+| `slipway.arabic.digits` | yes | `arabic.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
 | `slipway.tokens.text` | yes | `config.test.mjs` |
@@ -48,7 +50,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.tokens.font_body` | yes | `config.test.mjs` |
 | `slipway.tokens.radius` | yes | `config.test.mjs` |
 
-Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all six, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
+Jekyll keys the theme reads: `title` and `lang` are public (every layout test). `description` (the site summary in `llms.txt`) is public (`llms.test.mjs`). `direction` is public (`not-found.test.mjs`). `author` (feed author name, a string or `name`) is public (`config.test.mjs`). `url` and `baseurl` are read through Jekyll's `absolute_url` and `relative_url`; they stay Jekyll's. The schema describes all seven, and `config.test.mjs` fails when a layout reads a `site.*` key the schema lacks.
 
 ### Data files
 
@@ -56,6 +58,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | --- | --- | --- |
 | `_data/navigation.yml`: `main`, `docs`, and `main_<lang>`, `docs_<lang>` | yes | `navigation.test.mjs`, `doc-layout.test.mjs` |
 | `_data/i18n/<lang>.yml`: the keys of `_includes/i18n-builtin.html` | yes | `i18n.test.mjs` |
+| `_data/authors.yml`: per id, `name`, `bio`, `avatar`, and `links` (`title`, `url`), described by [`schema/authors.schema.json`](../../schema/authors.schema.json) | yes | `authors.test.mjs` |
 
 ### Front matter
 
@@ -67,11 +70,15 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `permalink` | all (Jekyll's) | yes | `doc-layout.test.mjs` |
 | `date`, `tags`, `categories` | `post` | yes | `post-layout.test.mjs`, `taxonomy.test.mjs` |
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
+| `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
+| `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
 | `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
 
-Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home` and `archive`. `front-matter.test.mjs` fails when a schema field is missing from this table.
+Two classes are public too, because page bodies use them: `sl-wide` widens an element to `--sl-measure-wide` and `sl-bleed` takes it edge to edge (`widths.test.mjs`). The `doc` layout keeps both in its column.
+
+Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../schema/front-matter/README.md): `post` for `_posts/`, `doc` for `_docs/`, `page` for `page`, `default`, `tags`, and `not-found`, plus `home`, `archive`, and `author`. `front-matter.test.mjs` fails when a schema field is missing from this table.
 
 ### Layouts
 
@@ -82,10 +89,12 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `doc` | yes | `doc-layout.test.mjs` |
 | `post` | yes | `post-layout.test.mjs` |
 | `archive`, `tags` | yes | `taxonomy.test.mjs` |
+| `author` | yes | `authors.test.mjs` |
 | `not-found` | yes | `not-found.test.mjs` |
 | `feed`, `sitemap` | yes | `feed.test.mjs` |
 | `search-index` | yes | `search.test.mjs` |
 | `sourcemap` | yes | `sourcemap.test.mjs` |
+| `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes
@@ -107,11 +116,11 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Group | Properties |
 | --- | --- |
 | Color | `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, `--sl-color-line`, `--sl-color-rose`, `--sl-color-rose-hover`, `--sl-color-rose-fill`, `--sl-color-on-rose-fill` |
-| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian` |
+| Fonts | `--sl-font-display`, `--sl-font-body`, `--sl-font-ui`, `--sl-font-mono`, `--sl-font-persian`, `--sl-font-arabic`, `--sl-font-hebrew` |
 | Type scale | `--sl-step-sm`, `--sl-step-base`, `--sl-step-lg`, `--sl-step-xl`, `--sl-step-2xl`, `--sl-step-3xl` |
 | Spacing | `--sl-space-1`, `--sl-space-2`, `--sl-space-3`, `--sl-space-4`, `--sl-space-6`, `--sl-space-8`, `--sl-space-12`, `--sl-space-16` |
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
-| Measure and rule | `--sl-measure`, `--sl-rule` |
+| Measure and rule | `--sl-measure`, `--sl-measure-narrow`, `--sl-measure-wide`, `--sl-rule` |
 | Button | `--sl-button-bg`, `--sl-button-fg`, `--sl-button-radius` |
 
 ### Generated URLs
@@ -123,6 +132,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | `/search.json` (the URL, not its format) | yes | `search.test.mjs` |
 | `/404.html` | yes | `not-found.test.mjs` |
 | `/sourcemap.json` (format: [spec/sourcemap/v0.md](../../spec/sourcemap/v0.md)) | yes | `sourcemap.test.mjs` |
+| `/llms.txt` and `/llms-full.txt` (the URLs; `llms.txt` follows [llmstxt.org](https://llmstxt.org)) | yes | `llms.test.mjs` |
 | Language homes at each `prefix` of `slipway.languages` | yes | `i18n.test.mjs` |
 
 `tools/theme/public-api.test.mjs` fails when a key in the config schema or a custom property in `tokens.css` is missing from this ADR, so the list cannot fall behind silently.

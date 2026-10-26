@@ -1,0 +1,14 @@
+{%- comment -%} "By A, B and C" for include.page, each name linked to its author page when there is one. Unknown ids print as they are. {%- endcomment -%}
+{%- include author-ids.html page=include.page -%}
+{%- if sl_ai_ids.size > 0 -%}
+{%- assign sl_bl_ids = sl_ai_ids -%}
+<span class="sl-byline">{% include t.html key='by' %}
+  {%- for id in sl_bl_ids %}
+  {%- assign sl_bl_author = site.data.authors[id] -%}
+  {%- assign sl_bl_name = sl_bl_author.name | default: id -%}
+  {%- capture sl_bl_url %}{% include author-url.html id=id %}{% endcapture %}{% assign sl_bl_url = sl_bl_url | strip -%}
+  {%- unless forloop.first %}{% if forloop.last %} {% include t.html key='and' %}{% else %}{% include t.html key='comma' %}{% endif %}{% endunless %}
+  {% if sl_bl_url != '' %}<a rel="author" href="{{ sl_bl_url }}">{{ sl_bl_name | escape }}</a>{% else %}<span>{{ sl_bl_name | escape }}</span>{% endif %}
+  {%- endfor -%}
+</span>
+{%- endif -%}

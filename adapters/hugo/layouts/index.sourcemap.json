@@ -1,0 +1,15 @@
+{{- /* /sourcemap.json (spec/sourcemap/v0.md): every page with a source file in this site, with its
+   headings and inline links at their source lines. Rendering each page's content runs the heading
+   render hook, which records the headings. */ -}}
+{{- $pages := slice -}}
+{{- range $page := site.Pages -}}
+  {{- $source := partial "slipway/source.html" $page -}}
+  {{- if and $source $page.RelPermalink -}}
+    {{- $_ := $page.Content -}}
+    {{- $sections := sort ($page.Store.Get "slipwaySections" | default dict) "line" -}}
+    {{- $links := slice -}}
+    {{- range partialCached "slipway/links.html" $source $source -}}{{- $links = $links | append (dict "href" .href "line" .line) -}}{{- end -}}
+    {{- $pages = $pages | append (dict "url" $page.RelPermalink "source" $source "sections" $sections "links" $links) -}}
+  {{- end -}}
+{{- end -}}
+{{- dict "version" 0 "pages" (sort $pages "url") | jsonify (dict "indent" "  ") -}}
