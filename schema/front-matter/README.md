@@ -11,7 +11,6 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | Layout | Collection folder | Schema | Keys beyond `base` |
 |---|---|---|---|
 | `page`, `default`, `tags`, `not-found` | (any other folder) | [`page.schema.json`](page.schema.json) | none |
-| `translation-status` | | [`translation-status.schema.json`](translation-status.schema.json) | none |
 | `doc` | `_docs/` | [`doc.schema.json`](doc.schema.json) | none |
 | `post` | `_posts/` | [`post.schema.json`](post.schema.json) | `author`: one id or a list of ids from `_data/authors.yml`; the date and slug come from the `YYYY-MM-DD-slug.md` file name |
 | `home` | | [`home.schema.json`](home.schema.json) | `variant` (`editorial`, `landing`, `blog`, `docs`); `cta_text` and `cta_url`, set together; `features` (a list of `title`, `text`, `url`) for `landing`; `posts_limit` |

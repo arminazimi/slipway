@@ -1,5 +1,0 @@
-{%- assign sl_twin = page.slipway_twin %}
-{%- unless sl_twin %}{% assign sl_twin = site.pages | where: 'twin_of', page.path | map: 'url' | first %}{% endunless %}
-{%- if sl_twin %}
-<button type="button" class="sl-copy-page" data-copy-page="{{ sl_twin | relative_url }}" hidden>{% include t.html key='copy_page_md' %}</button>
-{%- endif %}

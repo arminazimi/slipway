@@ -5,16 +5,9 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
-- Added `translation-status` layout to show which pages exist in which language.
 
 ### Added
-- Breadcrumbs above the title of doc and page layouts for nested pages, with a `BreadcrumbList` JSON-LD block. Translated labels for Persian, Arabic, and Hebrew.
-- "Copy page as Markdown" button on pages that have a Markdown twin (#24).
-- `slipway.fonts: system` skips downloading web fonts and uses the reader's system typography (system-ui, and system Arabic). Persian text is shaped correctly and remains readable. (#216)
-- Social links from `_data/social.yml` shown in the footer with an inline SVG icon set (#208).
 
-- Motion tokens (`--sl-motion-fast`) and hover transitions on interactive elements, respecting `prefers-reduced-motion` (#218).
-- Logo and favicon configuration (`slipway.logo.light`, `slipway.logo.dark`, `favicon_svg`, `touch_icon`) in `_config.yml` (#215).
 - Search: normalization covers more Arabic combining marks, ZWJ, and `ئ` and `ڪ` variants, so a Persian query typed with Arabic letters always finds the Persian page (#229).
 
 - Docusaurus adapter: a plugin that writes `sourcemap.json`, Markdown twins, and `data-source` on headings, with starter `AGENTS.md` and content schemas (#234).
@@ -66,8 +59,8 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Agent Skill `skills/slipway-site` for creating and customizing a site, with a config reference generated from the schema (#76).
 - Agent Skill `skills/slipway-content` for writing pages, posts, and translations that pass the front matter schemas and `slipway doctor`, with a front matter reference generated from the schemas (#77).
 - JSON-LD structured data on every page, typed by layout: `WebSite` on `home`, `BlogPosting` on `post`, `TechArticle` on `doc`, `CollectionPage` on `archive` and `tags`, `WebPage` elsewhere (#23).
+- Breadcrumbs for `doc` and `page` layouts with `BreadcrumbList` JSON-LD (#220).
 - Header variants chosen with `slipway.header` in `_config.yml`: `classic`, `centered`, and `minimal` (#212).
-- Opt-in, privacy-friendly analytics (GoatCounter, Plausible, Umami) with one config key (`slipway.analytics`) (#210).
 - Arabic: a font stack (`--sl-font-arabic`), Persian-style line height and no italics, built-in UI strings, and opt-in Arabic-Indic digits with `slipway.arabic.digits` (#222).
 - Opt-in Hijri calendar for Arabic pages with `slipway.arabic.hijri` (#225).
 - Hebrew: a font stack (`--sl-font-hebrew`) and built-in UI strings, so `lang: he` pages read right to left with Hebrew labels (#223).
@@ -78,4 +71,3 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Quotes in font stack overrides are kept (#134).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
-- Guide: make any generator conform to the spec, level by level

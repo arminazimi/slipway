@@ -12,7 +12,6 @@ author: Slipway
 You can install Slipway in three ways:
 
 ### 1. Remote theme (Zero config)
-{: #remote-theme-zero-config}
 
 The fastest way is to use Slipway as a `remote_theme` on GitHub Pages. Create a `_config.yml` with:
 
@@ -23,7 +22,6 @@ plugins:
 ```
 
 ### 2. Gem
-{: #gem}
 
 If you have a Ruby environment, you can install Slipway as a gem. Add to your `Gemfile`:
 
@@ -38,6 +36,5 @@ theme: slipway-theme
 ```
 
 ### 3. Template
-{: #template}
 
 You can use the repo as a template to get all the starter files, allowing you to edit the theme files directly if needed.

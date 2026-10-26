@@ -18,7 +18,7 @@
 {%- assign sl_ld_author = site.author.name | default: site.author -%}
 {%- capture sl_ld_site -%}{"@type":"WebSite","name":{{ site.title | default: sl_ld_title | jsonify }},"url":{{ '/' | absolute_url | jsonify }}}{%- endcapture -%}
 {%- capture sl_ld -%}
-{"@context":"https://schema.org","@type":"{{ sl_ld_type }}"
+{"@type":"{{ sl_ld_type }}"
 {%- if sl_ld_type == 'WebSite' -%}
 ,"name":{{ site.title | default: sl_ld_title | jsonify }}
 {%- elsif sl_ld_type == 'BlogPosting' or sl_ld_type == 'TechArticle' -%}
@@ -37,5 +37,14 @@
 {%- endif -%}
 }
 {%- endcapture %}
-  <script type="application/ld+json">{{ sl_ld | strip_newlines | replace: '<', '\u003c' }}</script>
+{%- capture sl_ld_full -%}
+{"@context":"https://schema.org",
+{%- if sl_bc_list -%}
+"@graph":[{{ sl_ld }},{{ sl_bc_list }}]
+{%- else -%}
+{{ sl_ld | remove_first: '{' }}
+{%- endif -%}
+}
+{%- endcapture -%}
+  <script type="application/ld+json">{{ sl_ld_full | strip_newlines | replace: '<', '\u003c' }}</script>
 {%- endunless -%}
