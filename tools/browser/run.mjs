@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, rmSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { platform } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildExample } from "../theme/build.mjs";
@@ -8,9 +9,12 @@ import { buildExample } from "../theme/build.mjs";
 const root = join(fileURLToPath(import.meta.url), "../../..");
 
 // Check if playwright browsers are available.
-const playwrightDir = join(process.env.HOME || "", ".cache/ms-playwright");
-if (!existsSync(playwrightDir) && !process.env.CI) {
-  // In CI we'll install them, so only skip locally if not installed
+let playwrightDir;
+if (platform() === "darwin") playwrightDir = join(process.env.HOME || "", "Library/Caches/ms-playwright");
+else if (platform() === "win32") playwrightDir = join(process.env.USERPROFILE || process.env.LOCALAPPDATA || "", "AppData/Local/ms-playwright");
+else playwrightDir = join(process.env.HOME || "", ".cache/ms-playwright");
+
+if (!existsSync(playwrightDir)) {
   console.log("SKIP: Playwright browsers are not installed. Run `npx playwright install` or `npx playwright install --with-deps` to run browser tests.");
   process.exit(0);
 }
