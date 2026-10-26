@@ -125,6 +125,7 @@ Every custom property in `assets/css/tokens.css`, generated from [`tokens/theme.
 | Radius | `--sl-radius-card`, `--sl-radius-compact` |
 | Measure and rule | `--sl-measure`, `--sl-measure-narrow`, `--sl-measure-wide`, `--sl-rule` |
 | Button | `--sl-button-bg`, `--sl-button-fg`, `--sl-button-radius` |
+| Motion | `--sl-motion-fast` |
 
 ### Generated URLs
 
