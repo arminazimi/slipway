@@ -57,3 +57,19 @@ test("the built site derives dir, translates the chrome, and links the translati
   assert.match(html("index.html"), /<a href="\/fa\/"[^>]*hreflang="fa"/);
   assert.match(html("index.html"), /Skip to content/);
 });
+
+test("every key used in a layout has a translation in the new language files", () => {
+  const builtin = read("_includes/i18n-builtin.html");
+  // Extract keys from English block
+  const engLines = builtin.split("{%- else -%}")[1];
+  const keys = [...engLines.matchAll(/{%- when '([^']+)' -%}/g)].map(m => m[1]);
+
+  const newLangs = ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh"];
+  for (const lang of newLangs) {
+    const yamlStr = read(`_data/i18n/${lang}.yml`);
+    const yaml = parse(yamlStr);
+    for (const key of keys) {
+      assert.ok(yaml[key] !== undefined, `${lang} missing key: ${key}`);
+    }
+  }
+});
