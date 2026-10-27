@@ -1,0 +1,9 @@
+{%- assign repo_url = site.github.repository_url | default: site.repository_url -%}
+{%- if repo_url -%}
+<div class="sl-feedback">
+  <p>Was this helpful?
+    <a href="{{ repo_url }}/issues/new?assignees=&labels=feedback&projects=&template=feedback.yml&title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">Yes</a> /
+    <a href="{{ repo_url }}/issues/new?assignees=&labels=feedback&projects=&template=feedback.yml&title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">No</a>
+  </p>
+</div>
+{%- endif -%}
