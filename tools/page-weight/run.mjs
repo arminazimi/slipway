@@ -12,7 +12,7 @@ if (platform() === "darwin") playwrightDir = join(process.env.HOME || "", "Libra
 else if (platform() === "win32") playwrightDir = join(process.env.USERPROFILE || process.env.LOCALAPPDATA || "", "AppData/Local/ms-playwright");
 else playwrightDir = join(process.env.HOME || "", ".cache/ms-playwright");
 
-if (!existsSync(playwrightDir)) {
+if (!existsSync(playwrightDir) && !process.env.PLAYWRIGHT_BROWSERS_PATH && !process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH) {
   console.log("SKIP: Playwright browsers are not installed. Run `npx playwright install` to run page-weight tests.");
   process.exit(0);
 }
@@ -43,7 +43,7 @@ try {
   const heavyFile = join(brokenDir, 'index.html');
   const hugeString = 'a'.repeat(200000); // 200KB
   writeFileSync(heavyFile, `<html><body>${hugeString}</body></html>`);
-  siteUrls['broken-fixture'] = `file://${brokenDir}/`;
+  siteUrls['broken-fixture'] = `file://${brokenDir}/index.html`;
 
   console.log("Running Playwright page-weight tests...");
   const result = spawnSync("npx", ["playwright", "test", "--config=tools/page-weight/playwright.config.js"], {
