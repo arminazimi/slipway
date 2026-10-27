@@ -67,8 +67,8 @@ test("the stubs are the files of starter-files/ except its README", () => {
   assert.deepEqual(walk(join(repo, "starter-files")).filter((path) => path !== "README.md").sort(), [...stubs].sort());
 });
 
-test("the built-in UI string keys are the ones in _includes/i18n-builtin.html", () => {
-  const html = readFileSync(join(repo, "_includes/i18n-builtin.html"), "utf8");
+test("the built-in UI string keys are the ones in _includes/i18n/en.html", () => {
+  const html = readFileSync(join(repo, "_includes/i18n/en.html"), "utf8");
   const keys = [...new Set([...html.matchAll(/when '([a-z_]+)'/g)].map((m) => m[1]))];
   assert.deepEqual([...builtinKeys].sort(), keys.sort());
 });
