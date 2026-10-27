@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://github.com/about.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/fa/archive/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/archive/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/home.html</loc>
+  </url>
+  <url>
+    <loc>https://github.com/docs/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/fa/</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://github.com/fa/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://github.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://github.com/"/>
+  </url>
+  <url>
+    <loc>https://github.com/de/</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://github.com/fa/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://github.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://github.com/"/>
+  </url>
+  <url>
+    <loc>https://github.com/</loc>
+    <xhtml:link rel="alternate" hreflang="fa" href="https://github.com/fa/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://github.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://github.com/"/>
+  </url>
+  <url>
+    <loc>https://github.com/docs/layouts/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/status/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/tags/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/fa/tags/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/docs/tokens/</loc>
+  </url>
+  <url>
+    <loc>https://github.com/fa/post-1/</loc>
+    <lastmod>2026-03-20T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/fa/post-2/</loc>
+    <lastmod>2026-03-21T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/2026/10/18/hello-world.html</loc>
+    <lastmod>2026-10-18T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/2026/10/20/second-post.html</loc>
+    <lastmod>2026-10-20T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/fa/post-3/</loc>
+    <lastmod>2026-10-22T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/ar/post-1/</loc>
+    <lastmod>2026-10-23T00:00:00+03:30</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/he/post-1/</loc>
+    <lastmod>2026-10-23T00:00:00+03:30</lastmod>
+  </url>
+</urlset>

@@ -1,0 +1,34 @@
+# Slipway minimal
+
+> The smallest site that uses every Slipway layout.
+
+The full text of every page is in [llms-full.txt](https://github.com/llms-full.txt).
+
+## Docs
+
+- [Introduction](https://github.com/docs/): Start here.
+- [Layouts](https://github.com/docs/layouts/): The layouts Slipway ships.
+- [Tokens](https://github.com/docs/tokens/): The design tokens.
+
+## Posts
+
+- [نوشتهٔ نمونه 1](https://github.com/fa/post-1/): نمونهٔ تاریخ جلالی.
+- [نوشتهٔ نمونه 2](https://github.com/fa/post-2/): نمونهٔ تاریخ جلالی.
+- [Hello world](https://github.com/2026/10/18/hello-world.html): The first post.
+- [A second post](https://github.com/2026/10/20/second-post.html): The second post.
+- [نوشتهٔ نمونه 3](https://github.com/fa/post-3/): نمونهٔ تاریخ جلالی.
+- [تدوينة تجريبية](https://github.com/ar/post-1/): نموذج للأرقام الهندية العربية.
+- [פוסט לדוגמה](https://github.com/he/post-1/): דוגמה לגופן העברי ולמחרוזות הממשק.
+
+## Pages
+
+- [About](https://github.com/about.html): A plain page with a title and text.
+- [بایگانی](https://github.com/fa/archive/): همهٔ نوشته‌ها، سال‌به‌سال.
+- [Archive](https://github.com/archive/): Every post, year by year.
+- [Build on Slipway](https://github.com/home.html): An editorial, RTL-ready site template, verified before it ships.
+- [سلام اسلیپ‌وی](https://github.com/fa/): نمونهٔ راست‌به‌چپ با چیدمان پیش‌فرض اسلیپ‌وی.
+- [Hallo Slipway](https://github.com/de/): Die deutsche Startseite.
+- [Hello Slipway](https://github.com/): The smallest site that uses the Slipway layout.
+- [Translation Status](https://github.com/status/): A translation status page.
+- [Tags](https://github.com/tags/): Every tag and category, with its posts.
+- [برچسب‌ها](https://github.com/fa/tags/): همهٔ برچسب‌ها و دسته‌ها با نوشته‌هایشان.

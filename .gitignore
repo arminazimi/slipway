@@ -29,3 +29,4 @@ planning/roadmap/out/
 .tmp-authors-site/
 .tmp-related-site/
 .tmp-series-site/
+__pycache__/

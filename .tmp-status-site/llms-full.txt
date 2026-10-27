@@ -1,0 +1,244 @@
+# Slipway minimal
+
+> The smallest site that uses every Slipway layout.
+
+---
+
+# Introduction
+
+Source: https://github.com/docs/
+
+Start here.
+
+## What Slipway is
+
+An editorial site template.
+
+## How to start
+
+Copy the template and edit the Markdown.
+
+---
+
+# Layouts
+
+Source: https://github.com/docs/layouts/
+
+The layouts Slipway ships.
+
+## Base and home
+
+The base layout holds the landmarks.
+
+### Doc
+
+The doc layout adds a sidebar, a table of contents, and previous and next links.
+
+## Code
+
+```
+// Copy this line
+const layout = "doc";
+```
+
+```
+A block without a language
+```
+
+---
+
+# Tokens
+
+Source: https://github.com/docs/tokens/
+
+The design tokens.
+
+## Colors
+
+Colors come from tokens.
+
+---
+
+# نوشتهٔ نمونه 1
+
+Source: https://github.com/fa/post-1/
+
+نمونهٔ تاریخ جلالی.
+
+## بخش اول
+
+متنی برای آزمایش تاریخ و ارقام فارسی.
+
+این یک خط اضافه برای افزایش طول محتوا در این نوشتهٔ کوتاه است تا درصد تشابه با فایل مارک‌داون اصلی بالا برود.
+
+---
+
+# نوشتهٔ نمونه 2
+
+Source: https://github.com/fa/post-2/
+
+نمونهٔ تاریخ جلالی.
+
+## بخش اول
+
+متنی برای آزمایش تاریخ و ارقام فارسی.
+
+این یک خط اضافه برای افزایش طول محتوا در این نوشتهٔ کوتاه است تا درصد تشابه با فایل مارک‌داون اصلی بالا برود.
+
+---
+
+# Hello world
+
+Source: https://github.com/2026/10/18/hello-world.html
+
+The first post.
+
+## A first section
+
+Posts show the date, reading time, and tags above the text.
+
+Posts that share a tag with this one are listed under related posts, after the text.
+
+---
+
+# A second post
+
+Source: https://github.com/2026/10/20/second-post.html
+
+The second post.
+
+Posts link to the one before and the one after.
+
+---
+
+# نوشتهٔ نمونه 3
+
+Source: https://github.com/fa/post-3/
+
+نمونهٔ تاریخ جلالی.
+
+## بخش اول
+
+متنی برای آزمایش تاریخ و ارقام فارسی.
+
+این یک خط اضافه برای افزایش طول محتوا در این نوشتهٔ کوتاه است تا درصد تشابه با فایل مارک‌داون اصلی بالا برود.
+
+---
+
+# تدوينة تجريبية
+
+Source: https://github.com/ar/post-1/
+
+نموذج للأرقام الهندية العربية.
+
+## القسم الأول
+
+نص لاختبار الخط العربي والأرقام.
+
+هذا سطر إضافي لزيادة طول المحتوى في هذه التدوينة القصيرة حتى ترتفع نسبة التشابه مع ملف الماركدون.
+
+---
+
+# פוסט לדוגמה
+
+Source: https://github.com/he/post-1/
+
+דוגמה לגופן העברי ולמחרוזות הממשק.
+
+## החלק הראשון
+
+טקסט לבדיקת הגופן העברי והכיוון מימין לשמאל.
+
+זוהי שורה נוספת להגדלת אורך התוכן בפוסט קצר זה, כדי שאחוז הדמיון לקובץ ה-Markdown יהיה גבוה יותר.
+
+---
+
+# About
+
+Source: https://github.com/about.html
+
+A plain page with a title and text.
+
+This page uses the page layout.
+
+---
+
+# بایگانی
+
+Source: https://github.com/fa/archive/
+
+همهٔ نوشته‌ها، سال‌به‌سال.
+
+---
+
+# Archive
+
+Source: https://github.com/archive/
+
+Every post, year by year.
+
+---
+
+# Build on Slipway
+
+Source: https://github.com/home.html
+
+An editorial, RTL-ready site template, verified before it ships.
+
+Slipway is the smallest site that uses the home layout.
+
+---
+
+# سلام اسلیپ‌وی
+
+Source: https://github.com/fa/
+
+نمونهٔ راست‌به‌چپ با چیدمان پیش‌فرض اسلیپ‌وی.
+
+# سلام اسلیپ‌وی
+
+---
+
+# Hallo Slipway
+
+Source: https://github.com/de/
+
+Die deutsche Startseite.
+
+# Hallo Slipway
+
+---
+
+# Hello Slipway
+
+Source: https://github.com/
+
+The smallest site that uses the Slipway layout.
+
+# Hello Slipway
+
+This page is built with the default layout.
+
+---
+
+# Translation Status
+
+Source: https://github.com/status/
+
+A translation status page.
+
+---
+
+# Tags
+
+Source: https://github.com/tags/
+
+Every tag and category, with its posts.
+
+---
+
+# برچسب‌ها
+
+Source: https://github.com/fa/tags/
+
+همهٔ برچسب‌ها و دسته‌ها با نوشته‌هایشان.

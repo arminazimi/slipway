@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { cpSync, mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { doctor } from '../../../packages/doctor/src/doctor.mjs';
 import { validateSourcemap } from '../../../tools/theme/sourcemap.mjs';
@@ -18,9 +18,15 @@ test('mkdocs builds with slipway plugin', { skip }, async () => {
     cpSync(fixture, dir, { recursive: true });
     cpSync(join(adapter, 'starter'), dir, { recursive: true });
 
-    // Install the local plugin in current python env if not already installed,
-    // or rely on PYTHONPATH=adapters/mkdocs/src
-    const env = { ...process.env, PYTHONPATH: join(adapter, 'src') };
+    // MkDocs finds plugins through entry points, so register the local one with a minimal dist-info
+    // next to the source instead of pip-installing the adapter.
+    const plugins = mkdtempSync(join(tmpdir(), 'slipway-mkdocs-plugin-'));
+    cpSync(join(adapter, 'src', 'slipway_mkdocs.py'), join(plugins, 'slipway_mkdocs.py'));
+    const info = join(plugins, 'slipway_mkdocs-0.0.0.dist-info');
+    mkdirSync(info);
+    writeFileSync(join(info, 'METADATA'), 'Metadata-Version: 2.1\nName: slipway-mkdocs\nVersion: 0.0.0\n');
+    writeFileSync(join(info, 'entry_points.txt'), '[mkdocs.plugins]\nslipway = slipway_mkdocs:SlipwayPlugin\n');
+    const env = { ...process.env, PYTHONPATH: plugins };
     const result = spawnSync('mkdocs', ['build', '-f', join(dir, 'mkdocs.yml')], { env, encoding: 'utf8' });
     assert.equal(result.status, 0, result.stderr + result.stdout);
 
@@ -49,4 +55,5 @@ test('mkdocs builds with slipway plugin', { skip }, async () => {
     assert.equal(report.level, "L2");
 
     rmSync(dir, { recursive: true, force: true });
+    rmSync(plugins, { recursive: true, force: true });
 });

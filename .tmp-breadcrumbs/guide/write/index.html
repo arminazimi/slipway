@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>try{var t=localStorage.getItem("slipway-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
+
+  <title>Write pages</title>
+  <meta name="description" content="Front matter, headings, and code blocks in a documentation page.">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Write pages","mainEntityOfPage":"https://github.com/guide/write/","isPartOf":{"@type":"WebSite","name":"Slipway docs","url":"https://github.com/"},"url":"https://github.com/guide/write/","inLanguage":"en","description":"Front matter, headings, and code blocks in a documentation page."}</script>
+  <link rel="canonical" href="https://github.com/guide/write/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/guide/write/">
+  <meta property="og:title" content="Write pages">
+  <meta property="og:site_name" content="Slipway docs">
+  <meta property="og:description" content="Front matter, headings, and code blocks in a documentation page.">
+  <meta property="og:image" content="https://github.com/assets/images/social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="preload" href="/assets/fonts/source-serif-4-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="alternate" type="text/markdown" href="/guide/write/index.md">
+  <link rel="stylesheet" href="/assets/css/fonts.css">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/slipway.css">
+  <link rel="stylesheet" href="/assets/css/print.css" media="print">
+  
+  <link rel="stylesheet" href="/assets/css/custom.css">
+  <script src="/assets/js/theme-toggle.js" defer></script>
+  <script src="/assets/js/search.js" defer></script>
+  <script src="/assets/js/copy-code.js" defer></script>
+  <script src="/assets/js/edit-prompt.js" defer></script>
+  
+  <meta name="author" content="Slipway contributors">
+
+</head>
+
+<body data-copy="Copy" data-copied="Copied" data-copy-failed="Press Ctrl+C">
+  <a class="sl-skip-link" href="#main">Skip to content</a>
+
+  <header class="sl-header">
+  <a class="sl-site-title" href="/">Slipway docs</a>
+  <nav class="sl-main-nav" aria-label="Main">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/guide/" aria-current="page">Guide</a></li>
+    </ul>
+  </nav>
+  <form class="sl-search" role="search" data-search="/search.json" data-none="No results" data-count="{n} results" hidden>
+  <input type="search" name="q" autocomplete="off" spellcheck="false" aria-label="Search" placeholder="Search">
+  <div class="sl-search-panel" hidden>
+    <p class="sl-search-status" aria-live="polite"></p>
+    <ul class="sl-search-results"></ul>
+  </div>
+  <button type="submit" hidden aria-hidden="true"></button>
+</form>
+  
+  <button type="button" class="sl-theme-toggle" data-theme-toggle data-label-auto="Auto" data-label-light="Light" data-label-dark="Dark" hidden>Theme</button>
+</header>
+<main id="main" class="sl-sections sl-layout-doc" tabindex="-1">
+    <div class="sl-doc">
+  <details class="sl-doc-nav">
+    <summary>Documentation</summary>
+    <nav aria-label="Documentation">
+      <ul>
+        <li class="sl-doc-group">Getting started
+          <ul>
+            <li><a href="/guide/">Overview</a></li>
+            <li><a href="/guide/install/">Install</a></li>
+          </ul>
+        </li>
+        <li class="sl-doc-group">Using the theme
+          <ul>
+            <li><a href="/guide/configure/">Configure</a></li>
+            <li><a href="/guide/write/" aria-current="page">Write pages</a></li>
+            <li><a href="/guide/deploy/">Deploy</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </details>
+
+  <article class="sl-doc-body" data-edit-label="Edit with your agent" data-edit-prompt="Edit {source}. Current text: &quot;{text}&quot;. Change:">
+    <nav class="sl-breadcrumbs" aria-label="Breadcrumbs">
+  <ol>
+    <li>
+      <a href="/">Home</a>
+      <span class="sl-breadcrumb-separator" aria-hidden="true">/</span>
+    </li>
+    <li>
+          <a href="/guide/">Overview</a>
+          <span class="sl-breadcrumb-separator" aria-hidden="true">/</span>
+        </li>
+    <li aria-current="page">Write pages</li>
+  </ol>
+</nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://github.com/"},{"@type":"ListItem","position":2,"name":"Overview","item":"https://github.com/guide/"},{"@type":"ListItem","position":3,"name":"Write pages"}]}</script>
+    <h1>Write pages</h1>
+<button type="button" class="sl-copy-page" data-copy-page="/guide/write/index.md" hidden>Copy page as Markdown</button>
+    <nav class="sl-toc" aria-label="On this page">
+      <p class="sl-toc-title">On this page</p>
+      <ul>
+          <li class="sl-toc-2"><a href="#front-matter">Front matter</a></li>
+          <li class="sl-toc-2"><a href="#headings">Headings</a></li>
+          <li class="sl-toc-3"><a href="#code-blocks">Code blocks</a></li>
+      </ul>
+    </nav>
+    <h2 data-source="guide/write.md" id="front-matter">Front matter</h2>
+
+<p>Every page needs a title and a description.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">My page</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s">One sentence about the page.</span>
+<span class="na">layout</span><span class="pi">:</span> <span class="s">doc</span>
+<span class="nn">---</span>
+</code></pre></div></div>
+
+<h2 data-source="guide/write.md" id="headings">Headings</h2>
+
+<p>Use <code class="language-plaintext highlighter-rouge">##</code> for sections and <code class="language-plaintext highlighter-rouge">###</code> for subsections. The table of contents is built from them.</p>
+
+<h3 data-source="guide/write.md" id="code-blocks">Code blocks</h3>
+
+<p>A fenced block gets a copy button when scripts are available, and reads fine without them.</p>
+
+    <nav class="sl-pager" aria-label="Previous and next">
+      <a class="sl-pager-prev" rel="prev" href="/guide/configure/"><span>Previous</span> Configure</a>
+      <a class="sl-pager-next" rel="next" href="/guide/deploy/"><span>Next</span> Deploy</a>
+    </nav>
+  </article>
+</div>
+
+  </main>
+  <footer class="sl-footer">
+  <p>Slipway docs</p>
+  
+  <p class="docs-footer-note">This line comes from the <code>footer-custom.html</code> override slot.</p>
+
+</footer>
+
+</body>
+</html>
