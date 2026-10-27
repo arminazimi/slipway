@@ -1,10 +1,11 @@
 // Release preparation. Sites pin a tag in `remote_theme: arminazimi/slipway@v0.2.0`, so a release is a version in the
-// gemspec, a dated CHANGELOG.md section, and a matching tag. This script never pushes or publishes; it prints the commands.
+// gemspec, a dated CHANGELOG.md section, and a matching tag. Pull requests add `changelog.d/<issue>.md` fragments instead of
+// editing CHANGELOG.md (so parallel PRs never conflict); a release folds them into the dated section and deletes them. This script never pushes or publishes; it prints the commands.
 //
-//   node tools/release/prepare.mjs 0.2.0           bump the gemspec, date the Unreleased changes, print the git commands
+//   node tools/release/prepare.mjs 0.2.0           bump the gemspec, date the Unreleased changes and changelog.d/ fragments, print the git commands
 //   node tools/release/prepare.mjs --check v0.2.0  fail unless the tag matches the gemspec version (release.yml)
 //   node tools/release/prepare.mjs --notes 0.2.0   print the CHANGELOG.md section for a version (release.yml)
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { root } from "../theme/tokens.mjs";
 
@@ -58,17 +59,32 @@ export function releaseNotes(changelog, version) {
   return section.body;
 }
 
-/** Move the Unreleased changes under a new dated heading, leave Unreleased empty, and update the compare links. */
-export function releaseChangelog(changelog, version, date, previous) {
+/** The changelog.d/*.md fragments (README.md excepted) in filename order, numbers compared as numbers: 9.md before 10.md. */
+export function readFragments(dir = root) {
+  const folder = join(dir, "changelog.d");
+  if (!existsSync(folder)) return [];
+  return readdirSync(folder)
+    .filter((f) => f.endsWith(".md") && f !== "README.md")
+    .sort((a, b) => a.localeCompare(b, "en", { numeric: true }))
+    .map((file) => ({ file, text: readFileSync(join(folder, file), "utf8").trim() }))
+    .filter((f) => f.text);
+}
+
+/** A fragment is one bullet, possibly with continuation lines; a bare line gets its "- ". */
+const bullet = (text) => (/^[-*] /.test(text) ? text : `- ${text}`);
+
+/** Move the Unreleased changes and the fragments under a new dated heading, leave Unreleased empty, and update the compare links. */
+export function releaseChangelog(changelog, version, date, previous, fragments = []) {
   const { text } = parseVersion(version);
   const all = sections(changelog);
   if (all.some((s) => s.name === text)) throw new Error(`CHANGELOG.md already has a section for ${text}`);
   const unreleased = all.find((s) => s.name === "Unreleased");
   if (!unreleased) throw new Error("CHANGELOG.md has no Unreleased section");
-  if (!unreleased.body) throw new Error("the Unreleased section is empty: nothing to release");
+  const body = [unreleased.body, ...fragments.map((f) => bullet(f.text))].filter(Boolean).join("\n");
+  if (!body) throw new Error("the Unreleased section is empty and changelog.d/ has no fragments: nothing to release");
   let out =
     changelog.slice(0, unreleased.bodyStart) +
-    `\n\n## [${text}] - ${date}\n\n${unreleased.body}\n\n` +
+    `\n\n## [${text}] - ${date}\n\n${body}\n\n` +
     changelog.slice(unreleased.end).replace(/^\n+/, "");
   const link = /^\[Unreleased\]: (https:\/\/github\.com\/[^/\s]+\/[^/\s]+)\/\S*$/m.exec(out);
   if (link) {
@@ -90,9 +106,11 @@ export function prepare({ version, dir = root, date = new Date().toISOString().s
   const gemspec = readFileSync(gemspecFile, "utf8");
   const previous = gemspecVersion(gemspec);
   const nextGemspec = bumpGemspec(gemspec, text);
-  const nextChangelog = releaseChangelog(readFileSync(changelogFile, "utf8"), text, date, previous);
+  const fragments = readFragments(dir);
+  const nextChangelog = releaseChangelog(readFileSync(changelogFile, "utf8"), text, date, previous, fragments);
   writeFileSync(gemspecFile, nextGemspec);
   writeFileSync(changelogFile, nextChangelog);
+  for (const { file } of fragments) rmSync(join(dir, "changelog.d", file));
   return [
     `git switch -c release/v${text}`,
     `git commit -am "chore(release): v${text}"`,

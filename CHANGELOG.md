@@ -2,7 +2,7 @@
 
 All notable changes to Slipway are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/) for the public API in [ADR 0012](docs/adr/0012-public-api.md). Pin a release with `remote_theme: arminazimi/slipway@v<version>`.
 
-Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
+Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a line here. `node tools/release/prepare.mjs <version>` turns `Unreleased` and the fragments into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
 - Added honest comparison page (`/compare/`) evaluating Slipway against Minimal Mistakes, Just the Docs, Chirpy, and hosted platforms.

@@ -26,13 +26,15 @@ Comment on the issue to claim it. If you go quiet for a week, someone else may p
 5. Run `npm run check`.
 6. Open the PR with `Closes #<issue>`.
 
-Add a line under `Unreleased` in [CHANGELOG.md](CHANGELOG.md) for anything a site owner would notice.
+For anything a site owner would notice, add a fragment: `changelog.d/<issue>.md` with one line (see [changelog.d/README.md](changelog.d/README.md)). Do not edit `CHANGELOG.md`, so parallel PRs never conflict.
+
+A new check needs no wiring: `npm run check` runs every `tools/<name>/run.mjs` and every `*.test.mjs` it finds (`tools/check.mjs`), and CI runs the browser-based `run.mjs` tools in one step. Put an optional tool's dependency in `devDependencies` as one line in alphabetical order, and make `run.mjs` print `SKIP` and exit 0 when it is missing.
 
 ## Releasing
 
 Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.Y.Z`.
 
-1. On an up-to-date `main`, run `node tools/release/prepare.mjs X.Y.Z`. It bumps `slipway-theme.gemspec`, moves `Unreleased` in `CHANGELOG.md` under `X.Y.Z` with today's date, and prints the git commands.
+1. On an up-to-date `main`, run `node tools/release/prepare.mjs X.Y.Z`. It bumps `slipway-theme.gemspec`, moves `Unreleased` and the `changelog.d/` fragments in `CHANGELOG.md` under `X.Y.Z` with today's date (and deletes the fragments), and prints the git commands.
 2. Commit on a `release/vX.Y.Z` branch, open a pull request, and merge it once CI is green.
 3. On `main`, tag the merge commit and push the tag: `git tag -a vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
 4. The [release workflow](.github/workflows/release.yml) fails if the tag does not match the gemspec version, runs `npm run check`, and creates the GitHub release with that `CHANGELOG.md` section as its notes.
