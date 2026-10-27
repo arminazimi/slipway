@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -44,7 +45,7 @@ test("the example site declares its languages", () => {
 });
 
 test("the built site derives dir, translates the chrome, and links the translations", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-i18n-site"));
+  const out = buildExample("gem", tmpDir("i18n-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   const fa = html("fa/index.html");
   assert.match(fa, /<html lang="fa" dir="rtl">/);

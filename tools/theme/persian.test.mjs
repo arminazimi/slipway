@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -25,7 +26,7 @@ test("Persian text has taller lines, no italics, and Persian section numbers beh
 });
 
 test("Jalali dates are right at the edges of a year, with Persian digits", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-persian-site"));
+  const out = buildExample("gem", tmpDir("persian-site"));
   const time = (n) => readFileSync(join(out, `fa/post-${n}/index.html`), "utf8").match(/<time[^>]*>([^<]*)<\/time>/)[1];
   assert.equal(time(1), "۲۹ اسفند ۱۴۰۴");
   assert.equal(time(2), "۱ فروردین ۱۴۰۵");
@@ -36,7 +37,7 @@ test("Jalali dates are right at the edges of a year, with Persian digits", { ski
 });
 
 test("English pages keep Gregorian dates and Latin digits", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-persian-site"));
+  const out = buildExample("gem", tmpDir("persian-site"));
   const post = readFileSync(join(out, "2026/10/18/hello-world.html"), "utf8");
   assert.match(post, /<time[^>]*>2026-10-18<\/time>/);
   assert.match(post, /1 min read/);

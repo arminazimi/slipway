@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -18,7 +19,7 @@ test("the bare example is two files: a two-key _config.yml and index.md", () => 
 
 for (const mode of ["gem", "template"]) {
   test(`the bare example builds a complete page with nothing but the theme (${mode} mode)`, { skip }, () => {
-    const out = buildExample(mode, join(root, `.tmp-bare-${mode}`), "bare");
+    const out = buildExample(mode, tmpDir(`bare-${mode}`), "bare");
     const html = readFileSync(join(out, "index.html"), "utf8");
     assert.match(html, /<title>[^<]+<\/title>/);
     assert.match(html, /<a class="sl-skip-link" href="#main">[^<]+<\/a>/);

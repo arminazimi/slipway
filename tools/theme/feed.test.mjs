@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -37,7 +38,7 @@ test("the head advertises the feed of the page language only when one exists", (
 });
 
 test("each language has its own Atom feed with its own posts, and the sitemap links the translations", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-feed-site"));
+  const out = buildExample("gem", tmpDir("feed-site"));
   const get = (p) => readFileSync(join(out, p), "utf8");
   const en = get("feed.xml");
   const fa = get("fa/feed.xml");

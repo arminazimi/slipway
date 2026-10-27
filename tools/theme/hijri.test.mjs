@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync, rmSync, cpSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { test, before, after } from "node:test";
@@ -8,8 +9,8 @@ import { root } from "./tokens.mjs";
 
 const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
-const tempSrc = join(root, ".tmp-hijri-src");
-const tempOut = join(root, ".tmp-hijri-out");
+const tempSrc = tmpDir("hijri-src");
+const tempOut = tmpDir("hijri-out");
 
 test("the arabic setting accepts digits and hijri and nothing else", () => {
   assert.ok(validateConfig({ slipway: { arabic: { digits: true, hijri: true } } }).ok);

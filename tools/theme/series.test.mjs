@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -34,7 +35,7 @@ test("the series styles use logical properties only", () => {
 });
 
 test("the blog example shows the series box with each part and its neighbours", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-series-site"), "blog");
+  const out = buildExample("gem", tmpDir("series-site"), "blog");
   const html = (p) => readFileSync(join(out, p), "utf8");
   const first = html("2026/08/03/notes-on-type.html");
   assert.match(first, /<aside class="sl-series" aria-labelledby="sl-series-title">/);

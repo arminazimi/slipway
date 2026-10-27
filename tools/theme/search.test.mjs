@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -66,7 +67,7 @@ test("the search styles use logical properties only", () => {
 });
 
 test("each language has an index with only its own pages, and never lists itself", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-search-site"));
+  const out = buildExample("gem", tmpDir("search-site"));
   const get = (p) => JSON.parse(readFileSync(join(out, p), "utf8"));
   const en = get("search.json");
   const fa = get("fa/search.json");

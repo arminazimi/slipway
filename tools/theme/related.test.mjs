@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { cpSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -33,7 +34,7 @@ test("related posts rank by shared tags, then newest, skip other languages, and 
   post("2026-01-01", "both-tags", "tags: [writing, markdown]");
   post("2026-02-01", "old-writing", "tags: [writing]");
   post("2026-03-01", "persian-writing", "lang: fa\ntags: [writing, markdown]");
-  const out = buildExample("gem", join(root, ".tmp-related-site"), site);
+  const out = buildExample("gem", tmpDir("related-site"), site);
   const html = (p) => readFileSync(join(out, p), "utf8");
 
   const page = html("2026/10/20/why-plain-markdown.html");

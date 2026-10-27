@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -73,7 +74,7 @@ test("the Liquid template in docs/source-maps.md writes a valid map", { skip: bu
     '_docs/say-"hi".md': "---\ntitle: Hi\n---\nA doc.\n",
     "_notes/hidden.md": "---\ntitle: Hidden\n---\nNot published.\n",
   });
-  const out = join(root, ".tmp-docs-sourcemap-liquid");
+  const out = tmpDir("docs-sourcemap-liquid");
   try {
     const map = JSON.parse(readFileSync(join(buildExample("gem", out, site), "sourcemap.json"), "utf8"));
     assert.deepEqual(validateSourcemap(map), { ok: true, errors: [] });
