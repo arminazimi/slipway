@@ -5,6 +5,9 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a line here. `node tools/release/prepare.mjs <version>` turns `Unreleased` and the fragments into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
+
+## [0.1.0] - 2026-10-27
+
 - Added honest comparison page (`/compare/`) evaluating Slipway against Minimal Mistakes, Just the Docs, Chirpy, and hosted platforms.
 - Built-in UI strings for ten more languages: es, fr, pt, de, it, ru, tr, nl, ja, zh (#224).
 - `@slipway/tokens` npm package exporting the theme's design tokens and core CSS.
@@ -86,7 +89,10 @@ Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a l
 ### Fixed
 
 - Quotes in font stack overrides are kept (#134).
+- The release workflow now pushes `slipway-theme` to RubyGems after the GitHub release, through trusted publishing (#175).
+- Changelog fragments in `changelog.d/` and a self-discovering `npm run check`, so parallel pull requests no longer conflict on `CHANGELOG.md`, `package.json`, or `ci.yml` (#389).
 
-[Unreleased]: https://github.com/arminazimi/slipway/commits/main
+[Unreleased]: https://github.com/arminazimi/slipway/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/arminazimi/slipway/releases/tag/v0.1.0
 - Guide: make any generator conform to the spec, level by level
 - **doctor:** Add `--fix` and `--dry-run` to fix safe cases automatically (missing stubs, deprecated keys).
