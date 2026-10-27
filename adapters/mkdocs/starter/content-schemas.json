@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["mkdocs.yml"], "target": "file", "schema": "schema/mkdocs-config.schema.json" },
+    { "files": ["docs/**/*.md"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}
