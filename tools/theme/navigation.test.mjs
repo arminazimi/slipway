@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -43,7 +44,7 @@ test("the example navigation passes, and a broken file is reported with its path
 });
 
 test("the built header uses the list of the page language, and the sidebar nests groups", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-nav-site"));
+  const out = buildExample("gem", tmpDir("nav-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   assert.match(html("fa/index.html"), /<li><a href="\/fa\/"[^>]*>خانه<\/a><\/li>/);
   assert.doesNotMatch(html("fa/index.html"), />Docs<\/a>/);

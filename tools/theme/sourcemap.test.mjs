@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { test } from "node:test";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -53,7 +54,7 @@ test("a source outside the site folder is rejected", () => {
   }
 });
 
-const built = (name, out) => JSON.parse(readFileSync(join(buildExample("gem", join(root, out), name), "sourcemap.json"), "utf8"));
+const built = (name, out) => JSON.parse(readFileSync(join(buildExample("gem", out, name), "sourcemap.json"), "utf8"));
 const generated = (entry) => !/(\/|\.html)$/.test(entry.url) || /^assets\/|\.(xml|json|css|scss|js|md\.html)$/.test(entry.source);
 
 test("every example but bare has a sourcemap.json stub on the sourcemap layout", () => {
@@ -64,8 +65,8 @@ test("every example but bare has a sourcemap.json stub on the sourcemap layout",
 });
 
 test("the docs and blog examples map posts and pages to their real files, and list no generated file", { skip }, () => {
-  const docs = built("docs", ".tmp-sourcemap-docs");
-  const blog = built("blog", ".tmp-sourcemap-blog");
+  const docs = built("docs", tmpDir("sourcemap-docs"));
+  const blog = built("blog", tmpDir("sourcemap-blog"));
   for (const map of [docs, blog]) {
     assert.deepEqual(validateSourcemap(map), { ok: true, errors: [] });
     assert.deepEqual(map.pages.filter(generated), []);
@@ -86,7 +87,7 @@ test("Persian text and quotes in titles, urls, and file names keep the JSON vali
     writeFileSync(join(site, "راهنما.md"), "---\ntitle: راهنمای \"تازه\"\nlayout: page\n---\nمتن\n");
     mkdirSync(join(site, "_notes"));
     writeFileSync(join(site, "_notes", "hidden.md"), "---\ntitle: Hidden\n---\nNot published.\n");
-    const map = built(site, ".tmp-sourcemap-persian");
+    const map = built(site, tmpDir("sourcemap-persian"));
     assert.deepEqual(validateSourcemap(map), { ok: true, errors: [] });
     assert.ok(map.pages.some((p) => p.source === '_docs/say-"hi".md'), "a quote in a file name");
     assert.ok(map.pages.some((p) => p.source === "راهنما.md"), "a Persian file name");

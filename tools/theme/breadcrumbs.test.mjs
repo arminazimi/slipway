@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -22,7 +23,7 @@ test("breadcrumbs are included in the doc and page layouts", () => {
 });
 
 test("breadcrumbs and BreadcrumbList JSON-LD are generated for nested pages", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-breadcrumbs"), "docs");
+  const out = buildExample("gem", tmpDir("breadcrumbs"), "docs");
 
   const nestedPageHTML = readFileSync(join(out, "guide/install/index.html"), "utf8");
 

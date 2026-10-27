@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { mkdtempSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -39,7 +40,7 @@ test("pageProblems flags blocking scripts, visible controls, and noscript", () =
 });
 
 test("no page of the example site needs JavaScript to be read", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-js-site"));
+  const out = buildExample("gem", tmpDir("js-site"));
   const pages = [];
   const walk = (dir) => {
     for (const name of readdirSync(dir)) {

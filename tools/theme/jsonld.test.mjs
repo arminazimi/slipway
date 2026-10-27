@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { test } from "node:test";
@@ -34,7 +35,7 @@ test("the checker reads JSON-LD and rejects broken JSON", () => {
 
 test("every page of every example has valid JSON-LD of its layout's type, and the 404 page has none", { skip }, () => {
   for (const name of ["minimal", "blog", "docs", "persian", "bare"]) {
-    const out = buildExample("gem", join(root, `.tmp-jsonld-${name}`), name);
+    const out = buildExample("gem", tmpDir(`jsonld-${name}`), name);
     for (const page of htmlPages(out)) {
       const blocks = jsonLd(readFileSync(join(out, page), "utf8"));
       if (page === "404.html") {
