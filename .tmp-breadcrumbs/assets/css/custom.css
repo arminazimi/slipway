@@ -1,5 +1,0 @@
-/* The docs example fills the custom.css override slot. */
-.docs-footer-note {
-  color: var(--sl-color-muted);
-  font-size: var(--sl-step-sm);
-}
