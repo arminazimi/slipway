@@ -9,7 +9,7 @@ export const budgetBytes = 30 * 1024; // 30 KB, current size is ~23 KB
 
 /** Every file in assets/css with its size in bytes. */
 export function stylesheetSizes(dir = join(root, "assets/css")) {
-  return readdirSync(dir)
+  return readdirSync(dir, { recursive: true })
     .filter((name) => name.endsWith(".css"))
     .map((name) => ({ name, bytes: statSync(join(dir, name)).size }))
     .sort((a, b) => b.bytes - a.bytes);

@@ -43,3 +43,7 @@ The [docs example](../examples/docs) fills all three.
 - **Scripts stay optional.** Every page must read without JavaScript; add `defer` to scripts, as the theme does.
 - **Right-to-left.** Use logical properties (`margin-inline-start`, not `margin-left`) so your styles work in both directions.
 - **These three are the supported slots.** Shadowing any other include (for example `head.html`) works, but it is not part of the [public API](adr/0012-public-api.md) and may break in a minor release.
+
+## Component CSS
+
+New components put their CSS in `assets/css/components/<name>.css`. Their include links it once per page through `{% include component-css.html name="<name>" %}`. The CSS budget and logical-property checks cover this folder.
