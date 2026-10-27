@@ -56,3 +56,5 @@ Open an issue that names who the starter or block is for, links two or three rea
 ## Using agents
 
 Agents are welcome contributors. The same rules apply: one issue per PR, `npm run check` passes, and a human or agent reviewer can follow what changed. Say in the PR which agent you used, if any.
+
+On a bare cloud VM, run `bash tools/agents/setup.sh` first: it installs Node, Ruby, the Pages gem, and Playwright so `npm run check` runs in full (see `tools/agents/README.md`).
