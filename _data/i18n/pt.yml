@@ -1,41 +1,41 @@
-skip: 'Pular para o conteúdo'
-not_found_title: 'Página não encontrada'
-not_found_text: 'Este endereço não existe ou foi movido. Use o campo de busca ou vá para a página inicial.'
-go_home: 'Ir para a página inicial'
-home: 'Início'
-breadcrumbs: 'Trilha de navegação'
-tags: 'Tags'
-categories: 'Categorias'
-main_nav: 'Principal'
-search: 'Buscar'
-search_none: 'Nenhum resultado'
-search_count: '{n} resultados'
-theme: 'Tema'
-mode_auto: 'Auto'
-mode_light: 'Claro'
-mode_dark: 'Escuro'
-docs_nav: 'Documentação'
-on_this_page: 'Nesta página'
-series: 'Série'
-series_part: 'Parte {n} de {total}'
-series_pager: 'Anterior e próximo nesta série'
-previous: 'Anterior'
-next: 'Próximo'
-pager: 'Anterior e próximo'
-post_pager: 'Postagem anterior e próxima'
-latest_posts: 'Últimas postagens'
-min_read: 'min de leitura'
-language: 'Idioma'
-copy: 'Copiar'
-copy_page_md: 'Copiar página como Markdown'
-copied: 'Copiado'
-copy_failed: 'Pressione Ctrl+C'
-by: 'Por'
-and: 'e'
-comma: ','
-about_author: 'Sobre o autor'
-posts: 'Postagens'
-related_posts: 'Postagens relacionadas'
-translation_key: 'Chave de tradução'
-edit_label: 'Editar com seu agente'
-edit_prompt: 'Editar {source}. Texto atual: "{text}". Alteração:'
+skip: "Pular para o conteúdo"
+not_found_title: "Página não encontrada"
+not_found_text: "Este endereço não existe ou foi movido. Use o campo de busca ou vá para a página inicial."
+go_home: "Ir para a página inicial"
+home: "Início"
+breadcrumbs: "Trilha de navegação"
+tags: "Tags"
+categories: "Categorias"
+main_nav: "Principal"
+search: "Buscar"
+search_none: "Nenhum resultado"
+search_count: "{n} resultados"
+theme: "Tema"
+mode_auto: "Auto"
+mode_light: "Claro"
+mode_dark: "Escuro"
+docs_nav: "Documentação"
+on_this_page: "Nesta página"
+series: "Série"
+series_part: "Parte {n} de {total}"
+series_pager: "Anterior e próximo nesta série"
+previous: "Anterior"
+next: "Próximo"
+pager: "Anterior e próximo"
+post_pager: "Postagem anterior e próxima"
+latest_posts: "Últimas postagens"
+min_read: "min de leitura"
+language: "Idioma"
+copy: "Copiar"
+copy_page_md: "Copiar página como Markdown"
+copied: "Copiado"
+copy_failed: "Pressione Ctrl+C"
+by: "Por"
+and: "e"
+comma: ","
+about_author: "Sobre o autor"
+posts: "Postagens"
+related_posts: "Postagens relacionadas"
+translation_key: "Chave de tradução"
+edit_label: "Editar com seu agente"
+edit_prompt: "Editar {source}. Texto atual: \"{text}\". Alteração:"

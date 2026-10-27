@@ -1,41 +1,41 @@
-skip: 'Naar inhoud springen'
-not_found_title: 'Pagina niet gevonden'
-not_found_text: 'Dit adres bestaat niet of is verplaatst. Gebruik het zoekveld of ga naar de startpagina.'
-go_home: 'Ga naar de startpagina'
-home: 'Startpagina'
-breadcrumbs: 'Broodkruimels'
-tags: 'Tags'
-categories: 'Categorieën'
-main_nav: 'Hoofdmenu'
-search: 'Zoeken'
-search_none: 'Geen resultaten'
-search_count: '{n} resultaten'
-theme: 'Thema'
-mode_auto: 'Auto'
-mode_light: 'Licht'
-mode_dark: 'Donker'
-docs_nav: 'Documentatie'
-on_this_page: 'Op deze pagina'
-series: 'Serie'
-series_part: 'Deel {n} van {total}'
-series_pager: 'Vorige en volgende in deze serie'
-previous: 'Vorige'
-next: 'Volgende'
-pager: 'Vorige en volgende'
-post_pager: 'Vorig en volgend bericht'
-latest_posts: 'Laatste berichten'
-min_read: 'min lezen'
-language: 'Taal'
-copy: 'Kopiëren'
-copy_page_md: 'Pagina kopiëren als Markdown'
-copied: 'Gekopieerd'
-copy_failed: 'Druk op Ctrl+C'
-by: 'Door'
-and: 'en'
-comma: ','
-about_author: 'Over de auteur'
-posts: 'Berichten'
-related_posts: 'Gerelateerde berichten'
-translation_key: 'Vertaalsleutel'
-edit_label: 'Bewerken met uw agent'
-edit_prompt: 'Bewerk {source}. Huidige tekst: "{text}". Wijziging:'
+skip: "Naar inhoud springen"
+not_found_title: "Pagina niet gevonden"
+not_found_text: "Dit adres bestaat niet of is verplaatst. Gebruik het zoekveld of ga naar de startpagina."
+go_home: "Ga naar de startpagina"
+home: "Startpagina"
+breadcrumbs: "Broodkruimels"
+tags: "Tags"
+categories: "Categorieën"
+main_nav: "Hoofdmenu"
+search: "Zoeken"
+search_none: "Geen resultaten"
+search_count: "{n} resultaten"
+theme: "Thema"
+mode_auto: "Auto"
+mode_light: "Licht"
+mode_dark: "Donker"
+docs_nav: "Documentatie"
+on_this_page: "Op deze pagina"
+series: "Serie"
+series_part: "Deel {n} van {total}"
+series_pager: "Vorige en volgende in deze serie"
+previous: "Vorige"
+next: "Volgende"
+pager: "Vorige en volgende"
+post_pager: "Vorig en volgend bericht"
+latest_posts: "Laatste berichten"
+min_read: "min lezen"
+language: "Taal"
+copy: "Kopiëren"
+copy_page_md: "Pagina kopiëren als Markdown"
+copied: "Gekopieerd"
+copy_failed: "Druk op Ctrl+C"
+by: "Door"
+and: "en"
+comma: ","
+about_author: "Over de auteur"
+posts: "Berichten"
+related_posts: "Gerelateerde berichten"
+translation_key: "Vertaalsleutel"
+edit_label: "Bewerken met uw agent"
+edit_prompt: "Bewerk {source}. Huidige tekst: \"{text}\". Wijziging:"

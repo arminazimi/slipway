@@ -1,41 +1,41 @@
-skip: 'Zum Inhalt springen'
-not_found_title: 'Seite nicht gefunden'
-not_found_text: 'Diese Adresse existiert nicht oder wurde verschoben. Verwenden Sie das Suchfeld oder gehen Sie zur Startseite.'
-go_home: 'Zur Startseite gehen'
-home: 'Startseite'
-breadcrumbs: 'Brotkrümelnavigation'
-tags: 'Tags'
-categories: 'Kategorien'
-main_nav: 'Hauptmenü'
-search: 'Suche'
-search_none: 'Keine Ergebnisse'
-search_count: '{n} Ergebnisse'
-theme: 'Design'
-mode_auto: 'Auto'
-mode_light: 'Hell'
-mode_dark: 'Dunkel'
-docs_nav: 'Dokumentation'
-on_this_page: 'Auf dieser Seite'
-series: 'Serie'
-series_part: 'Teil {n} von {total}'
-series_pager: 'Zurück und Weiter in dieser Serie'
-previous: 'Zurück'
-next: 'Weiter'
-pager: 'Zurück und Weiter'
-post_pager: 'Vorheriger und nächster Beitrag'
-latest_posts: 'Neueste Beiträge'
-min_read: 'Min. Lesezeit'
-language: 'Sprache'
-copy: 'Kopieren'
-copy_page_md: 'Seite als Markdown kopieren'
-copied: 'Kopiert'
-copy_failed: 'Drücken Sie Strg+C'
-by: 'Von'
-and: 'und'
-comma: ','
-about_author: 'Über den Autor'
-posts: 'Beiträge'
-related_posts: 'Ähnliche Beiträge'
-translation_key: 'Übersetzungsschlüssel'
-edit_label: 'Mit Ihrem Agenten bearbeiten'
-edit_prompt: '{source} bearbeiten. Aktueller Text: "{text}". Änderung:'
+skip: "Zum Inhalt springen"
+not_found_title: "Seite nicht gefunden"
+not_found_text: "Diese Adresse existiert nicht oder wurde verschoben. Verwenden Sie das Suchfeld oder gehen Sie zur Startseite."
+go_home: "Zur Startseite gehen"
+home: "Startseite"
+breadcrumbs: "Brotkrümelnavigation"
+tags: "Tags"
+categories: "Kategorien"
+main_nav: "Hauptmenü"
+search: "Suche"
+search_none: "Keine Ergebnisse"
+search_count: "{n} Ergebnisse"
+theme: "Design"
+mode_auto: "Auto"
+mode_light: "Hell"
+mode_dark: "Dunkel"
+docs_nav: "Dokumentation"
+on_this_page: "Auf dieser Seite"
+series: "Serie"
+series_part: "Teil {n} von {total}"
+series_pager: "Zurück und Weiter in dieser Serie"
+previous: "Zurück"
+next: "Weiter"
+pager: "Zurück und Weiter"
+post_pager: "Vorheriger und nächster Beitrag"
+latest_posts: "Neueste Beiträge"
+min_read: "Min. Lesezeit"
+language: "Sprache"
+copy: "Kopieren"
+copy_page_md: "Seite als Markdown kopieren"
+copied: "Kopiert"
+copy_failed: "Drücken Sie Strg+C"
+by: "Von"
+and: "und"
+comma: ","
+about_author: "Über den Autor"
+posts: "Beiträge"
+related_posts: "Ähnliche Beiträge"
+translation_key: "Übersetzungsschlüssel"
+edit_label: "Mit Ihrem Agenten bearbeiten"
+edit_prompt: "{source} bearbeiten. Aktueller Text: \"{text}\". Änderung:"
