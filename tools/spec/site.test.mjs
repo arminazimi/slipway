@@ -22,7 +22,7 @@ test("spec site builds and schemas are valid", () => {
   // Check that every schema was output to the build dir and $id is correct.
   const schemaFiles = readdirSync(join(root, "schema")).filter((f) => f.endsWith(".schema.json"));
   for (const file of schemaFiles) {
-    const schemaPath = join(out, "spec/0.1", file);
+    const schemaPath = join(out, "0.1", file);
     assert.ok(existsSync(schemaPath), `schema ${file} missing from built spec site at ${schemaPath}`);
     const schemaJson = JSON.parse(readFileSync(schemaPath, "utf8"));
     assert.equal(schemaJson.$id, `https://arminazimi.github.io/slipway/spec/0.1/${file}`, `schema ${file} has incorrect $id`);
