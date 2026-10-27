@@ -1,0 +1,13 @@
+.sl-badge{display:inline-block;padding:.1em .4em;font-size:.85em;font-weight:600;line-height:1.2;border-radius:.25rem;white-space:nowrap;vertical-align:baseline;border:1px solid var(--bd);background:var(--bg);color:var(--fg)}
+.sl-badge-stable{--bg:#e6f6e6;--fg:#0f5132;--bd:#badbcc}
+.sl-badge-beta{--bg:#fff3cd;--fg:#664d03;--bd:#ffecb5}
+.sl-badge-deprecated{--bg:#f8d7da;--fg:#842029;--bd:#f5c2c7}
+.sl-badge-new{--bg:#cfe2ff;--fg:#084298;--bd:#b6d4fe}
+.sl-badge-experimental{--bg:#e2d9f3;--fg:#432874;--bd:#d1c4e9}
+@media(prefers-color-scheme:dark){
+.sl-badge-stable{--bg:#0f5132;--fg:#d1e7dd}
+.sl-badge-beta{--bg:#664d03;--fg:#fff3cd}
+.sl-badge-deprecated{--bg:#842029;--fg:#f8d7da}
+.sl-badge-new{--bg:#084298;--fg:#cfe2ff}
+.sl-badge-experimental{--bg:#432874;--fg:#e2d9f3}
+}

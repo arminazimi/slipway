@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/badge.schema.json",
+  "title": "Badge Block",
+  "description": "Small inline labels such as stable, beta, deprecated, and new.",
+  "type": "object",
+  "required": ["label"],
+  "properties": {
+    "label": {
+      "type": "string",
+      "description": "The text to display inside the badge."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["stable", "beta", "deprecated", "new", "experimental"],
+      "description": "The status type which determines the color.",
+      "default": "stable"
+    }
+  },
+  "additionalProperties": false
+}
