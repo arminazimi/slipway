@@ -1,0 +1,6 @@
+.sl-pull-quote{margin-block:var(--sl-space-8);margin-inline:0;padding-inline-start:var(--sl-space-6);border-inline-start:4px solid var(--sl-color-rose);color:var(--sl-color-heading)}
+.sl-pull-quote blockquote{margin:0;padding:0}
+.sl-pull-quote p{margin:0;font-family:var(--sl-font-display);font-size:var(--sl-step-xl);line-height:1.2;font-style:italic}
+.sl-pull-quote figcaption{margin-block-start:var(--sl-space-4);font-size:var(--sl-step-base);color:var(--sl-color-muted)}
+.sl-pull-quote-author{font-weight:600}
+.sl-pull-quote cite{font-style:italic}
