@@ -16,17 +16,18 @@
 {%- assign sl_ld_lang = page.lang | default: site.lang | default: 'en' -%}
 {%- assign sl_ld_title = page.title | default: site.title -%}
 {%- assign sl_ld_author = site.author.name | default: site.author -%}
+{%- assign sl_ld_url = page.canonical_url | default: page.url | absolute_url -%}
 {%- capture sl_ld_site -%}{"@type":"WebSite","name":{{ site.title | default: sl_ld_title | jsonify }},"url":{{ '/' | absolute_url | jsonify }}}{%- endcapture -%}
 {%- capture sl_ld -%}
 {"@context":"https://schema.org","@type":"{{ sl_ld_type }}"
 {%- if sl_ld_type == 'WebSite' -%}
 ,"name":{{ site.title | default: sl_ld_title | jsonify }}
 {%- elsif sl_ld_type == 'BlogPosting' or sl_ld_type == 'TechArticle' -%}
-,"headline":{{ sl_ld_title | jsonify }},"mainEntityOfPage":{{ page.url | absolute_url | jsonify }},"isPartOf":{{ sl_ld_site }}
+,"headline":{{ sl_ld_title | jsonify }},"mainEntityOfPage":{{ sl_ld_url | jsonify }},"isPartOf":{{ sl_ld_site }}
 {%- else -%}
 ,"name":{{ sl_ld_title | jsonify }},"isPartOf":{{ sl_ld_site }}
 {%- endif -%}
-,"url":{{ page.url | absolute_url | jsonify }},"inLanguage":{{ sl_ld_lang | jsonify }}
+,"url":{{ sl_ld_url | jsonify }},"inLanguage":{{ sl_ld_lang | jsonify }}
 {%- if sl_desc and sl_desc != '' -%},"description":{{ sl_desc | jsonify }}{%- endif -%}
 {%- if sl_ld_type == 'BlogPosting' and page.date -%}
 ,"datePublished":{{ page.date | date_to_xmlschema | jsonify }},"dateModified":{{ page.date | date_to_xmlschema | jsonify }}

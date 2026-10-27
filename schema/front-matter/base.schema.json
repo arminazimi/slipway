@@ -8,6 +8,10 @@
     "title"
   ],
   "properties": {
+    "canonical_url": {
+      "$ref": "#/$defs/url",
+      "description": "The original URL of the page, if it was first published elsewhere."
+    },
     "categories": {
       "$ref": "#/$defs/terms",
       "description": "Categories: a list, or one space-separated string as Jekyll allows."

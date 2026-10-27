@@ -20,6 +20,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
+| `canonical_url` | string |  | `^(/\|https://)[^\s"<>]*$` | The original URL of the page, if it was first published elsewhere. |
 | `categories` | list or string |  |  | Categories: a list, or one space-separated string as Jekyll allows. |
 | `date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | YYYY-MM-DD, optionally with a time and a UTC offset (`2026-10-18 09:30:00 +0330`). |
 | `description` | string |  |  | One sentence for search results and link previews. |
