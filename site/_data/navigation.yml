@@ -8,8 +8,8 @@ items:
     url: /config/
   - title: Recipes
     url: /recipes/
-  - title: Migration
-    url: /guides/migration/
+  - title: Guides
+    url: /guides/
   - title: The Spec
     url: /spec/
   - title: Compare
