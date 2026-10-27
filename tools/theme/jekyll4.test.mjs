@@ -46,7 +46,6 @@ test("the minimal example builds the same on Jekyll 3.10 (Pages) and Jekyll 4", 
     ]),
   );
   assert.ok(Object.keys(built.pages).length > 10, "the site has pages to compare");
-  const filterKeys = (keys) => keys.filter(k => !k.startsWith("assets/css/components/"));
-  assert.deepEqual(filterKeys(Object.keys(built.jekyll4)).sort(), filterKeys(Object.keys(built.pages)).sort(), "the same files are built");
-  for (const path of filterKeys(Object.keys(built.pages))) assert.equal(built.jekyll4[path], built.pages[path], `${path} differs`);
+  assert.deepEqual(Object.keys(built.jekyll4).sort(), Object.keys(built.pages).sort(), "the same files are built");
+  for (const path of Object.keys(built.pages)) assert.equal(built.jekyll4[path], built.pages[path], `${path} differs`);
 });
