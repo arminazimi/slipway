@@ -225,6 +225,29 @@
   }
 }
 
+/* Tables: responsive scroll with start alignment for LTR and RTL. */
+@layer base {
+  table {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin-block: var(--sl-space-6);
+  }
+
+  th,
+  td {
+    padding: var(--sl-space-2) var(--sl-space-3);
+    border: var(--sl-rule) solid var(--sl-color-line);
+    text-align: start;
+  }
+
+  th {
+    background: var(--sl-color-surface);
+    font-weight: 600;
+  }
+}
+
 /* Editorial signature: numbered sections between hairline rules. */
 @layer components {
   .sl-sections {
@@ -594,6 +617,7 @@
 @layer components {
   .sl-code {
     position: relative;
+    direction: ltr;
   }
 
   .sl-copy {
