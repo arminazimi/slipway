@@ -2,8 +2,8 @@
 // The format is the one ROADMAP.md uses: a phase table, `# Phase N — Title (dates)` sections,
 // `## Epic: Title` blocks with a roadmap-key marker, and a `### Tasks` table per epic.
 
-const PHASE_ROW = /^\|\s*(Phase \d+)\s*\|\s*(\d{4}-\d{2}-\d{2})\s*→\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$/;
-const PHASE_HEADING = /^# (Phase \d+) — /;
+const PHASE_ROW = /^\|\s*(Phase \d+[a-z]?)\s*\|\s*(\d{4}-\d{2}-\d{2})\s*→\s*(\d{4}-\d{2}-\d{2})\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$/;
+const PHASE_HEADING = /^# (Phase \d+[a-z]?) — /;
 const EPIC_HEADING = /^## Epic: (.+)$/;
 const KEY_MARKER = /<!--\s*slipway-roadmap-key:\s*(\S+)\s*-->/;
 const SECTION_HEADING = /^### (.+)$/;

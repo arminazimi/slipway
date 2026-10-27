@@ -43,6 +43,19 @@ export const EPIC_AREAS = {
   "E-extensions": ["area: core"],
   "E-migration": ["area: agent", "area: starters"],
   "E-standard": ["area: standards"],
+  "E-evergreen": ["area: dogfood", "area: core"],
+  "E-parallel": ["area: devops"],
+  "E-doctor-checks": ["area: agent", "area: standards"],
+  "E-blocks-2": ["area: core", "area: theme"],
+  "E-docs-kit": ["area: theme"],
+  "E-rtl-2": ["area: i18n"],
+  "E-adapters-2": ["area: standards", "area: ecosystem"],
+  "E-mcp-3": ["area: agent"],
+  "E-cli": ["area: core", "area: agent"],
+  "E-recipes": ["area: docs"],
+  "E-quality-2": ["area: devops", "area: theme"],
+  "E-starters-2": ["area: starters"],
+  "E-lifecycle": ["area: devops", "area: dogfood"],
 };
 
 /** Type label from a task key prefix. First match wins. */
@@ -57,6 +70,7 @@ export const TYPE_BY_PREFIX = [
   ["adapter.", "type: adapter"],
   ["astro.", "type: adapter"],
   ["qa.", "type: test"],
+  ["i18n.pseudo-rtl", "type: test"],
   ["perf.", "type: test"],
   ["sourcemap.e2e", "type: test"],
   ["launch2.visual-tests", "type: test"],
@@ -95,6 +109,7 @@ export const LABELS = [
   L("area: standards", "006b75", "Source maps and the agent-editable site spec"),
   L("area: ecosystem", "006b75", "Other site generators and adapters"),
   L("area: docs", "006b75", "Slipway's documentation site"),
+  L("area: dogfood", "006b75", "Slipway on the maintainer's own sites, Evergreen first"),
 ];
 
 /** Labels GitHub creates by default and the generator may also use. */
