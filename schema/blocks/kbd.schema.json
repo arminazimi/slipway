@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/kbd.schema.json",
+  "title": "Keyboard Shortcut Block",
+  "description": "Keyboard shortcut block with macOS and other-platform variants.",
+  "type": "object",
+  "required": ["mac", "other"],
+  "properties": {
+    "mac": {
+      "type": "string",
+      "description": "The key combination to display on Apple devices (macOS, iOS, iPadOS)."
+    },
+    "other": {
+      "type": "string",
+      "description": "The key combination to display on other platforms (Windows, Linux, Android)."
+    }
+  },
+  "additionalProperties": false
+}

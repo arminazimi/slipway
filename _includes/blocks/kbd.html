@@ -1,0 +1,28 @@
+{% include component-css.html name="kbd" %}
+<kbd class="sl-kbd" data-mac="{{ include.mac | escape }}" data-other="{{ include.other | escape }}">
+  <span class="sl-kbd-mac">{{ include.mac }}</span>
+  <span class="sl-kbd-sep">/</span>
+  <span class="sl-kbd-other">{{ include.other }}</span>
+</kbd>
+<script>
+  (function() {
+    var scripts = document.getElementsByTagName('script');
+    var script = scripts[scripts.length - 1];
+    var kbd = script.previousElementSibling;
+    if (!kbd || kbd.tagName !== 'KBD' || !kbd.classList.contains('sl-kbd')) return;
+
+    var isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform) || /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+
+    var macSpan = kbd.querySelector('.sl-kbd-mac');
+    var sepSpan = kbd.querySelector('.sl-kbd-sep');
+    var otherSpan = kbd.querySelector('.sl-kbd-other');
+
+    if (isMac) {
+      if (otherSpan) otherSpan.hidden = true;
+      if (sepSpan) sepSpan.hidden = true;
+    } else {
+      if (macSpan) macSpan.hidden = true;
+      if (sepSpan) sepSpan.hidden = true;
+    }
+  })();
+</script>
