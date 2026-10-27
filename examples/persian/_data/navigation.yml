@@ -1,4 +1,12 @@
 # yaml-language-server: $schema=../../../schema/navigation.schema.json
+docs:
+  - title: شروع
+    children:
+      - title: مقدمه
+        url: /guide/
+      - title: نوشتن
+        url: /guide/writing/
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
 main:
   - title: خانه
     url: /
@@ -8,11 +16,3 @@ main:
     url: /archive/
   - title: دربارهٔ ما
     url: /about.html
-
-docs:
-  - title: شروع
-    children:
-      - title: مقدمه
-        url: /guide/
-      - title: نوشتن
-        url: /guide/writing/

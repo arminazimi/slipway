@@ -10,16 +10,6 @@
     }
   ],
   "properties": {
-    "variant": {
-      "enum": [
-        "editorial",
-        "landing",
-        "blog",
-        "docs"
-      ],
-      "default": "editorial",
-      "description": "How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards."
-    },
     "cta_text": {
       "type": "string",
       "minLength": 1,
@@ -39,14 +29,14 @@
           "title"
         ],
         "properties": {
+          "text": {
+            "type": "string",
+            "description": "One or two plain sentences under the heading."
+          },
           "title": {
             "type": "string",
             "minLength": 1,
             "description": "The card heading."
-          },
-          "text": {
-            "type": "string",
-            "description": "One or two plain sentences under the heading."
           },
           "url": {
             "$ref": "base.schema.json#/$defs/url",
@@ -59,6 +49,16 @@
       "type": "integer",
       "minimum": 1,
       "description": "How many posts the `editorial` and `blog` variants list. Defaults to 5 for `editorial` and every post for `blog`."
+    },
+    "variant": {
+      "enum": [
+        "editorial",
+        "landing",
+        "blog",
+        "docs"
+      ],
+      "default": "editorial",
+      "description": "How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards."
     }
   },
   "dependentRequired": {

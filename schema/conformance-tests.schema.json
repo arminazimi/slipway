@@ -14,10 +14,6 @@
       "type": "string",
       "description": "Path or URL of this schema, for editors."
     },
-    "version": {
-      "const": "0.1",
-      "description": "The version of the agent-editable spec these tests belong to."
-    },
     "spec": {
       "type": "string",
       "description": "The spec file the tests come from, relative to the spec/ folder.",
@@ -30,6 +26,10 @@
       "items": {
         "$ref": "#/$defs/test"
       }
+    },
+    "version": {
+      "const": "0.1",
+      "description": "The version of the agent-editable spec these tests belong to."
     }
   },
   "additionalProperties": false,
@@ -46,40 +46,55 @@
         "check"
       ],
       "properties": {
-        "id": {
+        "check": {
           "type": "string",
-          "description": "The requirement id from the spec. Stable: never reused for a different meaning.",
-          "pattern": "^ae\\.[a-z0-9-]+\\.[a-z0-9-]+$"
-        },
-        "level": {
-          "enum": ["L0", "L1", "L2", "L3"],
-          "description": "The lowest level that includes this requirement. Levels are cumulative."
-        },
-        "keyword": {
-          "enum": ["MUST", "SHOULD"],
-          "description": "MUST: the level is reached only when the test passes. SHOULD: a failure is a warning and never lowers the level."
-        },
-        "scope": {
-          "enum": ["source", "output", "both"],
-          "description": "What the checker reads: the source folder, the output folder, or both."
-        },
-        "how": {
-          "enum": ["automated", "review"],
-          "description": "automated: a checker decides it with no person. review: a person decides it by following check; a checker reports it as not run."
-        },
-        "network": {
-          "const": "opt-in",
-          "description": "Present when part of the test needs network access. A checker runs that part only when its network option is on, and reports it as not run otherwise."
+          "minLength": 1,
+          "description": "How a checker or a person decides the requirement, from the spec."
         },
         "description": {
           "type": "string",
           "minLength": 1,
           "description": "The requirement's text, from the spec."
         },
-        "check": {
+        "how": {
+          "enum": [
+            "automated",
+            "review"
+          ],
+          "description": "automated: a checker decides it with no person. review: a person decides it by following check; a checker reports it as not run."
+        },
+        "id": {
           "type": "string",
-          "minLength": 1,
-          "description": "How a checker or a person decides the requirement, from the spec."
+          "description": "The requirement id from the spec. Stable: never reused for a different meaning.",
+          "pattern": "^ae\\.[a-z0-9-]+\\.[a-z0-9-]+$"
+        },
+        "keyword": {
+          "enum": [
+            "MUST",
+            "SHOULD"
+          ],
+          "description": "MUST: the level is reached only when the test passes. SHOULD: a failure is a warning and never lowers the level."
+        },
+        "level": {
+          "enum": [
+            "L0",
+            "L1",
+            "L2",
+            "L3"
+          ],
+          "description": "The lowest level that includes this requirement. Levels are cumulative."
+        },
+        "network": {
+          "const": "opt-in",
+          "description": "Present when part of the test needs network access. A checker runs that part only when its network option is on, and reports it as not run otherwise."
+        },
+        "scope": {
+          "enum": [
+            "source",
+            "output",
+            "both"
+          ],
+          "description": "What the checker reads: the source folder, the output folder, or both."
         }
       },
       "additionalProperties": false

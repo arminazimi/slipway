@@ -4,5 +4,9 @@
   "title": "Slipway front matter: translation status layout",
   "description": "A translation status page.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }]
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ]
 }

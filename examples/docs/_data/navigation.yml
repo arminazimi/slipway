@@ -1,10 +1,4 @@
 # yaml-language-server: $schema=../../../schema/navigation.schema.json
-main:
-  - title: Home
-    url: /
-  - title: Guide
-    url: /guide/
-
 docs:
   - title: Getting started
     children:
@@ -20,3 +14,9 @@ docs:
         url: /guide/write/
       - title: Deploy
         url: /guide/deploy/
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: Guide
+    url: /guide/
