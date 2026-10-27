@@ -4,9 +4,18 @@
   "title": "Slipway front matter: author layout",
   "description": "One author's page: the avatar, bio, and links from `_data/authors.yml`, then that author's posts in the page's language. Bylines link here.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }],
-  "required": ["author"],
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ],
+  "required": [
+    "author"
+  ],
   "properties": {
-    "author": { "$ref": "base.schema.json#/$defs/authorId", "description": "The key of this author in `_data/authors.yml`." }
+    "author": {
+      "$ref": "base.schema.json#/$defs/authorId",
+      "description": "The key of this author in `_data/authors.yml`."
+    }
   }
 }

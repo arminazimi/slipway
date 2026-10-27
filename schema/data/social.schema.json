@@ -7,10 +7,19 @@
   "items": {
     "type": "object",
     "additionalProperties": false,
-    "required": ["network", "url"],
+    "required": [
+      "network",
+      "url"
+    ],
     "properties": {
-      "network": { "type": "string", "minLength": 1 },
-      "url": { "type": "string", "format": "uri" }
+      "network": {
+        "type": "string",
+        "minLength": 1
+      },
+      "url": {
+        "type": "string",
+        "format": "uri"
+      }
     }
   }
 }

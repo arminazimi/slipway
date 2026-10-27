@@ -4,5 +4,9 @@
   "title": "Slipway front matter: archive layout",
   "description": "Every post, grouped by year.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }]
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ]
 }

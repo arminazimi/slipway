@@ -6,28 +6,6 @@
   "type": "object",
   "additionalProperties": true,
   "properties": {
-    "title": {
-      "type": "string",
-      "description": "Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset."
-    },
-    "description": {
-      "type": "string",
-      "description": "One-sentence summary of the site, quoted under the title in llms.txt and llms-full.txt."
-    },
-    "lang": {
-      "type": "string",
-      "default": "en",
-      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$",
-      "description": "Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction."
-    },
-    "direction": {
-      "type": "string",
-      "enum": [
-        "ltr",
-        "rtl"
-      ],
-      "description": "Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins."
-    },
     "author": {
       "description": "Author of the site, used in the feed and as the author in the JSON-LD of posts and docs. Either a name or an object with a name.",
       "anyOf": [
@@ -51,21 +29,93 @@
         }
       ]
     },
-    "url": {
-      "type": "string",
-      "pattern": "^(https?://[^/\\s]+)?$",
-      "description": "Scheme and host of the published site, without a trailing slash. Jekyll's absolute_url uses it for the feed, the sitemap, and canonical links; GitHub Pages sets it for you."
-    },
     "baseurl": {
       "type": "string",
       "pattern": "^(/[^\\s]*[^/\\s])?$",
       "description": "Path the site lives under, such as /my-project, without a trailing slash; empty at a domain root. Jekyll's relative_url and absolute_url use it for every link."
+    },
+    "description": {
+      "type": "string",
+      "description": "One-sentence summary of the site, quoted under the title in llms.txt and llms-full.txt."
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "ltr",
+        "rtl"
+      ],
+      "description": "Text direction of every page. Leave it unset to derive it from the language (rtl for fa, ar, he, ur, and other right-to-left languages). A page's direction in front matter wins."
+    },
+    "lang": {
+      "type": "string",
+      "default": "en",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$",
+      "description": "Default language of the site as a BCP 47 tag. A page's lang in front matter wins. It picks the interface strings, the date format, and the text direction."
     },
     "slipway": {
       "type": "object",
       "description": "Slipway's own settings. Unknown keys here are rejected, so a typo fails instead of being ignored.",
       "additionalProperties": false,
       "properties": {
+        "analytics": {
+          "type": "object",
+          "description": "Opt-in, privacy-friendly analytics.",
+          "additionalProperties": false,
+          "properties": {
+            "goatcounter": {
+              "type": "string",
+              "description": "Your GoatCounter endpoint URL."
+            },
+            "plausible": {
+              "type": "string",
+              "description": "The domain name of your site to enable Plausible Analytics."
+            },
+            "umami": {
+              "type": "object",
+              "description": "Umami analytics configuration.",
+              "additionalProperties": false,
+              "required": [
+                "website_id"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "The URL to the Umami script. Defaults to https://analytics.umami.is/script.js."
+                },
+                "website_id": {
+                  "type": "string",
+                  "description": "Your Umami website ID."
+                }
+              }
+            }
+          }
+        },
+        "arabic": {
+          "type": "object",
+          "description": "Opt-in Arabic conventions for pages whose lang is ar.",
+          "additionalProperties": false,
+          "properties": {
+            "digits": {
+              "type": "boolean",
+              "default": false,
+              "description": "Print dates, reading time, and section numbers with Arabic-Indic digits."
+            },
+            "hijri": {
+              "type": "boolean",
+              "default": false,
+              "description": "Print post dates in the Hijri calendar."
+            }
+          }
+        },
+        "fonts": {
+          "type": "string",
+          "enum": [
+            "default",
+            "system"
+          ],
+          "default": "default",
+          "description": "Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts."
+        },
         "header": {
           "type": "string",
           "enum": [
@@ -97,13 +147,36 @@
               "name": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Name of the language in that language, shown in the switcher, such as \u0641\u0627\u0631\u0633\u06cc."
+                "description": "Name of the language in that language, shown in the switcher, such as فارسی."
               },
               "prefix": {
                 "type": "string",
                 "pattern": "^(/[a-z0-9-]+)?$",
                 "description": "URL folder of the language home, such as /fa; '' for the default language."
               }
+            }
+          }
+        },
+        "logo": {
+          "type": "object",
+          "description": "Site logo and favicons.",
+          "additionalProperties": false,
+          "properties": {
+            "dark": {
+              "type": "string",
+              "description": "Path to the dark-mode logo (shown when the dark theme is active), relative to the site root."
+            },
+            "favicon_svg": {
+              "type": "string",
+              "description": "Path to an SVG favicon, relative to the site root."
+            },
+            "light": {
+              "type": "string",
+              "description": "Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg."
+            },
+            "touch_icon": {
+              "type": "string",
+              "description": "Path to an Apple touch icon (180x180 PNG), relative to the site root."
             }
           }
         },
@@ -124,53 +197,6 @@
             }
           }
         },
-        "arabic": {
-          "type": "object",
-          "description": "Opt-in Arabic conventions for pages whose lang is ar.",
-          "additionalProperties": false,
-          "properties": {
-            "digits": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print dates, reading time, and section numbers with Arabic-Indic digits."
-            },
-            "hijri": {
-              "type": "boolean",
-              "default": false,
-              "description": "Print post dates in the Hijri calendar."
-            }
-          }
-        },
-        "logo": {
-          "type": "object",
-          "description": "Site logo and favicons.",
-          "additionalProperties": false,
-          "properties": {
-            "light": { "type": "string", "description": "Path to the light-mode logo (shown by default), relative to the site root, such as /assets/img/logo.svg." },
-            "dark": { "type": "string", "description": "Path to the dark-mode logo (shown when the dark theme is active), relative to the site root." },
-            "favicon_svg": { "type": "string", "description": "Path to an SVG favicon, relative to the site root." },
-            "touch_icon": { "type": "string", "description": "Path to an Apple touch icon (180x180 PNG), relative to the site root." }
-          }
-        },
-        "analytics": {
-          "type": "object",
-          "description": "Opt-in, privacy-friendly analytics.",
-          "additionalProperties": false,
-          "properties": {
-            "plausible": { "type": "string", "description": "The domain name of your site to enable Plausible Analytics." },
-            "goatcounter": { "type": "string", "description": "Your GoatCounter endpoint URL." },
-            "umami": {
-              "type": "object",
-              "description": "Umami analytics configuration.",
-              "additionalProperties": false,
-              "required": ["website_id"],
-              "properties": {
-                "website_id": { "type": "string", "description": "Your Umami website ID." },
-                "url": { "type": "string", "description": "The URL to the Umami script. Defaults to https://analytics.umami.is/script.js." }
-              }
-            }
-          }
-        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",
@@ -184,37 +210,37 @@
               "$ref": "#/$defs/color",
               "description": "Page background, in both light and dark."
             },
-            "text": {
-              "$ref": "#/$defs/color",
-              "description": "Body text color, in both light and dark."
+            "font_body": {
+              "$ref": "#/$defs/fontStack",
+              "default": "\"Source Serif 4\", Georgia, serif",
+              "description": "Reading text (Latin)."
             },
             "font_display": {
               "$ref": "#/$defs/fontStack",
               "default": "\"Instrument Serif\", Georgia, \"Times New Roman\", serif",
               "description": "Large headings (Latin)."
             },
-            "font_body": {
-              "$ref": "#/$defs/fontStack",
-              "default": "\"Source Serif 4\", Georgia, serif",
-              "description": "Reading text (Latin)."
-            },
             "radius": {
               "$ref": "#/$defs/length",
               "default": "0.75rem",
               "description": "Corner radius of cards."
+            },
+            "text": {
+              "$ref": "#/$defs/color",
+              "description": "Body text color, in both light and dark."
             }
           }
-        },
-        "fonts": {
-          "type": "string",
-          "enum": [
-            "default",
-            "system"
-          ],
-          "default": "default",
-          "description": "Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts."
         }
       }
+    },
+    "title": {
+      "type": "string",
+      "description": "Site name, shown in the header, the page title, and the feed. The feed falls back to it when author is unset."
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^(https?://[^/\\s]+)?$",
+      "description": "Scheme and host of the published site, without a trailing slash. Jekyll's absolute_url uses it for the feed, the sitemap, and canonical links; GitHub Pages sets it for you."
     }
   },
   "$defs": {

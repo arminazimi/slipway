@@ -4,5 +4,9 @@
   "title": "Slipway front matter: doc layout",
   "description": "A documentation page with the sidebar from _data/navigation.yml, a table of contents, and previous and next links.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }]
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ]
 }
