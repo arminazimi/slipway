@@ -113,6 +113,5 @@ jobs:
           bundler-cache: true
       - run: npm ci
       - run: npx playwright install --with-deps
-      - run: node tools/browser/run.mjs
-      - run: npm run check:nojs
-      - run: node tools/a11y/run.mjs
+      # Every tools/*/run.mjs (cross-browser, no-JS, screenshots, axe, and any added later).
+      - run: npm run check:tools
