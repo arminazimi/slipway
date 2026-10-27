@@ -10,7 +10,7 @@ const skip = bundleAvailable() ? false : "run `bundle install` to build with the
 const head = (html) => html.split("</head>")[0];
 
 test("canonical_url and description from front matter are used in SEO tags and JSON-LD", { skip }, () => {
-  const out = buildExample("gem", tmpDir("kit-canonical-site"), "/app/tools/theme/fixtures/kit-canonical");
+  const out = buildExample("gem", tmpDir("kit-canonical-site"), join(root, "tools/theme/fixtures/kit-canonical"));
 
   const index = head(readFileSync(join(out, "index.html"), "utf8"));
   assert.match(index, /<link rel="canonical" href="https:\/\/example\.org\/canonical-index\/">/);
