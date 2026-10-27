@@ -91,7 +91,17 @@ test.describe('code contrast', () => {
         });
       }
 
+      const scheme = testInfo.project.name.includes('dark') ? 'dark' : 'light';
+      await page.addInitScript((s) => {
+        document.documentElement.setAttribute('data-theme', s);
+      }, scheme);
+
       await page.goto(siteUrls[name]);
+
+      // Explicitly set data-theme again just to be sure it takes effect in case page JS overwrote it
+      await page.evaluate((s) => {
+        document.documentElement.setAttribute('data-theme', s);
+      }, scheme);
 
       const pairs = await page.evaluate((classes) => {
         // Find existing .highlight blocks or create one if none exist on this page
@@ -102,6 +112,7 @@ test.describe('code contrast', () => {
         if (!pre) {
           created = true;
           content = document.createElement('div');
+          content.id = 'main';
 
           const wrapper = document.createElement('div');
           wrapper.className = 'highlighter-rouge';
@@ -137,6 +148,7 @@ test.describe('code contrast', () => {
         }
 
         // Compute colors
+        // Wait a tiny bit just in case styles are loading, though they should be sync here
         const bgRgb = window.getComputedStyle(pre).backgroundColor;
 
         const results = [];
