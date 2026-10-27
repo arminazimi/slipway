@@ -66,6 +66,7 @@ without a second format.
 | Phase 0 | 2026-10-18 → 2026-10-19 | Foundations and feasibility spikes | none |
 | Phase 1 | 2026-10-20 → 2026-10-25 | Core theme | `0.1.0-alpha.1` |
 | Phase 2 | 2026-10-26 → 2026-11-22 | Standalone theme and the spec | `0.2.0` |
+| Phase 2a | 2026-10-28 → 2026-11-15 | Evergreen on Slipway, parallel-ready | `0.2.0` (Evergreen pins it) |
 | Phase 3 | 2026-11-23 → 2026-12-20 | Content and design | `0.3.0` |
 | Phase 4 | 2026-12-21 → 2027-01-17 | Languages, ecosystems, and agents | `0.4.0` |
 | Phase 5 | 2027-01-18 → 2027-02-14 | Proof, quality, and 1.0 | **`1.0.0`** |
@@ -76,6 +77,16 @@ without a second format.
 
 Same system as Seaworthy: `roadmap`, `type: epic`/`task`, lanes (`strong-agent`, `free-agent`, `maintainer`), sizes (`XS`, `S`, `M`), and areas.
 Issues transferred from Seaworthy keep their roadmap keys.
+
+## Working in parallel
+
+Issues are written so that up to 15 agents (for example Jules sessions) can work at once, and their pull requests merge in any order.
+
+1. **Wave 0 first.** The `E-parallel` epic in Phase 2a removes the shared files that make parallel pull requests conflict: changelog fragments, auto-discovered checks, one file per doctor check, MCP tool, and UI language. `parallel.merge-safe` goes first, alone.
+2. **Then any ready task.** A task is ready when every task it depends on is closed. Two tasks that edit the same file are chained by a dependency, so any set of ready tasks can run together.
+3. **Stay inside the brief.** Every brief lists the files the task may create or edit. Shared files (`CHANGELOG.md`, `package.json`, workflows, `ROADMAP.md`, `AGENTS.md`, `.gitignore`, the base layout, `<head>`, and `slipway.css`) are off limits unless the brief says otherwise.
+
+Phase 2a, `E-evergreen`, holds only what [Evergreen](https://github.com/arminazimi/evergreen) needs to move its GitHub Pages site to Slipway.
 
 ---
 
@@ -216,7 +227,6 @@ Any project adds Slipway with one line, pins a version, and upgrades without sur
 | Key | Task | Lane | Size | Depends |
 |---|---|---|---|---|
 | `standalone.zero-config` | A site with only `remote_theme` and a title builds and looks right; a new `examples/bare` proves it | strong-agent | S | `foundation.layout` |
-| `standalone.stubs` | Cut the files every site must copy (feed, search index, sitemap, 404) to a minimum, shipped as one copyable folder | strong-agent | M | `standalone.zero-config` |
 | `standalone.baseurl` | Project sites under `/<repo>/` and custom domains: every URL respects `baseurl`, tested in CI | free-agent | S | `standalone.zero-config` |
 | `standalone.jekyll4` | Works on Jekyll 4 outside GitHub Pages (Netlify, Cloudflare Pages, plain `jekyll build`); CI matrix with 3.10 and 4.x | strong-agent | M | `foundation.ci` |
 | `standalone.overrides` | Documented override slots (`head-custom.html`, `footer-custom.html`, `assets/css/custom.css`), no fork needed | free-agent | S | `theme.base` |
@@ -322,6 +332,69 @@ Agents build, edit, and check Slipway sites as first-class users: instructions t
 
 ### Exit criteria
 - [ ] A fresh agent session creates a Slipway site, adds a page, breaks a link, sees the finding on the Markdown line, fixes it, and gets a clean `slipway doctor` report.
+
+---
+
+# Phase 2a — Evergreen on Slipway, parallel-ready (2026-10-28 → 2026-11-15)
+
+## Epic: Evergreen's site on Slipway
+<!-- slipway-roadmap-key: E-evergreen -->
+> **Epic** · **Phase:** Phase 2a — Evergreen on Slipway, parallel-ready (2026-10-28 → 2026-11-15)
+
+### Outcome
+Evergreen's GitHub Pages site (arminazimi.github.io/evergreen) runs on Slipway, pinned to a release: its hand-written pages without front matter, its 500+ generated rule pages, its dashboard, and its own `llms.txt` and sitemap all keep working at the same URLs, and Evergreen's CI checks the site with `slipway doctor`.
+
+### Scope
+- Only what Evergreen needs to switch; everything else waits for later phases
+- Slipway-side tasks land here; `evergreen.switch` and `evergreen.doctor-gate` are pull requests in arminazimi/evergreen
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `evergreen.title-from-heading` | Pages without a `title` take it from their first heading and show one `h1`, not two | strong-agent | S | `parallel.merge-safe` |
+| `standalone.stubs` | Cut the files every site must copy (feed, search index, sitemap, 404) to a minimum, shipped as one copyable folder | strong-agent | M | `standalone.zero-config`, `parallel.doctor-registry` |
+| `evergreen.site-files` | A site's own `sitemap.xml`, `llms.txt`, `llms-full.txt`, and `robots.txt` replace Slipway's without a warning | strong-agent | S | `standalone.stubs`, `parallel.doctor-registry` |
+| `evergreen.large-section` | Generated sections with hundreds of pages: the docs sidebar marks the section, not every page | strong-agent | S | `evergreen.title-from-heading` |
+| `evergreen.search-scale` | Search stays fast on 600 pages: a smaller index, `search: false`, and an index that loads on first use | strong-agent | S | `parallel.merge-safe` |
+| `evergreen.subfolder` | Sites in a repository subfolder (`docs/`): edit prompts name the path from the repository root | strong-agent | S | `parallel.merge-safe` |
+| `evergreen.app-pages` | Static HTML apps (own CSS and JavaScript, no front matter) pass through untouched and stay out of search, `llms.txt`, and the source map | free-agent | S | `evergreen.search-scale` |
+| `evergreen.fixture` | `examples/product-docs`: an example shaped like Evergreen's site, built and checked in CI | strong-agent | M | `evergreen.title-from-heading`, `evergreen.large-section`, `evergreen.site-files`, `evergreen.app-pages`, `evergreen.subfolder` |
+| `evergreen.release` | Release `v0.2.0` so Evergreen can pin `remote_theme: arminazimi/slipway@v0.2.0` | maintainer | XS | `evergreen.fixture`, `standalone.stubs` |
+| `evergreen.switch` | Switch arminazimi/evergreen's `docs/` site to Slipway, pinned to `v0.2.0` | strong-agent | M | `evergreen.release` |
+| `evergreen.doctor-gate` | Evergreen's CI runs Slipway's doctor Action on `docs/` and records the level its site reaches | strong-agent | S | `evergreen.switch` |
+
+### Exit criteria
+- [ ] arminazimi.github.io/evergreen builds with `remote_theme: arminazimi/slipway@v0.2.0`, and every URL in its previous `sitemap.xml` still resolves.
+- [ ] `examples/product-docs` reproduces Evergreen's shape and passes `npm run check`.
+
+
+## Epic: Parallel-safe contributions
+<!-- slipway-roadmap-key: E-parallel -->
+> **Epic** · **Phase:** Phase 2a — Evergreen on Slipway, parallel-ready (2026-10-28 → 2026-11-15)
+
+### Outcome
+Fifteen agents (for example Jules sessions) can work on fifteen issues at once, and their pull requests merge in any order: no shared changelog, script list, registry, or string file forces a conflict.
+
+### Scope
+- Wave 0: these tasks run before the other epics fan out; `parallel.merge-safe` goes first, alone
+- Repository tooling and docs only; no visible change to sites
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `parallel.merge-safe` | Remove shared-file merge conflicts: changelog fragments and an auto-discovered check runner | strong-agent | M | none |
+| `parallel.jules-setup` | Agent environment setup script: Node, Ruby, the Pages gem, and Playwright in one command | free-agent | S | `parallel.merge-safe` |
+| `parallel.tmp-root` | Tests write temporary sites under one ignored `.tmp/` folder | free-agent | S | `parallel.jules-setup` |
+| `parallel.doctor-registry` | One file per `slipway doctor` check, discovered automatically | strong-agent | M | `parallel.merge-safe` |
+| `parallel.mcp-registry` | One file per MCP tool, registered automatically | strong-agent | S | `parallel.merge-safe` |
+| `parallel.i18n-split` | One UI-string file per language, and every right-to-left language code known up front | strong-agent | M | `parallel.merge-safe` |
+| `parallel.css-components` | Component stylesheets: each new component ships its own CSS file, linked once by its include | strong-agent | S | `parallel.merge-safe` |
+| `parallel.sorted` | Keep schema properties, UI strings, and navigation data sorted, checked by a test | free-agent | S | `parallel.i18n-split`, `evergreen.search-scale`, `evergreen.subfolder`, `evergreen.large-section` |
+| `parallel.hot-files` | Hot-file guard: a list of shared files, and a check that warns when a pull request edits one | free-agent | S | `parallel.jules-setup` |
+| `parallel.docs-autonav` | Docs site lists guides and recipes from their folders, so a new page edits no shared navigation | free-agent | S | `parallel.merge-safe` |
+
+### Exit criteria
+- [ ] Fifteen pull requests from ready issues, opened on the same day, merge in any order without a manual conflict fix.
 
 ---
 
@@ -450,6 +523,81 @@ The first agent tools (Phase 2) get their second layer: MCP editing tools, plugi
 - [ ] A Slipway site shows its conformance badge, and `slipway doctor --fix` repairs the safe cases with a dry-run diff.
 
 
+
+## Epic: Doctor checks, round two
+<!-- slipway-roadmap-key: E-doctor-checks -->
+> **Epic** · **Phase:** Phase 3 — Content and design (2026-11-23 → 2026-12-20)
+
+### Outcome
+`slipway doctor` catches the mistakes agents actually make when editing a site (stale instructions, stale source maps, edits to generated pages, unknown keys) and explains each finding.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `doctor.agents-commands` | Check: every command and path in a site's `AGENTS.md` exists | strong-agent | S | `parallel.doctor-registry` |
+| `doctor.sourcemap-fresh` | Check: `sourcemap.json` lines still match the Markdown sources | strong-agent | S | `parallel.doctor-registry` |
+| `doctor.twin-fresh` | Check: Markdown twins match their pages (missing, stale, or orphaned twins) | free-agent | S | `parallel.doctor-registry` |
+| `doctor.schema-coverage` | Check: every layout and collection in use has a content schema | free-agent | S | `parallel.doctor-registry` |
+| `doctor.generated-pages` | Check: generated pages declare their generator, and edit prompts point at it | strong-agent | M | `parallel.doctor-registry`, `kit.canonical` |
+| `doctor.nav-targets` | Check: every `_data/navigation.yml` entry points at a page that exists | free-agent | S | `parallel.doctor-registry` |
+| `doctor.unknown-config` | Check: unknown `slipway:` config keys, with a "did you mean" suggestion | free-agent | S | `parallel.doctor-registry` |
+| `doctor.unknown-front-matter` | Check: unknown front-matter fields, with a "did you mean" suggestion | free-agent | S | `parallel.doctor-registry` |
+| `doctor.root-links` | Check: root-relative links that skip `baseurl` on project sites | free-agent | S | `parallel.doctor-registry` |
+| `doctor.explain` | `slipway doctor --explain <id>` prints a check's page: why it matters and how to fix it | free-agent | S | `parallel.doctor-registry` |
+
+### Exit criteria
+- [ ] Ten new checks run on every example with no false positives, and `slipway doctor --explain <id>` prints each one's page.
+
+
+## Epic: Content blocks, round two
+<!-- slipway-roadmap-key: E-blocks-2 -->
+> **Epic** · **Phase:** Phase 3 — Content and design (2026-11-23 → 2026-12-20)
+
+### Outcome
+Ten more blocks for the pages people actually write (timelines, file trees, comparisons, endpoints), each a separate set of files so they can be built at the same time.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `block.timeline` | Timeline block: dated events, vertical on narrow screens | free-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.file-tree` | File tree block: a folder structure with notes per file | free-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.kbd` | Keyboard shortcut block: `kbd` keys with platform variants | free-agent | XS | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.compare` | Comparison block: pros and cons, or a feature matrix with yes, no, and partial | free-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.pull-quote` | Pull quote block: editorial quote with attribution, in the theme's display serif | free-agent | XS | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.banner` | Announcement banner: a site-wide notice from `_data/banner.yml`, dismissible with JavaScript | strong-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.stats` | Stat tiles block: a row of numbers with labels and optional trend | free-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.endpoint` | API endpoint block: method, path, parameters, and an example response | strong-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.gallery` | Gallery block: a responsive image grid with captions, CSS only | free-agent | S | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+| `block.badge` | Badge block: inline status labels (stable, beta, deprecated, new) | free-agent | XS | `ext.blocks`, `parallel.css-components`, `parallel.sorted` |
+
+### Exit criteria
+- [ ] Every new block renders in LTR and RTL with JavaScript off, and an invalid option fails the schema check.
+
+
+## Epic: Product documentation kit
+<!-- slipway-roadmap-key: E-docs-kit -->
+> **Epic** · **Phase:** Phase 3 — Content and design (2026-11-23 → 2026-12-20)
+
+### Outcome
+Everything a developer tool's documentation needs beyond pages (CLI reference, changelog, schema tables, decision records, status banners), learned from moving Evergreen.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `kit.cli-ref` | CLI reference layout from `_data/cli/*.yml`: commands, flags, examples, exit codes | strong-agent | M | `parallel.css-components`, `parallel.sorted` |
+| `kit.changelog` | Changelog layout: a Keep a Changelog file with version anchors and a releases feed | free-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.json-schema` | Schema table include: render a JSON Schema from `_data` as a property table | strong-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.status-banner` | Page status from front matter: experimental, beta, deprecated, with `since` and a replacement link | free-agent | S | `parallel.css-components`, `parallel.sorted`, `evergreen.large-section`, `evergreen.search-scale` |
+| `kit.terminal` | Terminal block: commands and output, where copy takes only the commands | free-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.glossary` | Glossary: `_data/glossary.yml`, a glossary page, and a term include that links to it | free-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.adr` | Decision records: an `adr` layout with status and supersedes, and an index by status | free-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.last-updated` | "Last updated" on doc pages from `last_modified_at`, or from git in Actions mode | strong-agent | S | `parallel.css-components`, `parallel.sorted`, `kit.status-banner` |
+| `kit.filter-table` | Filter for long lists and tables: type to narrow rows, all rows shown without JavaScript | strong-agent | S | `parallel.css-components`, `parallel.sorted` |
+| `kit.canonical` | Respect `canonical_url` and `description` from front matter in SEO tags and JSON-LD | free-agent | XS | `parallel.css-components`, `parallel.sorted`, `kit.last-updated` |
+
+### Exit criteria
+- [ ] `examples/product-docs` uses every kit feature, and each is covered by a fixture test.
+
 ---
 
 # Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
@@ -552,6 +700,131 @@ Slipway's own docs, built with Slipway, are the best demo and the reference for 
 ### Exit criteria
 - [ ] Every public API item named in the semver ADR has a reference page generated or checked in CI.
 
+
+## Epic: More right-to-left languages
+<!-- slipway-roadmap-key: E-rtl-2 -->
+> **Epic** · **Phase:** Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
+
+### Outcome
+Every major right-to-left script and language has built-in UI strings and a font stack, and tests catch mirroring mistakes in any language.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `i18n.ur` | Urdu (`ur`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.ckb` | Central Kurdish (Sorani) (`ckb`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.ps` | Pashto (`ps`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.sd` | Sindhi (`sd`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.ug` | Uyghur (`ug`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.dv` | Dhivehi (`dv`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.yi` | Yiddish (`yi`): UI strings, font stack, and a right-to-left test | free-agent | S | `parallel.i18n-split`, `parallel.sorted` |
+| `i18n.pseudo-rtl` | Pseudo-RTL run: every example rendered with `dir="rtl"` to catch mirroring bugs | strong-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `i18n.mirror-icons` | Directional icons mirror in right-to-left; others never do, checked by a test | free-agent | S | `parallel.merge-safe`, `evergreen.large-section`, `block.banner` |
+| `doctor.lang-mismatch` | Check: a page's text is in a different script than its `lang` says | strong-agent | S | `parallel.doctor-registry` |
+
+### Exit criteria
+- [ ] Seven more right-to-left languages pass `slipway doctor` with no right-to-left findings, and the pseudo-RTL run finds no mirroring bug in the examples.
+
+
+## Epic: The spec on more generators
+<!-- slipway-roadmap-key: E-adapters-2 -->
+> **Epic** · **Phase:** Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
+
+### Outcome
+The agent-editable spec works on nine more static site generators, each adapter in its own folder with a fixture that `slipway doctor` checks.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `adapter.vitepress` | VitePress adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.starlight` | Astro Starlight adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.zola` | Zola adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.mdbook` | mdBook adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.hexo` | Hexo adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | free-agent | M | `parallel.merge-safe` |
+| `adapter.quarto` | Quarto adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.sphinx` | Sphinx (MyST) adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.pelican` | Pelican adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.nextra` | Nextra adapter that emits `sourcemap.json`, Markdown twins, and `data-source` on headings | strong-agent | M | `parallel.merge-safe` |
+| `adapter.detect-more` | `slipway doctor` detects the new generators and their source and output folders | free-agent | S | `adapter.vitepress`, `adapter.starlight`, `adapter.zola`, `adapter.mdbook`, `adapter.hexo`, `adapter.quarto`, `adapter.sphinx`, `adapter.pelican`, `adapter.nextra` |
+
+### Exit criteria
+- [ ] Every new adapter's fixture reaches L2 in `slipway doctor` when its generator is installed, and `slipway doctor` detects each generator.
+
+
+## Epic: MCP tools, round three
+<!-- slipway-roadmap-key: E-mcp-3 -->
+> **Epic** · **Phase:** Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
+
+### Outcome
+An agent finds, reads, moves, and checks content through the MCP server by file and line, without reading the whole site.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `mcp.list-pages` | MCP tool `list_pages`: every page with its URL, source file, layout, language, and title | free-agent | S | `parallel.mcp-registry` |
+| `mcp.read-section` | MCP tool `read_section`: one section of a page by heading or by line | strong-agent | S | `parallel.mcp-registry` |
+| `mcp.find-text` | MCP tool `find_text`: search content sources and return file, line, and the section heading | free-agent | S | `parallel.mcp-registry` |
+| `mcp.move-page` | MCP tool `move_page`: move a page, add `redirect_from`, and update navigation and links | strong-agent | M | `parallel.mcp-registry` |
+| `mcp.add-block` | MCP tool `add_block`: insert a block after a heading, with options validated against its schema | strong-agent | S | `parallel.mcp-registry`, `ext.blocks` |
+| `mcp.list-blocks` | MCP tool `list_blocks`: available blocks with their options and an example | free-agent | XS | `parallel.mcp-registry`, `ext.blocks` |
+| `mcp.validate-page` | MCP tool `validate_page`: front matter of one page against its layout schema | free-agent | S | `parallel.mcp-registry` |
+| `mcp.source-for-url` | MCP tool `source_for_url`: built URL (and optional anchor) to source file and line | free-agent | S | `parallel.mcp-registry` |
+| `mcp.scaffold-translation` | MCP tool `scaffold_translation`: create a translation stub with `lang` and `translation_key` | free-agent | S | `parallel.mcp-registry` |
+| `mcp.findings-for-file` | MCP tool `findings_for_file`: `slipway doctor` findings for one source file | free-agent | S | `parallel.mcp-registry` |
+
+### Exit criteria
+- [ ] An agent moves a page, adds a block, and scaffolds a translation through MCP tools, then gets a clean `slipway doctor` report.
+
+
+## Epic: Node-only site tooling
+<!-- slipway-roadmap-key: E-cli -->
+> **Epic** · **Phase:** Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
+
+### Outcome
+`npx slipway <command>` does the common site chores (new pages, navigation, translations, stubs, twins, source maps, pinning) with Node alone, so agents in a bare environment need no Ruby.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `cli.commands` | `slipway` subcommands discovered from `packages/doctor/src/commands/`, with shared `--help`, `--json`, and exit codes | strong-agent | S | `parallel.merge-safe`, `doctor.explain` |
+| `cli.twins` | `slipway twins [site] [--check]`: Markdown twin stubs without Ruby, identical to the Ruby output | strong-agent | M | `cli.commands` |
+| `cli.sourcemap` | `slipway sourcemap [site] [--check]`: level-1 source map without Ruby | strong-agent | M | `cli.commands` |
+| `cli.new` | `slipway new <layout> <path>` for pages, posts, and docs: schema-valid front matter from the layout's schema | free-agent | S | `cli.commands` |
+| `cli.nav` | `slipway nav` add, remove, and check: edit `_data/navigation.yml` without breaking its schema | free-agent | S | `cli.commands` |
+| `cli.translate` | `slipway translate <page> --to <lang>`: create a translation stub | free-agent | S | `cli.commands` |
+| `cli.stubs` | `slipway stubs [--check]`: copy or update the stub files a site needs, keeping files the site owns | free-agent | S | `cli.commands`, `standalone.stubs`, `evergreen.site-files` |
+| `cli.info` | `slipway info`: mode, theme pin, versions, and spec level, for bug reports | free-agent | XS | `cli.commands` |
+| `cli.pin` | `slipway pin <version>`: update the `remote_theme` pin and print upgrade notes in between | free-agent | S | `cli.commands` |
+| `cli.completion` | `slipway completion <shell>`: bash, zsh, and fish completion from the command files | free-agent | XS | `cli.commands` |
+
+### Exit criteria
+- [ ] On a machine with only Node, an agent creates a page, adds it to navigation, regenerates twins and the source map, and pins a theme version with `npx slipway`.
+
+
+## Epic: Recipes, round two
+<!-- slipway-roadmap-key: E-recipes -->
+> **Epic** · **Phase:** Phase 4 — Languages, ecosystems, and agents (2026-12-21 → 2027-01-17)
+
+### Outcome
+Short, tested answers to the hosting and integration questions site owners ask, each one new file in `site/recipes/`.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `recipe.gitlab-pages` | Recipe: deploy a Slipway site to GitLab Pages | free-agent | S | `parallel.docs-autonav` |
+| `recipe.codeberg-pages` | Recipe: deploy to Codeberg Pages | free-agent | S | `parallel.docs-autonav` |
+| `recipe.vercel` | Recipe: deploy to Vercel | free-agent | S | `parallel.docs-autonav` |
+| `recipe.redirects` | Recipe: redirects when pages move, with `jekyll-redirect-from` | free-agent | S | `parallel.docs-autonav` |
+| `recipe.forms` | Recipe: contact forms on a static site (Formspree, Netlify Forms, Basin) | free-agent | S | `parallel.docs-autonav` |
+| `recipe.pagefind` | Recipe: Pagefind search for large sites in Actions mode | free-agent | S | `parallel.docs-autonav` |
+| `recipe.versioned-docs` | Recipe: versioned documentation on GitHub Pages (folders per version) | free-agent | S | `parallel.docs-autonav` |
+| `recipe.docs-folder` | Recipe: a documentation site in a code repository's `docs/` folder | free-agent | S | `parallel.docs-autonav`, `evergreen.subfolder` |
+| `recipe.rel-me` | Recipe: `rel="me"` links and Mastodon verification | free-agent | S | `parallel.docs-autonav` |
+| `recipe.from-pages-themes` | Guide: move a site from a GitHub Pages built-in theme (minimal, cayman, …) to Slipway | free-agent | S | `parallel.docs-autonav`, `evergreen.switch` |
+
+### Exit criteria
+- [ ] Ten new recipes on the docs site, each with a passing snippet test.
+
 ---
 
 # Phase 5 — Proof, quality, and 1.0 (2027-01-18 → 2027-02-14)
@@ -652,6 +925,81 @@ Slipway 1.0: a stable theme and an open spec, launched in English and Persian.
 
 ### Exit criteria
 - [ ] `1.0.0` published as a tag, a gem, and a template; 25 public sites built with Slipway show the conformance badge.
+
+
+## Epic: Quality gates, round two
+<!-- slipway-roadmap-key: E-quality-2 -->
+> **Epic** · **Phase:** Phase 5 — Proof, quality, and 1.0 (2027-01-18 → 2027-02-14)
+
+### Outcome
+The accessibility and robustness claims extend to forced colors, zoom, long strings, motion, and code highlighting, each its own check folder.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `qa.forced-colors` | Forced-colors mode: focus, borders, and icons stay visible in Windows High Contrast | strong-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.reflow` | Reflow at 320 CSS pixels and 400% zoom: no horizontal scrolling of the page | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.text-spacing` | Text spacing override (WCAG 1.4.12) clips no text | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.pseudo-loc` | Pseudo-localized UI strings 40% longer break no header, navigation, or button | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.page-weight` | Page-weight budget per example: HTML, CSS, JavaScript, and fonts | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.include-snapshots` | HTML snapshot tests for every include with fixed inputs | strong-agent | M | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.anchors` | Every table-of-contents and in-page link targets an existing `id` | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.reduced-motion` | `prefers-reduced-motion: reduce` turns off every transition and animation | free-agent | XS | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.code-contrast` | Syntax highlighting tokens pass contrast in light and dark | free-agent | S | `parallel.merge-safe`, `parallel.tmp-root` |
+| `qa.schema-fuzz` | Schema fuzzing: random valid config and front matter never break the build | strong-agent | M | `parallel.merge-safe`, `parallel.tmp-root` |
+
+### Exit criteria
+- [ ] Ten new checks run in `npm run check` and pass on every example in light, dark, LTR, and RTL.
+
+
+## Epic: More starters
+<!-- slipway-roadmap-key: E-starters-2 -->
+> **Epic** · **Phase:** Phase 5 — Proof, quality, and 1.0 (2027-01-18 → 2027-02-14)
+
+### Outcome
+Ten more ready-made sites for the niches people ask for, each in its own folder under `starters/`.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `starter.tool` | Developer tool starter: landing page, docs, CLI reference, changelog (shaped like Evergreen) | strong-agent | M | `parallel.merge-safe`, `evergreen.fixture` |
+| `starter.handbook` | Team handbook starter: policies, onboarding, and an owner per page | free-agent | S | `parallel.merge-safe` |
+| `starter.course` | Course starter: lessons, modules, progress order, and exercises | free-agent | S | `parallel.merge-safe` |
+| `starter.event` | Event starter: schedule, speakers, venue, and code of conduct | free-agent | S | `parallel.merge-safe` |
+| `starter.resume` | Résumé starter: one page that prints well, in English and Persian | free-agent | S | `parallel.merge-safe` |
+| `starter.newsletter` | Newsletter archive starter: issues, subscribe form, and a feed | free-agent | S | `parallel.merge-safe` |
+| `starter.podcast` | Podcast starter: episodes, show notes, and a podcast RSS feed | strong-agent | S | `parallel.merge-safe` |
+| `starter.garden` | Digital garden starter: notes with backlinks and growth stages | strong-agent | S | `parallel.merge-safe` |
+| `starter.nonprofit` | Nonprofit starter: mission, programs, reports, and donate links | free-agent | S | `parallel.merge-safe` |
+| `starter.links` | Link page starter: one page of links, an avatar, and social icons | free-agent | XS | `parallel.merge-safe` |
+
+### Exit criteria
+- [ ] Every new starter builds, passes the quality checks, and reaches the top level in `slipway doctor`.
+
+
+## Epic: Dependency lifecycle with Evergreen
+<!-- slipway-roadmap-key: E-lifecycle -->
+> **Epic** · **Phase:** Phase 5 — Proof, quality, and 1.0 (2027-01-18 → 2027-02-14)
+
+### Outcome
+Slipway and the sites built with it find end-of-life runtimes, gems, packages, and Actions before they break a build, using Evergreen optionally, the way Slipway uses Seaworthy.
+
+### Tasks
+| Key | Task | Lane | Size | Depends |
+|---|---|---|---|---|
+| `lifecycle.adr` | ADR: Slipway and Evergreen, optional and one-way | strong-agent | XS | `parallel.merge-safe` |
+| `lifecycle.ci` | Slipway's CI scans its own runtimes, gems, packages, and Actions with Evergreen, report-only | free-agent | S | `parallel.merge-safe`, `lifecycle.adr` |
+| `lifecycle.dependabot` | Dependabot for Actions, npm, and Bundler, grouped to keep pull requests few | free-agent | XS | `parallel.merge-safe` |
+| `lifecycle.actions-pin` | Pin every GitHub Action in this repository to a commit SHA, checked by a test | strong-agent | S | `parallel.merge-safe`, `lifecycle.ci` |
+| `lifecycle.runtimes` | Supported runtimes page: Ruby, Node, Jekyll, and the Pages gem, with end-of-life dates, checked against the repository | free-agent | S | `parallel.merge-safe` |
+| `lifecycle.starter-workflow` | Opt-in lifecycle workflow for sites: one file in `starter-files/` | free-agent | S | `parallel.merge-safe`, `lifecycle.adr` |
+| `lifecycle.doctor-runtimes` | Check: a site's workflow or `.ruby-version` uses an end-of-life runtime (needs Evergreen data, skips without it) | strong-agent | S | `parallel.merge-safe`, `parallel.doctor-registry`, `lifecycle.adr` |
+| `lifecycle.skill-hint` | Site Skill: check a new dependency's lifecycle before adding it (Evergreen when available) | free-agent | XS | `parallel.merge-safe`, `lifecycle.adr` |
+| `lifecycle.cle` | Publish Slipway's deprecated config keys as lifecycle declarations Evergreen reads | strong-agent | S | `parallel.merge-safe`, `lifecycle.adr` |
+| `lifecycle.recipe` | Recipe: keep a site's dependencies alive with Evergreen | free-agent | XS | `parallel.merge-safe`, `lifecycle.starter-workflow`, `parallel.docs-autonav` |
+
+### Exit criteria
+- [ ] Slipway's own CI reports lifecycle findings with Evergreen, and a site can opt in with one workflow file.
 
 ---
 

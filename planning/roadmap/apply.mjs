@@ -93,7 +93,7 @@ function ghOnce(args, input) {
   return text.trim() ? JSON.parse(text) : null;
 }
 
-const isTransient = (error) => /unexpected EOF|ECONNRESET|ETIMEDOUT|EAI_AGAIN|timeout|HTTP 50[0-9]|HTTP 429|secondary rate limit/i.test(String(error?.stderr ?? error?.message ?? error));
+const isTransient = (error) => /\bEOF\b|ECONNRESET|ETIMEDOUT|EAI_AGAIN|timeout|HTTP 50[0-9]|HTTP 429|secondary rate limit/i.test(String(error?.stderr ?? error?.message ?? error));
 const pause = (ms) => execFileSync(process.execPath, ["-e", `setTimeout(() => {}, ${ms})`]);
 
 /** GET and PATCH are safe to repeat: retry transient failures with backoff. */

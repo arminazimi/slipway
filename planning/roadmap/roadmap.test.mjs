@@ -67,6 +67,14 @@ test("parses phases, epics, and tasks, and ignores fenced examples", () => {
   );
 });
 
+test("a lettered phase such as Phase 0a is its own phase", () => {
+  const lettered = SAMPLE.replace("| Phase 0 | 2026-10-19", "| Phase 0a | 2026-10-19").replace("# Phase 0 — ", "# Phase 0a — ");
+  const { phases, epics, errors } = parseRoadmap(lettered);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(phases.map((p) => p.id), ["Phase 0a"]);
+  assert.equal(epics[0].phase, "Phase 0a");
+});
+
 test("builds labels and bodies with unresolved references for apply.mjs", () => {
   const { issues, errors } = buildIssues(SAMPLE, new Map(), PARTIAL);
   assert.deepEqual(errors, []);
