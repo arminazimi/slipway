@@ -1,5 +1,7 @@
 // The read-only tools of the Slipway MCP server. Each takes the site directory and returns plain data (or a promise of it) or throws.
-import { existsSync, readFileSync, readdirSync, realpathSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, realpathSync, writeFileSync, mkdirSync } from "node:fs";
+import { parseDocument, Document } from "yaml";
+import * as yaml from "yaml";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
@@ -81,4 +83,80 @@ export async function runDoctor(site, { build, level } = {}) {
   if (level !== undefined && !levels.includes(level)) throw new Error(`level must be one of ${levels.join(", ")}`);
   const report = await doctor(realpathSync(site), { build: build === undefined ? null : insideSite(site, build) });
   return { ok: exitCode(report, level) === 0, target: level ?? null, ...report };
+}
+
+/** Writes a new page with front matter and content. */
+export function createPage(site, { path, frontMatter, content }) {
+  const base = realpathSync(site);
+  const file = resolve(base, path);
+  if (outside(base, file)) throw new Error(`${path} is outside the site directory`);
+  mkdirSync(dirname(file), { recursive: true });
+
+  let fm = {};
+  try {
+    fm = JSON.parse(frontMatter);
+  } catch (e) {
+    throw new Error("frontMatter must be valid JSON");
+  }
+
+  const yamlString = Object.keys(fm).length > 0 ? `---\n${yaml.stringify(fm)}---\n` : "";
+  writeFileSync(file, `${yamlString}${content}`);
+  return { status: "created", file: path };
+}
+
+/** Sets a token in _config.yml. */
+export function setToken(site, { token, value }) {
+  const base = realpathSync(site);
+  const file = resolve(base, "_config.yml");
+  let doc;
+  if (existsSync(file)) {
+    doc = parseDocument(readFileSync(file, "utf8"));
+  } else {
+    doc = new Document({});
+  }
+
+  if (!doc.has("slipway")) doc.set("slipway", doc.createNode({}));
+  let slipway = doc.get("slipway");
+  if (!slipway) { doc.set("slipway", doc.createNode({})); slipway = doc.get("slipway"); }
+  if (typeof slipway.has === "function" && !slipway.has("tokens")) slipway.set("tokens", doc.createNode({}));
+  const tokens = slipway.get ? slipway.get("tokens") : null;
+  if (tokens && typeof tokens.set === "function") {
+    tokens.set(token, value);
+  }
+
+  writeFileSync(file, doc.toString());
+  return { status: "set", token, value };
+}
+
+/** Adds an item to the main navigation in _data/navigation.yml. */
+export function addNavigationItem(site, { title, url }) {
+  const base = realpathSync(site);
+  const dir = resolve(base, "_data");
+  mkdirSync(dir, { recursive: true });
+  const file = resolve(dir, "navigation.yml");
+
+  let doc;
+  if (existsSync(file)) {
+    doc = parseDocument(readFileSync(file, "utf8"));
+  } else {
+    doc = new Document({});
+  }
+
+  if (!doc.has("main")) doc.set("main", doc.createNode([]));
+  const main = doc.get("main");
+  if (main && typeof main.add === "function") {
+    main.add(doc.createNode({ title, url }));
+  } else if (main && Array.isArray(main.items)) {
+    main.items.push(doc.createNode({ title, url }));
+  }
+
+  writeFileSync(file, doc.toString());
+  return { status: "added", title, url };
+}
+
+/** Returns preview instructions. */
+export function preview(site) {
+  return {
+    instructions: "To build the site locally, give it a Gemfile with gem \"github-pages\", group: :jekyll_plugins, then run:\n\nbundle exec jekyll build\n\nRead every error and warning and fix them the same way. To look at the result, run bundle exec jekyll serve and open the address it prints. Without a Gemfile, push and read the log of the Pages build."
+  };
 }

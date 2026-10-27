@@ -1,0 +1,104 @@
+/* Mobile navigation drawer. Included after slipway.css. */
+@layer components {
+  /* Hide the toggle and state on desktop. */
+  .sl-nav-state,
+  .sl-nav-toggle,
+  .sl-nav-backdrop {
+    display: none;
+  }
+
+  /* Desktop: The drawer behaves as if it wasn't there so flexbox layout of sl-header works. */
+  .sl-nav-drawer {
+    display: contents;
+  }
+
+  /* Mobile */
+  @media (max-width: 63.99rem) {
+    .sl-header {
+      flex-wrap: wrap;
+    }
+
+    /* The checkbox holds the open/closed state. */
+    .sl-nav-state {
+      display: none;
+    }
+
+    /* The hamburger button. */
+    .sl-nav-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--sl-color-heading);
+      padding: var(--sl-space-2);
+      border-radius: var(--sl-radius-compact);
+      margin-inline-start: auto;
+      transition: background-color var(--sl-motion-fast);
+    }
+
+    .sl-nav-toggle:hover {
+      background-color: var(--sl-color-surface);
+    }
+
+    .sl-nav-toggle svg {
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      fill: currentColor;
+    }
+
+    /* The drawer that slides in. */
+    .sl-nav-drawer {
+      display: block;
+      position: fixed;
+      inset-block: 0;
+      inset-inline-start: -100%; /* Hidden off-screen logically */
+      inline-size: 80%;
+      max-inline-size: 20rem;
+      background: var(--sl-color-canvas);
+      z-index: 100;
+      padding: var(--sl-space-6) var(--sl-space-4);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      transition: inset-inline-start var(--sl-motion-normal) ease-in-out;
+      overflow-y: auto;
+    }
+
+    /* The dark overlay behind the drawer. */
+    .sl-nav-backdrop {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--sl-motion-normal) ease-in-out;
+    }
+
+    /* When the checkbox is checked, slide the drawer in and show the backdrop. */
+    .sl-nav-state:checked ~ .sl-nav-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .sl-nav-state:checked ~ .sl-nav-drawer {
+      inset-inline-start: 0;
+    }
+
+    /* Force mobile nav items to stack vertically. */
+    .sl-nav-drawer .sl-main-nav {
+      margin-block-start: var(--sl-space-4);
+    }
+
+    .sl-nav-drawer .sl-main-nav ul {
+      flex-direction: column;
+      gap: var(--sl-space-4);
+    }
+
+    .sl-nav-drawer .sl-main-nav a {
+      font-size: var(--sl-step-lg);
+      display: block;
+      padding-block: var(--sl-space-2);
+    }
+  }
+}
