@@ -62,7 +62,17 @@ test.describe('code contrast', () => {
       content.appendChild(wrapper);
       document.body.appendChild(content);
 
-      const bgRgb = window.getComputedStyle(pre).backgroundColor;
+      let bgNode = pre;
+      let bgRgb = window.getComputedStyle(bgNode).backgroundColor;
+      while (bgRgb === 'rgba(0, 0, 0, 0)' || bgRgb === 'transparent' || !bgRgb) {
+        bgNode = bgNode.parentElement;
+        if (!bgNode) {
+          bgRgb = 'rgb(255, 255, 255)';
+          break;
+        }
+        bgRgb = window.getComputedStyle(bgNode).backgroundColor;
+      }
+
       const results = [];
       for (let i = 0; i < classes.length; i++) {
         const fgRgb = window.getComputedStyle(spans[i]).color;
@@ -98,13 +108,14 @@ test.describe('code contrast', () => {
 
       await page.goto(siteUrls[name]);
 
-      // Explicitly set data-theme again just to be sure it takes effect in case page JS overwrote it
       await page.evaluate((s) => {
         document.documentElement.setAttribute('data-theme', s);
       }, scheme);
 
+      // Wait for layout and styles
+      await page.waitForTimeout(100);
+
       const pairs = await page.evaluate((classes) => {
-        // Find existing .highlight blocks or create one if none exist on this page
         let pre = document.querySelector('.highlight pre.highlight');
         let created = false;
         let content;
@@ -129,7 +140,6 @@ test.describe('code contrast', () => {
           document.body.appendChild(content);
         }
 
-        // ensure there is a code block inside
         let code = pre.querySelector('code');
         if (!code) {
           code = document.createElement('code');
@@ -147,9 +157,16 @@ test.describe('code contrast', () => {
           spans.push(span);
         }
 
-        // Compute colors
-        // Wait a tiny bit just in case styles are loading, though they should be sync here
-        const bgRgb = window.getComputedStyle(pre).backgroundColor;
+        let bgNode = pre;
+        let bgRgb = window.getComputedStyle(bgNode).backgroundColor;
+        while (bgRgb === 'rgba(0, 0, 0, 0)' || bgRgb === 'transparent' || !bgRgb) {
+          bgNode = bgNode.parentElement;
+          if (!bgNode) {
+            bgRgb = 'rgb(255, 255, 255)';
+            break;
+          }
+          bgRgb = window.getComputedStyle(bgNode).backgroundColor;
+        }
 
         const results = [];
         for (let i = 0; i < classes.length; i++) {
@@ -157,7 +174,6 @@ test.describe('code contrast', () => {
           results.push({ cls: classes[i], fg: fgRgb, bg: bgRgb });
         }
 
-        // Clean up
         for (const span of spans) {
           code.removeChild(span);
         }
