@@ -29,6 +29,11 @@ test.describe('code contrast', () => {
     await page.goto(siteUrls['bare']);
 
     const pairs = await page.evaluate((classes) => {
+      // Must mock the layout so that Rouge CSS matches correctly.
+      // E.g., assets/css/slipway.css styles .highlight classes
+      const content = document.createElement('div');
+      content.id = 'main'; // Needed for some context styles?
+
       const wrapper = document.createElement('div');
       wrapper.className = 'highlighter-rouge';
 
@@ -38,7 +43,7 @@ test.describe('code contrast', () => {
 
       const pre = document.createElement('pre');
       pre.className = 'highlight';
-      pre.style.backgroundColor = '#ffffff'; // White bg
+      pre.style.setProperty('background-color', '#ffffff', 'important'); // Force White bg
       div.appendChild(pre);
 
       const code = document.createElement('code');
@@ -48,13 +53,14 @@ test.describe('code contrast', () => {
       for (const cls of classes) {
         const span = document.createElement('span');
         span.className = cls;
-        span.style.color = '#eeeeee'; // Light gray fg -> bad contrast on white
+        span.style.setProperty('color', '#eeeeee', 'important'); // Force Light gray fg -> bad contrast on white
         span.textContent = 'test';
         code.appendChild(span);
         spans.push(span);
       }
 
-      document.body.appendChild(wrapper);
+      content.appendChild(wrapper);
+      document.body.appendChild(content);
 
       const bgRgb = window.getComputedStyle(pre).backgroundColor;
       const results = [];
@@ -63,7 +69,7 @@ test.describe('code contrast', () => {
         results.push({ cls: classes[i], fg: fgRgb, bg: bgRgb });
       }
 
-      document.body.removeChild(wrapper);
+      document.body.removeChild(content);
       return results;
     }, rougeClasses);
 
@@ -88,6 +94,9 @@ test.describe('code contrast', () => {
       await page.goto(siteUrls[name]);
 
       const pairs = await page.evaluate((classes) => {
+        const content = document.createElement('div');
+        content.id = 'main';
+
         const wrapper = document.createElement('div');
         wrapper.className = 'highlighter-rouge';
 
@@ -111,8 +120,10 @@ test.describe('code contrast', () => {
           spans.push(span);
         }
 
-        document.body.appendChild(wrapper);
+        content.appendChild(wrapper);
+        document.body.appendChild(content);
 
+        // Let it layout and compute colors
         const bgRgb = window.getComputedStyle(pre).backgroundColor;
 
         const results = [];
@@ -121,7 +132,7 @@ test.describe('code contrast', () => {
           results.push({ cls: classes[i], fg: fgRgb, bg: bgRgb });
         }
 
-        document.body.removeChild(wrapper);
+        document.body.removeChild(content);
         return results;
       }, rougeClasses);
 
