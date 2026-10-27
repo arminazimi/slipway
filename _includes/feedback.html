@@ -1,9 +1,12 @@
-{%- assign repo_url = site.github.repository_url | default: site.repository_url -%}
-{%- if repo_url -%}
+{%- assign sl_repo_url = site.github.repository_url -%}
+{%- if sl_repo_url == nil -%}
+{%- assign sl_repo_url = site.repository_url -%}
+{%- endif -%}
+{%- if sl_repo_url -%}
 <div class="sl-feedback">
   <p>Was this helpful?
-    <a href="{{ repo_url }}/issues/new?assignees=&labels=feedback&projects=&template=feedback.yml&title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">Yes</a> /
-    <a href="{{ repo_url }}/issues/new?assignees=&labels=feedback&projects=&template=feedback.yml&title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">No</a>
+    <a href="{{ sl_repo_url }}/issues/new?assignees=&amp;labels=feedback&amp;projects=&amp;template=feedback.yml&amp;title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">Yes</a> /
+    <a href="{{ sl_repo_url }}/issues/new?assignees=&amp;labels=feedback&amp;projects=&amp;template=feedback.yml&amp;title=Feedback+on+{{ page.url | url_encode }}" target="_blank" rel="noopener noreferrer" class="sl-feedback-link">No</a>
   </p>
 </div>
 {%- endif -%}
