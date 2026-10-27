@@ -30,8 +30,15 @@ test("the copy script is small and loaded deferred from the head", () => {
 
 test("code stays left-to-right inside right-to-left pages, with logical properties", () => {
   const css = read("assets/css/slipway.css");
-  assert.match(css, /direction: ltr;\s*text-align: start;/);
+  assert.match(css, /\.sl-code\s*\{[^}]*direction:\s*ltr;/);
+  assert.match(css, /pre\s*\{[^}]*direction:\s*ltr;\s*text-align:\s*start;/);
   assert.doesNotMatch(css.slice(css.indexOf("Code blocks:")), /\b(left|right|margin-left|margin-right)\s*:/);
+});
+
+test("tables have responsive styles and logical text alignment", () => {
+  const css = read("assets/css/slipway.css");
+  assert.match(css, /table\s*\{[^}]*display:\s*block;[^}]*overflow-x:\s*auto;/);
+  assert.match(css, /th,\s*td\s*\{[^}]*text-align:\s*start;/);
 });
 
 test("syntax colors use tokens that pass contrast on the surface", () => {

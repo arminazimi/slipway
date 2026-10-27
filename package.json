@@ -16,7 +16,6 @@
     "check:browser": "node tools/browser/run.mjs",
     "check:nojs": "node tools/nojs/run.mjs",
     "check:screenshots": "node tools/screenshots/run.mjs",
-
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:site": "node tools/theme/check.mjs",
     "check:schemas": "node tools/theme/validate.mjs",
