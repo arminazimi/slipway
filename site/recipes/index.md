@@ -11,9 +11,14 @@ author: Slipway
 
 We have recipes for various common tasks. Pick one below:
 
-- [Custom domain](/recipes/custom-domain/)
-- [Analytics](/recipes/analytics/)
-- [Comments](/recipes/comments/)
-- [Deploy to Netlify](/recipes/netlify/)
-- [Deploy to Cloudflare Pages](/recipes/cloudflare-pages/)
-- [Content negotiation](/recipes/content-negotiation/)
+{% assign recipes = site.pages | where_exp: "item", "item.url contains '/recipes/' and item.url != '/recipes/'" | sort: "title" | sort: "nav_order" %}
+<ul>
+{% for r in recipes %}
+  <li>
+    <a href="{{ r.url }}">{{ r.title }}</a>
+    {% if r.description %}
+      <p>{{ r.description }}</p>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
