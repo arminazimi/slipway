@@ -19,7 +19,7 @@ test.describe('page weight tests', () => {
     if (name === 'broken-fixture') continue;
 
     // Determine which pages to test for this example.
-    const pagesToTest = [{ path: '', type: 'home' }];
+    const pagesToTest = [{ path: 'index.html', type: 'home' }];
 
     if (name === 'docs') {
       pagesToTest.push({ path: 'guide/install.html', type: 'doc' });
@@ -57,18 +57,18 @@ test.describe('page weight tests', () => {
           }
         });
 
+        if (testInfo.project.name === 'chromium-rtl') {
+          // Add init script to emulate RTL dynamically before any network requests
+          await page.addInitScript(() => {
+             document.documentElement.setAttribute('dir', 'rtl');
+          });
+        }
+
         // Go to page and wait for network idle to ensure all resources are loaded
         const response = await page.goto(url, { waitUntil: 'networkidle' }).catch(() => null);
         if (!response) {
             console.log(`Skipping missing page ${url}`);
             return;
-        }
-
-        if (testInfo.project.name === 'chromium-rtl') {
-          await page.evaluate(() => {
-            document.documentElement.setAttribute('dir', 'rtl');
-          });
-          await page.waitForTimeout(500);
         }
 
         const budget = budgets[type];
@@ -86,7 +86,7 @@ test.describe('page weight tests', () => {
 
   // Explicit broken fixture test if passed
   if (sites['broken-fixture']) {
-    test(`broken fixture correctly fails budget`, async ({ page }) => {
+    test(`broken fixture correctly fails budget`, async ({ page }, testInfo) => {
       const url = sites['broken-fixture'];
       let totalBytes = 0;
       page.on('response', async (response) => {
@@ -97,6 +97,13 @@ test.describe('page weight tests', () => {
             } catch (e) {}
           }
       });
+
+      if (testInfo.project.name === 'chromium-rtl') {
+        // Add init script to emulate RTL dynamically before any network requests
+        await page.addInitScript(() => {
+           document.documentElement.setAttribute('dir', 'rtl');
+        });
+      }
       await page.goto(url, { waitUntil: 'networkidle' });
       // We expect the home budget to be exceeded
       expect(totalBytes).toBeGreaterThan(budgets.home);
