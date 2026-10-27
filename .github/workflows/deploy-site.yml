@@ -18,16 +18,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Build spec site content
+        run: node tools/spec/build.mjs
       - name: Build site
         # Pages gem needs a repository to avoid metadata errors
         env:
           PAGES_REPO_NWO: ${{ github.repository }}
           JEKYLL_ENV: production
-        run: bundle exec jekyll build --source site --destination _site --baseurl ""
+        run: |
+
+          bundle exec jekyll build --source site --destination _site --baseurl ""
+          bundle exec jekyll build --source spec/docs-site --destination _site/spec --baseurl ""
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
