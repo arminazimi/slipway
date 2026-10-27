@@ -1,8 +1,10 @@
 name: release
 
 # A maintainer pushes a tag vX.Y.Z after merging the pull request from `node tools/release/prepare.mjs X.Y.Z`.
-# This workflow checks the tag against the gemspec, runs the full check, and creates the GitHub release.
-# It never publishes a package: the gem is pushed by hand (standalone.gem-publish).
+# This workflow checks the tag against the gemspec, runs the full check, creates the GitHub release,
+# and then pushes the gem to RubyGems (standalone.gem-publish) with trusted publishing: no API key is stored.
+# One-time maintainer setup: add a trusted publisher for `slipway-theme` on rubygems.org (repository
+# arminazimi/slipway, workflow release.yml, environment rubygems) and create the `rubygems` environment.
 on:
   push:
     tags: ["v*"]
@@ -44,3 +46,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag
+
+  publish-gem:
+    needs: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: rubygems
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+      - uses: rubygems/configure-rubygems-credentials@v1.0.0
+      - name: Build and push the gem
+        run: |
+          gem build slipway-theme.gemspec
+          gem push slipway-theme-*.gem
