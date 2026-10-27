@@ -4,31 +4,57 @@
   "title": "Slipway authors",
   "description": "_data/authors.yml. Each key is an author id that a post names in `author` and an author page names in `author`.",
   "type": "object",
-  "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+  "propertyNames": {
+    "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+  },
   "additionalProperties": {
     "type": "object",
     "additionalProperties": false,
-    "required": ["name"],
+    "required": [
+      "name"
+    ],
     "properties": {
-      "name": { "type": "string", "minLength": 1, "description": "The name shown in bylines and author boxes." },
-      "bio": { "type": "string", "description": "One or two sentences, shown in the author box." },
-      "avatar": { "$ref": "#/$defs/url", "description": "A square image: a path on this site or an https link. Shown at 64 by 64 pixels." },
+      "avatar": {
+        "$ref": "#/$defs/url",
+        "description": "A square image: a path on this site or an https link. Shown at 64 by 64 pixels."
+      },
+      "bio": {
+        "type": "string",
+        "description": "One or two sentences, shown in the author box."
+      },
       "links": {
         "type": "array",
         "description": "Links shown under the bio, such as a website or a profile.",
         "items": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["title", "url"],
+          "required": [
+            "title",
+            "url"
+          ],
           "properties": {
-            "title": { "type": "string", "minLength": 1 },
-            "url": { "$ref": "#/$defs/url" }
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "$ref": "#/$defs/url"
+            }
           }
         }
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The name shown in bylines and author boxes."
       }
     }
   },
   "$defs": {
-    "url": { "type": "string", "pattern": "^(/|https://)[^\\s\"<>]*$", "description": "A path on this site or an https link." }
+    "url": {
+      "type": "string",
+      "pattern": "^(/|https://)[^\\s\"<>]*$",
+      "description": "A path on this site or an https link."
+    }
   }
 }

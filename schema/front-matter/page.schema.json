@@ -4,5 +4,9 @@
   "title": "Slipway front matter: page layout",
   "description": "A plain page: a title, a description, and text. Also used by the default, tags, and not-found layouts.",
   "type": "object",
-  "allOf": [{ "$ref": "base.schema.json" }]
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ]
 }

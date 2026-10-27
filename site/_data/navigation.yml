@@ -1,4 +1,6 @@
 # yaml-language-server: $schema=../../schema/navigation.schema.json
+# yaml-language-server: $schema=../../schema/navigation.schema.json
+# yaml-language-server: $schema=../../schema/navigation.schema.json
 items:
   - title: Home
     url: /

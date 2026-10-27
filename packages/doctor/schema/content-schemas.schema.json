@@ -9,16 +9,16 @@
     "schemas"
   ],
   "properties": {
-    "version": {
-      "const": "0.1",
-      "description": "The version of the agent-editable spec this index follows."
-    },
     "schemas": {
       "type": "array",
       "description": "One entry per group of files. A file that matches several entries must satisfy all of them.",
       "items": {
         "$ref": "#/$defs/entry"
       }
+    },
+    "version": {
+      "const": "0.1",
+      "description": "The version of the agent-editable spec this index follows."
     }
   },
   "additionalProperties": false,
@@ -53,13 +53,6 @@
             }
           }
         },
-        "target": {
-          "enum": [
-            "front-matter",
-            "file"
-          ],
-          "description": "front-matter: the schema applies to the file's front matter. file: it applies to the whole parsed file."
-        },
         "schema": {
           "type": "string",
           "minLength": 1,
@@ -74,6 +67,13 @@
               }
             }
           ]
+        },
+        "target": {
+          "enum": [
+            "front-matter",
+            "file"
+          ],
+          "description": "front-matter: the schema applies to the file's front matter. file: it applies to the whole parsed file."
         },
         "when": {
           "type": "object",

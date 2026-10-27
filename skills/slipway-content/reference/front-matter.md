@@ -20,39 +20,39 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
-| `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
+| `categories` | list or string |  |  | Categories: a list, or one space-separated string as Jekyll allows. |
+| `date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | YYYY-MM-DD, optionally with a time and a UTC offset (`2026-10-18 09:30:00 +0330`). |
 | `description` | string |  |  | One sentence for search results and link previews. |
-| `lang` | string |  | `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` | BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language. |
 | `dir` | `ltr` or `rtl` |  |  | Text direction (ADR 0003). Defaults to the direction of `lang`. |
 | `direction` | `ltr` or `rtl` |  |  | Text direction as the base layout reads it today; same meaning as `dir`. |
-| `date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | YYYY-MM-DD, optionally with a time and a UTC offset (`2026-10-18 09:30:00 +0330`). |
-| `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
-| `categories` | list or string |  |  | Categories: a list, or one space-separated string as Jekyll allows. |
-| `width` | `narrow` or `wide` or `full` |  |  | Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it. |
-| `nav_order` | number |  |  | Sort order in generated navigation. |
+| `lang` | string |  | `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` | BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
+| `nav_order` | number |  |  | Sort order in generated navigation. |
 | `permalink` | string |  | `^(/\|(pretty\|date\|ordinal\|weekdate\|none)$)` | The output URL: a path starting with `/`, or one of Jekyll's built-in styles. |
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
-| `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
-| `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
 | `search` | boolean |  |  | `false` leaves the page out of the search index. |
+| `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
+| `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
+| `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
+| `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
+| `width` | `narrow` or `wide` or `full` |  |  | Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it. |
 
 ## Only in `post`
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
-| `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
 | `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
+| `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
 
 ## Only in `home`
 
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
-| `variant` | `editorial` or `landing` or `blog` or `docs` |  |  | How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards. |
 | `cta_text` | string |  | not empty | Label of the call-to-action button. Shown only with `cta_url`. Set together with `cta_url`. |
 | `cta_url` | string |  | `^(/\|https://)[^\s"<>]*$` | Where the call-to-action button goes. Set together with `cta_text`. |
 | `features` | list |  |  | Feature cards for the `landing` variant, in order. |
 | `posts_limit` | integer |  |  | How many posts the `editorial` and `blog` variants list. Defaults to 5 for `editorial` and every post for `blog`. |
+| `variant` | `editorial` or `landing` or `blog` or `docs` |  |  | How the home page is laid out. `editorial`: a large hero, the body, then the latest posts. `landing`: the hero, the body, the `features` grid, and the call to action again. `blog`: a compact heading, the body, then every post. `docs`: the hero, the body, then the `docs` list of `_data/navigation.yml` as cards. |
 
 ## Only in `author`
 

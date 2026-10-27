@@ -4,15 +4,20 @@
   "title": "Slipway source map",
   "description": "/sourcemap.json at the site root: which source file, and which line in it, produced each built page, section, and link. Version 0 is a draft; see spec/sourcemap/v0.md. A url must not appear twice, which JSON Schema cannot express; tools/theme/sourcemap.mjs checks it.",
   "type": "object",
-  "required": ["version", "pages"],
+  "required": [
+    "version",
+    "pages"
+  ],
   "properties": {
+    "pages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/page"
+      }
+    },
     "version": {
       "const": 0,
       "description": "The format version. Only 0 exists."
-    },
-    "pages": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/page" }
     }
   },
   "additionalProperties": false,
@@ -24,49 +29,85 @@
     },
     "page": {
       "type": "object",
-      "required": ["url", "source"],
+      "required": [
+        "url",
+        "source"
+      ],
       "properties": {
-        "url": {
-          "type": "string",
-          "pattern": "^/",
-          "description": "The page's URL path from the site root, as the generator writes it (`/docs/intro.html` or `/docs/intro/`)."
+        "links": {
+          "type": "array",
+          "description": "Links in document order.",
+          "items": {
+            "$ref": "#/$defs/link"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "description": "Headings in document order.",
+          "items": {
+            "$ref": "#/$defs/section"
+          }
         },
         "source": {
           "type": "string",
           "minLength": 1,
           "description": "The source file, relative to the site source folder, with forward slashes.",
-          "not": { "pattern": "^([a-zA-Z]:)?[\\\\/]|(^|/)\\.\\.(/|$)|\\\\" }
+          "not": {
+            "pattern": "^([a-zA-Z]:)?[\\\\/]|(^|/)\\.\\.(/|$)|\\\\"
+          }
         },
-        "sections": {
-          "type": "array",
-          "description": "Headings in document order.",
-          "items": { "$ref": "#/$defs/section" }
-        },
-        "links": {
-          "type": "array",
-          "description": "Links in document order.",
-          "items": { "$ref": "#/$defs/link" }
+        "url": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "The page's URL path from the site root, as the generator writes it (`/docs/intro.html` or `/docs/intro/`)."
         }
       },
       "additionalProperties": false
     },
     "section": {
       "type": "object",
-      "required": ["id", "level", "line", "text"],
+      "required": [
+        "id",
+        "level",
+        "line",
+        "text"
+      ],
       "properties": {
-        "id": { "type": "string", "minLength": 1, "description": "The heading's id in the built HTML." },
-        "level": { "type": "integer", "minimum": 1, "maximum": 6 },
-        "line": { "$ref": "#/$defs/line" },
-        "text": { "type": "string", "description": "The heading's plain text." }
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The heading's id in the built HTML."
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "line": {
+          "$ref": "#/$defs/line"
+        },
+        "text": {
+          "type": "string",
+          "description": "The heading's plain text."
+        }
       },
       "additionalProperties": false
     },
     "link": {
       "type": "object",
-      "required": ["href", "line"],
+      "required": [
+        "href",
+        "line"
+      ],
       "properties": {
-        "href": { "type": "string", "minLength": 1, "description": "The link target as written in the source." },
-        "line": { "$ref": "#/$defs/line" }
+        "href": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The link target as written in the source."
+        },
+        "line": {
+          "$ref": "#/$defs/line"
+        }
       },
       "additionalProperties": false
     }
