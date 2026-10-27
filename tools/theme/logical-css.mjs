@@ -28,7 +28,7 @@ export function findPhysical(css, name = "css") {
 
 export function themeStylesheets() {
   const dir = join(root, "assets/css");
-  return readdirSync(dir).filter((f) => f.endsWith(".css")).map((f) => join(dir, f));
+  return readdirSync(dir, { recursive: true }).filter((f) => f.endsWith(".css")).map((f) => join(dir, f));
 }
 
 export function main() {
