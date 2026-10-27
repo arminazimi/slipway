@@ -16,3 +16,4 @@ We have recipes for various common tasks. Pick one below:
 - [Comments](/recipes/comments/)
 - [Deploy to Netlify](/recipes/netlify/)
 - [Deploy to Cloudflare Pages](/recipes/cloudflare-pages/)
+- [Content negotiation](/recipes/content-negotiation/)
