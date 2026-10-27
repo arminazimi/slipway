@@ -14,6 +14,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Added security headers documentation (`docs/security-headers.md`) and CSP validation tests to ensure the theme works securely out-of-the-box.
 
 ### Added
+- Recipes for answering `Accept: text/markdown` with the twins on Netlify and Cloudflare Pages (`docs/content-negotiation.md`) (#64).
 - `UPGRADING.md` to document breaking changes across releases (#176).
 - Breadcrumbs above the title of doc and page layouts for nested pages, with a `BreadcrumbList` JSON-LD block. Translated labels for Persian, Arabic, and Hebrew.
 - "Copy page as Markdown" button on pages that have a Markdown twin (#24).
