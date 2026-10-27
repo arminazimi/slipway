@@ -1,0 +1,29 @@
+---
+layout: base
+---
+<article class="sl-page sl-links">
+  <header class="sl-page-header">
+    {% include author-card.html id=page.author %}
+  </header>
+  {{ content }}
+
+  {% if site.data.links %}
+  <nav aria-label="Links">
+    <ul class="sl-links-list">
+      {% for link in site.data.links %}
+        <li><a href="{{ link.url | relative_url }}" class="sl-button">{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% if site.slipway.social %}
+  <nav aria-label="Social">
+    <ul class="sl-social-icons">
+      {% for item in site.slipway.social %}
+        <li><a href="{{ item.url }}" aria-label="{{ item.title }}">{% include icons/{{ item.icon }}.html %}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+</article>

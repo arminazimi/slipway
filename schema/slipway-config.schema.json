@@ -147,7 +147,7 @@
               "name": {
                 "type": "string",
                 "minLength": 1,
-                "description": "Name of the language in that language, shown in the switcher, such as فارسی."
+                "description": "Name of the language in that language, shown in the switcher, such as \u0641\u0627\u0631\u0633\u06cc."
               },
               "prefix": {
                 "type": "string",
@@ -195,6 +195,33 @@
               "default": false,
               "description": "Print post dates in the Jalali calendar."
             }
+          }
+        },
+        "social": {
+          "type": "array",
+          "description": "Social icons for the links layout.",
+          "items": {
+            "type": "object",
+            "required": [
+              "title",
+              "url",
+              "icon"
+            ],
+            "properties": {
+              "icon": {
+                "type": "string",
+                "description": "The icon name in _includes/icons/."
+              },
+              "title": {
+                "type": "string",
+                "description": "Accessible name for the social icon."
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL of the social profile."
+              }
+            },
+            "additionalProperties": false
           }
         },
         "tokens": {

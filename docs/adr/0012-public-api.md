@@ -46,6 +46,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.logo.touch_icon` | yes | `head.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
+| `slipway.social` | yes | `links-layout.test.mjs` |
 | `slipway.arabic.digits` | yes | `arabic.test.mjs` |
 | `slipway.arabic.hijri` | yes | `hijri.test.mjs` |
 | `slipway.analytics.plausible` | yes | `analytics.test.mjs` |
@@ -101,6 +102,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `doc` | yes | `doc-layout.test.mjs` |
 | `post` | yes | `post-layout.test.mjs` |
 | `archive`, `tags` | yes | `taxonomy.test.mjs` |
+| `links` | yes | `links-layout.test.mjs` |
 | `author` | yes | `authors.test.mjs` |
 | `not-found` | yes | `not-found.test.mjs` |
 | `translation-status` | yes | `translation-status.test.mjs` |
