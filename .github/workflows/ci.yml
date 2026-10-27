@@ -97,3 +97,20 @@ jobs:
           path: examples/docs
           level: none
           setup-node: "false"
+
+  browser:
+    name: browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: node tools/browser/run.mjs

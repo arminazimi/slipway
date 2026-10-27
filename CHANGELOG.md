@@ -10,6 +10,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 - Published the agent-editable spec as a versioned site at `/spec/0.1/` with stable JSON Schema URLs (#179).
 - Generated configuration reference from the JSON schema for the documentation site (#252).
 - Added `translation-status` layout to show which pages exist in which language.
+- Added cross-browser testing with Playwright.
 - Added security headers documentation (`docs/security-headers.md`) and CSP validation tests to ensure the theme works securely out-of-the-box.
 
 ### Added
