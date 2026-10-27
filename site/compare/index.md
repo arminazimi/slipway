@@ -11,9 +11,7 @@ When choosing a theme or platform for your documentation or blog, it's important
 
 Slipway is designed to be **agent-editable**, explicitly verifying edits against [strict schemas and Seaworthy tests](/spec/). It prioritizes robust **Right-to-Left (RTL)** support, zero-JavaScript graceful degradation, and standard JSON-LD structured data. However, it might not be the right fit for everyone.
 
----
-
-## Slipway vs. Minimal Mistakes
+## Slipway vs. Minimal Mistakes {#minimal-mistakes}
 
 **[Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/)** is a highly versatile, feature-rich Jekyll theme suitable for personal sites, blogs, and portfolios. It has a massive community and years of plugins and layouts.
 
@@ -27,9 +25,7 @@ Slipway is designed to be **agent-editable**, explicitly verifying edits against
 - **RTL out of the box:** Slipway treats Right-to-Left languages (like Arabic, Persian, Hebrew) as first-class citizens with logical CSS properties, specific font stacks, and bidirectional layout checks.
 - **Zero-JavaScript baseline:** Slipway ensures core functionality remains intact even with JavaScript completely disabled.
 
----
-
-## Slipway vs. Just the Docs
+## Slipway vs. Just the Docs {#just-the-docs}
 
 **[Just the Docs](https://just-the-docs.github.io/just-the-docs/)** is a fast, responsive, and highly customizable Jekyll theme specifically tailored for documentation.
 
@@ -43,9 +39,7 @@ Slipway is designed to be **agent-editable**, explicitly verifying edits against
 - **Seaworthy verification:** Slipway is built to pass Seaworthy checks by default, giving AI agents clear paths to manage documentation securely.
 - **Accessibility & RTL:** While Just the Docs is accessible, Slipway provides native RTL and strict WCAG AA contrast validation across all theme tokens.
 
----
-
-## Slipway vs. Chirpy
+## Slipway vs. Chirpy {#chirpy}
 
 **[Chirpy](https://chirpy.cotes.page/)** is a text-focused Jekyll theme with a modern aesthetic, excellent for technical blogging.
 
@@ -59,9 +53,7 @@ Slipway is designed to be **agent-editable**, explicitly verifying edits against
 - **Agent workflows:** Chirpy is designed for human authors. Slipway's `slipway doctor`, Markdown twins, and `AGENTS.md` make it safe for autonomous agents to manage posts and fix errors.
 - **Localization:** Slipway's explicit focus on localized UI strings and RTL alignment is superior for multilingual or Arabic/Persian/Hebrew sites.
 
----
-
-## Slipway vs. Hosted Docs Platforms
+## Slipway vs. Hosted Docs Platforms {#hosted-docs-platforms}
 
 Hosted documentation platforms provide fully managed, "doc-as-code" experiences, often integrating with specific frameworks.
 
