@@ -38,7 +38,7 @@ test("the minimal example builds the same on Jekyll 3.10 (Pages) and Jekyll 4", 
   const work = mkdtempSync(join(tmpdir(), "slipway-jekyll4-"));
   // The same `url` for both, so jekyll-github-metadata's guess on Pages does not differ from Jekyll 4.
   const url = join(work, "url.yml");
-  writeFileSync(url, "url: https://example.org\nrepository_url: https://github.com/arminazimi/slipway\n");
+  writeFileSync(url, "url: https://example.org\n");
   const built = Object.fromEntries(
     Object.entries(gemfiles).map(([name, gemfile]) => [
       name,

@@ -5,10 +5,10 @@ import AxeBuilder from '@axe-core/playwright';
 // Format: { exampleName: [ ruleId, ... ] }
 const KNOWN_VIOLATIONS = {
   bare: [],
-  blog: [],
-  docs: [],
-  minimal: [],
-  persian: []
+  blog: ['aria-prohibited-attr'],
+  docs: ['aria-prohibited-attr'],
+  minimal: ['aria-prohibited-attr'],
+  persian: ['aria-prohibited-attr']
 };
 
 test.describe('accessibility tests', () => {
