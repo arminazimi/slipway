@@ -57,3 +57,13 @@ test("the built site derives dir, translates the chrome, and links the translati
   assert.match(html("index.html"), /<a href="\/fa\/"[^>]*hreflang="fa"/);
   assert.match(html("index.html"), /Skip to content/);
 });
+
+test("every key in the English block has a translation in each new built-in language", () => {
+  const source = read("_includes/i18n-builtin.html");
+  const keysOf = (block) => [...block.matchAll(/{%- when '([^']+)' -%}/g)].map((m) => m[1]);
+  const english = keysOf(source.split("{%- else -%}").at(-1));
+  for (const lang of ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh"]) {
+    const block = source.split(`{%- elsif include.lang == '${lang}' -%}`)[1].split("{%- endcase -%}")[0];
+    assert.deepEqual(keysOf(block), english, `${lang} has every key`);
+  }
+});
