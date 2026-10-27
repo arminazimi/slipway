@@ -28,11 +28,11 @@ test("initialize names the server", async (t) => {
 
 test("tools/list returns exactly the tools with JSON Schema inputs", async (t) => {
   const { tools } = await (await connect(docs, t)).listTools();
-  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "list_layouts", "preview", "read_config", "set_token"]);
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "list_blocks", "list_layouts", "preview", "read_config", "set_token"]);
   for (const tool of tools) {
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
-    if (["doctor", "list_layouts", "read_config"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
+    if (["doctor", "list_blocks", "list_layouts", "read_config"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
   }
 });
 
