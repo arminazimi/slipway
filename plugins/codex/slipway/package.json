@@ -1,0 +1,6 @@
+{
+  "name": "@slipway/codex-plugin",
+  "version": "0.0.0",
+  "description": "Codex plugin for working on Slipway sites, bundling the Site, Content and Doctor skills and the MCP server.",
+  "private": true
+}
