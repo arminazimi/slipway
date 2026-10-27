@@ -1,6 +1,6 @@
 ---
 title: Content negotiation
-description: How to answer Accept: text/markdown with the twins on Netlify and Cloudflare Pages.
+description: 'How to answer Accept: text/markdown with the twins on Netlify and Cloudflare Pages.'
 layout: doc
 permalink: /recipes/content-negotiation/
 date: 2024-03-20
