@@ -1,6 +1,6 @@
 {%- comment %} Canonical, Open Graph, Twitter card, and hreflang alternates. Plain Liquid, so classic Pages needs no jekyll-seo-tag. Expects sl_desc from head.html. {% endcomment %}
 {%- assign sl_seo_lang = page.lang | default: site.lang | default: 'en' %}
-{%- assign sl_seo_url = page.url | absolute_url %}
+{%- assign sl_seo_url = page.canonical_url | default: page.url | absolute_url %}
 {%- assign sl_seo_title = page.title | default: site.title %}
   <link rel="canonical" href="{{ sl_seo_url }}">
   <meta property="og:type" content="{% if page.collection == 'posts' %}article{% else %}website{% endif %}">

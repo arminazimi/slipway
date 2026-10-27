@@ -1,0 +1,6 @@
+title: "Slipway Canonical Test"
+url: "https://example.com"
+theme: "slipway"
+plugins:
+  - jekyll-remote-theme
+remote_theme: arminazimi/slipway

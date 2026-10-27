@@ -76,6 +76,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `layout`, `title`, `description` | all | yes | every layout test |
 | `lang`, `direction` | all | yes | `i18n.test.mjs`, `not-found.test.mjs` |
 | `translation_key` | all | yes | `i18n.test.mjs` |
+| `canonical_url` | all | yes | `kit-canonical.test.mjs` |
 | `permalink` | all (Jekyll's) | yes | `doc-layout.test.mjs` |
 | `date`, `tags`, `categories` | `post` | yes | `post-layout.test.mjs`, `taxonomy.test.mjs` |
 | `cta_text`, `cta_url` | `home` | yes | `home-layout.test.mjs` |
