@@ -60,12 +60,7 @@ try {
   process.env.BUILT_PAGES = JSON.stringify(builtPages);
 
   console.log("Running Playwright anchor tests...");
-  // Use a playwright config dynamically or just pass the test file?
-  // I will just let playwright test find it, but maybe I don't need a custom playwright.config.js?
-  // Wait, I should not create `playwright.config.js` because of "Only these files".
-  // Wait, issue says "Only these files: tools/anchors/run.mjs, tools/anchors/README.md, tools/anchors/anchors.test.mjs"
-  // So I can't create tools/anchors/playwright.config.js. I should just use the CLI or a built-in config, or point playwright to test the file directly.
-  const result = spawnSync("npx", ["playwright", "test", "tools/anchors/anchors.test.mjs"], {
+  const result = spawnSync("node", ["--test", "tools/anchors/anchors.test.mjs"], {
     stdio: "inherit",
     shell: true,
     cwd: root,
