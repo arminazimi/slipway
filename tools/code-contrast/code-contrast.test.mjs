@@ -94,22 +94,38 @@ test.describe('code contrast', () => {
       await page.goto(siteUrls[name]);
 
       const pairs = await page.evaluate((classes) => {
-        const content = document.createElement('div');
-        content.id = 'main';
+        // Find existing .highlight blocks or create one if none exist on this page
+        let pre = document.querySelector('.highlight pre.highlight');
+        let created = false;
+        let content;
 
-        const wrapper = document.createElement('div');
-        wrapper.className = 'highlighter-rouge';
+        if (!pre) {
+          created = true;
+          content = document.createElement('div');
 
-        const div = document.createElement('div');
-        div.className = 'highlight';
-        wrapper.appendChild(div);
+          const wrapper = document.createElement('div');
+          wrapper.className = 'highlighter-rouge';
 
-        const pre = document.createElement('pre');
-        pre.className = 'highlight';
-        div.appendChild(pre);
+          const div = document.createElement('div');
+          div.className = 'highlight';
+          wrapper.appendChild(div);
 
-        const code = document.createElement('code');
-        pre.appendChild(code);
+          pre = document.createElement('pre');
+          pre.className = 'highlight';
+          div.appendChild(pre);
+
+          content.appendChild(wrapper);
+          document.body.appendChild(content);
+        }
+
+        // ensure there is a code block inside
+        let code = pre.querySelector('code');
+        if (!code) {
+          code = document.createElement('code');
+          pre.appendChild(code);
+        }
+
+        const originalSpans = Array.from(code.querySelectorAll('span'));
 
         const spans = [];
         for (const cls of classes) {
@@ -120,10 +136,7 @@ test.describe('code contrast', () => {
           spans.push(span);
         }
 
-        content.appendChild(wrapper);
-        document.body.appendChild(content);
-
-        // Let it layout and compute colors
+        // Compute colors
         const bgRgb = window.getComputedStyle(pre).backgroundColor;
 
         const results = [];
@@ -132,7 +145,14 @@ test.describe('code contrast', () => {
           results.push({ cls: classes[i], fg: fgRgb, bg: bgRgb });
         }
 
-        document.body.removeChild(content);
+        // Clean up
+        for (const span of spans) {
+          code.removeChild(span);
+        }
+        if (created) {
+          document.body.removeChild(content);
+        }
+
         return results;
       }, rougeClasses);
 
