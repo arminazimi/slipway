@@ -9,7 +9,7 @@ author: Slipway
 
 ## Deploy to Vercel
 
-You can easily deploy a Slipway site to Vercel. Since Vercel runs a build step outside GitHub Pages, this deployment falls under [Actions mode](/docs/modes/).
+You can easily deploy a Slipway site to Vercel. Since Vercel runs a build step outside GitHub Pages, this deployment runs in Actions mode.
 
 ### Prerequisites
 
