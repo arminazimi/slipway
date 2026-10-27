@@ -5,7 +5,6 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
-- Added `create_page`, `set_token`, `add_navigation_item`, and `preview` tools to the MCP server (#79).
 - Built-in UI strings for ten more languages: es, fr, pt, de, it, ru, tr, nl, ja, zh (#224).
 - `@slipway/tokens` npm package exporting the theme's design tokens and core CSS.
 - Published the agent-editable spec as a versioned site at `/spec/0.1/` with stable JSON Schema URLs (#179).
