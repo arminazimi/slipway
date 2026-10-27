@@ -1,0 +1,6 @@
+{%- assign _sl_css_check = "|" | append: include.name | append: "|" -%}
+{%- assign _sl_css_list = "|" | append: slipway_components_css -%}
+{%- unless _sl_css_list contains _sl_css_check -%}
+  {%- assign slipway_components_css = slipway_components_css | append: include.name | append: "|" -%}
+  <link rel="stylesheet" href="{{ '/assets/css/components/' | append: include.name | append: '.css' | relative_url }}">
+{%- endunless -%}
