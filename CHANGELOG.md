@@ -86,7 +86,6 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 ### Fixed
 
 - Quotes in font stack overrides are kept (#134).
-- Code blocks and tables in right-to-left pages (fa, ar, he) have correct logical directions and scrolling (#227).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
 - Guide: make any generator conform to the spec, level by level
