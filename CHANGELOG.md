@@ -83,3 +83,4 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
 - Guide: make any generator conform to the spec, level by level
+- **doctor:** Add `--fix` and `--dry-run` to fix safe cases automatically (missing stubs, deprecated keys).
