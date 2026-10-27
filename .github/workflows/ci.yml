@@ -114,4 +114,5 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: node tools/browser/run.mjs
+      - run: npm run check:nojs
       - run: node tools/a11y/run.mjs

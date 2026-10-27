@@ -12,8 +12,9 @@
   ],
   "scripts": {
     "test": "node --test \"planning/roadmap/*.test.mjs\" \"tools/brand/*.test.mjs\" \"tools/theme/*.test.mjs\" \"tools/seaworthy/*.test.mjs\" \"tools/release/*.test.mjs\" \"tools/sourcemap/*.test.mjs\" \"tools/twins/*.test.mjs\" \"tools/spec/*.test.mjs\" \"tools/skills/*.test.mjs\" \"packages/mcp/test/*.test.mjs\" \"packages/doctor/test/*.test.mjs\" \"packages/create-slipway/test/*.test.mjs\" \"packages/tokens/test/*.test.mjs\" \"adapters/*/test/*.test.mjs\"",
-    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:css --silent && npm run check:schemas --silent && npm run check:site --silent && npm run check:docs --silent && npm run check:a11y --silent",
+    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:css --silent && npm run check:schemas --silent && npm run check:site --silent && npm run check:docs --silent && npm run check:nojs --silent && npm run check:a11y --silent",
     "check:browser": "node tools/browser/run.mjs",
+    "check:nojs": "node tools/nojs/run.mjs",
     "check:a11y": "node tools/a11y/run.mjs",
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:site": "node tools/theme/check.mjs",
