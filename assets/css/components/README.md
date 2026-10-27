@@ -1,6 +1,3 @@
----
-published: false
----
 # Component CSS
 
 This folder contains stylesheets for individual components.

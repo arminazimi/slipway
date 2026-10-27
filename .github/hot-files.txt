@@ -1,4 +1,0 @@
-CHANGELOG.md
-AGENTS.md
-_data/navigation.yml
-package.json
