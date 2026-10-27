@@ -47,7 +47,7 @@ Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.
 2. Commit on a `release/vX.Y.Z` branch, open a pull request, and merge it once CI is green.
 3. On `main`, tag the merge commit and push the tag: `git tag -a vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
 4. The [release workflow](.github/workflows/release.yml) fails if the tag does not match the gemspec version, runs `npm run check`, and creates the GitHub release with that `CHANGELOG.md` section as its notes.
-5. Publishing the gem to RubyGems is a separate, manual step; no workflow does it.
+5. Once the GitHub release exists, the workflow's `publish-gem` job builds `slipway-theme.gemspec` and pushes the gem to RubyGems with trusted publishing (the `rubygems` environment, no stored API key). Setting up that trusted publisher on rubygems.org is a one-time maintainer step.
 
 ## Proposing starters, blocks, and migrations
 
