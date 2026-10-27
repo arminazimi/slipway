@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import fs, { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,13 +26,13 @@ test("initialize names the server", async (t) => {
   assert.ok(client.getServerCapabilities().tools);
 });
 
-test("tools/list returns exactly the three read-only tools with JSON Schema inputs", async (t) => {
+test("tools/list returns exactly the tools with JSON Schema inputs", async (t) => {
   const { tools } = await (await connect(docs, t)).listTools();
-  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["doctor", "list_layouts", "read_config"]);
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "list_layouts", "preview", "read_config", "set_token"]);
   for (const tool of tools) {
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
-    assert.equal(tool.annotations.readOnlyHint, true);
+    if (["doctor", "list_layouts", "read_config"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
   }
 });
 
@@ -143,4 +143,54 @@ test("doctor refuses a build folder outside the site and an unknown level", asyn
   const notString = await client.callTool({ name: "doctor", arguments: { build: 1 } });
   assert.equal(notString.isError, true);
   assert.match(notString.content[0].text, /build must be a string/);
+});
+
+
+test("create_page writes a Markdown file with front matter to the site", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  const client = await connect(site, t);
+  const result = await client.callTool({
+    name: "create_page",
+    arguments: { path: "new.md", frontMatter: '{"title":"T"}', content: "Hello" }
+  });
+  assert.ok(!result.isError, result.content[0].text);
+  const fileContent = fs.readFileSync(join(site, "new.md"), "utf8");
+  assert.match(fileContent, /---\ntitle: T\n---\nHello/);
+});
+
+test("set_token sets a token in _config.yml", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  const client = await connect(site, t);
+  const result = await client.callTool({
+    name: "set_token",
+    arguments: { token: "accent", value: "red" }
+  });
+  assert.ok(!result.isError, result.content[0].text);
+  const fileContent = fs.readFileSync(join(site, "_config.yml"), "utf8");
+  assert.match(fileContent, /slipway:\n  tokens:\n    accent: red/);
+});
+
+test("add_navigation_item adds an item to _data/navigation.yml", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  const client = await connect(site, t);
+  const result = await client.callTool({
+    name: "add_navigation_item",
+    arguments: { title: "Home", url: "/" }
+  });
+  assert.ok(!result.isError, result.content[0].text);
+  const fileContent = fs.readFileSync(join(site, "_data/navigation.yml"), "utf8");
+  assert.match(fileContent, /- title: Home\n    url: \//);
+});
+
+test("preview returns instructions with jekyll serve", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  const client = await connect(site, t);
+  const result = await client.callTool({ name: "preview", arguments: {} });
+  assert.ok(!result.isError, result.content[0].text);
+  const parsed = json(result);
+  assert.match(parsed.instructions, /jekyll serve/);
 });
