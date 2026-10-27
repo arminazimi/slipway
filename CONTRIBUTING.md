@@ -30,6 +30,15 @@ For anything a site owner would notice, add a fragment: `changelog.d/<issue>.md`
 
 A new check needs no wiring: `npm run check` runs every `tools/<name>/run.mjs` and every `*.test.mjs` it finds (`tools/check.mjs`), and CI runs the browser-based `run.mjs` tools in one step. Put an optional tool's dependency in `devDependencies` as one line in alphabetical order, and make `run.mjs` print `SKIP` and exit 0 when it is missing.
 
+## Working in parallel
+
+To avoid merge conflicts when working on tasks in parallel:
+- Check `.github/hot-files.txt` before modifying any shared files. Stop and explain why in the PR if you need to edit a file not listed.
+- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<issue-number>.md` with one line instead.
+- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.
+- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.
+- Keep one file per check, tool, and language.
+
 ## Releasing
 
 Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.Y.Z`.
