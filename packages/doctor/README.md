@@ -54,6 +54,8 @@ When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote
 | `jekyll.translation-pair` | A `translation_key` with no page in one of the languages in `slipway.languages`. |
 | `jekyll.ui-strings` | A UI string key a site adds in `_data/i18n/<lang>.yml` that another listed language has no text for. Keys the theme has built in fall back to English and are not reported. |
 
+To add a new check, add a file in `src/checks/` (one per check) exporting its `id`, `level` or `warning`, and a `run(site)` function, then document it in `docs/checks/<id>.md` and add it to `tests.json`.
+
 `schema/deprecations.json` is a copy too; `tools/theme/deprecations.mjs` uses the same finder (`slipway/deprecations`).
 
 ## Generator detection
