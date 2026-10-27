@@ -1,0 +1,6 @@
+Add MkDocs adapter for agent-editable spec
+
+The new MkDocs plugin outputs `sourcemap.json`, creates Markdown twins,
+and generates `data-source` metadata on headings. This adapter implements
+features as required by the agent-editable spec. A build test skipping mechanism
+is also added for CI environments when MkDocs is unavailable.
