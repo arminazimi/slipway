@@ -12,11 +12,12 @@
   ],
   "scripts": {
     "test": "node --test \"planning/roadmap/*.test.mjs\" \"tools/brand/*.test.mjs\" \"tools/theme/*.test.mjs\" \"tools/seaworthy/*.test.mjs\" \"tools/release/*.test.mjs\" \"tools/sourcemap/*.test.mjs\" \"tools/twins/*.test.mjs\" \"tools/spec/*.test.mjs\" \"tools/skills/*.test.mjs\" \"packages/mcp/test/*.test.mjs\" \"packages/doctor/test/*.test.mjs\" \"packages/create-slipway/test/*.test.mjs\" \"packages/tokens/test/*.test.mjs\" \"adapters/*/test/*.test.mjs\"",
-    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:css --silent && npm run check:schemas --silent && npm run check:site --silent && npm run check:browser --silent",
+    "check": "node planning/roadmap/build.mjs --check && npm run test --silent && npm run check:brand --silent && npm run check:tokens --silent && npm run check:contrast --silent && npm run check:logical --silent && npm run check:js --silent && npm run check:css --silent && npm run check:schemas --silent && npm run check:site --silent && npm run check:docs --silent && npm run check:browser --silent",
     "check:browser": "node tools/browser/run.mjs",
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:site": "node tools/theme/check.mjs",
     "check:schemas": "node tools/theme/validate.mjs",
+    "check:docs": "node tools/theme/config-doc.mjs --check",
     "sourcemap": "node tools/sourcemap/run.mjs",
     "twins": "node tools/twins/run.mjs",
     "roadmap:build": "node planning/roadmap/build.mjs",
@@ -30,10 +31,10 @@
     "check:logical": "node tools/theme/logical-css.mjs",
     "check:js": "node tools/theme/js-budget.mjs",
     "check:css": "node tools/theme/css-budget.mjs",
-    "build:skills": "node tools/skills/config-reference.mjs && node tools/skills/front-matter-reference.mjs"
+    "build:skills": "node tools/skills/config-reference.mjs && node tools/skills/front-matter-reference.mjs",
+    "build:docs": "node tools/theme/config-doc.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.1",
     "ajv": "^8.20.0",
     "html-validate": "^11.17.0",
     "yaml": "^2.9.1"
