@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { levels } from "../../doctor/src/doctor.mjs";
-import { listLayouts, readConfig, runDoctor } from "./tools.mjs";
+import { listLayouts, readConfig, runDoctor, createPage, setToken, addNavigationItem, preview } from "./tools.mjs";
 
 const { version } = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
@@ -40,12 +40,62 @@ export const tools = [
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
   },
+
+  {
+    name: "create_page",
+    description: "Create a new page or post.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: { type: "string", description: "Path to the file to create, relative to the site directory." },
+        frontMatter: { type: "string", description: "Front matter for the page as a JSON string." },
+        content: { type: "string", description: "Markdown content for the page." },
+      },
+      required: ["path", "frontMatter", "content"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "set_token",
+    description: "Set a theme token in _config.yml.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        token: { type: "string", description: "Token name (e.g. accent, canvas)." },
+        value: { type: "string", description: "Token value (e.g. a color)." },
+      },
+      required: ["token", "value"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "add_navigation_item",
+    description: "Add a link to the main navigation menu in _data/navigation.yml.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "The text of the link." },
+        url: { type: "string", description: "The URL of the link." },
+      },
+      required: ["title", "url"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "preview",
+    description: "Get instructions on how to preview the site locally.",
+    inputSchema: { type: "object", properties: {}, additionalProperties: false },
+  },
 ];
 
 const handlers = {
   list_layouts: (site) => ({ layouts: listLayouts(site) }),
   read_config: (site, args) => readConfig(site, args.file ?? "_config.yml"),
   doctor: (site, args) => runDoctor(site, args),
+  create_page: (site, args) => createPage(site, args),
+  set_token: (site, args) => setToken(site, args),
+  add_navigation_item: (site, args) => addNavigationItem(site, args),
+  preview: (site) => preview(site),
 };
 
 export function createServer(site) {
