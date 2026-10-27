@@ -5,8 +5,10 @@ All notable changes to Slipway are listed here. The format follows [Keep a Chang
 Add a line under `Unreleased` in the pull request that makes the change. `node tools/release/prepare.mjs <version>` turns `Unreleased` into a release ([CONTRIBUTING.md](CONTRIBUTING.md#releasing)).
 
 ## [Unreleased]
+- Added honest comparison page (`/compare/`) evaluating Slipway against Minimal Mistakes, Just the Docs, Chirpy, and hosted platforms.
 - Built-in UI strings for ten more languages: es, fr, pt, de, it, ru, tr, nl, ja, zh (#224).
 - `@slipway/tokens` npm package exporting the theme's design tokens and core CSS.
+- Blog starter in `starters/blog/`.
 - Published the agent-editable spec as a versioned site at `/spec/0.1/` with stable JSON Schema URLs (#179).
 - Generated configuration reference from the JSON schema for the documentation site (#252).
 - Added `translation-status` layout to show which pages exist in which language.
@@ -84,6 +86,7 @@ Add a line under `Unreleased` in the pull request that makes the change. `node t
 ### Fixed
 
 - Quotes in font stack overrides are kept (#134).
+- Code blocks and tables in right-to-left pages (fa, ar, he) have correct logical directions and scrolling (#227).
 
 [Unreleased]: https://github.com/arminazimi/slipway/commits/main
 - Guide: make any generator conform to the spec, level by level
