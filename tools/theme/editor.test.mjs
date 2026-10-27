@@ -43,8 +43,10 @@ test("starter-files/.vscode/settings.json maps the config and navigation to exis
 test("docs/editor.md links only schemas that exist and covers VS Code and another editor", () => {
   const docs = read("docs/editor.md");
   for (const [, path] of docs.matchAll(/\]\(\.\.\/([^)#]+)\)/g)) assert.ok(existsSync(join(root, path)), path);
-  for (const url of docs.match(/https:\/\/raw\.githubusercontent\.com\/\S+?\.json/g)) {
-    assert.ok(existsSync(join(root, repoPath(url))), url);
+  const urls = docs.match(/https:\/\/arminazimi\.github\.io\/slipway\/spec\/0\.1\/\S+?\.schema\.json/g) || [];
+  for (const url of urls) {
+    const filename = url.split('/').pop();
+    assert.ok(existsSync(join(root, "schema", filename)), url);
   }
   for (const heading of ["## VS Code", "## Neovim", "## Zed", "## Front matter"]) assert.ok(docs.includes(heading), heading);
 });

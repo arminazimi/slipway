@@ -7,11 +7,11 @@ Slipway publishes JSON Schemas for the files you edit by hand. An editor that ru
 | `_config.yml` (and overlays such as `_config.remote.yml`) | [`schema/slipway-config.schema.json`](../schema/slipway-config.schema.json) |
 | `_data/navigation.yml` | [`schema/navigation.schema.json`](../schema/navigation.schema.json) |
 
-Until the spec site gives the schemas stable URLs, point at the raw file on GitHub. Replace `main` with a release tag, such as `v1.0.0`, to match the theme version you pin:
+Point your editor at the stable URLs of the schemas for your version of the spec.
 
 ```text
-https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json
-https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json
+https://arminazimi.github.io/slipway/spec/0.1/slipway-config.schema.json
+https://arminazimi.github.io/slipway/spec/0.1/navigation.schema.json
 ```
 
 ## Any editor: a comment on the first line
@@ -19,7 +19,7 @@ https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.sche
 The YAML language server reads a schema from a comment at the top of the file. This works in every editor below without other settings:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json
+# yaml-language-server: $schema=https://arminazimi.github.io/slipway/spec/0.1/slipway-config.schema.json
 title: My site
 ```
 
@@ -40,8 +40,8 @@ require("lspconfig").yamlls.setup({
   settings = {
     yaml = {
       schemas = {
-        ["https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json"] = { "_config.yml", "_config.*.yml" },
-        ["https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json"] = "_data/navigation.yml",
+        ["https://arminazimi.github.io/slipway/spec/0.1/slipway-config.schema.json"] = { "_config.yml", "_config.*.yml" },
+        ["https://arminazimi.github.io/slipway/spec/0.1/navigation.schema.json"] = "_data/navigation.yml",
       },
     },
   },
@@ -59,8 +59,8 @@ Zed ships the YAML language server. Add to your project's `.zed/settings.json`:
       "settings": {
         "yaml": {
           "schemas": {
-            "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json": ["_config.yml", "_config.*.yml"],
-            "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json": ["_data/navigation.yml"]
+            "https://arminazimi.github.io/slipway/spec/0.1/slipway-config.schema.json": ["_config.yml", "_config.*.yml"],
+            "https://arminazimi.github.io/slipway/spec/0.1/navigation.schema.json": ["_data/navigation.yml"]
           }
         }
       }

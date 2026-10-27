@@ -6,7 +6,7 @@ const root = resolve(fileURLToPath(import.meta.url), "../../..");
 
 const docsSite = join(root, "spec/docs-site");
 const specSrcDir = join(root, "spec/agent-editable");
-const specDestDir = join(docsSite, "spec/0.1");
+const specDestDir = join(docsSite, "0.1");
 const schemaDir = join(root, "schema");
 
 export function buildSpecSite() {
@@ -44,11 +44,12 @@ export function buildSpecSite() {
     writeFileSync(join(specDestDir, file), JSON.stringify(schemaJson, null, 2) + "\n");
   }
 
-  const latestDir = join(docsSite, "spec/latest");
+  const latestDir = join(docsSite, "latest");
   if (!existsSync(latestDir)) mkdirSync(latestDir, { recursive: true });
   writeFileSync(join(latestDir, "index.md"), "---\nlayout: doc\nredirect_to: /spec/0.1/\n---\n");
 
   writeFileSync(join(docsSite, "_config.yml"), "title: Slipway Spec\ndescription: The Slipway specification for agent-editable sites.\ntheme: slipway-theme\nplugins:\n  - jekyll-remote-theme\n");
+  writeFileSync(join(docsSite, "index.md"), "---\ntitle: The Spec\ndescription: The agent-editable site spec.\nlayout: doc\n---\n\nSlipway follows an open spec for agent-editable sites. See the spec for more details on how agents can read and edit your site reliably. (To be expanded in a future task.)\n");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
