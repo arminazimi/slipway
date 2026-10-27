@@ -58,18 +58,12 @@ test("the built site derives dir, translates the chrome, and links the translati
   assert.match(html("index.html"), /Skip to content/);
 });
 
-test("every key used in a layout has a translation in the new language files", () => {
-  const builtin = read("_includes/i18n-builtin.html");
-  // Extract keys from English block
-  const engLines = builtin.split("{%- else -%}")[1];
-  const keys = [...engLines.matchAll(/{%- when '([^']+)' -%}/g)].map(m => m[1]);
-
-  const newLangs = ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh"];
-  for (const lang of newLangs) {
-    const yamlStr = read(`_data/i18n/${lang}.yml`);
-    const yaml = parse(yamlStr);
-    for (const key of keys) {
-      assert.ok(yaml[key] !== undefined, `${lang} missing key: ${key}`);
-    }
+test("every key in the English block has a translation in each new built-in language", () => {
+  const source = read("_includes/i18n-builtin.html");
+  const keysOf = (block) => [...block.matchAll(/{%- when '([^']+)' -%}/g)].map((m) => m[1]);
+  const english = keysOf(source.split("{%- else -%}").at(-1));
+  for (const lang of ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh"]) {
+    const block = source.split(`{%- elsif include.lang == '${lang}' -%}`)[1].split("{%- endcase -%}")[0];
+    assert.deepEqual(keysOf(block), english, `${lang} has every key`);
   }
 });
