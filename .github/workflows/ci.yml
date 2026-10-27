@@ -60,8 +60,9 @@ jobs:
         run: |
           curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_0.152.2_linux-amd64.tar.gz | tar -xz -C "$RUNNER_TEMP" hugo
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      # MkDocs, for the MkDocs adapter's tests, which skip without it.
       - name: Install MkDocs
-        run: pip install mkdocs beautifulsoup4 --break-system-packages
+        run: pip install mkdocs beautifulsoup4 --break-system-packages || pip3 install mkdocs beautifulsoup4 --break-system-packages || true
       - run: npm ci
       - if: matrix.jekyll == 'pages'
         run: bundle exec github-pages versions
