@@ -1,0 +1,7 @@
+{%- comment -%} Renders a link to a glossary term. {%- endcomment -%}
+{%- assign sl_term = site.data.glossary | where: "id", include.id | first -%}
+{%- if sl_term -%}
+{%- include component-css.html name="glossary" -%}
+{%- capture sl_glossary_url -%}{% include layout-url.html layout="glossary" %}{%- endcapture -%}
+<a href="{{ sl_glossary_url | strip }}#{{ sl_term.id }}" class="sl-term" title="{{ sl_term.definition | escape }}">{{ sl_term.term }}</a>
+{%- endif -%}

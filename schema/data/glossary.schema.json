@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/data/glossary.schema.json",
+  "title": "Slipway glossary",
+  "description": "_data/glossary.yml. A list of terms and their definitions.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id",
+      "term",
+      "definition"
+    ],
+    "properties": {
+      "definition": {
+        "type": "string",
+        "minLength": 1
+      },
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "term": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
