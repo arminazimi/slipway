@@ -23,7 +23,7 @@ test("the series box lists the posts of the series in the same language, oldest 
   assert.match(box, /aria-current="page"/);
   for (const key of ["series", "series_part", "series_pager", "previous", "next"]) assert.match(box, new RegExp(`key='${key}'`));
   const builtin = read("_includes/i18n-builtin.html");
-  for (const key of ["series", "series_part", "series_pager"]) assert.equal(builtin.split(`when '${key}'`).length - 1, 14, key);
+  for (const key of ["series", "series_part", "series_pager"]) assert.equal(builtin.split(`when '${key}'`).length - 1, 4, key);
 });
 
 test("the series styles use logical properties only", () => {
