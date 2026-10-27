@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: ur
+future: true
+languages:
+  - { code: ur, name: Urdu, prefix: "" }

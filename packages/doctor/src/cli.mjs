@@ -4,6 +4,7 @@ import { relative, resolve, sep } from "node:path";
 import { doctor, levels } from "./doctor.mjs";
 import { describe, toSarif } from "./report.mjs";
 import { applyFixes } from "./fix.mjs";
+import * as infoCommand from "./commands/info.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
@@ -24,7 +25,7 @@ const formats = ["text", "json", "sarif"];
 export function parseArgs(args) {
   const [command, ...rest] = args;
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
-  if (command !== "doctor") return { error: command ? `unknown command: ${command}` : "missing command" };
+  if (command !== "doctor" && command !== "info") return { error: command ? `unknown command: ${command}` : "missing command" };
   const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false };
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
@@ -88,6 +89,11 @@ export function exitCode(report, target) {
 }
 
 export async function main(args, { log = console.log, error = console.error } = {}) {
+  const [command] = args;
+
+  if (command === "info") {
+    return infoCommand.main(args, { log, error });
+  }
   const parsed = parseArgs(args);
   if (parsed.help) {
     log(usage);
