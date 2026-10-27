@@ -10,7 +10,7 @@ const skip = bundleAvailable() ? false : "run `bundle install` to build with the
 
 test("Urdu pages get RTL direction, Urdu lang, and Urdu UI strings", { skip }, () => {
   const out = buildExample("gem", tmpDir("lang-ur"), join(root, "tools/theme/fixtures/lang-ur"));
-  const page = readFileSync(join(out, "2027/01/01/post.html"), "utf8");
+  const page = readFileSync(join(out, "ur/2027/01/01/post.html"), "utf8");
 
   assert.match(page, /<html lang="ur" dir="rtl">/);
 
