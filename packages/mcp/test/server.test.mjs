@@ -28,11 +28,11 @@ test("initialize names the server", async (t) => {
 
 test("tools/list returns exactly the tools with JSON Schema inputs", async (t) => {
   const { tools } = await (await connect(docs, t)).listTools();
-  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "list_blocks", "list_layouts", "list_pages", "preview", "read_config", "set_token"]);
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "find_text", "list_blocks", "list_layouts", "list_pages", "preview", "read_config", "set_token"]);
   for (const tool of tools) {
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
-    if (["doctor", "list_blocks", "list_layouts", "list_pages", "read_config"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
+    if (["doctor", "find_text", "list_blocks", "list_layouts", "list_pages", "read_config"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
   }
 });
 
@@ -193,4 +193,22 @@ test("preview returns instructions with jekyll serve", async (t) => {
   assert.ok(!result.isError, result.content[0].text);
   const parsed = json(result);
   assert.match(parsed.instructions, /jekyll serve/);
+});
+
+test("find_text searches content and returns file, line, and heading", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  writeFileSync(join(site, "index.md"), "---\ntitle: Home\n---\n# Welcome\n\nThis is a test of finding some specific text.\n\n## Another section\n\nMore text goes here.\n");
+  const client = await connect(site, t);
+  const result = await client.callTool({
+    name: "find_text",
+    arguments: { query: "specific text" }
+  });
+  assert.ok(!result.isError, result.content[0].text);
+  const data = json(result);
+  assert.equal(data.matches.length, 1);
+  assert.equal(data.matches[0].file, "index.md");
+  assert.equal(data.matches[0].line, 6);
+  assert.equal(data.matches[0].heading, "Welcome");
+  assert.match(data.matches[0].match, /specific text/);
 });
