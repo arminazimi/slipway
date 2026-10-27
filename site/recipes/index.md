@@ -11,9 +11,10 @@ author: Slipway
 
 We have recipes for various common tasks. Pick one below:
 
-{% assign recipes = site.pages | where_exp: "item", "item.url contains '/recipes/' and item.url != '/recipes/'" | sort: "title" | sort: "nav_order" %}
+{% assign all_recipes = site.pages | where_exp: "item", "item.url contains '/recipes/'" %}
+{% assign filtered_recipes = all_recipes | where_exp: "item", "item.url != '/recipes/'" | sort: "title" %}
 <ul>
-{% for r in recipes %}
+{% for r in filtered_recipes %}
   <li>
     <a href="{{ r.url }}">{{ r.title }}</a>
     {% if r.description %}

@@ -11,9 +11,10 @@ author: Slipway
 
 We have guides for various tasks. Pick one below:
 
-{% assign guides = site.pages | where_exp: "item", "item.url contains '/guides/' and item.url != '/guides/'" | sort: "title" | sort: "nav_order" %}
+{% assign all_guides = site.pages | where_exp: "item", "item.url contains '/guides/'" %}
+{% assign filtered_guides = all_guides | where_exp: "item", "item.url != '/guides/'" | sort: "title" %}
 <ul>
-{% for g in guides %}
+{% for g in filtered_guides %}
   <li>
     <a href="{{ g.url }}">{{ g.title }}</a>
     {% if g.description %}
