@@ -31,3 +31,6 @@ planning/roadmap/out/
 .tmp-series-site/
 spec/docs-site/
 __pycache__/
+test-results/
+.tmp-status-site/
+.tmp-breadcrumbs/
