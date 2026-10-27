@@ -4,7 +4,9 @@ description: Keyboard shortcut block with platform variants.
 layout: page
 ---
 
-{% include component-css.html name="kbd" %}
+<div>
+  {% include component-css.html name="kbd" %}
+</div>
 
 ## Command Palette
 
