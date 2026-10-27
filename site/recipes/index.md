@@ -11,9 +11,15 @@ author: Slipway
 
 We have recipes for various common tasks. Pick one below:
 
-- [Custom domain](/recipes/custom-domain/)
-- [Analytics](/recipes/analytics/)
-- [Comments](/recipes/comments/)
-- [Deploy to Netlify](/recipes/netlify/)
-- [Deploy to Cloudflare Pages](/recipes/cloudflare-pages/)
-- [Content negotiation](/recipes/content-negotiation/)
+{% assign all_recipes = site.pages | where_exp: "item", "item.url contains '/recipes/'" %}
+{% assign filtered_recipes = all_recipes | where_exp: "item", "item.url != '/recipes/'" | sort: "title" %}
+<ul>
+{% for r in filtered_recipes %}
+  <li>
+    <a href="{{ r.url }}">{{ r.title }}</a>
+    {% if r.description %}
+      <p>{{ r.description }}</p>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>

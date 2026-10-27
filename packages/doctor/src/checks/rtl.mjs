@@ -15,7 +15,7 @@ const strongLtr = new RegExp(`[\\p{L}--[${rtlScripts}]]`, "v");
 const isolates = /[⁦-⁨][^⁦-⁩]*⁩/g;
 
 /** Text of an element outside any isolate: descendants that are `bdi` or carry `dir`, and isolate marks. */
-function unisolatedText(element) {
+export function unisolatedText(element) {
   let text = "";
   const collect = (node) => {
     for (const child of node.children) {
@@ -33,11 +33,11 @@ function unisolatedText(element) {
   return text;
 }
 
-const allText = (element) => element.children.map((child) => child.text ?? allText(child)).join("");
-const mixed = (text) => strongRtl.test(text) && strongLtr.test(text);
+export const allText = (element) => element.children.map((child) => child.text ?? allText(child)).join("");
+export const mixed = (text) => strongRtl.test(text) && strongLtr.test(text);
 
 /** Where a finding on a built page points: the source line when the page or the map gives it, else the output line. */
-function locate(site, file, element, kind, pages) {
+export function locate(site, file, element, kind, pages) {
   const dataSource = element.attributes.get("data-source")?.match(/^(.+):(\d+)$/);
   if (dataSource && site.isFile(site.source, dataSource[1])) return { in: "source", file: dataSource[1], line: Number(dataSource[2]) };
   const page = pages.find((p) => typeof p?.url === "string" && site.outputFile(p.url) === file);
@@ -54,54 +54,9 @@ function locate(site, file, element, kind, pages) {
   return { in: "output", file, line: element.line };
 }
 
-function sourcemapPages(site) {
+export function sourcemapPages(site) {
   const pages = site.sourcemap()?.data?.pages;
   return Array.isArray(pages) ? pages : [];
 }
 
-export const rtlChecks = {
-  "ae.rtl.dir-matches-lang"(site) {
-    if (!site.build) return noOutput;
-    const findings = [];
-    for (const file of site.outputHtml()) {
-      for (const { element } of walk(parse(site.readOutput(file)))) {
-        if (element.name !== "html") continue;
-        const lang = element.attributes.get("lang")?.trim();
-        if (!lang) break;
-        const dir = element.attributes.get("dir")?.trim().toLowerCase();
-        const rtl = rtlLanguages.has(lang.split(/[-_]/)[0].toLowerCase());
-        const at = { in: "output", file, line: element.line, key: "html" };
-        if (rtl && dir !== "rtl") findings.push({ ...at, message: `has lang="${lang}", a right-to-left language, ${dir ? `but dir="${dir}"` : "and no dir"}`, allowed: ["rtl"] });
-        if (!rtl && dir === "rtl") findings.push({ ...at, message: `has dir="rtl" but lang="${lang}" is written left to right` });
-        break;
-      }
-    }
-    return failWith(findings);
-  },
 
-  "ae.rtl.bidi-isolated"(site) {
-    if (!site.build) return noOutput;
-    const pages = sourcemapPages(site);
-    const findings = [];
-    for (const file of site.outputHtml()) {
-      for (const { element, ancestors } of walk(parse(site.readOutput(file)))) {
-        const kind =
-          element.name === "title" && !ancestors.some((a) => a.name === "svg")
-            ? "title"
-            : element.name === "h1"
-              ? "h1"
-              : element.name === "a" && ancestors.some((a) => a.name === "nav")
-                ? "nav link"
-                : null;
-        if (!kind || !mixed(unisolatedText(element))) continue;
-        const text = allText(element).replace(/\s+/g, " ").trim();
-        findings.push({
-          ...locate(site, file, element, kind, pages),
-          key: kind === "nav link" ? "a" : kind,
-          message: `${kind} ${JSON.stringify(text)} mixes right-to-left and left-to-right text without isolating either (use <bdi>, dir="auto", or FSI and PDI marks)`,
-        });
-      }
-    }
-    return failWith(findings);
-  },
-};

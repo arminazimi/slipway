@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -23,7 +24,7 @@ test("base and the 404 layout share one direction rule", () => {
 });
 
 test("the 404 page has a section per language with its own lang, dir, and home link", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-404-site"));
+  const out = buildExample("gem", tmpDir("404-site"));
   const html = readFileSync(join(out, "404.html"), "utf8");
   assert.match(html, /<section lang="en" dir="ltr">\s*<h2>Page not found<\/h2>/);
   assert.match(html, /<section lang="fa" dir="rtl">\s*<h2>صفحه پیدا نشد<\/h2>/);
@@ -33,7 +34,7 @@ test("the 404 page has a section per language with its own lang, dir, and home l
 });
 
 test("the 404 page stays out of the sitemap and the search index", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-404-site"));
+  const out = buildExample("gem", tmpDir("404-site"));
   assert.doesNotMatch(readFileSync(join(out, "sitemap.xml"), "utf8"), /404/);
   assert.doesNotMatch(readFileSync(join(out, "search.json"), "utf8"), /Page not found/);
 });

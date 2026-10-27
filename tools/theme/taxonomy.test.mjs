@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -22,7 +23,7 @@ test("the tag styles use logical properties only", () => {
 });
 
 test("tag and category pages list the posts of one language, with counts", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-taxonomy-site"));
+  const out = buildExample("gem", tmpDir("taxonomy-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   const en = html("tags/index.html");
   assert.match(en, /<h3 id="tag-slipway">slipway <span class="sl-count">\(2\)<\/span>/);
@@ -35,7 +36,7 @@ test("tag and category pages list the posts of one language, with counts", { ski
 });
 
 test("posts link their tags and categories to the tags page of their language", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-taxonomy-site"));
+  const out = buildExample("gem", tmpDir("taxonomy-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   const en = html("2026/10/18/hello-world.html");
   assert.match(en, /<a class="sl-tag" href="\/tags\/#tag-notes">notes<\/a>/);
@@ -44,7 +45,7 @@ test("posts link their tags and categories to the tags page of their language", 
 });
 
 test("the archive groups posts by year, in Jalali years for Persian when opted in", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-taxonomy-site"));
+  const out = buildExample("gem", tmpDir("taxonomy-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   assert.match(html("archive/index.html"), /<h2 id="year-2026">2026<\/h2>/);
   const fa = html("fa/archive/index.html");
@@ -53,7 +54,7 @@ test("the archive groups posts by year, in Jalali years for Persian when opted i
 });
 
 test("previous and next posts stay in the post's language", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-taxonomy-site"));
+  const out = buildExample("gem", tmpDir("taxonomy-site"));
   const html = (p) => readFileSync(join(out, p), "utf8");
   const second = html("2026/10/20/second-post.html");
   assert.match(second, /rel="prev" href="\/2026\/10\/18\/hello-world\.html"/);

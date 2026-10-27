@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -38,7 +39,7 @@ test("the docs example's custom.css uses logical properties", () => {
 
 for (const mode of ["gem", "template"]) {
   test(`a site's own override files fill the slots (${mode})`, { skip }, () => {
-    const out = buildExample(mode, join(root, `.tmp-overrides-${mode}`), "docs");
+    const out = buildExample(mode, tmpDir(`overrides-${mode}`), "docs");
     const html = readFileSync(join(out, "index.html"), "utf8");
     assert.match(html, /<meta name="author" content="Slipway contributors">\s*<\/head>/);
     assert.match(html, /<p class="docs-footer-note">[\s\S]*?<\/p>\s*<\/footer>/);
@@ -49,7 +50,7 @@ for (const mode of ["gem", "template"]) {
 
 for (const mode of ["gem", "template"]) {
   test(`a site without overrides renders empty slots and no custom.css link (${mode})`, { skip }, () => {
-    const out = buildExample(mode, join(root, `.tmp-overrides-minimal-${mode}`));
+    const out = buildExample(mode, tmpDir(`overrides-minimal-${mode}`));
     const html = readFileSync(join(out, "index.html"), "utf8");
     assert.doesNotMatch(html, /Override slot|custom\.css/);
     assert.match(html, /<\/script>\s*<\/head>/);

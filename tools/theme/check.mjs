@@ -18,7 +18,8 @@ import { ensureSeaworthy } from "../seaworthy/setup.mjs";
 import { bundleAvailable, buildExample, exampleNames, root, target } from "./build.mjs";
 import { validateExampleConfigs } from "./config.mjs";
 import { findDeprecations } from "./deprecations.mjs";
-import { rtlChecks } from "../../packages/doctor/src/checks/rtl.mjs";
+import { run as dirMatchesLang } from "../../packages/doctor/src/checks/ae.rtl.dir-matches-lang.mjs";
+import { run as bidiIsolated } from "../../packages/doctor/src/checks/ae.rtl.bidi-isolated.mjs";
 import { Site } from "../../packages/doctor/src/site.mjs";
 import { validateExampleNavigation } from "./navigation.mjs";
 import { validateExampleAuthors } from "./authors.mjs";
@@ -164,7 +165,7 @@ export function main(env = process.env) {
         }
         // Every example, the Persian one above all, passes slipway doctor's right-to-left checks.
         const doctorSite = new Site(join(root, "examples", name), { build: site });
-        const rtl = Object.values(rtlChecks).flatMap((check) => check(doctorSite).findings);
+        const rtl = [dirMatchesLang, bidiIsolated].flatMap((check) => check(doctorSite).findings);
         if (rtl.length) {
           console.error(`FAIL: right-to-left findings (${label})\n${rtl.map((f) => `  ${f.file}:${f.line} ${f.message}`).join("\n")}`);
           process.exitCode = 1;

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -57,7 +58,7 @@ test("the author styles use logical properties only", () => {
 });
 
 test("the blog example shows bylines, author boxes, and author pages", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-authors-site"), "blog");
+  const out = buildExample("gem", tmpDir("authors-site"), "blog");
   const html = (p) => readFileSync(join(out, p), "utf8");
   const shared = html("2026/09/12/a-slow-site-is-a-broken-site.html");
   assert.match(shared, /<span class="sl-byline">By\s+<a rel="author" href="\/authors\/ada\/">Ada Rahimi<\/a> and\s+<a rel="author" href="\/authors\/sam\/">Sam Okafor<\/a><\/span>/);

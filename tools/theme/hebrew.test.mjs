@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -14,7 +15,7 @@ test("Hebrew text has its own font stack", () => {
 });
 
 test("Hebrew pages read right to left with Hebrew UI strings", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-hebrew-site"));
+  const out = buildExample("gem", tmpDir("hebrew-site"));
   const page = readFileSync(join(out, "he/post-1/index.html"), "utf8");
   assert.match(page, /<html lang="he" dir="rtl">/);
   assert.match(page, />דילוג לתוכן</);

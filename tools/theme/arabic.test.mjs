@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -27,7 +28,7 @@ test("Arabic text has its own font stack, taller lines, no italics, and Arabic-I
 });
 
 test("Arabic pages get Arabic-Indic digits and Arabic UI strings", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-arabic-site"));
+  const out = buildExample("gem", tmpDir("arabic-site"));
   const page = readFileSync(join(out, "ar/post-1/index.html"), "utf8");
   assert.match(page, /<html lang="ar" dir="rtl">/);
   assert.match(page, /<body class="sl-ar-digits"/);

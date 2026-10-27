@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -29,7 +30,7 @@ test("every example except bare publishes llms.txt and llms-full.txt", () => {
 });
 
 test("llms.txt lists each page with its description in sections, and llms-full.txt holds their text", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-llms-site"));
+  const out = buildExample("gem", tmpDir("llms-site"));
   const get = (p) => readFileSync(join(out, p), "utf8");
   const index = get("llms.txt");
   assert.match(index, /^# Slipway minimal\n\n> The smallest site that uses every Slipway layout\.\n/);

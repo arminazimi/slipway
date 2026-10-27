@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { tmpDir } from "./tmp.mjs";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -21,7 +22,7 @@ test("the theme ships a 1200 by 630 PNG as the default social image", () => {
 });
 
 test("pages get a canonical link, Open Graph, a Twitter card, and hreflang alternates of their translations", { skip }, () => {
-  const out = buildExample("gem", join(root, ".tmp-seo-site"));
+  const out = buildExample("gem", tmpDir("seo-site"));
   const fa = head(readFileSync(join(out, "fa/index.html"), "utf8"));
   assert.match(fa, /<link rel="canonical" href="https?:\/\/[^"]+\/fa\/">/);
   assert.match(fa, /<meta property="og:type" content="website">/);
