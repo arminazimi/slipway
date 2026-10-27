@@ -1,0 +1,23 @@
+---
+layout: base
+---
+{% include component-css.html name="glossary" %}
+<article class="sl-page">
+  <header class="sl-page-header">
+    {% include breadcrumbs.html %}
+    <h1>{{ page.title }}</h1>{% include copy-page.html %}
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+  {{ content }}
+  {%- if site.data.glossary %}
+  <dl class="sl-glossary">
+    {%- assign sl_terms = site.data.glossary | sort: "term" %}
+    {%- for sl_term in sl_terms %}
+    <dt id="{{ sl_term.id }}">{{ sl_term.term }}</dt>
+    <dd>{{ sl_term.definition }}</dd>
+    {%- endfor %}
+  </dl>
+  {%- endif %}
+</article>
