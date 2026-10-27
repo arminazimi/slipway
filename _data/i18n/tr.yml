@@ -29,7 +29,7 @@ language: 'Dil'
 copy: 'Kopyala'
 copy_page_md: 'Sayfayı Markdown olarak kopyala'
 copied: 'Kopyalandı'
-copy_failed: "Ctrl+C'ye basın"
+copy_failed: 'Ctrl+C''ye basın'
 by: 'Yazan:'
 and: 've'
 comma: ','

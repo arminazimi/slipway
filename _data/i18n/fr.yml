@@ -1,9 +1,9 @@
 skip: 'Passer au contenu'
 not_found_title: 'Page non trouvée'
-not_found_text: "Cette adresse n'existe pas ou a été déplacée. Utilisez le champ de recherche ou retournez à l'accueil."
-go_home: "Retourner à l'accueil"
+not_found_text: 'Cette adresse n''existe pas ou a été déplacée. Utilisez le champ de recherche ou retournez à l''accueil.'
+go_home: 'Retourner à l''accueil'
 home: 'Accueil'
-breadcrumbs: "Fil d'Ariane"
+breadcrumbs: 'Fil d''Ariane'
 tags: 'Mots-clés'
 categories: 'Catégories'
 main_nav: 'Principal'
@@ -33,7 +33,7 @@ copy_failed: 'Appuyez sur Ctrl+C'
 by: 'Par'
 and: 'et'
 comma: ','
-about_author: "À propos de l'auteur"
+about_author: 'À propos de l''auteur'
 posts: 'Articles'
 related_posts: 'Articles liés'
 translation_key: 'Clé de traduction'
