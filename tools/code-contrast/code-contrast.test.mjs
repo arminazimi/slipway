@@ -21,6 +21,11 @@ test.describe('code contrast', () => {
   const examples = Object.keys(siteUrls);
 
   test('deliberately broken fixture fails contrast', async ({ page }) => {
+    // If we're not running in full mode and no SITE_URLS were passed, skip.
+    if (!examples.length) {
+      test.skip();
+      return;
+    }
     await page.goto(siteUrls['bare']);
 
     const pairs = await page.evaluate((classes) => {
@@ -73,8 +78,8 @@ test.describe('code contrast', () => {
   });
 
   for (const name of examples) {
-    test(`example ${name} has accessible code syntax contrast`, async ({ page, project }) => {
-      if (project.name.includes('rtl')) {
+    test(`example ${name} has accessible code syntax contrast`, async ({ page }, testInfo) => {
+      if (testInfo.project.name.includes('rtl')) {
         await page.addInitScript(() => {
           document.documentElement.setAttribute('dir', 'rtl');
         });
@@ -124,7 +129,7 @@ test.describe('code contrast', () => {
         const fgHex = rgbToHex(fg);
         const bgHex = rgbToHex(bg);
         const ratio = contrastRatio(fgHex, bgHex);
-        expect(ratio, `Token .${cls} (${fgHex} on ${bgHex}) contrast ${ratio.toFixed(2)} must be >= 4.5 in ${project.name}`).toBeGreaterThanOrEqual(4.5);
+        expect(ratio, `Token .${cls} (${fgHex} on ${bgHex}) contrast ${ratio.toFixed(2)} must be >= 4.5 in ${testInfo.project.name}`).toBeGreaterThanOrEqual(4.5);
       }
     });
   }
