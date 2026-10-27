@@ -9,8 +9,8 @@ const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
 
 test("the not-found strings exist in English and Persian", () => {
-  const builtin = read("_includes/i18n-builtin.html");
-  const [fa, en] = builtin.split("{%- else -%}");
+  const fa = read("_includes/i18n/fa.html");
+  const en = read("_includes/i18n/en.html");
   for (const key of ["not_found_title", "not_found_text", "go_home"]) {
     assert.ok(fa.includes(`when '${key}'`) && en.includes(`when '${key}'`), key);
   }

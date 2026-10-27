@@ -13,10 +13,10 @@ const skip = bundleAvailable() ? false : "run `bundle install` to build with the
 test("every key used in a layout has a built-in English, Persian, Arabic, and Hebrew string", () => {
   const files = ["_layouts/base.html", "_layouts/home.html", "_layouts/doc.html", "_layouts/post.html", "_includes/header.html", "_includes/skip-link.html", "_includes/lang-switcher.html"];
   const used = new Set(files.flatMap((f) => [...read(f).matchAll(/include t\.html key=['"](\w+)['"]/g)].map((m) => m[1])));
-  const builtin = read("_includes/i18n-builtin.html");
-  const [faAr, en] = builtin.split("{%- else -%}");
-  const [fa, arHe] = faAr.split("{%- elsif include.lang == 'ar' -%}");
-  const [ar, he] = arHe.split("{%- elsif include.lang == 'he' -%}");
+  const fa = read("_includes/i18n/fa.html");
+  const ar = read("_includes/i18n/ar.html");
+  const he = read("_includes/i18n/he.html");
+  const en = read("_includes/i18n/en.html");
   assert.ok(used.size >= 12);
   for (const key of used) {
     assert.ok(fa.includes(`when '${key}'`), `fa: ${key}`);
@@ -59,11 +59,11 @@ test("the built site derives dir, translates the chrome, and links the translati
 });
 
 test("every key in the English block has a translation in each new built-in language", () => {
-  const source = read("_includes/i18n-builtin.html");
+  const enSource = read("_includes/i18n/en.html");
   const keysOf = (block) => [...block.matchAll(/{%- when '([^']+)' -%}/g)].map((m) => m[1]);
-  const english = keysOf(source.split("{%- else -%}").at(-1));
+  const english = keysOf(enSource);
   for (const lang of ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh"]) {
-    const block = source.split(`{%- elsif include.lang == '${lang}' -%}`)[1].split("{%- endcase -%}")[0];
+    const block = read(`_includes/i18n/${lang}.html`);
     assert.deepEqual(keysOf(block), english, `${lang} has every key`);
   }
 });

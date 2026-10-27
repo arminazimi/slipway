@@ -55,7 +55,8 @@ test("the doc and post layouts mark their sections and carry the translated prom
     assert.match(html, /capture sl_edit_prompt %\}\{% include t\.html key='edit_prompt' %\}/, layout);
     assert.match(html, /data-edit-label="\{\{ sl_edit_label \| escape \}\}" data-edit-prompt="\{\{ sl_edit_prompt \| escape \}\}"/, layout);
   }
-  const [fa, en] = read("_includes/i18n-builtin.html").split("{%- else -%}");
+  const fa = read("_includes/i18n/fa.html");
+  const en = read("_includes/i18n/en.html");
   for (const part of [fa, en]) assert.match(part, /when 'edit_prompt' -%\}[^\n]*\{source\}[^\n]*\{text\}/);
 });
 

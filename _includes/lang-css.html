@@ -1,6 +1,0 @@
-{%- assign sl_lang_css_lang = page.lang | default: site.lang | default: 'en' | split: '-' | first -%}
-{%- assign sl_lang_css_path = '/assets/css/lang/' | append: sl_lang_css_lang | append: '.css' -%}
-{%- assign sl_lang_css_file = site.static_files | where: 'path', sl_lang_css_path | first -%}
-{%- if sl_lang_css_file -%}
-<link rel="stylesheet" href="{{ sl_lang_css_path | relative_url }}">
-{%- endif -%}
