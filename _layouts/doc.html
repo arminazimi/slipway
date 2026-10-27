@@ -69,6 +69,7 @@ layout: base
     </nav>
     {%- endif %}
     {% include edit-sources.html html=content %}
+    {% include feedback.html %}
 
     {%- if sl_index >= 0 %}
     {%- assign sl_prev_index = sl_index | minus: 1 -%}

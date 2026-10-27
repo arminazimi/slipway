@@ -91,3 +91,16 @@ test("every link, path, and command in the skill exists", () => {
   assert.ok(commands.some((c) => c.startsWith(`node ${theme}packages/doctor/`) && c.includes(" doctor . ")), "runs the doctor");
   assert.ok(commands.some((c) => c.startsWith(`node ${theme}tools/theme/validate.mjs`)), "runs the schema check");
 });
+
+test("the translation recipe exists and has valid paths and commands", () => {
+  const recipePath = join(skillDir, "reference/translate-page.md");
+  assert.ok(existsSync(recipePath), "translate-page.md exists");
+  const recipeBody = readFileSync(recipePath, "utf8");
+  assert.match(recipeBody, /translation_key/);
+  assert.match(recipeBody, /links/);
+  const commands = [...recipeBody.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((m) => m[1].trim().split("\n"));
+  for (const command of commands) {
+    const script = command.match(/^node "\$HOME\/\.slipway\/([^"]+)"/);
+    if (script) assert.ok(existsSync(join(root, script[1])), command);
+  }
+});

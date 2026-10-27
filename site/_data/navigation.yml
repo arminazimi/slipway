@@ -12,3 +12,5 @@ items:
     url: /guides/migration/
   - title: The Spec
     url: /spec/
+  - title: Compare
+    url: /compare/
