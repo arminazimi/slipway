@@ -74,8 +74,16 @@ test("releaseChangelog refuses an empty Unreleased section or a version it alrea
   assert.throws(() => releaseChangelog(changelog, "0.1.0", "2026-11-01", "0.1.0"), /already has/);
 });
 
-test("prepare bumps a temp copy of the gemspec and changelog and prints the git commands", () => {
+/** A temp dir with changelog.d/ holding the given files. */
+function withFragments(files) {
   const dir = copy();
+  mkdirSync(join(dir, "changelog.d"));
+  for (const [name, text] of Object.entries(files)) writeFileSync(join(dir, "changelog.d", name), text);
+  return dir;
+}
+
+test("prepare bumps a temp copy of the gemspec and changelog and prints the git commands", () => {
+  const dir = withFragments({ "1.md": "A change." });
   const before = gemspecVersion(readFileSync(join(dir, "slipway-theme.gemspec"), "utf8"));
   const commands = prepare({ version: "9.0.0", dir, date: "2026-11-01" });
   assert.equal(gemspecVersion(readFileSync(join(dir, "slipway-theme.gemspec"), "utf8")), "9.0.0");
@@ -88,21 +96,13 @@ test("prepare bumps a temp copy of the gemspec and changelog and prints the git 
 });
 
 test("--check fails when the tag and the gemspec version differ", () => {
-  const dir = copy();
+  const dir = withFragments({ "1.md": "A change." });
   quiet(() => main(["9.0.0"], dir));
   assert.equal(quiet(() => main(["--check", "v9.0.0"], dir)), 0);
   assert.equal(quiet(() => main(["--check", "v9.0.1"], dir)), 1);
   assert.equal(quiet(() => main(["--check", "9.0.0"], dir)), 1);
   assert.equal(tagMatches("v0.1.0", gemspec), true);
 });
-
-/** A temp dir with changelog.d/ holding the given files. */
-function withFragments(files) {
-  const dir = copy();
-  mkdirSync(join(dir, "changelog.d"));
-  for (const [name, text] of Object.entries(files)) writeFileSync(join(dir, "changelog.d", name), text);
-  return dir;
-}
 
 test("readFragments orders by number, ignores README.md, and returns [] without a folder or with an empty one", () => {
   assert.deepEqual(readFragments(copy()), []);
