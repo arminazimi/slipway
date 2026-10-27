@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert';
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { platform } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,7 +22,7 @@ test('anchor checker logic', async (t) => {
 
   // Define a tiny Node script that uses Playwright as a library, to keep tests running in node --test
   const scriptPath = join(root, '.tmp', 'anchor-test.mjs');
-  spawnSync('mkdir', ['-p', '.tmp'], { cwd: root });
+  mkdirSync(join(root, '.tmp'), { recursive: true });
   const scriptContent = `
     import { chromium } from 'playwright';
 
@@ -103,7 +103,7 @@ test('anchor checker logic', async (t) => {
 
     run().catch(e => { console.error(e); process.exit(1); });
   `;
-  import('node:fs').then(fs => fs.writeFileSync(scriptPath, scriptContent));
+  writeFileSync(scriptPath, scriptContent);
 
   const result = spawnSync('node', [scriptPath], {
     cwd: root,
