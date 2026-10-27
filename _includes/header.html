@@ -15,7 +15,13 @@
   {%- assign sl_nav_key = 'main_' | append: sl_nav_lang -%}
   {%- assign sl_main = site.data.navigation[sl_nav_key] | default: site.data.navigation.main -%}
   {%- if sl_main.size > 0 and sl_header != 'minimal' %}
-  <nav class="sl-main-nav" aria-label="{% include t.html key='main_nav' %}">
+  <input type="checkbox" id="sl-nav-state" class="sl-nav-state" autocomplete="off">
+  <label for="sl-nav-state" class="sl-nav-toggle" aria-label="{% include t.html key='main_nav' %}">
+    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+  </label>
+  <label for="sl-nav-state" class="sl-nav-backdrop"></label>
+  <div class="sl-nav-drawer">
+    <nav class="sl-main-nav" aria-label="{% include t.html key='main_nav' %}">
     <ul>
       {%- for item in sl_main %}
       {%- assign sl_here = false %}
@@ -23,7 +29,8 @@
       <li><a href="{{ item.url | relative_url }}"{% if sl_here %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
       {%- endfor %}
     </ul>
-  </nav>
+    </nav>
+  </div>
   {%- endif %}
   {% unless sl_header == 'minimal' %}{% include search.html %}{% endunless %}
   {% include lang-switcher.html %}
