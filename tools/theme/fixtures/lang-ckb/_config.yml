@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: ckb
+future: true
+languages:
+  - { code: ckb, name: Central Kurdish, prefix: "" }
