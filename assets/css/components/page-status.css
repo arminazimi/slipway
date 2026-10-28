@@ -1,0 +1,5 @@
+.sl-page-status{padding:var(--sl-space-3) var(--sl-space-4);margin-block-end:var(--sl-space-6);border-radius:var(--sl-radius-card);background-color:var(--sl-color-surface);border:1px solid var(--sl-color-line);font-size:var(--sl-step-sm);color:var(--sl-color-text)}
+.sl-page-status strong{color:var(--sl-color-heading);margin-inline-end:var(--sl-space-2)}
+.sl-page-status-experimental{border-color:var(--sl-color-rose);background-color:var(--sl-color-rose-fill)}
+.sl-page-status-experimental strong{color:var(--sl-color-on-rose-fill)}
+.sl-page-status-deprecated{border-color:var(--sl-color-rose)}

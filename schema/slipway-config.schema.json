@@ -224,6 +224,10 @@
             "additionalProperties": false
           }
         },
+        "source_dir": {
+          "type": "string",
+          "description": "Folder where the site lives in the repository, such as docs, to prefix source paths in the edit prompt."
+        },
         "tokens": {
           "type": "object",
           "description": "Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both.",
