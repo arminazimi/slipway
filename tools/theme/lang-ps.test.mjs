@@ -14,6 +14,8 @@ test("Pashto pages get RTL direction, ps lang, and Pashto UI strings", { skip },
 
   assert.match(page, /<html lang="ps" dir="rtl">/);
 
+  assert.match(page, /href="\/assets\/css\/lang\/ps\.css"/);
+
   // Check translation string
   assert.match(page, /مینځپانګې ته لاړ شئ/); // skip to content
 

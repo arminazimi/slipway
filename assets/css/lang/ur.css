@@ -1,4 +1,9 @@
-:lang(ur), :lang(ur) :is(h1, h2, h3, h4, h5, h6) {
+:lang(ur) {
+  font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Noto Sans Arabic", "Arial", sans-serif;
+  line-height: 2.0;
+  font-style: normal;
+}
+:lang(ur) :is(h1, h2, h3, h4, h5, h6) {
   font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Noto Sans Arabic", "Arial", sans-serif;
   line-height: 2.0;
   font-style: normal;

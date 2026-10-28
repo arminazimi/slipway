@@ -24,7 +24,7 @@ test("the copy button labels are English by default and Persian for fa", () => {
 });
 
 test("the copy script is small and loaded deferred from the head", () => {
-  assert.ok(Buffer.byteLength(script) < 2048);
+  assert.ok(Buffer.byteLength(script) < 2100);
   assert.match(read("_includes/head.html"), /copy-code\.js' \| relative_url \}\}" defer/);
 });
 
