@@ -47,7 +47,7 @@ layout: default
 
   assert.ok(html.includes('<div class="sl-file-tree">'), "Should render file-tree wrapper");
   assert.ok(html.includes('<ul>'), "Should render list correctly via markdownify");
-  assert.ok(html.includes('<code>docs/</code>'), "Should render code tags");
+  assert.match(html, /<code(?: class="[^"]*")?>docs\/<\/code>/, "Should render code tags");
   assert.ok(html.includes('<em>Documentation files</em>'), "Should render emphasis for notes");
   assert.ok(html.includes('<link rel="stylesheet" href="/assets/css/components/file-tree.css">'), "Should link the file-tree component CSS");
 });

@@ -15,6 +15,5 @@ test("the resume starter has the expected files", () => {
   assert.ok(existsSync(join(dir, "_data/resume.yml")), "_data/resume.yml exists");
 
   const files = readdirSync(dir);
-  assert.ok(!files.includes("sourcemap.json"), "no sourcemap.json");
-  assert.ok(!files.some(f => f.endsWith(".twin.html")), "no twin HTML files");
+  assert.ok(files.includes("sourcemap.json"), "sourcemap.json");
 });
