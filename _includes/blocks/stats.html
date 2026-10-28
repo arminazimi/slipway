@@ -1,0 +1,15 @@
+{%- include component-css.html name="stats" -%}
+<div class="sl-stats">
+  {%- for item in include.items -%}
+    <div class="sl-stat">
+      <div>
+        <span class="sl-stat-value">{%- include num.html value=item.value -%}</span>
+        {%- if item.unit -%}<span class="sl-stat-unit">{{ item.unit }}</span>{%- endif -%}
+      </div>
+      <div class="sl-stat-footer">
+        <span class="sl-stat-label">{{ item.label }}</span>
+        {%- if item.trend -%}<span class="sl-stat-trend">{%- include num.html value=item.trend -%}</span>{%- endif -%}
+      </div>
+    </div>
+  {%- endfor -%}
+</div>
