@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/gallery.schema.json",
+  "title": "Gallery Block",
+  "description": "A responsive grid of images with optional captions and credits.",
+  "type": "object",
+  "required": ["images"],
+  "properties": {
+    "images": {
+      "type": "array",
+      "description": "The list of images to display in the gallery.",
+      "items": {
+        "type": "object",
+        "required": ["src"],
+        "properties": {
+          "alt": {
+            "type": "string",
+            "description": "Alternative text for the image."
+          },
+          "caption": {
+            "type": "string",
+            "description": "The caption for the image."
+          },
+          "credit": {
+            "type": "string",
+            "description": "Credit or attribution for the image."
+          },
+          "lazy": {
+            "type": "boolean",
+            "description": "Whether to lazy load the image.",
+            "default": false
+          },
+          "src": {
+            "type": "string",
+            "description": "The URL of the image."
+          },
+          "srcset": {
+            "type": "string",
+            "description": "A srcset attribute for responsive images."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

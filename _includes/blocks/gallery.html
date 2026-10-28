@@ -1,0 +1,20 @@
+<div class="sl-gallery">
+  {%- for image in include.images -%}
+  <figure class="sl-gallery-item">
+    <img src="{{ image.src }}" alt="{{ image.alt }}"
+      {%- if image.srcset %} srcset="{{ image.srcset }}"{% endif -%}
+      {%- if image.lazy %} loading="lazy"{% endif -%}
+    >
+    {%- if image.caption or image.credit -%}
+    <figcaption>
+      {%- if image.caption -%}
+      <span class="sl-gallery-caption">{{ image.caption }}</span>
+      {%- endif -%}
+      {%- if image.credit -%}
+      <span class="sl-gallery-credit">{{ image.credit }}</span>
+      {%- endif -%}
+    </figcaption>
+    {%- endif -%}
+  </figure>
+  {%- endfor -%}
+</div>

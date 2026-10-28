@@ -1,0 +1,6 @@
+.sl-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:var(--sl-space-6);margin-block:var(--sl-space-8)}
+.sl-gallery-item{margin:0;display:flex;flex-direction:column}
+.sl-gallery-item img{max-inline-size:100%;block-size:auto;border-radius:var(--sl-radius-card);object-fit:cover;flex-grow:1}
+.sl-gallery-item figcaption{margin-block-start:var(--sl-space-2);font-size:var(--sl-step-sm);color:var(--sl-color-muted);line-height:1.4}
+.sl-gallery-caption{display:block}
+.sl-gallery-credit{display:block;font-style:italic;margin-block-start:var(--sl-space-1)}
