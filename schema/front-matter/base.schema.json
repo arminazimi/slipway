@@ -80,9 +80,13 @@
       "enum": [
         "experimental",
         "beta",
-        "deprecated"
+        "deprecated",
+        "proposed",
+        "accepted",
+        "rejected",
+        "superseded"
       ],
-      "description": "The status of the feature or page."
+      "description": "The page status; ADR records also accept proposed, accepted, rejected, and superseded."
     },
     "tags": {
       "$ref": "#/$defs/terms",
@@ -144,5 +148,43 @@
       "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
       "description": "A key of `_data/authors.yml`."
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "layout": {
+            "const": "adr"
+          }
+        },
+        "required": [
+          "layout"
+        ]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "enum": [
+              "proposed",
+              "accepted",
+              "rejected",
+              "superseded",
+              "deprecated"
+            ]
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "status": {
+            "enum": [
+              "experimental",
+              "beta",
+              "deprecated"
+            ]
+          }
+        }
+      }
+    }
+  ]
 }

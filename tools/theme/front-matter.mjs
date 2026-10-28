@@ -22,6 +22,8 @@ export const layoutSchemas = {
   home: "home",
   archive: "archive",
   author: "author",
+  adr: "adr",
+  "adr-index": "page",
 };
 
 /** Collection folder to schema name, for pages without `layout`. */
