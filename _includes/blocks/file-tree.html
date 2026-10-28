@@ -1,0 +1,52 @@
+<div class="sl-file-tree">
+  {%- if include.list -%}
+    {{ include.list | markdownify }}
+  {%- elsif include.items -%}
+    <ul>
+      {%- for item1 in include.items -%}
+        <li>
+          <span class="sl-file-name">{{ item1.name }}</span>
+          {%- if item1.note -%}
+            <span class="sl-file-note">{{ item1.note }}</span>
+          {%- endif -%}
+          {%- if item1.children -%}
+            <ul>
+              {%- for item2 in item1.children -%}
+                <li>
+                  <span class="sl-file-name">{{ item2.name }}</span>
+                  {%- if item2.note -%}
+                    <span class="sl-file-note">{{ item2.note }}</span>
+                  {%- endif -%}
+                  {%- if item2.children -%}
+                    <ul>
+                      {%- for item3 in item2.children -%}
+                        <li>
+                          <span class="sl-file-name">{{ item3.name }}</span>
+                          {%- if item3.note -%}
+                            <span class="sl-file-note">{{ item3.note }}</span>
+                          {%- endif -%}
+                          {%- if item3.children -%}
+                            <ul>
+                              {%- for item4 in item3.children -%}
+                                <li>
+                                  <span class="sl-file-name">{{ item4.name }}</span>
+                                  {%- if item4.note -%}
+                                    <span class="sl-file-note">{{ item4.note }}</span>
+                                  {%- endif -%}
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>
