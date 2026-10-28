@@ -11,7 +11,7 @@ for (const mode of ["gem", "template"]) {
   test(`the changelog layout renders the changelog (${mode})`, { skip }, () => {
     const out = tmpDir(`kit-changelog-${mode}`);
     buildExample(mode, out, join(root, "tools/theme/fixtures/changelog"));
-    const html = readFileSync(join(out, "index.html"), "utf8");
+    const html = readFileSync(join(out, "changelog/index.html"), "utf8");
 
     assert.match(html, /<h2 id="unreleased">/i);
     assert.match(html, /<h2 id="1-0-0">/i);
