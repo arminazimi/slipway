@@ -22,6 +22,8 @@ demo_stats_2:
     trend: -0.5%
 ---
 
+{::nomarkdown}{% include component-css.html name="stats" %}{:/nomarkdown}
+
 ## Basic
 
 {% include blocks/stats.html items=page.demo_stats_1 %}
