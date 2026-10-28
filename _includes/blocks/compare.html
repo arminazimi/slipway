@@ -1,4 +1,3 @@
-{%- include component-css.html name="compare" -%}
 {%- if include.pros or include.cons -%}
   <div class="sl-compare sl-compare-pros-cons">
     {%- if include.pros -%}
@@ -32,7 +31,7 @@
       <table>
         <thead>
           <tr>
-            <th></th>
+            <td></td>
             {%- for header in include.headers -%}
               <th scope="col">{{ header }}</th>
             {%- endfor -%}

@@ -22,6 +22,8 @@ features:
     values: ["yes", "partial", "partial"]
 ---
 
+{::nomarkdown}{% include component-css.html name="compare" %}{:/nomarkdown}
+
 ## Pros and cons
 
 {% include blocks/compare.html pros=page.pros cons=page.cons %}
