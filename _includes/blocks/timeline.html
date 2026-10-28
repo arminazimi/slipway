@@ -1,0 +1,23 @@
+<div class="sl-timeline">
+  {%- if include.events -%}
+    <ol>
+      {%- for event in include.events -%}
+        <li>
+          <time datetime="{{ event.date | date_to_xmlschema }}">{{ event.date | date: "%B %-d, %Y" }}</time>
+          <div class="sl-timeline-content">
+            <span class="sl-timeline-title">
+              {%- if event.url -%}
+                <a href="{{ event.url | relative_url }}">{{ event.title }}</a>
+              {%- else -%}
+                {{ event.title }}
+              {%- endif -%}
+            </span>
+            {%- if event.description -%}
+              <div class="sl-timeline-description">{{ event.description | markdownify }}</div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+  {%- endif -%}
+</div>

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/timeline.schema.json",
+  "title": "Timeline Block",
+  "description": "A timeline of dated events, such as a release history or project milestones.",
+  "type": "object",
+  "required": ["events"],
+  "properties": {
+    "events": {
+      "type": "array",
+      "description": "The list of events in the timeline.",
+      "items": {
+        "type": "object",
+        "required": ["date", "title"],
+        "properties": {
+          "date": {
+            "type": ["string", "object"],
+            "description": "The date of the event (ISO 8601 string or YAML date)."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional description for the event, formatted as Markdown."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the event."
+          },
+          "url": {
+            "type": "string",
+            "description": "An optional URL for the event."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
