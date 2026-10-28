@@ -17,4 +17,4 @@ credentials. A deploy writes an artifact, so `beacon rollback` and `beacon relea
 ## What happens next
 
 Each deploy is recorded. Read [output](output.md) to know what the lines mean, or see the
-[dashboard](../beacon/dashboard/) for the last runs.
+[dashboard](dashboard/) for the last runs.

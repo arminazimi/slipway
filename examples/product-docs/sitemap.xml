@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://example.com/beacon/</loc></url>
-  <url><loc>https://example.com/beacon/install/</loc></url>
-  <url><loc>https://example.com/beacon/quickstart/</loc></url>
-  <url><loc>https://example.com/beacon/configuration/</loc></url>
-  <url><loc>https://example.com/beacon/commands/</loc></url>
-  <url><loc>https://example.com/beacon/output/</loc></url>
-  <url><loc>https://example.com/beacon/ci/</loc></url>
-  <url><loc>https://example.com/beacon/troubleshooting/</loc></url>
-  <url><loc>https://example.com/beacon/security/</loc></url>
-  <url><loc>https://example.com/beacon/faq/</loc></url>
-  <url><loc>https://example.com/beacon/reference/</loc></url>
+  <url><loc>https://example.com/</loc></url>
+  <url><loc>https://example.com/install.html</loc></url>
+  <url><loc>https://example.com/quickstart.html</loc></url>
+  <url><loc>https://example.com/configuration.html</loc></url>
+  <url><loc>https://example.com/commands.html</loc></url>
+  <url><loc>https://example.com/output.html</loc></url>
+  <url><loc>https://example.com/ci.html</loc></url>
+  <url><loc>https://example.com/troubleshooting.html</loc></url>
+  <url><loc>https://example.com/security.html</loc></url>
+  <url><loc>https://example.com/faq.html</loc></url>
+  <url><loc>https://example.com/reference/</loc></url>
 </urlset>
