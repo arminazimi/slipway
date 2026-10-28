@@ -3,7 +3,16 @@
   (assets/js/edit-prompt.js): "path:line" when the Actions plugin set page.slipway_sections from the
   source map, the page's file alone otherwise (classic mode cannot know lines, ADR 0007).
 {%- endcomment -%}
-{%- assign sl_src_path = page.path | escape -%}
+{%- assign sl_src_root = site.github.source.path | default: '' -%}
+{%- if site.slipway.source_dir != nil -%}{%- assign sl_src_root = site.slipway.source_dir -%}{%- endif -%}
+{%- assign sl_src_dirs = sl_src_root | strip | split: '/' -%}
+{%- assign sl_src_prefix = '' -%}
+{%- for dir in sl_src_dirs -%}
+  {%- if dir != '' and dir != '.' -%}
+    {%- assign sl_src_prefix = sl_src_prefix | append: dir | append: '/' -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign sl_src_path = sl_src_prefix | append: page.path -%}
 {%- assign sl_src_parts = include.html | split: '<h' -%}
 {%- for part in sl_src_parts -%}
   {%- if forloop.first %}{{ part }}{% continue %}{% endif -%}
@@ -19,7 +28,7 @@
           {%- if section.id == sl_src_id %}{% assign sl_src = sl_src_path | append: ':' | append: section.line %}{% break %}{% endif -%}
         {%- endfor -%}
       {%- endif -%}
-      <h{{ sl_src_level }} data-source="{{ sl_src }}"{{ part | slice: 1, part.size }}
+      <h{{ sl_src_level }} data-source="{{ sl_src | escape }}"{{ part | slice: 1, part.size }}
     {%- else -%}<h{{ part }}{%- endif -%}
   {%- else -%}<h{{ part }}{%- endif -%}
 {%- endfor -%}
