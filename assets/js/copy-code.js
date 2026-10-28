@@ -30,7 +30,7 @@
     btn.type = "button";
     btn.className = "sl-copy";
     var orig = btn.textContent = label(lang, "copy", data);
-    bind(btn, lang, data, orig, function(c) { return c.writeText(pre.textContent); });
+    bind(btn, lang, data, orig, function(c) { var m=pre.querySelector(".sl-commands");return c.writeText(m?m.textContent:pre.textContent) });
     pre.parentNode.insertBefore(wrap, pre);
     wrap.appendChild(pre);
     wrap.appendChild(btn);
