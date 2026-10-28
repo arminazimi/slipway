@@ -39,7 +39,7 @@ Built-in themes often have specific configuration keys in `_config.yml`. Here's 
         light: /assets/img/logo.png
     ```
 *   **`show_downloads:`** Slipway doesn't have a built-in download button for the repository. If you want to link to your repository, you can add it to the navigation or the `social` links list.
-*   **Colors/Brand:** Some themes let you set colors in `_config.yml` (e.g., `google_fonts` or specific color keys). In Slipway, you configure these using [Design Tokens](/docs/tokens/):
+*   **Colors/Brand:** Some themes let you set colors in `_config.yml` (e.g., `google_fonts` or specific color keys). In Slipway, you configure these using [configuration reference]({{ '/config/' | relative_url }}):
     ```yaml
     slipway:
       tokens:

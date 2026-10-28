@@ -31,7 +31,10 @@ import * as c27 from "./checks/unknown-config.mjs";
 import * as c28 from "./checks/unknown-front-matter.mjs";
 import * as c29 from "./checks/twin-fresh.mjs";
 
+import * as c30 from "./checks/schema-coverage.mjs";
+
 export const checks = {
+  [c30.id]: c30.run,
   [c0.id]: c0.run,
   [c1.id]: c1.run,
   [c2.id]: c2.run,

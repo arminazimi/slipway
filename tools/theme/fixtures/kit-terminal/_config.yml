@@ -1,0 +1,9 @@
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+title: Terminal test
+slipway:
+  languages:
+    - code: en
+      name: English
+      prefix: /
