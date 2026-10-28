@@ -16,18 +16,15 @@ test("timeline block renders correctly", { skip }, () => {
 
   const pageContent = `---
 layout: default
+events:
+  - date: 2026-11-23
+    title: Phase 3 begins
+    description: The third phase starts
+  - date: 2026-12-01
+    title: Feature implemented
+    url: /feature/
 ---
-{% capture timeline_events %}
-- date: 2026-11-23
-  title: Phase 3 begins
-  description: The third phase starts
-- date: 2026-12-01
-  title: Feature implemented
-  url: /feature/
-{% endcapture %}
-{% assign events_data = timeline_events | from_yaml %}
-
-{% include blocks/timeline.html events=events_data %}`;
+{% include blocks/timeline.html events=page.events %}`;
 
   writeFileSync(join(testSite, "index.md"), pageContent);
   mkdirSync(join(testSite, "_layouts"), { recursive: true });
@@ -52,7 +49,7 @@ layout: default
 
   assert.ok(html.includes('<div class="sl-timeline">'), "Should render timeline wrapper");
   assert.ok(html.includes('<ol>'), "Should render ordered list");
-  assert.ok(/<time datetime="2026-11-23T00:00:00[^"]*">November 23, 2026<\/time>/.test(html), "Should render time with format: " + html.slice(html.indexOf("<body"), html.indexOf("<body") + 700));
+  assert.ok(/<time datetime="2026-11-23T00:00:00[^"]*">November 23, 2026<\/time>/.test(html), "Should render time with format");
   assert.ok(html.includes('<a href="/feature/">Feature implemented</a>'), "Should render links for events with urls");
   // Kramdown on classic pages adds class="language-plaintext highlighter-rouge" to inline code etc. We relax the description text test to ignore HTML tags inside the description.
   assert.ok(html.includes('The third phase starts'), "Should render description text");
