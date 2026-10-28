@@ -6,11 +6,11 @@ layout: doc
 
 The built-in search uses a single JSON index per language. For sites with thousands of pages, [Pagefind](https://pagefind.app/) offers a faster, low-bandwidth search. It requires **Actions mode** because it needs a post-build step.
 
-## Remove the built-in search
+## Remove the built-in search {id="remove-the-built-in-search"}
 
 Delete `search.json` (or any file with `layout: search-index`) from your site. When the theme cannot find the search index, it removes the built-in search form from the header automatically.
 
-## Add the search page
+## Add the search page {id="add-the-search-page"}
 
 Create a new page for your search (e.g., `search.md`). Add the Pagefind UI container, keeping it hidden by default to provide a no-JavaScript fallback.
 
@@ -31,7 +31,7 @@ Create a new page for your search (e.g., `search.md`). Add the Pagefind UI conta
 </script>
 ```
 
-## Link to it
+## Link to it {id="link-to-it"}
 
 Add the new search page to your `_data/navigation.yml`:
 
@@ -41,7 +41,7 @@ main:
     url: /search/
 ```
 
-## Run Pagefind in your workflow
+## Run Pagefind in your workflow {id="run-pagefind-in-your-workflow"}
 
 After your Jekyll build step in your GitHub Actions workflow, run the Pagefind CLI on the output directory:
 
