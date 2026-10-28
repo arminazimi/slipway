@@ -1,0 +1,109 @@
+.sl-compare {
+  margin-block: 1.5rem;
+}
+.sl-compare-pros-cons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.sl-compare-pros,
+.sl-compare-cons {
+  flex: 1 1 300px;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--bd);
+}
+.sl-compare-pros {
+  --bg: var(--sl-bg-success, #e6f6e6);
+  --bd: var(--sl-bd-success, #badbcc);
+  --fg: var(--sl-fg-success, #0f5132);
+  background-color: var(--bg);
+  color: var(--fg);
+}
+.sl-compare-cons {
+  --bg: var(--sl-bg-danger, #f8d7da);
+  --bd: var(--sl-bd-danger, #f5c2c7);
+  --fg: var(--sl-fg-danger, #842029);
+  background-color: var(--bg);
+  color: var(--fg);
+}
+@media (prefers-color-scheme: dark) {
+  .sl-compare-pros {
+    --bg: var(--sl-bg-success-dark, #0f5132);
+    --bd: var(--sl-bd-success-dark, #0f5132);
+    --fg: var(--sl-fg-success-dark, #d1e7dd);
+  }
+  .sl-compare-cons {
+    --bg: var(--sl-bg-danger-dark, #842029);
+    --bd: var(--sl-bd-danger-dark, #842029);
+    --fg: var(--sl-fg-danger-dark, #f8d7da);
+  }
+}
+.sl-compare ul {
+  list-style: none;
+  padding-inline-start: 0;
+  margin: 0;
+}
+.sl-compare li {
+  display: flex;
+  gap: 0.5rem;
+  margin-block-end: 0.5rem;
+}
+.sl-compare li:last-child {
+  margin-block-end: 0;
+}
+.sl-compare .sl-icon {
+  flex-shrink: 0;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-block-start: 0.125rem;
+}
+.sl-compare-table-wrapper {
+  overflow-x: auto;
+}
+.sl-compare-matrix table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  text-align: start;
+}
+.sl-compare-matrix th,
+.sl-compare-matrix td {
+  padding: 0.75rem;
+  border: 1px solid var(--bd, var(--sl-bd, #dee2e6));
+}
+.sl-compare-matrix th {
+  background-color: var(--bg, var(--sl-bg-muted, #f8f9fa));
+  font-weight: 600;
+}
+.sl-compare-cell-yes,
+.sl-compare-cell-no,
+.sl-compare-cell-partial {
+  text-align: center;
+}
+.sl-compare-cell-yes {
+  color: var(--sl-fg-success, #0f5132);
+}
+.sl-compare-cell-no {
+  color: var(--sl-fg-danger, #842029);
+}
+.sl-compare-cell-partial {
+  color: var(--sl-fg-warning, #664d03);
+}
+@media (prefers-color-scheme: dark) {
+  .sl-compare-matrix th,
+  .sl-compare-matrix td {
+    --bd: var(--sl-bd-dark, #495057);
+  }
+  .sl-compare-matrix th {
+    --bg: var(--sl-bg-muted-dark, #212529);
+  }
+  .sl-compare-cell-yes {
+    color: var(--sl-fg-success-dark, #d1e7dd);
+  }
+  .sl-compare-cell-no {
+    color: var(--sl-fg-danger-dark, #f8d7da);
+  }
+  .sl-compare-cell-partial {
+    color: var(--sl-fg-warning-dark, #fff3cd);
+  }
+}

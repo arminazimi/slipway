@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/compare.schema.json",
+  "title": "Comparison Block",
+  "description": "A pros/cons pair or a feature matrix with yes, no, and partial.",
+  "type": "object",
+  "properties": {
+    "cons": {
+      "type": "array",
+      "description": "A list of negative points (cons).",
+      "items": { "type": "string" }
+    },
+    "features": {
+      "type": "array",
+      "description": "A list of features to compare. Each feature can have a label and values.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The name of the feature."
+          },
+          "values": {
+            "type": "array",
+            "description": "The values for this feature across the options being compared.",
+            "items": {
+              "type": "string",
+              "enum": ["yes", "no", "partial", ""]
+            }
+          }
+        },
+        "required": ["label", "values"],
+        "additionalProperties": false
+      }
+    },
+    "headers": {
+      "type": "array",
+      "description": "The headers for the feature matrix.",
+      "items": { "type": "string" }
+    },
+    "pros": {
+      "type": "array",
+      "description": "A list of positive points (pros).",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

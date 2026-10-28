@@ -1,0 +1,13 @@
+title: My Résumé
+lang: en
+remote_theme: arminazimi/slipway
+plugins:
+  - jekyll-remote-theme
+slipway:
+  languages:
+    - code: en
+      name: English
+      prefix: /
+    - code: fa
+      name: فارسی
+      prefix: /fa
