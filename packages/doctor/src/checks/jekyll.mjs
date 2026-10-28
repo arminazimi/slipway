@@ -9,6 +9,13 @@ import * as rootLinks from "./root-links.mjs";
 /** The files of starter-files/ in the repository, except its README: every site copies them. */
 export const stubs = [".vscode/settings.json", "404.md", "AGENTS.md", "search.json"];
 
+/**
+ * Files Slipway generates at a fixed URL that a site may write itself (with or without front matter), as
+ * Evergreen does with its own tools. A site's own copy replaces Slipway's stub, so none of these is ever a
+ * required stub; `docs/site-files.md` lists which mode serves each URL.
+ */
+export const siteFiles = ["llms-full.txt", "llms.txt", "robots.txt", "sitemap.xml"];
+
 /** The keys of _includes/i18n-builtin.html: the theme has English, Persian, Arabic, and Hebrew for each of them. */
 export const builtinKeys = [
   "about_author",
@@ -123,8 +130,9 @@ export const checks = {
   "jekyll.stubs": (site) =>
     result(
       stubs
+        .filter((path) => !siteFiles.includes(path))
         .filter((path) => !site.isFile(site.source, path))
-        .map((path) => ({ in: "source", file: path, message: "is missing", fix: `copy starter-files/${path} from the Slipway repository` })),
+        .map((path) => ({ in: "source", file: path, message: "is missing", fix: `copy starter-files/${path} from the Slipway repository, or write your own ${path}` })),
     ),
 
   "jekyll.deprecated": (site, { deprecations = packagedDeprecations() } = {}) =>

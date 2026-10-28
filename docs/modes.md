@@ -43,7 +43,7 @@ Only rows with a decision record are filled in. The other planned features (sear
 
 ## Starter files
 
-A new site copies `starter-files/` once, except its README. Only `search.json` and `404.md` are output stubs; `AGENTS.md` and `.vscode/settings.json` help authors and agents. The stubs contain front matter only, selecting layouts shipped by the theme.
+A new site copies `starter-files/` once, except its README. Only `search.json` and `404.md` are output stubs; `AGENTS.md` and `.vscode/settings.json` help authors and agents. The stubs contain front matter only, selecting layouts shipped by the theme. A site that writes any generated file itself keeps its own copy: [site-files.md](site-files.md) lists which files Slipway generates and which a site may own.
 
 Enable the GitHub Pages plugins in `_config.yml`:
 
