@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { root } from "../theme/tokens.mjs";
-import { bumpGemspec, gemspecVersion, main, prepare, readFragments, releaseChangelog, releaseNotes, sections, tagMatches } from "./prepare.mjs";
+import { bumpGemspec, bumpLockfile, gemspecVersion, lockfiles, main, prepare, readFragments, releaseChangelog, releaseNotes, sections, tagMatches } from "./prepare.mjs";
 
 const gemspec = 'Gem::Specification.new do |spec|\n  spec.name = "slipway-theme"\n  spec.version = "0.1.0"\nend\n';
 const changelog = `# Changelog
@@ -27,10 +27,16 @@ Intro.
 [0.1.0]: https://github.com/arminazimi/slipway/releases/tag/v0.1.0
 `;
 
-/** A temp copy of the real gemspec and CHANGELOG.md. */
+/** A temp copy of the gemspec, changelog, and lockfiles, so `prepare` has a whole release tree to work on. */
 function copy() {
   const dir = mkdtempSync(join(tmpdir(), "slipway-release-test-"));
-  for (const file of ["slipway-theme.gemspec", "CHANGELOG.md"]) copyFileSync(join(root, file), join(dir, file));
+  writeFileSync(join(dir, "slipway-theme.gemspec"), gemspec);
+  writeFileSync(join(dir, "CHANGELOG.md"), changelog);
+  for (const file of lockfiles) {
+    const dest = join(dir, file);
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(join(root, file), dest);
+  }
   return dir;
 }
 
@@ -44,9 +50,32 @@ const quiet = (fn) => {
   }
 };
 
-test("the real gemspec has a version and the real changelog an Unreleased section", () => {
-  assert.match(gemspecVersion(readFileSync(join(root, "slipway-theme.gemspec"), "utf8")), /^\d+\.\d+\.\d+$/);
-  assert.ok(sections(readFileSync(join(root, "CHANGELOG.md"), "utf8")).some((s) => s.name === "Unreleased"));
+test("the real gemspec has a version and the lockfiles agree with it", () => {
+  const version = gemspecVersion(readFileSync(join(root, "slipway-theme.gemspec"), "utf8"));
+  assert.match(version, /^\d+\.\d+\.\d+$/);
+  for (const file of lockfiles) {
+    const lock = readFileSync(join(root, file), "utf8");
+    assert.ok(lock.includes(`slipway-theme (${version})`), `${file} records a different version, and bundler frozen mode fails`);
+  }
+});
+
+test("bumpLockfile sets the version on both lines and leaves the other gems alone", () => {
+  const lock = ["PATH", "  remote: .", "  specs:", "    slipway-theme (0.1.0)", "      jekyll (>= 3.9, < 5.0)", "", "GEM", "  remote: https://rubygems.org/", "  specs:", "    jekyll (4.3.4)", "", "DEPENDENCIES", "  slipway-theme!", "", "  slipway-theme (0.1.0)", ""].join("\n");
+  const next = bumpLockfile(lock, "0.2.0");
+  assert.deepEqual(next.match(/^ {2,4}slipway-theme \(\d[^)]*\)$/gm), ["    slipway-theme (0.2.0)", "  slipway-theme (0.2.0)"]);
+  assert.ok(next.includes("jekyll (4.3.4)"), "another gem changed");
+  assert.ok(next.includes("jekyll (>= 3.9, < 5.0)"), "a requirement changed");
+  assert.throws(() => bumpLockfile("GEM\n  specs:\n    jekyll (4.3.4)\n", "0.2.0"), /no slipway-theme version line/);
+});
+
+test("prepare bumps both lockfiles with the gemspec", () => {
+  const dir = withFragments({ "1.md": "A change." });
+  prepare({ version: "9.0.0", dir, date: "2026-11-01" });
+  for (const file of lockfiles) {
+    const lock = readFileSync(join(dir, file), "utf8");
+    assert.ok(lock.includes(`slipway-theme (9.0.0)`), file);
+    assert.ok(!lock.includes("slipway-theme (0.1.0)"), `${file} still records the old version`);
+  }
 });
 
 test("bumpGemspec sets a newer version and refuses an older or invalid one", () => {
