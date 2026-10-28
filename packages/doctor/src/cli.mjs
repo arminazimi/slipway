@@ -1,14 +1,12 @@
 // slipway doctor <dir> [--build <dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
 // Exit codes: 0 the target level is reached (with no --level: no MUST fails), 1 findings, 2 usage error.
-import { relative, resolve, sep, dirname, join } from "node:path";
-import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { relative, resolve, sep } from "node:path";
 import { doctor, levels } from "./doctor.mjs";
 import { describe, toSarif } from "./report.mjs";
 import { applyFixes } from "./fix.mjs";
 import * as infoCommand from "./commands/info.mjs";
 import * as completionCommand from "./commands/completion.mjs";
-import { handleExplain } from "./explain.mjs";
+import * as explainCommand from "./explain.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
@@ -120,10 +118,7 @@ export async function main(args, { log = console.log, error = console.error } = 
     return 2;
   }
   const { options } = parsed;
-  if (options.explainGiven) {
-    return handleExplain(options.explain, { log, error });
-  }
-
+  if (options.explainGiven) return explainCommand.main(options.explain, { log, error });
   const folders = { source: resolve(options.source), build: options.build ? resolve(options.build) : null };
   let report;
   try {

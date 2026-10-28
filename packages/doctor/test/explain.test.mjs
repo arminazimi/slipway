@@ -2,9 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { readdirSync, renameSync, existsSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { main as explain } from "../src/explain.mjs";
 
 const bin = fileURLToPath(new URL("../bin/slipway.mjs", import.meta.url));
+const packageDir = fileURLToPath(new URL("..", import.meta.url));
 
 test("cli: --explain prints a check's page", () => {
   const result = spawnSync(process.execPath, [bin, "doctor", "--explain", "ae.agents-md.layout"], { encoding: "utf8" });
@@ -31,35 +33,37 @@ test("cli: --explain unknown ID gives exit code 2 and lists closest", () => {
   assert.match(result.stderr, /Did you mean:\n\s+ae\.agents-md\.layout/);
 });
 
-test("cli: npm pack output includes docs/checks pages", () => {
-  const doctorDir = fileURLToPath(new URL("..", import.meta.url));
-  const result = spawnSync("npm", ["pack", "--dry-run", "--json"], { encoding: "utf8", cwd: doctorDir });
-  if (result.error && result.error.code === 'ENOENT') {
+test("cli: --explain says so and exits 2 when docs/checks cannot be read", async () => {
+  let stdout = "";
+  let stderr = "";
+  const code = await explain("ae.agents-md.layout", {
+    log: (msg) => { stdout += msg + "\n"; },
+    error: (msg) => { stderr += msg + "\n"; },
+    docs: fileURLToPath(new URL("./does-not-exist", import.meta.url)),
+  });
+  assert.equal(code, 2);
+  assert.equal(stdout, "");
+  assert.match(stderr, /cannot read the check docs at .*does-not-exist/);
+});
+
+test("pack: the tarball ships docs/checks, so --explain works from the published package", () => {
+  const npmVersion = spawnSync("npm", ["--version"], { encoding: "utf8", shell: process.platform === "win32" });
+  if (npmVersion.error || npmVersion.status !== 0) {
     console.log("SKIP: npm is not installed here");
     return;
   }
-  assert.equal(result.status, 0);
-  const out = JSON.parse(result.stdout);
-  const files = out[0].files.map(f => f.path);
-  assert.ok(files.includes("docs/checks/ae.agents-md.layout.md"));
-});
 
-test("cli: --explain errors cleanly when docs/checks cannot be read", () => {
-  // We mock a situation where docs/checks is unreadable by mocking readdirSync?
-  // No, actually wait, the prompt says "New test asserts the clear error: exit 2 and no stdout when docs/checks cannot be read (reproduces the bug path)."
-  // We can rename docs to docs-hidden temporarily and run the cli.
+  const result = spawnSync("npm", ["pack", "--dry-run", "--json"], { cwd: packageDir, encoding: "utf8", shell: process.platform === "win32", maxBuffer: 32 * 1024 * 1024 });
+  assert.equal(result.status, 0, result.stderr);
+  const packed = JSON.parse(result.stdout)[0];
+  const files = packed.files.map((f) => f.path);
 
+  // The page --explain reads for `ae.agents-md.layout` must be in the tarball.
+  assert.ok(files.includes("docs/checks/ae.agents-md.layout.md"), "docs/checks/ae.agents-md.layout.md is not in the tarball");
 
-  const docsDir = fileURLToPath(new URL("../docs", import.meta.url));
-  const hiddenDocsDir = fileURLToPath(new URL("../docs-hidden", import.meta.url));
-
-  try {
-    renameSync(docsDir, hiddenDocsDir);
-    const result = spawnSync(process.execPath, [bin, "doctor", "--explain"], { encoding: "utf8" });
-    assert.equal(result.status, 2);
-    assert.equal(result.stdout, "");
-    assert.match(result.stderr, /slipway: cannot read the check docs at .*docs\/checks:/);
-  } finally {
-    if (existsSync(hiddenDocsDir)) renameSync(hiddenDocsDir, docsDir);
+  // And every check page ships with it.
+  const pages = readdirSync(new URL("../docs/checks", import.meta.url)).filter((f) => f.endsWith(".md"));
+  for (const page of pages) {
+    assert.ok(files.includes(`docs/checks/${page}`), `docs/checks/${page} is not in the tarball`);
   }
 });

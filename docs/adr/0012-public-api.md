@@ -53,6 +53,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.analytics.goatcounter` | yes | `analytics.test.mjs` |
 | `slipway.analytics.umami.website_id` | yes | `analytics.test.mjs` |
 | `slipway.analytics.umami.url` | yes | `analytics.test.mjs` |
+| `slipway.source_dir` | yes | `config.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
 | `slipway.tokens.text` | yes | `config.test.mjs` |
