@@ -1,0 +1,5 @@
+@layer base {
+  :root:where([lang="yi"], [lang^="yi-"]) {
+    font-family: var(--sl-font-hebrew);
+  }
+}
