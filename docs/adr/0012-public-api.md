@@ -73,6 +73,10 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 
 ### Front matter
 
+| `changelog`, `feed_url` | `changelog`, `changelog-feed` | yes | `kit-changelog.test.mjs` |
+
+`changelog` selects the source page for `changelog-feed`; `feed_url` links a changelog page to its Atom feed (`kit-changelog.test.mjs`).
+
 | Field | Layouts | Public | Tested by |
 | --- | --- | --- | --- |
 | `layout`, `title`, `description` | all | yes | every layout test |
@@ -113,7 +117,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `sourcemap` | yes | `sourcemap.test.mjs` |
 | `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `glossary` | yes | `kit-glossary.test.mjs` |
-| `changelog` | yes | `kit-changelog.test.mjs` |
+| `changelog`, `changelog-feed` | yes | `kit-changelog.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes

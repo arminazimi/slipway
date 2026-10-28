@@ -1,6 +1,7 @@
 ---
 layout: changelog
 title: Changelog
+feed_url: /releases.xml
 ---
 ## [Unreleased]
 

@@ -17,6 +17,11 @@ for (const mode of ["gem", "template"]) {
     assert.match(html, /<h2 id="1-0-0">/i);
     assert.match(html, /<link rel="stylesheet" href="\/assets\/css\/components\/changelog\.css"[^>]*>/);
     assert.match(html, /<a href="#1-0-0">1\.0\.0<\/a>/);
-    assert.match(html, /<a href="\/index\.xml" class="sl-changelog-feed">/);
+    assert.match(html, /<a href="\/releases\.xml" class="sl-changelog-feed"/);
+    const feed = readFileSync(join(out, "releases.xml"), "utf8");
+    assert.match(feed, /<feed xmlns="http:\/\/www\.w3\.org\/2005\/Atom">/);
+    assert.match(feed, /<title>1\.0\.0<\/title>/);
+    assert.match(feed, /2024-01-01T00:00:00/);
+    assert.doesNotMatch(feed, /<title>Unreleased<\/title>/);
   });
 }

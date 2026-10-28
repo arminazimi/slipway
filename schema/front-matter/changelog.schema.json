@@ -1,10 +1,22 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/arminazimi/slipway/schema/front-matter/changelog.schema.json",
-  "title": "Slipway front matter: changelog layout",
-  "description": "The front matter of a changelog page.",
+  "title": "Slipway front matter: changelog layouts",
+  "description": "A Keep a Changelog page or its Atom feed of dated releases.",
   "type": "object",
+  "allOf": [
+    {
+      "$ref": "base.schema.json"
+    }
+  ],
   "properties": {
-  },
-  "additionalProperties": true
+    "changelog": {
+      "$ref": "base.schema.json#/$defs/url",
+      "description": "The changelog page URL whose releases a changelog-feed page exports."
+    },
+    "feed_url": {
+      "$ref": "base.schema.json#/$defs/url",
+      "description": "The URL of a page using the changelog-feed layout."
+    }
+  }
 }
