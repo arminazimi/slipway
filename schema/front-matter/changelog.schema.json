@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/front-matter/changelog.schema.json",
+  "title": "Slipway front matter: changelog layout",
+  "description": "The front matter of a changelog page.",
+  "type": "object",
+  "properties": {
+  },
+  "additionalProperties": true
+}

@@ -111,6 +111,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `sourcemap` | yes | `sourcemap.test.mjs` |
 | `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `glossary` | yes | `kit-glossary.test.mjs` |
+| `changelog` | yes | `kit-changelog.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes

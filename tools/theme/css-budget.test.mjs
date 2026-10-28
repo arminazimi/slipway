@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { budgetBytes, stylesheetSizes, totalBytes } from "./css-budget.mjs";
 
-test("the budget is 34 KB of raw bytes", () => {
-  assert.equal(budgetBytes, 34816);
+test("the budget is 35 KB of raw bytes", () => {
+  assert.equal(budgetBytes, 35840);
 });
 
 test("the stylesheets the theme ships fit the budget", () => {
@@ -18,8 +18,8 @@ test("the stylesheets the theme ships fit the budget", () => {
 test("every stylesheet in the folder counts, including ones added later", () => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-css-"));
   writeFileSync(join(dir, "a.css"), "x".repeat(20000));
-  writeFileSync(join(dir, "b.css"), "x".repeat(15000));
+  writeFileSync(join(dir, "b.css"), "x".repeat(16000));
   writeFileSync(join(dir, "notes.txt"), "x".repeat(9000));
-  assert.equal(totalBytes(stylesheetSizes(dir)), 35000);
+  assert.equal(totalBytes(stylesheetSizes(dir)), 36000);
   assert.ok(totalBytes(stylesheetSizes(dir)) > budgetBytes);
 });

@@ -1,0 +1,56 @@
+.sl-changelog-layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sl-spacing-6);
+}
+
+@media (min-width: 48rem) {
+  .sl-changelog-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .sl-changelog-main {
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  .sl-changelog-sidebar {
+    flex: 0 0 16rem;
+    position: sticky;
+    inset-block-start: var(--sl-spacing-4);
+  }
+}
+
+.sl-changelog-toc {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--sl-spacing-4) 0;
+}
+
+.sl-changelog-toc li {
+  margin-block-end: var(--sl-spacing-2);
+}
+
+.sl-changelog-toc a {
+  color: var(--sl-color-text-muted);
+  text-decoration: none;
+}
+
+.sl-changelog-toc a:hover {
+  color: var(--sl-color-text);
+  text-decoration: underline;
+}
+
+.sl-changelog-feed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sl-spacing-2);
+  color: var(--sl-color-text-muted);
+  text-decoration: none;
+  font-size: var(--sl-font-size-sm);
+}
+
+.sl-changelog-feed:hover {
+  color: var(--sl-color-text);
+}

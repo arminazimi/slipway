@@ -1,0 +1,39 @@
+---
+layout: base
+---
+{% include component-css.html name="changelog" %}
+<article class="sl-page sl-changelog">
+  <header class="sl-page-header">
+    {% include breadcrumbs.html %}
+    <h1>{{ page.title }}</h1>{% include copy-page.html %}
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+
+  <div class="sl-changelog-layout">
+    <div class="sl-changelog-main">
+      {{ content }}
+    </div>
+
+    <aside class="sl-changelog-sidebar">
+      <nav aria-labelledby="sl-versions-title">
+        <h2 id="sl-versions-title" class="sl-sr-only">{% include t.html key='versions' %}</h2>
+        <ul class="sl-changelog-toc">
+          {%- assign sl_sections = content | split: '<h2 id="' -%}
+          {%- for sl_section in sl_sections -%}
+            {%- if forloop.first %}{% continue %}{% endif -%}
+            {%- assign sl_id = sl_section | split: '"' | first -%}
+            {%- assign sl_title_parts = sl_section | split: '>' -%}
+            {%- assign sl_title = sl_title_parts[1] | split: '<' | first -%}
+            <li><a href="#{{ sl_id }}">{{ sl_title }}</a></li>
+          {%- endfor -%}
+        </ul>
+        {%- assign sl_feed_url = page.url | replace: '.html', '.xml' -%}
+        <a href="{{ sl_feed_url | relative_url }}" class="sl-changelog-feed">
+          {% include icons/rss.svg %} {% include t.html key='releases' %}
+        </a>
+      </nav>
+    </aside>
+  </div>
+</article>
