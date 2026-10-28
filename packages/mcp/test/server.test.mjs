@@ -28,11 +28,11 @@ test("initialize names the server", async (t) => {
 
 test("tools/list returns exactly the tools with JSON Schema inputs", async (t) => {
   const { tools } = await (await connect(docs, t)).listTools();
-  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "find_text", "findings_for_file", "list_blocks", "list_layouts", "list_pages", "preview", "read_config", "set_token", "source_for_url"]);
+  assert.deepEqual(tools.map((tool) => tool.name).sort(), ["add_navigation_item", "create_page", "doctor", "find_text", "findings_for_file", "list_blocks", "list_layouts", "list_pages", "preview", "read_config", "set_token", "source_for_url", "validate_page"]);
   for (const tool of tools) {
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
-    if (["doctor", "find_text", "findings_for_file", "list_blocks", "list_layouts", "list_pages", "read_config", "source_for_url"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
+    if (["doctor", "find_text", "findings_for_file", "list_blocks", "list_layouts", "list_pages", "read_config", "source_for_url", "validate_page"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
   }
 });
 
@@ -211,4 +211,23 @@ test("find_text searches content and returns file, line, and heading", async (t)
   assert.equal(data.matches[0].line, 6);
   assert.equal(data.matches[0].heading, "Welcome");
   assert.match(data.matches[0].match, /specific text/);
+});
+
+test("validate_page validates front matter", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+  writeFileSync(join(site, "content-schemas.json"), JSON.stringify({
+    version: "0.1",
+    schemas: [{ files: ["index.md"], target: "front-matter", schema: "schema/page.schema.json" }]
+  }));
+  mkdirSync(join(site, "schema"));
+  writeFileSync(join(site, "schema/page.schema.json"), JSON.stringify({
+    $schema: "https://json-schema.org/draft/2020-12/schema", type: "object", required: ["title"], properties: { title: { type: "string" } }, additionalProperties: false
+  }));
+  writeFileSync(join(site, "index.md"), "---\nlayout: home\n---\n");
+  const client = await connect(site, t);
+  const result = await client.callTool({ name: "validate_page", arguments: { file: "index.md" } });
+  assert.ok(!result.isError, result.content[0].text);
+  const data = json(result);
+  assert.equal(data.errors.length, 2);
 });

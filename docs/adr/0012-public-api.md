@@ -53,6 +53,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.analytics.goatcounter` | yes | `analytics.test.mjs` |
 | `slipway.analytics.umami.website_id` | yes | `analytics.test.mjs` |
 | `slipway.analytics.umami.url` | yes | `analytics.test.mjs` |
+| `slipway.source_dir` | yes | `config.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
 | `slipway.tokens.text` | yes | `config.test.mjs` |
@@ -85,6 +86,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
 | `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
 | `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
+| `status`, `since`, `replaced_by` | all | yes | `kit-status-banner.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
 | `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |

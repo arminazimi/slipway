@@ -1,0 +1,19 @@
+{%- if page.status -%}
+{%- include component-css.html name="page-status" -%}
+<div class="sl-page-status sl-page-status-{{ page.status }}">
+  {%- capture sl_status_text -%}
+    {%- case page.status -%}
+      {%- when 'experimental' -%}{%- include t.html key="status_experimental" -%}
+      {%- when 'beta' -%}{%- include t.html key="status_beta" -%}
+      {%- when 'deprecated' -%}{%- include t.html key="status_deprecated" -%}
+    {%- endcase -%}
+  {%- endcapture -%}
+  <strong>{{ sl_status_text }}</strong>
+  {%- if page.status == 'deprecated' and page.since -%}
+    <span> {% include t.html key="status_since" %} {{ page.since }}.</span>
+  {%- endif -%}
+  {%- if page.status == 'deprecated' and page.replaced_by -%}
+    <span> {% include t.html key="status_replaced_by" %} <a href="{{ page.replaced_by | relative_url }}">{{ page.replaced_by }}</a>.</span>
+  {%- endif -%}
+</div>
+{%- endif -%}

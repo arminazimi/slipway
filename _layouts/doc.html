@@ -46,6 +46,7 @@ layout: base
 
   <article class="sl-doc-body" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
     {% include breadcrumbs.html %}
+    {% include page-status.html %}
     <h1>{{ page.title }}</h1>{% include copy-page.html %}
     {%- assign sl_parts = content | split: '<h' -%}
     {%- capture sl_toc_html -%}

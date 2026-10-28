@@ -16,6 +16,7 @@ export const builtinKeys = [
   "search_count", "theme", "mode_auto", "mode_light", "mode_dark", "docs_nav", "on_this_page", "previous", "next",
   "pager", "post_pager", "latest_posts", "min_read", "language", "copy", "copy_page_md", "copied", "copy_failed", "edit_label", "edit_prompt",
   "by", "and", "comma", "home", "breadcrumbs", "about_author", "posts", "series", "series_part", "series_pager", "related_posts", "links", "social_links", "yes", "no", "partial",
+  "status_beta", "status_deprecated", "status_experimental", "status_replaced_by", "status_since",
 ];
 
 /** Folders that hold theme code or generated files, not content. */

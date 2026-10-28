@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/terminal.schema.json",
+  "title": "Terminal Block",
+  "description": "A terminal session block that marks prompts, commands, and output.",
+  "type": "object",
+  "required": ["commands"],
+  "properties": {
+    "commands": {
+      "type": "string",
+      "description": "The commands executed in the terminal."
+    },
+    "output": {
+      "type": "string",
+      "description": "The output of the commands."
+    },
+    "prompt": {
+      "type": "string",
+      "description": "The prompt string to use.",
+      "default": "$"
+    }
+  },
+  "additionalProperties": false
+}
