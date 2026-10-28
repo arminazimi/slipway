@@ -18,7 +18,8 @@
     "bin",
     "src",
     "spec",
-    "schema"
+    "schema",
+    "docs"
   ],
   "engines": {
     "node": ">=22"

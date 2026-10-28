@@ -1,6 +1,7 @@
-/* Client-side search over the language's search.json. The field is hidden until this script runs, so a page
-   needs no JavaScript to be read. Persian-aware: ي/ك become ی/ک, ZWNJ and diacritics are dropped, digits are
-   Latin. */
+/* Client-side search over the language's search.json. The field is hidden until this script runs, and the
+   index is fetched only when the field is first focused or typed in, so a page needs no JavaScript to be
+   read and pays for the index only when search is used. Persian-aware: ي/ك become ی/ک, ZWNJ and diacritics
+   are dropped, digits are Latin. */
 (function () {
   function normalize(text) {
     return String(text || "")
@@ -22,7 +23,7 @@
     return item[key];
   }
 
-  /* Every query word must appear somewhere; title beats description beats text, and word starts beat the middle. */
+  /* Every query word must appear somewhere; title beats headings beats text, and word starts beat the middle. */
   function search(index, query, limit) {
     var terms = words(query);
     if (!terms.length) return [];
@@ -32,7 +33,7 @@
       var score = 0;
       for (var t = 0; t < terms.length; t++) {
         var s = 0;
-        var parts = [["title", 6], ["description", 3], ["text", 1]];
+        var parts = [["title", 6], ["headings", 3], ["text", 1]];
         for (var p = 0; p < parts.length; p++) {
           var haystack = field(item, parts[p][0]);
           if (haystack.indexOf(" " + terms[t]) >= 0) s += parts[p][1] * 2;
@@ -62,7 +63,7 @@
       if (!loading) {
         loading = fetch(form.getAttribute("data-search"))
           .then(function (r) { return r.json(); })
-          .then(function (data) { index = data; form.hidden = false; return data; });
+          .then(function (data) { index = data; return data; });
       }
       return loading;
     }
@@ -82,7 +83,7 @@
         var note = document.createElement("span");
         a.href = item.url;
         a.textContent = item.title;
-        note.textContent = item.description || item.text.slice(0, 100);
+        note.textContent = item.text.slice(0, 100);
         li.appendChild(a);
         li.appendChild(note);
         list.appendChild(li);
@@ -91,8 +92,8 @@
 
     function links() { return Array.prototype.slice.call(list.querySelectorAll("a")); }
 
-    input.addEventListener("input", function () { show(index ? search(index, input.value) : []); });
-    input.addEventListener("focus", function () { load().then(function () { show(search(index, input.value)); }, function () {}); });
+    input.addEventListener("input", firstUse);
+    input.addEventListener("focus", firstUse);
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       var first = links()[0];
@@ -106,7 +107,8 @@
       else if (event.key === "ArrowUp" && at >= 0) { event.preventDefault(); (items[at - 1] || input).focus(); }
     });
     document.addEventListener("click", function (event) { if (!form.contains(event.target)) panel.hidden = true; });
-    load().then(function () {}, function () {});
+    form.hidden = false;
+    function firstUse() { load().then(function () { show(search(index, input.value)); }, function () {}); }
   }
 
   globalThis.slipwaySearch = { normalize: normalize, search: search };

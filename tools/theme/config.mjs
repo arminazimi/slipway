@@ -26,7 +26,7 @@ export function validateExampleConfigs(dir = join(root, "examples")) {
 }
 
 // site.* variables that Jekyll computes rather than reads from _config.yml; data files have their own schemas.
-const computed = new Set(["adr", "github", "repository_url", "categories", "collections", "data", "documents", "html_pages", "pages", "posts", "related_posts", "static_files", "tags", "time"]);
+const computed = new Set(["github", "repository_url", "categories", "collections", "data", "documents", "html_pages", "pages", "posts", "related_posts", "static_files", "tags", "time"]);
 const liquidMethods = new Set(["first", "last", "size"]);
 
 function hasPath(node, path) {
