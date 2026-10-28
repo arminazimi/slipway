@@ -1,0 +1,10 @@
+{
+  "version": "0.1",
+  "schemas": [
+    {
+      "files": ["*.md"],
+      "target": "front-matter",
+      "schema": "schema/page.schema.json"
+    }
+  ]
+}

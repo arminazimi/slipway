@@ -8,10 +8,13 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { root } from "../theme/build.mjs";
+import { root, bundleAvailable } from "../theme/build.mjs";
 
 /** The stubs a site source folder needs, as { path: text }. Throws when Ruby fails. */
 export function generateTwins(site) {
+  if (!bundleAvailable()) {
+    return {};
+  }
   const result = spawnSync("bundle", ["exec", "ruby", join(root, "tools/twins/twins.rb"), resolve(site)], {
     cwd: root,
     encoding: "utf8",
@@ -38,6 +41,10 @@ export function committedTwins(site) {
 }
 
 export function main(args = process.argv.slice(2)) {
+  if (!bundleAvailable()) {
+    console.log("SKIP: install Ruby and run bundle install to manage twins");
+    return;
+  }
   const check = args.includes("--check");
   const site = resolve(args.find((arg) => !arg.startsWith("--")) ?? ".");
   const stubs = generateTwins(site);
