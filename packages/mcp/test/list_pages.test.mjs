@@ -1,60 +1,93 @@
-import { test, before, after } from "node:test";
+import { test } from "node:test";
 import assert from "node:assert/strict";
-import { cpSync, rmSync } from "node:fs";
+import fs, { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { listPages } from "../src/tools/list_pages.mjs";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const root = fileURLToPath(new URL("../../../", import.meta.url));
-const testDir = join(root, ".tmp/test-list-pages");
+const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
+const docs = fileURLToPath(new URL("../../../examples/docs", import.meta.url));
 
-before(() => {
-  rmSync(testDir, { recursive: true, force: true });
-  cpSync(join(root, "examples/docs"), testDir, { recursive: true });
-});
+async function connect(site, t) {
+  const transport = new StdioClientTransport({ command: "node", args: [bin, site] });
+  const client = new Client({ name: "slipway-test", version: "0.0.0" }, { capabilities: {} });
+  await client.connect(transport);
+  if (t) t.after(() => transport.close());
+  return client;
+}
 
-after(() => {
-  rmSync(testDir, { recursive: true, force: true });
-});
+const json = (result) => JSON.parse(result.content[0].text);
 
-test("lists pages without filters", () => {
-  const result = listPages(testDir);
-  assert.ok(Array.isArray(result.pages));
-  assert.ok(result.pages.length > 0);
+test("list_pages lists all pages in examples/docs", async (t) => {
+  const tmpDocs = mkdtempSync(join(tmpdir(), "slipway-mcp-docs-"));
+  t.after(() => rmSync(tmpDocs, { recursive: true, force: true }));
+  fs.cpSync(docs, tmpDocs, { recursive: true });
 
-  const index = result.pages.find((p) => p.file === "index.md");
-  assert.ok(index, "index.md should be in the list");
+  const client = await connect(tmpDocs, t);
+  const result = await client.callTool({ name: "list_pages", arguments: {} });
+
+  assert.ok(!result.isError, result.content?.[0]?.text);
+  const data = json(result);
+  assert.ok(Array.isArray(data.pages));
+
+  const index = data.pages.find((p) => p.source === "index.md");
+  assert.ok(index);
   assert.equal(index.url, "/");
   assert.equal(index.layout, "home");
-
-  const guideIndex = result.pages.find((p) => p.file === "guide/index.md");
-  assert.ok(guideIndex, "guide/index.md should be in the list");
-  assert.equal(guideIndex.url, "/guide/");
-  assert.equal(guideIndex.layout, "doc");
-  assert.equal(guideIndex.title, "Overview");
-
-  const configure = result.pages.find((p) => p.file === "guide/configure.md");
-  assert.ok(configure, "guide/configure.md should be in the list");
-  assert.equal(configure.url, "/guide/configure/");
+  assert.equal(index.title, "Docs for a Slipway site");
 });
 
-test("filters by layout", () => {
-  const result = listPages(testDir, { layout: "home" });
-  assert.equal(result.pages.length, 1);
-  assert.equal(result.pages[0].file, "index.md");
+test("list_pages filters by folder, layout, and lang", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
+
+  writeFileSync(join(site, "index.md"), "---\nlayout: home\ntitle: Home\nlang: en\n---\n");
+
+  mkdirSync(join(site, "about"));
+  writeFileSync(join(site, "about/index.md"), "---\nlayout: page\ntitle: About\nlang: en\n---\n");
+
+  mkdirSync(join(site, "fr"));
+  writeFileSync(join(site, "fr/index.md"), "---\nlayout: home\ntitle: Accueil\nlang: fr\n---\n");
+
+  const client = await connect(site, t);
+
+  // Filter by layout
+  const resLayout = await client.callTool({ name: "list_pages", arguments: { layout: "page" } });
+  assert.ok(!resLayout.isError);
+  const dataLayout = json(resLayout);
+  assert.equal(dataLayout.pages.length, 1);
+  assert.equal(dataLayout.pages[0].source, "about/index.md");
+
+  // Filter by lang
+  const resLang = await client.callTool({ name: "list_pages", arguments: { lang: "fr" } });
+  assert.ok(!resLang.isError);
+  const dataLang = json(resLang);
+  assert.equal(dataLang.pages.length, 1);
+  assert.equal(dataLang.pages[0].source, "fr/index.md");
+
+  // Filter by folder
+  const resFolder = await client.callTool({ name: "list_pages", arguments: { folder: "about" } });
+  assert.ok(!resFolder.isError);
+  const dataFolder = json(resFolder);
+  assert.equal(dataFolder.pages.length, 1);
+  assert.equal(dataFolder.pages[0].source, "about/index.md");
 });
 
-test("filters by lang", () => {
-  const result = listPages(testDir, { lang: "fr" }); // no fr pages in examples/docs
-  assert.equal(result.pages.length, 0);
-});
+test("list_pages refuses invalid inputs and outside folder paths", async (t) => {
+  const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
+  t.after(() => rmSync(site, { recursive: true, force: true }));
 
-test("filters by folder", () => {
-  const result = listPages(testDir, { folder: "guide" });
-  assert.ok(result.pages.length > 0);
-  assert.ok(result.pages.every((p) => p.file.startsWith("guide/")));
-});
+  const client = await connect(site, t);
 
-test("rejects folder outside site", () => {
-  assert.throws(() => listPages(testDir, { folder: "../" }), /outside the site/);
+  // Invalid input (non-string)
+  const resBadInput = await client.callTool({ name: "list_pages", arguments: { layout: 123 } });
+  assert.equal(resBadInput.isError, true);
+  assert.match(resBadInput.content[0].text, /must be a string/);
+
+  // Outside folder path
+  const resOutside = await client.callTool({ name: "list_pages", arguments: { folder: "../outside" } });
+  assert.equal(resOutside.isError, true);
+  assert.match(resOutside.content[0].text, /outside the site directory/);
 });
