@@ -76,6 +76,6 @@ features:
   assert.ok(html.includes('sl-compare-cell-partial'), "Should render partial cell");
 
   // Hidden text for a11y
-  assert.ok(html.includes('<span class="sl-visually-hidden">Yes</span>'), "Should render hidden text for yes");
-  assert.ok(html.includes('<span class="sl-visually-hidden">No</span>'), "Should render hidden text for no");
+  assert.ok(html.includes('<span class="sl-sr-only">Yes</span>'), "Should render hidden text for yes");
+  assert.ok(html.includes('<span class="sl-sr-only">No</span>'), "Should render hidden text for no");
 });
