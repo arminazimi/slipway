@@ -38,6 +38,16 @@ export function bumpGemspec(gemspec, version) {
   return gemspec.replace(versionLine, `$1"${version}"`);
 }
 
+/** The lockfiles that record the gem's own version; CI runs bundler in frozen mode, so both must match the gemspec. */
+export const lockfiles = ["Gemfile.lock", join("tools", "theme", "gemfiles", "jekyll4.gemfile.lock")];
+const ownVersion = /^( {2,4}slipway-theme \()[0-9][^)]*(\))$/gm;
+
+export function bumpLockfile(lockfile, version) {
+  const next = lockfile.replace(ownVersion, `$1${version}$2`);
+  if (next === lockfile) throw new Error("the lockfile has no slipway-theme version line");
+  return next;
+}
+
 /** Every `## [name]` section of a Keep a Changelog file, with its body. */
 export function sections(changelog) {
   const found = [...changelog.matchAll(heading)];
@@ -110,6 +120,11 @@ export function prepare({ version, dir = root, date = new Date().toISOString().s
   const nextChangelog = releaseChangelog(readFileSync(changelogFile, "utf8"), text, date, previous, fragments);
   writeFileSync(gemspecFile, nextGemspec);
   writeFileSync(changelogFile, nextChangelog);
+  for (const name of lockfiles) {
+    const file = join(dir, name);
+    if (!existsSync(file)) continue;
+    writeFileSync(file, bumpLockfile(readFileSync(file, "utf8"), text));
+  }
   for (const { file } of fragments) rmSync(join(dir, "changelog.d", file));
   return [
     `git switch -c release/v${text}`,
