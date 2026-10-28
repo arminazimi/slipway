@@ -41,6 +41,23 @@ The design is that you can start in classic mode and move to Actions mode later 
 
 Only rows with a decision record are filled in. The other planned features (search, WebMCP, migration tools) are not placed in a column yet; each task adds its row when it lands.
 
+## Starter files
+
+A new site copies `starter-files/` once, except its README. Only `search.json` and `404.md` are output stubs; `AGENTS.md` and `.vscode/settings.json` help authors and agents. The stubs contain front matter only, selecting layouts shipped by the theme.
+
+Enable the GitHub Pages plugins in `_config.yml`:
+
+```yaml
+plugins:
+  - jekyll-remote-theme # only with remote_theme
+  - jekyll-feed
+  - jekyll-sitemap
+```
+
+They generate `/feed.xml` and `/sitemap.xml` without copied files. `create-slipway` writes this configuration automatically. Set `url` when building outside GitHub Pages. A site with several languages can keep the existing `feed` stubs per language and the `sitemap` stub with `hreflang`, as `examples/minimal` does; the generic plugins do not replace those multilingual features. Tags and archives are optional content pages, not required stubs. Markdown twins and exact source maps remain separate generated files, as described below.
+
+`examples/bare` stays the two-file zero-configuration example from #166. The starter-files test copies the bundle onto that example and builds it, proving the path used by new sites without weakening the zero-configuration check. `examples/minimal` uses the same search and 404 stubs and retains its multilingual feed and sitemap.
+
 ## Limits to know
 
 - **Classic mode cannot get a Markdown page's source from Liquid.** `page.content` is the converted HTML. That is why twins need a stub per page (ADR 0006).
