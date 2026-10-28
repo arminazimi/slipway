@@ -1,33 +1,31 @@
 ---
 layout: base
 ---
-<article class="sl-page sl-links">
+<div class="sl-page sl-links">
   <header class="sl-page-header">
     <h1 class="sl-sr-only">{{ page.title }}</h1>
     {% include author-card.html id=page.author %}
   </header>
 
-  <main id="main" tabindex="-1">
-    {{ content }}
+  {{ content }}
 
-    {% if site.data.links %}
-    <nav aria-label="{% include t.html key='links' %}">
-      <ul class="sl-links-list">
-        {% for link in site.data.links %}
-          <li><a href="{{ link.url | relative_url }}" class="sl-button">{{ link.title }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-    {% endif %}
+  {% if site.data.links %}
+  <nav aria-label="{% include t.html key='links' %}">
+    <ul class="sl-links-list">
+      {% for link in site.data.links %}
+        <li><a href="{{ link.url | relative_url }}" class="sl-button">{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
 
-    {% if site.slipway.social %}
-    <nav aria-label="{% include t.html key='social' %}">
-      <ul class="sl-social-icons">
-        {% for item in site.slipway.social %}
-          <li><a href="{{ item.url }}" aria-label="{{ item.title }}">{% include icons/{{ item.icon }}.svg %}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-    {% endif %}
-  </main>
-</article>
+  {% if site.slipway.social %}
+  <nav aria-label="{% include t.html key='social_links' %}">
+    <ul class="sl-social-icons">
+      {% for item in site.slipway.social %}
+        <li><a href="{{ item.url }}" aria-label="{{ item.title }}">{% include icons/{{ item.icon }}.svg %}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
