@@ -3,10 +3,9 @@ title: Beacon
 description: Documentation for the Beacon deploy CLI, in the shape of a real product's site.
 lang: en
 url: https://example.com
-# No baseurl: Seaworthy verifies the built folder as the site root, so it reads a sitemap entry
-# `https://example.com/beacon/install/` as `<build>/beacon/install/index.html` and calls it missing.
-# Every absolute URL a baseurl site writes (sitemap.xml, llms.txt) fails the same way until the check
-# can pass the site's base path to Seaworthy.
+# No baseurl: every example is built for checking with `--baseurl ""` (tools/theme/build.mjs), and
+# Seaworthy reads the built folder as the site root, so the site-owned sitemap.xml and llms.txt below
+# can only name root URLs. A project-site baseurl would make those two files lie about their own site.
 remote_theme: arminazimi/slipway
 plugins:
   - jekyll-remote-theme
