@@ -24,6 +24,8 @@ export const layoutSchemas = {
   author: "author",
   changelog: "changelog",
   "changelog-feed": "changelog",
+  adr: "adr",
+  "adr-index": "page",
 };
 
 /** Collection folder to schema name, for pages without `layout`. */
