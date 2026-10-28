@@ -13,3 +13,4 @@
 | [0011](0011-standalone-and-the-spec.md) | Slipway 1.0 is standalone: a theme and an agent-editable site spec; Seaworthy integration follows in 1.1 | Accepted |
 | [0012](0012-public-api.md) | The public API under semver: what sites may rely on, and how it is deprecated | Accepted |
 | [0013](0013-astro-adapter.md) | The Astro adapter follows the framework-neutral content model using content loaders and endpoints | Accepted |
+| [0014](0014-evergreen.md) | Evergreen is optional: Slipway may use it and offer it to sites, and the dependency points one way | Accepted |
