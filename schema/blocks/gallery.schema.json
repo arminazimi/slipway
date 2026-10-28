@@ -30,6 +30,11 @@
             "type": "string",
             "description": "Credit or attribution for the image."
           },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "The image's intrinsic height in pixels."
+          },
           "lazy": {
             "type": "boolean",
             "description": "Whether to lazy load the image.",
@@ -42,6 +47,11 @@
           "srcset": {
             "type": "string",
             "description": "A srcset attribute for responsive images."
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "The image's intrinsic width in pixels."
           }
         },
         "additionalProperties": false
