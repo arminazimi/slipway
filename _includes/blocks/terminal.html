@@ -1,0 +1,14 @@
+{%- include component-css.html name="terminal" -%}
+{%- assign nl = "
+" -%}
+{%- assign prompt = include.prompt | default: "$" -%}
+{%- assign cmds = include.commands | split: nl -%}
+<div class="sl-terminal" dir="ltr">
+<pre><code class="sl-commands">
+{%- for cmd in cmds -%}
+<span class="sl-terminal-prompt" data-prompt="{{ prompt }}"></span>{{ cmd }}
+{% endfor -%}
+</code>{% if include.output %}
+<code class="sl-terminal-output">{{ include.output }}</code>
+{%- endif %}</pre>
+</div>

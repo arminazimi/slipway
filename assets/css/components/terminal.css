@@ -1,0 +1,17 @@
+.sl-terminal {
+  background: var(--sl-color-canvas);
+  color: var(--sl-color-text);
+  padding: var(--sl-space-4);
+  border-radius: var(--sl-radius-card);
+  overflow-x: auto;
+}
+.sl-terminal-prompt::before {
+  content: attr(data-prompt);
+  user-select: none;
+  opacity: 0.7;
+  margin-inline-end: 1ch;
+}
+.sl-terminal-output {
+  opacity: 0.7;
+  display: block;
+}
