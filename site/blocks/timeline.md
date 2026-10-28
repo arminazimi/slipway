@@ -8,7 +8,7 @@ events:
     description: The third phase of the project starts with a focus on content and design.
   - date: 2026-12-01
     title: Timeline block implemented
-    url: /blocks/timeline/
+    url: /blocks/timeline.html
     description: A new block was added to show chronological events easily.
   - date: 2026-12-20
     title: End of Phase 3
@@ -18,7 +18,7 @@ events_rtl:
     description: فاز سوم پروژه با تمرکز بر محتوا و طراحی آغاز می‌شود.
   - date: 2026-12-01
     title: بلوک تایم‌لاین پیاده‌سازی شد
-    url: /blocks/timeline/
+    url: /blocks/timeline.html
     description: یک بلوک جدید برای نمایش آسان رویدادهای زمانی اضافه شد.
   - date: 2026-12-20
     title: پایان فاز سوم
