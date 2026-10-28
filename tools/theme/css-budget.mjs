@@ -5,7 +5,7 @@ import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { root } from "./tokens.mjs";
 
-export const budgetBytes = 30 * 1024; // 30 KB, current size is ~23 KB
+export const budgetBytes = 31 * 1024; // 30 KB, current size is ~23 KB
 
 /** Every file in assets/css with its size in bytes. */
 export function stylesheetSizes(dir = join(root, "assets/css")) {

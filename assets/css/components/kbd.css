@@ -1,0 +1,4 @@
+.sl-kbd{display:inline-flex;align-items:center;gap:.25em;font-family:var(--sl-font-ui);font-size:.85em;line-height:1;white-space:nowrap}
+.sl-kbd-mac,.sl-kbd-other{display:inline-block;padding:.2em .4em;border-radius:var(--sl-radius-compact);border:1px solid var(--sl-color-line);background-color:var(--sl-color-surface);color:var(--sl-color-text);box-shadow:0 1px 1px var(--sl-color-line)}
+.sl-kbd-sep{color:var(--sl-color-muted);font-size:.9em;padding-inline:.1em}
+.sl-kbd [hidden]{display:none!important}

@@ -1,0 +1,22 @@
+<figure class="sl-pull-quote">
+  <blockquote>
+    <p>{{ include.text }}</p>
+  </blockquote>
+  {%- if include.author or include.source -%}
+  <figcaption>
+    {%- if include.author -%}
+    <span class="sl-pull-quote-author">{{ include.author }}</span>
+    {%- endif -%}
+    {%- if include.source -%}
+    {%- if include.author -%}<span class="sl-pull-quote-sep">, </span>{%- endif -%}
+    <cite>
+      {%- if include.url -%}
+      <a href="{{ include.url }}">{{ include.source }}</a>
+      {%- else -%}
+      {{ include.source }}
+      {%- endif -%}
+    </cite>
+    {%- endif -%}
+  </figcaption>
+  {%- endif -%}
+</figure>
