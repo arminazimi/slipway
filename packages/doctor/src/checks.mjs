@@ -28,7 +28,10 @@ import * as c24 from "./checks/ae.sourcemap.present.mjs";
 import * as c25 from "./checks/ae.sourcemap.sources-exist.mjs";
 import * as c26 from "./checks/ae.sourcemap.urls-exist.mjs";
 
+import * as c27 from './checks/twin-fresh.mjs';
+
 export const checks = {
+  [c27.id]: c27.run,
   [c0.id]: c0.run,
   [c1.id]: c1.run,
   [c2.id]: c2.run,
