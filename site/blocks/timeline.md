@@ -4,6 +4,8 @@ description: A timeline of dated events, such as a release history or project mi
 layout: page
 ---
 
+{::nomarkdown}{% include component-css.html name="timeline" %}{:/nomarkdown}
+
 ## Left-to-right
 
 {% capture timeline_events %}

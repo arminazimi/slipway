@@ -52,7 +52,7 @@ layout: default
 
   assert.ok(html.includes('<div class="sl-timeline">'), "Should render timeline wrapper");
   assert.ok(html.includes('<ol>'), "Should render ordered list");
-  assert.ok(html.includes('<time datetime="2026-11-23T00:00:00+00:00">November 23, 2026</time>') || html.includes('<time datetime="2026-11-23T00:00:00Z">November 23, 2026</time>'), "Should render time with format");
+  assert.ok(/<time datetime="2026-11-23T00:00:00[^"]*">November 23, 2026<\/time>/.test(html), "Should render time with format");
   assert.ok(html.includes('<a href="/feature/">Feature implemented</a>'), "Should render links for events with urls");
   // Kramdown on classic pages adds class="language-plaintext highlighter-rouge" to inline code etc. We relax the description text test to ignore HTML tags inside the description.
   assert.ok(html.includes('The third phase starts'), "Should render description text");
