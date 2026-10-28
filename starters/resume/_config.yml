@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: My Résumé
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  languages:
+    - code: en
+      name: English
+      prefix: /
+    - code: fa
+      name: فارسی
+      prefix: /fa

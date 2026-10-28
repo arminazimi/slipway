@@ -27,6 +27,8 @@ import * as c23 from "./checks/ae.sourcemap.lines.mjs";
 import * as c24 from "./checks/ae.sourcemap.present.mjs";
 import * as c25 from "./checks/ae.sourcemap.sources-exist.mjs";
 import * as c26 from "./checks/ae.sourcemap.urls-exist.mjs";
+import * as c27 from "./checks/unknown-config.mjs";
+import * as c28 from "./checks/unknown-front-matter.mjs";
 
 export const checks = {
   [c0.id]: c0.run,
@@ -56,4 +58,6 @@ export const checks = {
   [c24.id]: c24.run,
   [c25.id]: c25.run,
   [c26.id]: c26.run,
+  [c27.id]: c27.run,
+  [c28.id]: c28.run,
 };
