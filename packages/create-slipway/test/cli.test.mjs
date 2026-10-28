@@ -40,7 +40,7 @@ test("flags alone create a site from the starter without prompting", () => {
   assert.equal(result.status, 0, result.stderr);
   const site = join(work, "fa-site");
   const config = parse(readFileSync(join(site, "_config.yml"), "utf8"));
-  assert.deepEqual(config, { title: "T", lang: "fa", remote_theme: "arminazimi/slipway", plugins: ["jekyll-remote-theme"] });
+  assert.deepEqual(config, { title: "T", lang: "fa", remote_theme: "arminazimi/slipway", plugins: ["jekyll-remote-theme", "jekyll-feed", "jekyll-sitemap"] });
   for (const name of readdirSync(repoSources().starter)) if (name !== "_config.yml") assert.ok(existsSync(join(site, name)), `${name} is copied from examples/bare`);
   assert.ok(existsSync(join(site, "Gemfile")));
   assert.match(result.stdout, /bundle exec jekyll serve/);
@@ -103,7 +103,7 @@ test("with a terminal it prompts only for the missing values", async () => {
   assert.match(out.text(), /Mode/);
   assert.doesNotMatch(out.text(), /Folder|Language code/);
   const config = parse(readFileSync(join(work, "prompted", "_config.yml"), "utf8"));
-  assert.deepEqual(config, { title: "My Title", lang: "de", theme: "slipway-theme" });
+  assert.deepEqual(config, { title: "My Title", lang: "de", theme: "slipway-theme", plugins: ["jekyll-feed", "jekyll-sitemap"] });
   assert.match(readFileSync(join(work, "prompted", "Gemfile"), "utf8"), /gem "slipway-theme"/);
 });
 

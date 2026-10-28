@@ -7,7 +7,7 @@ import { detect } from "../detect.mjs";
 import * as rootLinks from "./root-links.mjs";
 
 /** The files of starter-files/ in the repository, except its README: every site copies them. */
-export const stubs = [".vscode/settings.json", "AGENTS.md"];
+export const stubs = [".vscode/settings.json", "404.md", "AGENTS.md", "search.json"];
 
 /** The keys of _includes/i18n-builtin.html: the theme has English, Persian, Arabic, and Hebrew for each of them. */
 export const builtinKeys = [

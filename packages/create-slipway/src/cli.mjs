@@ -89,8 +89,9 @@ async function prompt(options, input, output) {
 /** The _config.yml of a new site. Titles are written as JSON strings, which YAML reads as is. */
 export function siteConfig({ title, lang, mode }) {
   const lines = [`title: ${JSON.stringify(title)}`, `lang: ${lang}`];
-  if (mode === "remote") lines.push(`remote_theme: ${remoteTheme}`, "plugins:", "  - jekyll-remote-theme");
+  if (mode === "remote") lines.push(`remote_theme: ${remoteTheme}`);
   if (mode === "gem") lines.push("theme: slipway-theme");
+  lines.push("plugins:", ...(mode === "remote" ? ["  - jekyll-remote-theme"] : []), "  - jekyll-feed", "  - jekyll-sitemap");
   return `${lines.join("\n")}\n`;
 }
 
