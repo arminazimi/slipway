@@ -4,7 +4,7 @@
     <img src="{{ image.src }}" alt="{{ image.alt }}"
       {%- if image.srcset %} srcset="{{ image.srcset }}"{% endif -%}
       {%- if image.lazy %} loading="lazy"{% endif -%}
-    >
+    />
     {%- if image.caption or image.credit -%}
     <figcaption>
       {%- if image.caption -%}
