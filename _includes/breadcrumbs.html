@@ -1,3 +1,18 @@
+{%- if sl_nav_section_url -%}
+{%- capture sl_bc_label %}{% include t.html key='breadcrumbs' %}{% endcapture -%}
+{%- capture sl_home_label %}{% include t.html key='home' %}{% endcapture -%}
+<nav class="sl-breadcrumbs" aria-label="{{ sl_bc_label | strip | escape }}">
+  <ol>
+    <li><a href="{{ '/' | relative_url }}">{{ sl_home_label | strip }}</a><span class="sl-breadcrumb-separator" aria-hidden="true">/</span></li>
+    <li><a href="{{ sl_nav_section_url | relative_url }}">{{ sl_nav_section_title | escape }}</a><span class="sl-breadcrumb-separator" aria-hidden="true">/</span></li>
+    <li aria-current="page">{{ page.title | escape }}</li>
+  </ol>
+</nav>
+{%- capture sl_bc_list -%}
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":{{ sl_home_label | strip | jsonify }},"item":{{ '/' | absolute_url | jsonify }}},{"@type":"ListItem","position":2,"name":{{ sl_nav_section_title | jsonify }},"item":{{ sl_nav_section_url | absolute_url | jsonify }}},{"@type":"ListItem","position":3,"name":{{ page.title | jsonify }}}]}
+{%- endcapture -%}
+<script type="application/ld+json">{{ sl_bc_list | strip_newlines | replace: '<', '\u003c' }}</script>
+{%- else -%}
 {%- assign sl_bc_parts = page.url | split: '/' -%}
 {%- assign sl_bc_url = '' -%}
 {%- assign sl_bc_items = '' -%}
@@ -64,4 +79,5 @@
 {%- capture sl_bc_json -%}{{ sl_bc_json }},{"@type":"ListItem","position":{{ sl_bc_pos }},"name":{{ page.title | jsonify }}}{%- endcapture -%}
 {%- capture sl_bc_list -%}{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{ sl_bc_json }}]}{%- endcapture %}
 <script type="application/ld+json">{{ sl_bc_list | strip_newlines | replace: '<', '\u003c' }}</script>
+{%- endif -%}
 {%- endif -%}
