@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Beacon
+description: Documentation for the Beacon deploy CLI, in the shape of a real product's site.
+lang: en
+url: https://example.com
+baseurl: /beacon
+remote_theme: arminazimi/slipway
+plugins:
+  - jekyll-remote-theme
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: doc

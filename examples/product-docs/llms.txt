@@ -1,0 +1,17 @@
+# Beacon
+
+> Documentation for the Beacon deploy CLI. This file is written by the product's own tooling, not by Slipway.
+
+Sections:
+
+- [Home](https://example.com/beacon/)
+- [Install](https://example.com/beacon/install/)
+- [Quickstart](https://example.com/beacon/quickstart/)
+- [Configuration](https://example.com/beacon/configuration/)
+- [Commands](https://example.com/beacon/commands/)
+- [Output format](https://example.com/beacon/output/)
+- [CI integration](https://example.com/beacon/ci/)
+- [Troubleshooting](https://example.com/beacon/troubleshooting/)
+- [Security](https://example.com/beacon/security/)
+- [FAQ](https://example.com/beacon/faq/)
+- [Reference](https://example.com/beacon/reference/)
