@@ -4,6 +4,7 @@
 import { blocks } from "../markdown.mjs";
 import { findDeprecations, packagedDeprecations } from "../deprecations.mjs";
 import { detect } from "../detect.mjs";
+import * as rootLinks from "./root-links.mjs";
 
 /** The files of starter-files/ in the repository, except its README: every site copies them. */
 export const stubs = [".vscode/settings.json", "AGENTS.md"];
@@ -60,6 +61,7 @@ function pages(site) {
 const result = (findings) => ({ status: findings.length ? "fail" : "pass", findings });
 
 export const checks = {
+  [rootLinks.id]: rootLinks.run,
   "jekyll.stubs": (site) =>
     result(
       stubs

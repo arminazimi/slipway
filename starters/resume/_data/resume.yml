@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/data/resume.schema.json
+basics:
+  name: Jane Doe
+  label: Software Engineer
+  email: jane.doe@example.com
+  phone: (912) 555-4321
+  url: https://janedoe.com
+  summary: A software engineer with a passion for learning.
+  location:
+    city: San Francisco
+    region: CA
+    countryCode: US

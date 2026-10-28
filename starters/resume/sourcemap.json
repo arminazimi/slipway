@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "pages": [
+    {
+      "source": "fa.md",
+      "urls": ["/fa/"]
+    },
+    {
+      "source": "index.md",
+      "urls": ["/"]
+    }
+  ]
+}
