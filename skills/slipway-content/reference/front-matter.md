@@ -31,8 +31,11 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `nav_order` | number |  |  | Sort order in generated navigation. |
 | `permalink` | string |  | `^(/\|(pretty\|date\|ordinal\|weekdate\|none)$)` | The output URL: a path starting with `/`, or one of Jekyll's built-in styles. |
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
+| `replaced_by` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of the page that replaces this one, if deprecated. |
 | `search` | boolean |  |  | `false` leaves the page out of the search index. |
+| `since` | string |  |  | The version when the page status was set. |
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
+| `status` | `experimental` or `beta` or `deprecated` |  |  | The status of the feature or page. |
 | `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
 | `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
 | `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
