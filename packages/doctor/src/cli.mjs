@@ -1,17 +1,21 @@
 // slipway doctor <dir> [--build <dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
 // Exit codes: 0 the target level is reached (with no --level: no MUST fails), 1 findings, 2 usage error.
-import { relative, resolve, sep } from "node:path";
+import { relative, resolve, sep, dirname, join } from "node:path";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { doctor, levels } from "./doctor.mjs";
 import { describe, toSarif } from "./report.mjs";
 import { applyFixes } from "./fix.mjs";
 import * as infoCommand from "./commands/info.mjs";
 import * as completionCommand from "./commands/completion.mjs";
+import { handleExplain } from "./explain.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
 Checks a site against the agent-editable site spec and prints the level it reaches.
 
 Options:
+  --explain [<id>]     print the check's page, or list all checks
   --build <dir>        the built output folder; tests on the output fail without it
   --format <format>    text, json, or sarif (default: text)
   --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
@@ -27,7 +31,7 @@ export function parseArgs(args) {
   const [command, ...rest] = args;
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
   if (command !== "doctor" && command !== "info" && command !== "completion") return { error: command ? `unknown command: ${command}` : "missing command" };
-  const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false };
+  const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false, explain: null, explainGiven: false };
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
     const value = () => {
@@ -43,6 +47,14 @@ export function parseArgs(args) {
       else if (arg === "--network") options.network = true;
       else if (arg === "--fix") options.fix = true;
       else if (arg === "--dry-run") options.dryRun = true;
+      else if (arg === "--explain") {
+        options.explainGiven = true;
+        const next = rest[i + 1];
+        if (next !== undefined && !next.startsWith("-")) {
+          options.explain = next;
+          i++;
+        }
+      }
       else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
       else if (options.source === null) options.source = arg;
       else return { error: `unexpected argument: ${arg}` };
@@ -50,7 +62,7 @@ export function parseArgs(args) {
       return { error: error.message };
     }
   }
-  if (options.source === null) return { error: "missing <source-dir>" };
+  if (!options.explainGiven && options.source === null) return { error: "missing <source-dir>" };
   if (!formats.includes(options.format)) return { error: `--format must be text, json, or sarif, not ${options.format}` };
   if (options.level !== null && !levels.includes(options.level)) return { error: `--level must be one of ${levels.join(", ")}` };
   return { options };
@@ -108,6 +120,10 @@ export async function main(args, { log = console.log, error = console.error } = 
     return 2;
   }
   const { options } = parsed;
+  if (options.explainGiven) {
+    return handleExplain(options.explain, { log, error });
+  }
+
   const folders = { source: resolve(options.source), build: options.build ? resolve(options.build) : null };
   let report;
   try {
