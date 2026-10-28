@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=../../schema/slipway-config.schema.json
 title: My Links
 lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
 slipway:
   social:
     - title: Twitter

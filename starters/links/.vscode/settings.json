@@ -1,7 +1,5 @@
 {
   "yaml.schemas": {
-    "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json": ["_config.yml", "_config.*.yml"],
-    "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json": ["_data/navigation.yml"],
-    "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/data/social.schema.json": ["_data/social.yml"]
+    "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json": ["_config.yml", "_config.*.yml"]
   }
 }
