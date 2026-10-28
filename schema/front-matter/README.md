@@ -17,9 +17,6 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `home` | | [`home.schema.json`](home.schema.json) | `variant` (`editorial`, `landing`, `blog`, `docs`); `cta_text` and `cta_url`, set together; `features` (a list of `title`, `text`, `url`) for `landing`; `posts_limit` |
 | `archive` | | [`archive.schema.json`](archive.schema.json) | none |
 | `author` | | [`author.schema.json`](author.schema.json) | `author`, required: the id of the author in `_data/authors.yml` |
-| `adr` | | [`adr.schema.json`](adr.schema.json) | `status`, `deciders`, `supersedes`, `superseded_by` |
-| `adr-index` | | [`page.schema.json`](page.schema.json) | none |
-| `changelog`, `changelog-feed` | | [`changelog.schema.json`](changelog.schema.json) | `feed_url`, `changelog` |
 | any other layout (your own) | | [`base.schema.json`](base.schema.json) | |
 
 ## Shared keys

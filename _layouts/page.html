@@ -5,11 +5,7 @@ layout: base
   <header class="sl-page-header">
     {% include breadcrumbs.html %}
     {% include page-status.html %}
-    {%- assign sl_start = content | strip -%}
-    {%- assign sl_start_tag = sl_start | slice: 0, 3 -%}
-    {%- unless sl_start_tag == '<h1' %}
-    <h1>{{ page.title }}</h1>
-    {%- endunless %}{% include copy-page.html %}
+    <h1>{{ page.title }}</h1>{% include copy-page.html %}
     {%- if page.description %}
     <p class="sl-page-lead">{{ page.description }}</p>
     {%- endif %}

@@ -1,7 +1,0 @@
-title: No Front Matter
-theme: slipway-theme
-defaults:
-  - scope:
-      path: ""
-    values:
-      layout: page

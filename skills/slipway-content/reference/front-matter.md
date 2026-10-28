@@ -9,14 +9,12 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 
 | Layout | Folder | Schema | What it renders |
 | --- | --- | --- | --- |
-| `page`, `default`, `tags`, `not-found`, `adr-index` |  | `page.schema.json` | A plain page: a title, a description, and text. Also used by the default, tags, and not-found layouts. |
+| `page`, `default`, `tags`, `not-found` |  | `page.schema.json` | A plain page: a title, a description, and text. Also used by the default, tags, and not-found layouts. |
 | `doc` | `_docs/` | `doc.schema.json` | A documentation page with the sidebar from _data/navigation.yml, a table of contents, and previous and next links. |
 | `post` | `_posts/` | `post.schema.json` | A dated post. The date and slug come from the file name (YYYY-MM-DD-slug.md); `date` in the front matter overrides the date. |
 | `home` |  | `home.schema.json` | The landing page in one of four variants: an editorial hero with the latest posts (the default), a landing page with features and a call to action, a blog index, or a docs index. |
 | `archive` |  | `archive.schema.json` | Every post, grouped by year. |
 | `author` |  | `author.schema.json` | One author's page: the avatar, bio, and links from `_data/authors.yml`, then that author's posts in the page's language. Bylines link here. |
-| `changelog`, `changelog-feed` |  | `changelog.schema.json` | A Keep a Changelog page or its Atom feed of dated releases. |
-| `adr` |  | `adr.schema.json` | An architecture decision record with status, deciders, and supersession links. |
 
 ## Every layout
 
@@ -37,7 +35,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `search` | boolean |  |  | `false` leaves the page out of the search index. |
 | `since` | string |  |  | The version when the page status was set. |
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
-| `status` | `experimental` or `beta` or `deprecated` or `proposed` or `accepted` or `rejected` or `superseded` |  |  | The page status; ADR records also accept proposed, accepted, rejected, and superseded. |
+| `status` | `experimental` or `beta` or `deprecated` |  |  | The status of the feature or page. |
 | `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
 | `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
 | `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
@@ -65,21 +63,3 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
 | `author` | string | yes | `^[A-Za-z0-9][A-Za-z0-9_-]*$` | The key of this author in `_data/authors.yml`. |
-
-## Only in `changelog`, `changelog-feed`
-
-| Key | Type | Required | Allowed | What it does |
-| --- | --- | --- | --- | --- |
-| `changelog` | string |  | `^(/\|https://)[^\s"<>]*$` | The changelog page URL whose releases a changelog-feed page exports. |
-| `feed_url` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of a page using the changelog-feed layout. |
-
-## Only in `adr`
-
-| Key | Type | Required | Allowed | What it does |
-| --- | --- | --- | --- | --- |
-| `date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date this decision was recorded. |
-| `deciders` | list |  |  | The people who made this decision. |
-| `layout` | any | yes |  | The ADR layout. |
-| `status` | `proposed` or `accepted` or `rejected` or `superseded` or `deprecated` | yes |  | The decision's lifecycle status. |
-| `superseded_by` | string |  |  | The title of the ADR that replaces this decision. |
-| `supersedes` | string |  |  | The title of the ADR replaced by this decision. |

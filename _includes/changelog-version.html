@@ -1,6 +1,0 @@
-{%- assign sl_release_heading = include.section | split: '</h2>' | first -%}
-{%- assign sl_release_open = sl_release_heading | split: '>' | first | append: '>' -%}
-{%- assign sl_release_heading = sl_release_heading | remove_first: sl_release_open | strip_html | strip -%}
-{%- assign sl_release_version = sl_release_heading | split: ' - ' | first | remove: '[' | remove: ']' | strip -%}
-{%- assign sl_release_id = sl_release_version | slugify -%}
-{%- assign sl_release_date = sl_release_heading | split: ' - ' | last | strip -%}

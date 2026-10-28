@@ -1,5 +1,0 @@
-title: ADR Test
-theme: slipway-theme
-collections:
-  adr:
-    output: true

@@ -1,4 +1,4 @@
-/* Base styles from tokens.css. Logical properties. */
+/* Base styles. Every value comes from assets/css/tokens.css. Logical properties only. */
 @layer base {
   html {
     background: var(--sl-color-canvas);

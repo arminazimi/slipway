@@ -38,11 +38,6 @@
   <link rel="stylesheet" href="{{ '/assets/css/slipway.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/nav.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/print.css' | relative_url }}" media="print">
-  {%- assign sl_lang_css = '/assets/css/lang/' | append: sl_base | append: '.css' %}
-  {%- assign sl_lang_file = site.static_files | where: 'path', sl_lang_css | first %}
-  {%- if sl_lang_file %}
-  <link rel="stylesheet" href="{{ sl_lang_css | relative_url }}">
-  {%- endif %}
   {% include theme-vars.html %}
   {%- assign sl_custom_css = site.static_files | where: 'path', '/assets/css/custom.css' | first %}
   {%- if sl_custom_css %}

@@ -119,18 +119,7 @@ For now, you must add standard HTML attributes manually to keep mixed content re
 
 **Known limits**: The theme does not yet automatically isolate titles, code, numbers, and URLs. This is tracked in issue [#226](https://github.com/arminazimi/slipway/issues/226).
 
-## 6. Directional icons
-
-Arrows, chevrons, and "next" icons must flip in RTL; logos, check marks, and media controls must not.
-
-When adding a directional icon in your components, add the `sl-mirror` class to the SVG and include its CSS dynamically:
-
-```html
-{% include component-css.html name="mirror" %}
-<svg class="sl-mirror" ...>...</svg>
-```
-
-## 7. Test a site in both directions
+## 6. Test a site in both directions
 
 You can build and test an example site locally to verify its direction and language behavior.
 
@@ -146,7 +135,7 @@ Open the generated HTML files in `out_persian/` in your browser. Inspect the pag
 1. The `<html>` tag should have `dir="rtl"` (or the appropriate direction).
 2. The language switcher in the header or menu should correctly link to the available languages.
 
-## 8. Checklist
+## 7. Checklist
 
 Before launching your multilingual or RTL site, tick off these steps:
 
