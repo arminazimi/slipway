@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/stats.schema.json",
+  "title": "Stat Tiles Block",
+  "description": "A row of key numbers with labels and optional trend.",
+  "type": "object",
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "The list of stat tiles to display.",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The label describing the stat."
+          },
+          "trend": {
+            "type": "string",
+            "description": "An optional trend text, e.g. +5%."
+          },
+          "unit": {
+            "type": "string",
+            "description": "An optional unit for the value, e.g. ms or %."
+          },
+          "value": {
+            "type": ["string", "number"],
+            "description": "The key number to display."
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}
