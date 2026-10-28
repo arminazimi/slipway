@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/file-tree.schema.json",
+  "title": "File Tree Block",
+  "description": "Render a nested list of folders and files with optional notes.",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "An array of file or folder objects.",
+      "items": {
+        "$ref": "#/$defs/treeItem"
+      }
+    },
+    "list": {
+      "type": "string",
+      "description": "An indented text list formatted as Markdown."
+    }
+  },
+  "anyOf": [
+    { "required": ["list"] },
+    { "required": ["items"] }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "treeItem": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "children": {
+          "type": "array",
+          "description": "Nested files or folders.",
+          "items": {
+            "$ref": "#/$defs/treeItem"
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the file or folder."
+        },
+        "note": {
+          "type": "string",
+          "description": "An optional note for the file or folder."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
