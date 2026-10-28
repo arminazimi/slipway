@@ -60,13 +60,29 @@
       "type": "boolean",
       "description": "`false` leaves the page out of the build."
     },
+    "replaced_by": {
+      "$ref": "#/$defs/url",
+      "description": "The URL of the page that replaces this one, if deprecated."
+    },
     "search": {
       "type": "boolean",
       "description": "`false` leaves the page out of the search index."
     },
+    "since": {
+      "type": "string",
+      "description": "The version when the page status was set."
+    },
     "sitemap": {
       "type": "boolean",
       "description": "`false` leaves the page out of sitemap.xml."
+    },
+    "status": {
+      "enum": [
+        "experimental",
+        "beta",
+        "deprecated"
+      ],
+      "description": "The status of the feature or page."
     },
     "tags": {
       "$ref": "#/$defs/terms",

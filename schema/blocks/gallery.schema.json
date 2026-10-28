@@ -4,14 +4,19 @@
   "title": "Gallery Block",
   "description": "A responsive grid of images with optional captions and credits.",
   "type": "object",
-  "required": ["images"],
+  "required": [
+    "images"
+  ],
   "properties": {
     "images": {
       "type": "array",
       "description": "The list of images to display in the gallery.",
       "items": {
         "type": "object",
-        "required": ["src"],
+        "required": [
+          "alt",
+          "src"
+        ],
         "properties": {
           "alt": {
             "type": "string",

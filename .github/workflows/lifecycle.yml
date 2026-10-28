@@ -1,0 +1,38 @@
+name: lifecycle
+
+# Slipway scans its own runtimes, gems, npm packages, and GitHub Actions with Evergreen
+# (arminazimi/evergreen), report-only: findings never fail the build, and nothing a site
+# needs depends on Evergreen (the one-way rule ADR 0011 sets for Seaworthy). Findings go
+# to code scanning as SARIF; the action also uploads the JSON report as a workflow artifact.
+on:
+  pull_request:
+  schedule:
+    # Weekly, Mondays 04:17 UTC (scheduled runs use this file on main).
+    - cron: "17 4 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+
+concurrency:
+  group: lifecycle-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  evergreen:
+    name: evergreen scan (report-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan with Evergreen
+        # Report-only: fail-on-severity none keeps findings from failing the job, and
+        # continue-on-error keeps a scan or upload failure from failing it too (for
+        # example a fork pull request, whose token cannot write to code scanning).
+        continue-on-error: true
+        uses: arminazimi/evergreen@21304c78171c303c7263f27e93cec9e1b7c704eb # main @ 2026-10-28, 49 commits past v0.7.1
+        with:
+          fail-on-severity: none
+          upload-sarif: "true"
+          upload-report: "true"
+          report-name: evergreen-report
