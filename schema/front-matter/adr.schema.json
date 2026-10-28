@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arminazimi.github.io/slipway/spec/0.1/adr.schema.json",
+  "title": "ADR front matter",
+  "type": "object",
+  "allOf": [{ "$ref": "base.schema.json" }],
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "deciders": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "layout": { "const": "adr" },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "rejected", "superseded", "deprecated"]
+    },
+    "superseded_by": { "type": "string" },
+    "supersedes": { "type": "string" }
+  },
+  "required": ["layout", "title", "status"]
+}

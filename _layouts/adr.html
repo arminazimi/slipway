@@ -1,0 +1,44 @@
+---
+layout: base
+---
+{%- include component-css.html name="adr" -%}
+<article class="sl-adr">
+  <header class="sl-adr-header">
+    <h1>{{ page.title }}</h1>
+    <dl class="sl-adr-meta">
+      <dt>{% include t.html key='adr_status' %}</dt>
+      <dd class="sl-adr-status sl-adr-status-{{ page.status }}">{{ page.status | capitalize }}</dd>
+      {% if page.date %}
+      <dt>{% include t.html key='adr_date' %}</dt>
+      <dd><time datetime="{{ page.date | date_to_xmlschema }}">{% include date.html date=page.date %}</time></dd>
+      {% endif %}
+      {% if page.deciders and page.deciders.size > 0 %}
+      <dt>{% include t.html key='adr_deciders' %}</dt>
+      <dd>{{ page.deciders | join: ', ' }}</dd>
+      {% endif %}
+      {% if page.supersedes %}
+      <dt>{% include t.html key='adr_supersedes' %}</dt>
+      <dd>
+        {% assign superseded_docs = site.adr | where: "title", page.supersedes %}
+        {% if superseded_docs.size > 0 %}
+          <a href="{{ superseded_docs.first.url | relative_url }}">{{ page.supersedes }}</a>
+        {% else %}
+          {{ page.supersedes }}
+        {% endif %}
+      </dd>
+      {% endif %}
+      {% if page.superseded_by %}
+      <dt>{% include t.html key='adr_superseded_by' %}</dt>
+      <dd>
+        {% assign superseding_docs = site.adr | where: "title", page.superseded_by %}
+        {% if superseding_docs.size > 0 %}
+          <a href="{{ superseding_docs.first.url | relative_url }}">{{ page.superseded_by }}</a>
+        {% else %}
+          {{ page.superseded_by }}
+        {% endif %}
+      </dd>
+      {% endif %}
+    </dl>
+  </header>
+  {{ content }}
+</article>

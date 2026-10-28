@@ -1,0 +1,31 @@
+---
+layout: base
+---
+{%- include component-css.html name="adr" -%}
+<div class="sl-adr-index">
+  <header class="sl-page-header">
+    <h1>{{ page.title }}</h1>
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description }}</p>
+    {%- endif %}
+  </header>
+
+  {% assign statuses = "proposed,accepted,rejected,superseded,deprecated" | split: "," %}
+
+  {% for status in statuses %}
+    {% assign docs = site.adr | where: "status", status %}
+    {% if docs.size > 0 %}
+      <section class="sl-adr-group">
+        <h2>{% include t.html key=status %}</h2>
+        <ul>
+          {% for doc in docs %}
+            <li>
+              <a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+              {% if doc.date %}<time datetime="{{ doc.date | date_to_xmlschema }}">{% include date.html date=doc.date %}</time>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+  {% endfor %}
+</div>

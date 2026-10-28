@@ -88,6 +88,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
 | `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |
+| `status`, `deciders`, `supersedes`, `superseded_by` | `adr` | yes | `kit-adr.test.mjs` |
 
 Two classes are public too, because page bodies use them: `sl-wide` widens an element to `--sl-measure-wide` and `sl-bleed` takes it edge to edge (`widths.test.mjs`). The `doc` layout keeps both in its column.
 
@@ -111,6 +112,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `sourcemap` | yes | `sourcemap.test.mjs` |
 | `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `glossary` | yes | `kit-glossary.test.mjs` |
+| `adr`, `adr-index` | yes | `kit-adr.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes
