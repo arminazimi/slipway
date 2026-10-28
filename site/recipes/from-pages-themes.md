@@ -1,4 +1,5 @@
 ---
+layout: doc
 title: "Move from a GitHub Pages built-in theme"
 description: "How to upgrade your site from a legacy GitHub Pages theme to Slipway."
 ---
