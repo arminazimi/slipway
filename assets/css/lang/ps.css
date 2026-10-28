@@ -1,0 +1,6 @@
+:lang(ps) {
+  font-family: var(--sl-font-arabic);
+}
+:lang(ps) :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--sl-font-arabic);
+}
