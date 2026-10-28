@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Slipway nonprofit
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  header: centered
