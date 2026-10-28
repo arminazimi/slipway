@@ -33,6 +33,11 @@
         "url"
       ],
       "properties": {
+        "match": {
+          "type": "string",
+          "pattern": "^/[^\\s\"<>]*$",
+          "description": "A site-local path prefix for generated pages in this section; matching observes path segment boundaries."
+        },
         "title": {
           "type": "string",
           "minLength": 1

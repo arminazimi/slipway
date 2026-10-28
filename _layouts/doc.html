@@ -10,16 +10,32 @@ layout: base
 {%- capture sl_flat_text -%}
   {%- for item in sl_tree -%}
     {%- if item.children -%}
-      {%- for child in item.children -%}{{ child.url }}||{{ child.title }}@@{%- endfor -%}
-    {%- else -%}{{ item.url }}||{{ item.title }}@@{%- endif -%}
+      {%- for child in item.children -%}{{ child.url }}||{{ child.title }}||{{ child.match }}@@{%- endfor -%}
+    {%- else -%}{{ item.url }}||{{ item.title }}||{{ item.match }}@@{%- endif -%}
   {%- endfor -%}
 {%- endcapture -%}
 {%- assign sl_items = sl_flat_text | split: '@@' -%}
 {%- assign sl_index = -1 -%}
+{%- assign sl_nav_section_url = nil -%}
+{%- assign sl_nav_section_title = nil -%}
+{%- assign sl_nav_section_size = 0 -%}
 {%- for entry in sl_items -%}
-  {%- assign sl_entry_url = entry | split: '||' | first -%}
+  {%- assign sl_entry = entry | split: '||' -%}
+  {%- assign sl_entry_url = sl_entry[0] -%}
   {%- if sl_entry_url == page.url %}{% assign sl_index = forloop.index0 %}{% endif -%}
+  {%- assign sl_match = sl_entry[2] | default: '' -%}
+  {%- assign sl_prefix = page.url | slice: 0, sl_match.size -%}
+  {%- assign sl_match_last = sl_match | slice: -1, 1 -%}
+  {%- assign sl_boundary = page.url | slice: sl_match.size, 1 -%}
+  {%- if sl_match != '' and sl_prefix == sl_match and sl_match.size > sl_nav_section_size -%}
+    {%- if sl_match_last == '/' or sl_boundary == '/' or sl_boundary == '' -%}
+      {%- assign sl_nav_section_url = sl_entry_url -%}
+      {%- assign sl_nav_section_title = sl_entry[1] -%}
+      {%- assign sl_nav_section_size = sl_match.size -%}
+    {%- endif -%}
+  {%- endif -%}
 {%- endfor -%}
+{%- if sl_index >= 0 -%}{%- assign sl_nav_section_url = nil -%}{%- endif -%}
 <div class="sl-doc">
   {%- if sl_tree.size > 0 %}
   <details class="sl-doc-nav">
@@ -31,12 +47,12 @@ layout: base
         <li class="sl-doc-group">{{ item.title }}
           <ul>
             {%- for child in item.children %}
-            <li><a href="{{ child.url | relative_url }}"{% if child.url == page.url %} aria-current="page"{% endif %}>{{ child.title }}</a></li>
+            <li><a href="{{ child.url | relative_url }}"{% if child.url == page.url %} aria-current="page"{% elsif child.url == sl_nav_section_url %} aria-current="true"{% endif %}>{{ child.title }}</a></li>
             {%- endfor %}
           </ul>
         </li>
         {%- else %}
-        <li><a href="{{ item.url | relative_url }}"{% if item.url == page.url %} aria-current="page"{% endif %}>{{ item.title }}</a></li>
+        <li><a href="{{ item.url | relative_url }}"{% if item.url == page.url %} aria-current="page"{% elsif item.url == sl_nav_section_url %} aria-current="true"{% endif %}>{{ item.title }}</a></li>
         {%- endif %}
         {%- endfor %}
       </ul>
