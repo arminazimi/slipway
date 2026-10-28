@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: Mission
+    url: /mission.html
+  - title: Programs
+    url: /programs.html
+  - title: Reports
+    url: /reports.html
+  - title: Team
+    url: /team.html
+  - title: Donate
+    url: /donate.html

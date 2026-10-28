@@ -48,6 +48,7 @@ When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote
 
 | Check id | What it finds |
 | --- | --- |
+| `doctor.root-links` | Root-relative links in Markdown files that skip `baseurl`. |
 | `jekyll.stubs` | A file from `starter-files/` (except its README) that the site has not copied. |
 | `jekyll.deprecated` | A deprecated config key or front-matter field from `schema/deprecations.json` (ADR 0012), with its replacement. |
 | `jekyll.liquid-in-content` | `{{` or `{%` in the body of a Markdown page, outside code spans and code blocks: content that only Jekyll can render. |
