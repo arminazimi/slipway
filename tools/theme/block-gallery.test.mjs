@@ -63,5 +63,5 @@ images:
   assert.ok(html.includes('<figcaption>'), "Should render figcaption element");
   assert.ok(html.includes('<span class="sl-gallery-caption">Caption 1</span>'), "Should render caption");
   assert.ok(html.includes('<span class="sl-gallery-credit">Credit 1</span>'), "Should render credit");
-  assert.ok(html.includes('<link rel="stylesheet" href="/assets/css/components/gallery.css">'), "Should link the gallery component CSS");
+  assert.ok(startTags(html).some((tag) => tag.name === "link" && tag.attributes.get("rel") === "stylesheet" && tag.attributes.get("href") === "/assets/css/components/gallery.css"), "Should link the gallery component CSS");
 });
