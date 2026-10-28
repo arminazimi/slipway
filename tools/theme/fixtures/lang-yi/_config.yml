@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: yi
+future: true
+languages:
+  - { code: yi, name: Yiddish, prefix: "" }
