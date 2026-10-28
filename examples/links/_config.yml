@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: My Links
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  social:
+    - title: Twitter
+      url: https://twitter.com/arminazimi
+      icon: twitter
+    - title: GitHub
+      url: https://github.com/arminazimi
+      icon: github
