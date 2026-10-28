@@ -46,7 +46,14 @@ layout: base
 
   <article class="sl-doc-body" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
     {% include breadcrumbs.html %}
+    {%- comment -%} Pages without a `title` get one from their first heading (jekyll-titles-from-headings); when that heading is an h1, printing the title here would make two. {%- endcomment -%}
+    {%- assign sl_start = content | strip -%}
+    {%- assign sl_start_tag = sl_start | slice: 0, 3 -%}
+    {%- if sl_start_tag == '<h1' %}
+    {%- include copy-page.html %}
+    {%- else %}
     <h1>{{ page.title }}</h1>{% include copy-page.html %}
+    {%- endif %}
     {%- assign sl_parts = content | split: '<h' -%}
     {%- capture sl_toc_html -%}
       {%- for part in sl_parts offset: 1 -%}
