@@ -22,6 +22,8 @@ export const layoutSchemas = {
   home: "home",
   archive: "archive",
   author: "author",
+  changelog: "changelog",
+  "changelog-feed": "changelog",
   adr: "adr",
   "adr-index": "page",
 };

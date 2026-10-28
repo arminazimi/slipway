@@ -54,6 +54,7 @@ export const builtinKeys = [
   "proposed",
   "rejected",
   "related_posts",
+  "releases",
   "search",
   "search_count",
   "search_none",
@@ -71,6 +72,7 @@ export const builtinKeys = [
   "tags",
   "theme",
   "translation_key",
+  "versions",
   "yes"
 ];
 

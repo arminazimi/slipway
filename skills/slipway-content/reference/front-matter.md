@@ -15,6 +15,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `home` |  | `home.schema.json` | The landing page in one of four variants: an editorial hero with the latest posts (the default), a landing page with features and a call to action, a blog index, or a docs index. |
 | `archive` |  | `archive.schema.json` | Every post, grouped by year. |
 | `author` |  | `author.schema.json` | One author's page: the avatar, bio, and links from `_data/authors.yml`, then that author's posts in the page's language. Bylines link here. |
+| `changelog`, `changelog-feed` |  | `changelog.schema.json` | A Keep a Changelog page or its Atom feed of dated releases. |
 | `adr` |  | `adr.schema.json` | An architecture decision record with status, deciders, and supersession links. |
 
 ## Every layout
@@ -64,6 +65,13 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | Key | Type | Required | Allowed | What it does |
 | --- | --- | --- | --- | --- |
 | `author` | string | yes | `^[A-Za-z0-9][A-Za-z0-9_-]*$` | The key of this author in `_data/authors.yml`. |
+
+## Only in `changelog`, `changelog-feed`
+
+| Key | Type | Required | Allowed | What it does |
+| --- | --- | --- | --- | --- |
+| `changelog` | string |  | `^(/\|https://)[^\s"<>]*$` | The changelog page URL whose releases a changelog-feed page exports. |
+| `feed_url` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of a page using the changelog-feed layout. |
 
 ## Only in `adr`
 

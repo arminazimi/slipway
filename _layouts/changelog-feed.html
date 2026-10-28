@@ -1,0 +1,28 @@
+---
+---
+<?xml version="1.0" encoding="UTF-8"?>
+{%- assign sl_source = site.pages | where: 'url', page.changelog | first -%}
+{%- assign sl_source_html = sl_source.content | markdownify -%}
+{%- assign sl_sections = sl_source_html | split: '<h2 id="' -%}
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>{{ page.url | absolute_url | xml_escape }}</id>
+  <title>{{ sl_source.title | default: page.title | xml_escape }}</title>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <link href="{{ page.url | absolute_url | xml_escape }}" rel="self" type="application/atom+xml"/>
+  <link href="{{ sl_source.url | absolute_url | xml_escape }}"/>
+  {%- for sl_section in sl_sections offset: 1 -%}
+    {%- include changelog-version.html section=sl_section -%}
+    {%- assign sl_unreleased = sl_release_version | downcase -%}
+    {%- if sl_unreleased == 'unreleased' -%}{%- continue -%}{%- endif -%}
+    {%- assign sl_release_body = sl_section | split: '</h2>' | last -%}
+    {%- assign sl_release_url = sl_source.url | absolute_url | append: '#' | append: sl_release_id -%}
+  <entry>
+    <id>{{ sl_release_url | xml_escape }}</id>
+    <title>{{ sl_release_version | xml_escape }}</title>
+    <link href="{{ sl_release_url | xml_escape }}"/>
+    <updated>{{ sl_release_date | date_to_xmlschema }}</updated>
+    <author><name>{{ site.author | default: site.title | default: 'Slipway' | xml_escape }}</name></author>
+    <content type="html">{{ sl_release_body | xml_escape }}</content>
+  </entry>
+  {%- endfor %}
+</feed>

@@ -74,6 +74,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 ### Front matter
 
 | `deciders`, `supersedes`, `superseded_by` | `adr` | yes | `kit-adr.test.mjs` |
+| `changelog`, `feed_url` | `changelog`, `changelog-feed` | yes | `kit-changelog.test.mjs` |
 
 | Field | Layouts | Public | Tested by |
 | --- | --- | --- | --- |
@@ -116,6 +117,7 @@ Each layout and collection has a JSON Schema in [`schema/front-matter/`](../../s
 | `llms`, `llms-full` | yes | `llms.test.mjs` |
 | `glossary` | yes | `kit-glossary.test.mjs` |
 | `adr`, `adr-index` | yes | `kit-adr.test.mjs` |
+| `changelog`, `changelog-feed` | yes | `kit-changelog.test.mjs` |
 | `base` | no: the parent of the others; use `default` | |
 
 ### Includes

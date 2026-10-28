@@ -1,0 +1,40 @@
+---
+layout: base
+---
+{% include component-css.html name="changelog" %}
+<article class="sl-page sl-changelog">
+  <header class="sl-page-header">
+    {% include breadcrumbs.html %}
+    <h1>{{ page.title | escape }}</h1>{% include copy-page.html %}
+    {%- if page.description %}
+    <p class="sl-page-lead">{{ page.description | escape }}</p>
+    {%- endif %}
+  </header>
+  {%- assign sl_sections = content | split: '<h2 id="' %}
+  <div class="sl-changelog-layout">
+    <div class="sl-changelog-main">
+      {{ sl_sections.first }}
+      {%- for sl_section in sl_sections offset: 1 %}
+        {%- include changelog-version.html section=sl_section %}
+        {%- assign sl_old_id = sl_section | split: '"' | first %}
+        {%- assign sl_old_attr = 'id="' | append: sl_old_id | append: '"' %}
+        {%- assign sl_new_attr = 'id="' | append: sl_release_id | append: '"' %}
+        {%- assign sl_section_html = '<h2 id="' | append: sl_section %}
+        {{ sl_section_html | replace_first: sl_old_attr, sl_new_attr }}
+      {%- endfor %}
+    </div>
+    <aside class="sl-changelog-sidebar">
+      <nav aria-label="{% include t.html key='versions' %}">
+        <ul class="sl-changelog-toc">
+          {%- for sl_section in sl_sections offset: 1 %}
+            {%- include changelog-version.html section=sl_section %}
+            <li><a href="#{{ sl_release_id }}">{{ sl_release_version | escape }}</a></li>
+          {%- endfor %}
+        </ul>
+        {%- if page.feed_url %}
+        <a href="{{ page.feed_url | relative_url }}" class="sl-changelog-feed" type="application/atom+xml">{% include t.html key='releases' %}</a>
+        {%- endif %}
+      </nav>
+    </aside>
+  </div>
+</article>
