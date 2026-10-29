@@ -18,6 +18,7 @@ slipway:
       repo_id: R_kgDOMuTfQQ
       category: Announcements
       category_id: DIC_kwDOMuTfQc4CiRyL
+      mapping: pathname
 `);
 
   mkdirSync(join(dir, "_posts"));

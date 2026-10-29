@@ -58,11 +58,6 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.comments.giscus.category` | yes | `comments.test.mjs` |
 | `slipway.comments.giscus.category_id` | yes | `comments.test.mjs` |
 | `slipway.comments.giscus.mapping` | yes | `comments.test.mjs` |
-| `slipway.comments.giscus.repo` | yes | `comments.test.mjs` |
-| `slipway.comments.giscus.repo_id` | yes | `comments.test.mjs` |
-| `slipway.comments.giscus.category` | yes | `comments.test.mjs` |
-| `slipway.comments.giscus.category_id` | yes | `comments.test.mjs` |
-| `slipway.comments.giscus.mapping` | yes | `comments.test.mjs` |
 | `slipway.source_dir` | yes | `config.test.mjs` |
 | `slipway.tokens.accent` | yes | `config.test.mjs` |
 | `slipway.tokens.canvas` | yes | `config.test.mjs` |
