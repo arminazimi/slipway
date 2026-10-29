@@ -11,7 +11,7 @@ test("page inherits base and shows the title, an optional lead, and the body", (
   assert.match(page, /layout: base/);
   assert.match(page, /<h1>\{\{ page\.title \}\}<\/h1>/);
   assert.match(page, /if page\.description/);
-  assert.match(page, /\{\{ content \}\}/);
+  assert.match(page, /\{% include edit-sources\.html html=content %\}/);
 });
 
 test("page shows no date, tags, or navigation", () => {
