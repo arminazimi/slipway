@@ -37,6 +37,10 @@
       ],
       "description": "Text direction as the base layout reads it today; same meaning as `dir`."
     },
+    "image": {
+      "$ref": "#/$defs/url",
+      "description": "The page's own social image (`og:image`): a path on this site or an https link. Without it, Actions mode generates one from the title, and every mode falls back to the shared `assets/images/social.png`."
+    },
     "lang": {
       "type": "string",
       "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",

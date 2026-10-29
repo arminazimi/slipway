@@ -11,6 +11,8 @@ They work the same with `remote_theme`, the gem, and "Use this template" (where 
 | `assets/css/custom.css` | Linked after the theme styles and the `slipway.tokens` config, on every page | Overriding tokens or styling your own content |
 | `assets/images/social.png` | The `og:image` of every page, the picture shown when a link to the site is shared | Your own 1200 × 630 image |
 
+A page can point at its own picture with `image` in its front matter (a path on the site or an https URL), which wins over the shared one and swaps the Twitter card to `summary_large_image`. In Actions mode, a site that copies `_plugins/slipway_og.rb` into its `_plugins/` gets a default picture generated from each page's title ([ADR 0015](adr/0015-og-images.md)); pages whose titles the embedded font cannot render, such as Persian ones, keep `social.png`.
+
 ## Examples
 
 `_includes/head-custom.html`:

@@ -28,6 +28,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 |---|---|---|
 | `title` | string, required | not empty |
 | `description` | string | |
+| `image` | string | a path on this site (`/assets/…`) or an https URL: the page's own social image |
 | `lang` | string | a BCP 47 tag such as `en`, `fa`, `pt-BR` |
 | `dir`, `direction` | string | `ltr`, `rtl` (`direction` is what the base layout reads today) |
 | `date` | string | `YYYY-MM-DD`, optionally with a time and offset |

@@ -42,3 +42,18 @@ test("pages get a canonical link, Open Graph, a Twitter card, and hreflang alter
   assert.match(post, /<meta property="article:published_time" content="2026-10-20T/);
   assert.doesNotMatch(post, /hreflang=/);
 });
+
+test("a page's own image wins, and pages without one share the site's default", { skip }, () => {
+  const out = buildExample("gem", tmpDir("seo-blog"), "blog");
+  // The post with `image` in its front matter points there, large card, no size claims.
+  const own = head(readFileSync(join(out, "2026/09/12/a-slow-site-is-a-broken-site.html"), "utf8"));
+  assert.match(own, /<meta property="og:image" content="https?:\/\/[^"]+\/assets\/img\/cover\.png">/);
+  assert.match(own, /<meta property="og:image:alt" content="A slow site is a broken site">/);
+  assert.match(own, /<meta name="twitter:card" content="summary_large_image">/);
+  assert.doesNotMatch(own, /og:image:width/);
+  // A post without one keeps the shared default at its known size.
+  const shared = head(readFileSync(join(out, "2026/06/21/hello-blog.html"), "utf8"));
+  assert.match(shared, /<meta property="og:image" content="https?:\/\/[^"]+\/assets\/images\/social\.png">/);
+  assert.match(shared, /<meta property="og:image:width" content="1200">/);
+  assert.match(shared, /<meta name="twitter:card" content="summary">/);
+});
