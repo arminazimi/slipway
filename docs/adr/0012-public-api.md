@@ -39,6 +39,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | Key | Public | Tested by |
 | --- | --- | --- |
 | `slipway.fonts`, `slipway.header` | yes | `header.test.mjs` |
+| `slipway.comments.repo`, `slipway.comments.repoId`, `slipway.comments.category`, `slipway.comments.categoryId`, `slipway.comments.mapping`, `slipway.comments.light`, `slipway.comments.dark`, `slipway.comments.lang` | yes | `comments.test.mjs` |
 | `slipway.languages` (`code`, `name`, `prefix`) | yes | `i18n.test.mjs`, `config.test.mjs` |
 | `slipway.logo.light` | yes | `header.test.mjs` |
 | `slipway.logo.dark` | yes | `header.test.mjs` |

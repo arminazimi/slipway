@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough } from "node:stream";
@@ -12,7 +12,9 @@ import { main, siteConfig } from "../src/cli.mjs";
 import { repoSources, themeDirs } from "../src/sources.mjs";
 
 const bin = fileURLToPath(new URL("../bin/create-slipway.mjs", import.meta.url));
-const work = mkdtempSync(join(tmpdir(), "create-slipway-"));
+// The Pages gem builds in safe mode, so a source under the symlinked /var/folders fails its
+// realpath prefix check on every include; build from the real path, as buildExample does.
+const work = mkdtempSync(join(realpathSync(tmpdir()), "create-slipway-"));
 after(() => rmSync(work, { recursive: true, force: true }));
 
 /** Runs the real binary with stdin from a pipe, so it has no terminal. */

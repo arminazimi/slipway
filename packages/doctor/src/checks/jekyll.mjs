@@ -30,6 +30,7 @@ export const builtinKeys = [
   "by",
   "categories",
   "comma",
+  "comments",
   "copied",
   "copy",
   "copy_failed",

@@ -107,6 +107,63 @@
             }
           }
         },
+        "comments": {
+          "type": "object",
+          "description": "Opt-in comments via giscus, on every post. Docs pages and the rest of the site stay comment-free.",
+          "additionalProperties": false,
+          "required": [
+            "category",
+            "categoryId",
+            "repo",
+            "repoId"
+          ],
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "The name of the discussion category the comments open discussions in, such as Announcements."
+            },
+            "categoryId": {
+              "type": "string",
+              "description": "The ID of that category, from the giscus setup at giscus.app."
+            },
+            "dark": {
+              "type": "string",
+              "default": "dark",
+              "description": "The giscus theme for the site's dark mode, a built-in name such as dark_dimmed or the URL of a custom theme. Defaults to dark."
+            },
+            "lang": {
+              "type": "string",
+              "description": "The language giscus displays in, such as zh-CN, when it differs from the site language. A site language giscus does not know falls back to en."
+            },
+            "light": {
+              "type": "string",
+              "default": "light",
+              "description": "The giscus theme for the site's light mode, a built-in name such as light_high_contrast or the URL of a custom theme. Defaults to light."
+            },
+            "mapping": {
+              "type": "string",
+              "enum": [
+                "pathname",
+                "url",
+                "title",
+                "og:title",
+                "specific",
+                "number"
+              ],
+              "default": "pathname",
+              "description": "How a post finds its discussion: by its path, its URL, its title, its og:title, or a fixed term or number. Defaults to pathname."
+            },
+            "repo": {
+              "type": "string",
+              "pattern": "^[\\w.-]+/[\\w.-]+$",
+              "description": "The GitHub repository whose discussions hold the comments, as owner/name."
+            },
+            "repoId": {
+              "type": "string",
+              "description": "The ID of that repository, from the giscus setup at giscus.app."
+            }
+          }
+        },
         "fonts": {
           "type": "string",
           "enum": [

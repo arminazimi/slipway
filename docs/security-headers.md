@@ -31,9 +31,16 @@ For example, for Plausible Analytics:
 script-src 'self' 'sha256-XGf7ojkkbZv5I86o3Cq4e6de1UCOIrwGFnO2NZTNKQg=' https://plausible.io; connect-src 'self' https://plausible.io;
 ```
 
+For the giscus comments (`slipway.comments`), allow the client script and the iframe it embeds; nothing else changes (`connect-src` stays `'self'` because all of giscus's network traffic happens inside its iframe):
+```http
+script-src 'self' 'sha256-XGf7ojkkbZv5I86o3Cq4e6de1UCOIrwGFnO2NZTNKQg=' https://giscus.app; frame-src https://giscus.app;
+```
+
+Enabling comments also adds one small inline script next to the embed, which forwards the site's light/dark mode to the giscus iframe. A hash-based `script-src` must allow it too: hash the script as it appears in your built page, or add `'unsafe-inline'`.
+
 ## Theme Script Hash
 
-The only inline script shipped with the theme is the dark mode toggle initialization (`_includes/theme-init.html`). Its exact hash is:
+Except on sites with comments enabled (see above), the only inline script shipped with the theme is the dark mode toggle initialization (`_includes/theme-init.html`). Its exact hash is:
 
 `'sha256-XGf7ojkkbZv5I86o3Cq4e6de1UCOIrwGFnO2NZTNKQg='`
 

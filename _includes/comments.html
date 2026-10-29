@@ -1,0 +1,19 @@
+{%- comment -%} Opt-in comments via giscus, rendered on posts. Renders nothing unless site.slipway.comments is set. {%- endcomment -%}
+{%- assign sl_comments = site.slipway.comments -%}
+{%- if sl_comments -%}
+{%- assign sl_comments_light = sl_comments.light | default: 'light' -%}
+{%- assign sl_comments_dark = sl_comments.dark | default: 'dark' -%}
+{%- assign sl_giscus_lang = sl_comments.lang | default: page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_giscus_locales = 'ar,be,bg,ca,cs,da,de,en,eo,es,eu,fa,fr,gr,hbs,he,hu,id,it,ja,kh,ko,nl,pl,pt,ro,ru,th,tr,uk,uz,vi,zh-CN,zh-HK,zh-TW' | split: ',' -%}
+{%- unless sl_giscus_locales contains sl_giscus_lang -%}
+{%- assign sl_giscus_base = sl_giscus_lang | split: '-' | first -%}
+{%- if sl_giscus_locales contains sl_giscus_base -%}{%- assign sl_giscus_lang = sl_giscus_base -%}{%- else -%}{%- assign sl_giscus_lang = 'en' -%}{%- endif -%}
+{%- endunless -%}
+<section class="sl-comments">
+  <h2>{% include t.html key='comments' %}</h2>
+  <script id="sl-giscus" defer src="https://giscus.app/client.js" crossorigin="anonymous" data-repo="{{ sl_comments.repo | escape }}" data-repo-id="{{ sl_comments.repoId | escape }}" data-category="{{ sl_comments.category | escape }}" data-category-id="{{ sl_comments.categoryId | escape }}" data-mapping="{{ sl_comments.mapping | default: 'pathname' | escape }}" data-reactions-enabled="1" data-emit-metadata="0" data-theme="{{ sl_comments_light | escape }}" data-lang="{{ sl_giscus_lang }}"></script>
+  <script data-light="{{ sl_comments_light | escape }}" data-dark="{{ sl_comments_dark | escape }}">
+  (function(){var d=document.currentScript.dataset,g=document.getElementById("sl-giscus"),q=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;function theme(){var t=document.documentElement.dataset.theme;if(t==="dark")return d.dark;if(t==="light")return d.light;return q&&q.matches?d.dark:d.light}if(g)g.setAttribute("data-theme",theme());function sync(){var f=document.querySelector("iframe.giscus-frame");if(f)f.contentWindow.postMessage({giscus:{setConfig:{theme:theme()}}},"https://giscus.app")}if(window.MutationObserver)new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});if(q)q.addEventListener?q.addEventListener("change",sync):q.addListener(sync)})();
+  </script>
+</section>
+{%- endif -%}
