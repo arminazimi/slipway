@@ -29,6 +29,8 @@ Run section 6 before you change anything and keep the output. Your edit is done 
 
 A post's file name is its date and its address; to change the title, set `title`, never rename the file. A `doc` page shows in the sidebar only when the `docs` list in `_data/navigation.yml` links its `permalink`; add it there in reading order. Do not create `search.json`, `feed.xml`, `sitemap.xml`, `404.md`, `tags.md`, or `archive.md`: they exist already, and they have front matter and no text on purpose.
 
+Drafts, scheduled posts, and edits, on a post: a draft goes in `_drafts/<slug>.md`, with no date in its name — GitHub Pages never builds `_drafts/`, and `jekyll serve --drafts` previews it with today's date. A scheduled post is a normal post whose `YYYY-MM-DD` file name is in the future: GitHub Pages publishes it automatically on that date, and `jekyll serve --future` previews it early, marked Scheduled on the page. After a substantial edit to a published post, add `updated: YYYY-MM-DD` (the same form as the file name's date): the post shows it as "edited on", and the feed, the sitemap, and the structured data report it as the last-modified date.
+
 ## 3. Fill the front matter from the schema
 
 Every key, its type, and its allowed values are in [reference/front-matter.md](reference/front-matter.md), generated from the schemas the checks use. Use only keys it lists for your layout.

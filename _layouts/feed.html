@@ -9,7 +9,7 @@
   {%- for post in site.posts -%}
     {%- assign sl_f_post_lang = post.lang | default: site.lang | default: 'en' -%}
     {%- if sl_f_post_lang != sl_f_lang %}{% continue %}{% endif -%}
-    {%- if sl_f_count == 0 %}{% assign sl_f_updated = post.last_modified_at | default: post.date %}{% endif -%}
+    {%- if sl_f_count == 0 %}{% assign sl_f_updated = post.updated | default: post.last_modified_at | default: post.date %}{% endif -%}
     {%- if sl_f_count == 20 %}{% break %}{% endif -%}
     {%- assign sl_f_count = sl_f_count | plus: 1 %}
   <entry>
@@ -17,7 +17,7 @@
     <link href="{{ post.url | absolute_url }}" rel="alternate" type="text/html"/>
     <id>{{ post.url | absolute_url }}</id>
     <published>{{ post.date | date_to_xmlschema }}</published>
-    <updated>{{ post.last_modified_at | default: post.date | date_to_xmlschema }}</updated>
+    <updated>{{ post.updated | default: post.last_modified_at | default: post.date | date_to_xmlschema }}</updated>
     {%- if post.description %}
     <summary>{{ post.description | xml_escape }}</summary>
     {%- endif %}

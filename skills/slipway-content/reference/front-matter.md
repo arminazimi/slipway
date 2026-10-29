@@ -43,6 +43,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
 | `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
 | `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
+| `updated` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date the page was last substantially edited. A post shows it as "edited on" after its publish date, and feeds, the sitemap, and structured data use it as the last-modified date. |
 | `width` | `narrow` or `wide` or `full` |  |  | Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it. |
 
 ## Only in `post`
