@@ -73,11 +73,11 @@ response: '{"res": "val"}'
 
   // Check request
   assert.ok(html.includes('<div class="sl-endpoint-request">'), "Should render request container");
-  assert.ok(html.includes('<h3>Example request</h3>'), "Should render request heading");
+  assert.ok(html.includes('<h2>Example request</h2>'), "Should render request heading");
   assert.ok(html.includes('<code>{&quot;req&quot;: &quot;val&quot;}</code>'), "Should render escaped request");
 
   // Check response
   assert.ok(html.includes('<div class="sl-endpoint-response">'), "Should render response container");
-  assert.ok(html.includes('<h3>Example response</h3>'), "Should render response heading");
+  assert.ok(html.includes('<h2>Example response</h2>'), "Should render response heading");
   assert.ok(html.includes('<code>{&quot;res&quot;: &quot;val&quot;}</code>'), "Should render escaped response");
 });
