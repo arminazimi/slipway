@@ -27,6 +27,13 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
 | `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.arabic.hijri` | boolean | `false` | Print post dates in the Hijri calendar. |
+| `slipway.comments` | object |  | Opt-in comments with giscus. |
+| `slipway.comments.giscus` | object |  | Giscus configuration. |
+| `slipway.comments.giscus.category` | string | required | The discussion category. |
+| `slipway.comments.giscus.category_id` | string | required | The ID of the category. |
+| `slipway.comments.giscus.mapping` | string |  | The mapping between pages and discussions. Defaults to pathname. |
+| `slipway.comments.giscus.repo` | string | required | The GitHub repository to store comments in. |
+| `slipway.comments.giscus.repo_id` | string | required | The ID of the repository. |
 | `slipway.fonts` | `default` or `system` | `default` | Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts. |
 | `slipway.header` | `classic` or `centered` or `minimal` | `classic` | Header layout. classic puts the title at the start and navigation, search, and the toggles at the end; centered stacks them on the middle axis; minimal shows only the title, the language switcher, and the theme toggle. |
 | `slipway.languages` | list of object | `[]` | Languages of the site, in switcher order. Pages join by lang and translation_key in front matter. Leave it unset for a one-language site. |

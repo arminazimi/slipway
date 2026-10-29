@@ -107,6 +107,46 @@
             }
           }
         },
+        "comments": {
+          "type": "object",
+          "description": "Opt-in comments with giscus.",
+          "additionalProperties": false,
+          "properties": {
+            "giscus": {
+              "type": "object",
+              "description": "Giscus configuration.",
+              "additionalProperties": false,
+              "required": [
+                "repo",
+                "repo_id",
+                "category",
+                "category_id"
+              ],
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "description": "The discussion category."
+                },
+                "category_id": {
+                  "type": "string",
+                  "description": "The ID of the category."
+                },
+                "mapping": {
+                  "type": "string",
+                  "description": "The mapping between pages and discussions. Defaults to pathname."
+                },
+                "repo": {
+                  "type": "string",
+                  "description": "The GitHub repository to store comments in."
+                },
+                "repo_id": {
+                  "type": "string",
+                  "description": "The ID of the repository."
+                }
+              }
+            }
+          }
+        },
         "fonts": {
           "type": "string",
           "enum": [
