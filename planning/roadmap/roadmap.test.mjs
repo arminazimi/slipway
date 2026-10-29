@@ -67,6 +67,14 @@ test("parses phases, epics, and tasks, and ignores fenced examples", () => {
   );
 });
 
+test("a release milestone such as v1.2 works like a phase", () => {
+  const release = SAMPLE.replace("| Phase 0 | 2026-10-19", "| v1.2 | 2026-10-19").replace("# Phase 0 — ", "# v1.2 — ");
+  const { phases, epics, errors } = parseRoadmap(release);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(phases.map((p) => p.id), ["v1.2"]);
+  assert.equal(epics[0].phase, "v1.2");
+});
+
 test("a lettered phase such as Phase 0a is its own phase", () => {
   const lettered = SAMPLE.replace("| Phase 0 | 2026-10-19", "| Phase 0a | 2026-10-19").replace("# Phase 0 — ", "# Phase 0a — ");
   const { phases, epics, errors } = parseRoadmap(lettered);
