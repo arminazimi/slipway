@@ -12,3 +12,5 @@ __pycache__/
 test-results/
 .tmp/
 .jules/
+zola-*.tar.gz
+.hugo_build.lock
