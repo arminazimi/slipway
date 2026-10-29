@@ -1,0 +1,6 @@
+# The fixture site of the social image tests (tools/theme/og.test.mjs).
+title: OG fixture
+url: "https://example.com"
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme

@@ -28,6 +28,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `description` | string |  |  | One sentence for search results and link previews. |
 | `dir` | `ltr` or `rtl` |  |  | Text direction (ADR 0003). Defaults to the direction of `lang`. |
 | `direction` | `ltr` or `rtl` |  |  | Text direction as the base layout reads it today; same meaning as `dir`. |
+| `image` | string |  | `^(/\|https://)[^\s"<>]*$` | The page's own social image (`og:image`): a path on this site or an https link. Without it, Actions mode generates one from the title, and every mode falls back to the shared `assets/images/social.png`. |
 | `lang` | string |  | `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` | BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
 | `nav_order` | number |  |  | Sort order in generated navigation. |
