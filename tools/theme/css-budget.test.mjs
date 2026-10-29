@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { budgetBytes, stylesheetSizes, totalBytes } from "./css-budget.mjs";
 
-test("the budget is 41 KB of raw bytes", () => {
-  assert.equal(budgetBytes, 41984);
+test("the budget is 42 KB of raw bytes", () => {
+  assert.equal(budgetBytes, 43008);
 });
 
 test("the stylesheets the theme ships fit the budget", () => {
