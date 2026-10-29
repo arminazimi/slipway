@@ -15,6 +15,14 @@ layout: base
     <h2>{% include t.html lang=l.code key='not_found_title' %}</h2>
     <p>{% include t.html lang=l.code key='not_found_text' %}</p>
     <p><a class="sl-button" href="{{ l.prefix | append: '/' | relative_url }}">{% include t.html lang=l.code key='go_home' %}</a></p>
+    {%- if sl_nf_langs.size > 1 %}
+    <p class="sl-not-found-missing" hidden>
+      {% include t.html lang=l.code key='translation_missing' %}
+      {%- for other in sl_nf_langs -%}
+        {%- if other.code != l.code %} <a href="{{ other.prefix | append: '/' | relative_url }}" hreflang="{{ other.code }}" lang="{{ other.code }}">{{ other.name }}</a>{% endif -%}
+      {%- endfor %}
+    </p>
+    {%- endif %}
   </section>
   {%- endfor %}
   {%- else %}
@@ -23,5 +31,39 @@ layout: base
     <p>{% include t.html key='not_found_text' %}</p>
     <p><a class="sl-button" href="{{ '/' | relative_url }}">{% include t.html key='go_home' %}</a></p>
   </section>
+  {%- endif %}
+  {%- if sl_nf_langs.size > 0 %}
+  <script>
+    (function() {
+      var path = location.pathname;
+      var rootUrl = "{{ '/' | relative_url }}";
+      var prefixes = [{% for l in sl_nf_langs %}"{{ l.prefix | append: '/' | relative_url }}"{% unless forloop.last %},{% endunless %}{% endfor %}];
+      var langs = [{% for l in sl_nf_langs %}"{{ l.code }}"{% unless forloop.last %},{% endunless %}{% endfor %}];
+      var match = null;
+      for (var i = 0; i < prefixes.length; i++) {
+        var prefix = prefixes[i];
+        if (prefix !== rootUrl && path.indexOf(prefix) === 0) {
+          match = langs[i];
+          break;
+        }
+      }
+      if (!match) {
+        var rootIndex = prefixes.indexOf(rootUrl);
+        if (rootIndex !== -1) match = langs[rootIndex];
+      }
+      if (match) {
+        var sections = document.querySelectorAll('.sl-not-found section[lang]');
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].getAttribute('lang') !== match) {
+            sections[i].hidden = true;
+          } else {
+            sections[i].hidden = false;
+            var missing = sections[i].querySelector('.sl-not-found-missing');
+            if (missing) missing.hidden = false;
+          }
+        }
+      }
+    })();
+  </script>
   {%- endif %}
 </article>
