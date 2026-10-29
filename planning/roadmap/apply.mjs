@@ -182,7 +182,11 @@ for (const l of labels) {
 const existingMilestones = gh([`repos/${REPO}/milestones?state=all&per_page=100`]);
 for (const p of phases) {
   const title = `${p.id} — ${p.title}`;
-  const found = existingMilestones.find((m) => m.title === title) ?? existingMilestones.find((m) => m.title.startsWith(`${p.id} — `));
+  // A milestone recorded in state.json keeps its number when its title changes (renamed phases keep their issues).
+  const found =
+    existingMilestones.find((m) => m.number === state.phases[p.id]) ??
+    existingMilestones.find((m) => m.title === title) ??
+    existingMilestones.find((m) => m.title.startsWith(`${p.id} — `));
   const body = { title, description: p.description, due_on: p.dueOn };
   if (found) {
     gh([`repos/${REPO}/milestones/${found.number}`, "-X", "PATCH"], body);
