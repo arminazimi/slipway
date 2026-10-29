@@ -12,7 +12,7 @@ const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
 
 test("every key used in a layout has a built-in English, Persian, Arabic, and Hebrew string", () => {
-  const files = ["_layouts/base.html", "_layouts/home.html", "_layouts/doc.html", "_layouts/post.html", "_includes/header.html", "_includes/skip-link.html", "_includes/lang-switcher.html"];
+  const files = ["_layouts/base.html", "_layouts/home.html", "_layouts/doc.html", "_layouts/post.html", "_includes/header.html", "_includes/skip-link.html", "_includes/lang-switcher.html", "_includes/comments.html"];
   const used = new Set(files.flatMap((f) => [...read(f).matchAll(/include t\.html key=['"](\w+)['"]/g)].map((m) => m[1])));
   const fa = read("_includes/i18n/fa.html");
   const ar = read("_includes/i18n/ar.html");

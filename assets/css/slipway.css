@@ -598,6 +598,18 @@
   }
 }
 
+/* Comments: the giscus embed at the end of a post. */
+@layer components {
+  .sl-comments {
+    margin-block-start: var(--sl-space-12);
+  }
+
+  .sl-comments h2 {
+    margin-block-end: var(--sl-space-4);
+    font-size: var(--sl-step-lg);
+  }
+}
+
 /* Authors: the byline, the author box after a post, and the author page. */
 @layer components {
   .sl-authors {

@@ -68,7 +68,8 @@ function findNavFiles(dir, fileList = []) {
   for (const file of files) {
     const filePath = join(dir, file);
     if (statSync(filePath).isDirectory()) {
-       if (!filePath.includes('node_modules') && !filePath.includes('.git')) {
+       // `.tmp/` is gitignored scratch (check output, build fixtures, workflow worktrees), not the repository.
+       if (!filePath.includes('node_modules') && !filePath.includes('.git') && filePath !== join(root, '.tmp')) {
           findNavFiles(filePath, fileList);
        }
     } else if (file === "navigation.yml" && filePath.includes('_data')) {

@@ -20,6 +20,15 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.arabic` | object |  | Opt-in Arabic conventions for pages whose lang is ar. |
 | `slipway.arabic.digits` | boolean | `false` | Print dates, reading time, and section numbers with Arabic-Indic digits. |
 | `slipway.arabic.hijri` | boolean | `false` | Print post dates in the Hijri calendar. |
+| `slipway.comments` | object |  | Opt-in comments via giscus, on every post. Docs pages and the rest of the site stay comment-free. |
+| `slipway.comments.category` | string | required | The name of the discussion category the comments open discussions in, such as Announcements. |
+| `slipway.comments.categoryId` | string | required | The ID of that category, from the giscus setup at giscus.app. |
+| `slipway.comments.dark` | string | `dark` | The giscus theme for the site's dark mode, a built-in name such as dark_dimmed or the URL of a custom theme. Defaults to dark. |
+| `slipway.comments.lang` | string |  | The language giscus displays in, such as zh-CN, when it differs from the site language. A site language giscus does not know falls back to en. |
+| `slipway.comments.light` | string | `light` | The giscus theme for the site's light mode, a built-in name such as light_high_contrast or the URL of a custom theme. Defaults to light. |
+| `slipway.comments.mapping` | `pathname` or `url` or `title` or `og:title` or `specific` or `number` | `pathname` | How a post finds its discussion: by its path, its URL, its title, its og:title, or a fixed term or number. Defaults to pathname. |
+| `slipway.comments.repo` | string | required | The GitHub repository whose discussions hold the comments, as owner/name. |
+| `slipway.comments.repoId` | string | required | The ID of that repository, from the giscus setup at giscus.app. |
 | `slipway.fonts` | `default` or `system` | `default` | Font loading. default self-hosts the theme fonts; system downloads nothing and falls back to system fonts. |
 | `slipway.header` | `classic` or `centered` or `minimal` | `classic` | Header layout. classic puts the title at the start and navigation, search, and the toggles at the end; centered stacks them on the middle axis; minimal shows only the title, the language switcher, and the theme toggle. |
 | `slipway.languages` | list of object | `[]` | Languages of the site, in switcher order. Pages join by lang and translation_key in front matter. Leave it unset for a one-language site. |

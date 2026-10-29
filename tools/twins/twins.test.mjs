@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, test } from "node:test";
@@ -9,7 +9,9 @@ import { committedTwins, generateTwins, main } from "./run.mjs";
 
 const skip = bundleAvailable() ? false : "run `bundle install` to generate the twins with the GitHub Pages gem";
 const fixture = join(root, "tools/theme/fixtures/twins-site");
-const work = mkdtempSync(join(tmpdir(), "slipway-twins-"));
+// The Pages gem builds in safe mode, so a source under the symlinked /var/folders fails its
+// realpath prefix check on every include; build from the real path, as buildExample does.
+const work = mkdtempSync(join(realpathSync(tmpdir()), "slipway-twins-"));
 after(() => rmSync(work, { recursive: true, force: true }));
 
 function jekyll(source, dest, env = {}) {

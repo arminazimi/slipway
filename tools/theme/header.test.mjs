@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { after, test } from "node:test";
@@ -9,7 +9,9 @@ import { root } from "./tokens.mjs";
 
 const read = (path) => readFileSync(join(root, path), "utf8");
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
-const work = mkdtempSync(join(tmpdir(), "slipway-header-"));
+// The Pages gem builds in safe mode, so a source under the symlinked /var/folders fails its
+// realpath prefix check on every include; build from the real path, as buildExample does.
+const work = mkdtempSync(join(realpathSync(tmpdir()), "slipway-header-"));
 after(() => rmSync(work, { recursive: true, force: true }));
 
 /** The opening tag and contents of the site header in a built page. */
