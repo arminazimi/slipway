@@ -35,6 +35,30 @@ layout: base
       {%- endif %}
     </p>
   </header>
+  {%- if page.toc %}
+  {%- assign sl_parts = content | split: '<h' -%}
+  {%- capture sl_toc_html -%}
+    {%- for part in sl_parts offset: 1 -%}
+      {%- assign sl_level = part | slice: 0, 1 -%}
+      {%- if sl_level == '2' or sl_level == '3' -%}
+        {%- assign sl_head = part | split: '</h' | first -%}
+        {%- assign sl_id = sl_head | split: 'id="' | last | split: '"' | first -%}
+        {%- if sl_head contains 'id="' %}
+        <li class="sl-toc-{{ sl_level }}"><a href="#{{ sl_id }}">{{ sl_head | split: '">' | last | strip_html }}</a></li>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- assign sl_toc_trim = sl_toc_html | strip -%}
+  {%- if sl_toc_trim != '' %}
+  <nav class="sl-toc" aria-label="{% include t.html key='on_this_page' %}">
+    <p class="sl-toc-title">{% include t.html key='on_this_page' %}</p>
+    <ul>{{ sl_toc_html }}
+    </ul>
+  </nav>
+  <div class="sl-progress" aria-hidden="true"><div class="sl-progress-fill"></div></div>
+  {%- endif %}
+  {%- endif %}
   {%- include series.html %}
   {% include edit-sources.html html=content %}
   {%- include author-ids.html page=page -%}

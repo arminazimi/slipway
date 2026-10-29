@@ -49,6 +49,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | --- | --- | --- | --- | --- |
 | `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
 | `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
+| `toc` | boolean |  |  | `true` shows a table of contents of the post's h2 and h3 headings after the header, and a reading-progress bar at the top of the viewport while scrolling. Long posts benefit most; the bar is drawn with CSS, so it works without JavaScript. |
 
 ## Only in `home`
 
