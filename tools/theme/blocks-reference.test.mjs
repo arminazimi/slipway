@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { bundleAvailable, buildExample } from "./build.mjs";
@@ -24,8 +24,7 @@ test("blocks reference page renders correctly", { skip }, () => {
     // Ensure the block is mentioned
     assert.ok(html.toLowerCase().includes(block.replace("-", " ")), `Should mention ${block}`);
 
-    // The snippet is printed as text
-    const snippetPattern = new RegExp(`{% include blocks/${block}\\.html`);
-    assert.ok(snippetPattern.test(html), `Should include copyable snippet for ${block}`);
+    // The snippet is escaped by markdown processing inside code blocks, e.g. `{ %` or similar. We can match the text content:
+    assert.ok(html.includes(`{% include blocks/${block}.html`), `Should include copyable snippet for ${block}`);
   }
 });
