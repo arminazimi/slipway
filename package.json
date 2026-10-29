@@ -18,7 +18,7 @@
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:site": "node tools/theme/check.mjs",
     "check:schemas": "node tools/theme/validate.mjs",
-    "check:docs": "node tools/theme/config-doc.mjs --check",
+    "check:docs": "node tools/theme/config-doc.mjs --check && node tools/theme/front-matter-doc.mjs --check",
     "sourcemap": "node tools/sourcemap/run.mjs",
     "twins": "node tools/twins/run.mjs",
     "roadmap:build": "node planning/roadmap/build.mjs",
@@ -33,7 +33,7 @@
     "check:js": "node tools/theme/js-budget.mjs",
     "check:css": "node tools/theme/css-budget.mjs",
     "build:skills": "node tools/skills/config-reference.mjs && node tools/skills/front-matter-reference.mjs",
-    "build:docs": "node tools/theme/config-doc.mjs"
+    "build:docs": "node tools/theme/config-doc.mjs && node tools/theme/front-matter-doc.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
