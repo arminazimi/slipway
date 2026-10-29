@@ -65,7 +65,7 @@ response: '{"res": "val"}'
 
   // Check parameters
   assert.ok(html.includes('<div class="sl-endpoint-parameters">'), "Should render parameters container");
-  assert.ok(html.includes('<th>Name</th>'), "Should render name heading");
+  assert.ok(html.includes('<th scope="col">Name</th>'), "Should render name heading");
   assert.ok(html.includes('<code>p1</code>'), "Should render parameter name");
   assert.ok(html.includes('<span class="sl-endpoint-param-required">Required</span>'), "Should render required label");
   assert.ok(html.includes('<code>string</code>'), "Should render parameter type");
