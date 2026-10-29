@@ -4,6 +4,7 @@ description: Create a new GitHub Pages site with the Slipway Jekyll theme, or cu
 ---
 
 # Create and customize a Slipway site
+
 Slipway is a Jekyll theme for GitHub Pages, right-to-left ready. You customize a site through config and three override slots, never by copying or editing theme files. Every key you may set is listed in [reference/config.md](reference/config.md); do not add keys it does not list under `slipway`.
 
 ## 1. Create the site
@@ -139,10 +140,13 @@ bundle exec jekyll build
 Read every error and warning and fix them the same way. To look at the result, run `bundle exec jekyll serve` and open the address it prints. Without a `Gemfile`, push and read the log of the Pages build.
 
 ## 7. Dependencies
+
 Check a gem, npm package, or Action with Evergreen's `check_dependency` before adding it, when Evergreen is available. Evergreen stays optional.
+
 ## Never
+
 - Never edit files under `_site/`; the build replaces them.
-- Never copy theme layouts or includes; use tokens and the three slots.
+- Never copy theme layouts or includes into the site to change them; use tokens and the three slots.
 - Never put Liquid (`{{ }}` or `{% %}`) in page content.
 - Never add a key under `slipway` that [reference/config.md](reference/config.md) does not list; the schema rejects it.
 - Never turn on Pages, add secrets, or change repository settings; ask the owner.
