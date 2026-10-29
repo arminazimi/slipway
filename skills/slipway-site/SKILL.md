@@ -139,6 +139,10 @@ bundle exec jekyll build
 
 Read every error and warning and fix them the same way. To look at the result, run `bundle exec jekyll serve` and open the address it prints. Without a `Gemfile`, push and read the log of the Pages build.
 
+## 7. Dependencies
+
+Check a gem, npm package, or Action with Evergreen's `check_dependency` before adding it, when Evergreen is available. Evergreen stays optional.
+
 ## Never
 
 - Never edit files under `_site/`; the build replaces them.

@@ -92,12 +92,13 @@ export function siteConfig({ title, lang, mode }) {
   if (mode === "remote") lines.push(`remote_theme: ${remoteTheme}`);
   if (mode === "gem") lines.push("theme: slipway-theme");
   lines.push("plugins:", ...(mode === "remote" ? ["  - jekyll-remote-theme"] : []), "  - jekyll-feed", "  - jekyll-sitemap");
+  lines.push("defaults:", "  - scope:", '      path: ""', "      type: pages", "    values:", "      layout: page");
   return `${lines.join("\n")}\n`;
 }
 
 /** The Gemfile of a new site: the GitHub Pages environment, plus the theme gem in gem mode. */
 export function gemfile({ mode }) {
-  const lines = ['source "https://rubygems.org"', "", "# The same Jekyll and plugins GitHub Pages runs, to preview the site locally.", 'gem "github-pages", group: :jekyll_plugins'];
+  const lines = ['source "https://rubygems.org"', "", "# Install the Pages dependency versions without enabling its safe-mode wrapper.", 'gem "github-pages", group: :jekyll_plugins, require: false'];
   if (mode === "gem") lines.push("", "# The Slipway theme.", 'gem "slipway-theme"');
   return `${lines.join("\n")}\n`;
 }
@@ -114,7 +115,8 @@ export function createSite({ dir, title, lang, mode }, sources = findSources()) 
   const written = copyStarter(sources, dir, { theme: mode === "template" });
   writeFileSync(join(dir, "_config.yml"), siteConfig({ title, lang, mode }));
   writeFileSync(join(dir, "Gemfile"), gemfile({ mode }));
-  return [...new Set([...written, "_config.yml", "Gemfile"])].sort();
+  writeFileSync(join(dir, "content-schemas.json"), readFileSync(join(packageRoot, "src/content-schemas.json")));
+  return [...new Set([...written, "_config.yml", "Gemfile", "content-schemas.json"])].sort();
 }
 
 function nextSteps(dir, cwd) {
@@ -124,7 +126,7 @@ function nextSteps(dir, cwd) {
   return [
     "Next:",
     `  cd ${cd} && bundle install && bundle exec jekyll serve   # build and preview`,
-    "  npx slipway doctor                                       # check the site",
+    "  npx slipway doctor . --build _site --level L2             # check the starter contract",
     '  git init && git add . && git commit -m "New Slipway site" && git push   # then turn on GitHub Pages',
   ].join("\n");
 }

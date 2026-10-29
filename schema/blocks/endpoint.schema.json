@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/blocks/endpoint.schema.json",
+  "title": "API Endpoint Block",
+  "description": "Documents an HTTP endpoint with its method, path, parameters, and examples.",
+  "type": "object",
+  "properties": {
+    "method": {
+      "type": "string",
+      "description": "The HTTP method (e.g. GET, POST, PUT, DELETE).",
+      "default": "GET"
+    },
+    "parameters": {
+      "type": "array",
+      "description": "A list of parameters for the endpoint.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "The description of the parameter."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the parameter."
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether the parameter is required."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the parameter (e.g. string, number)."
+          }
+        },
+        "required": ["name", "type", "description"],
+        "additionalProperties": false
+      }
+    },
+    "path": {
+      "type": "string",
+      "description": "The path of the endpoint (e.g. /api/v1/users)."
+    },
+    "request": {
+      "type": "string",
+      "description": "An example request payload."
+    },
+    "response": {
+      "type": "string",
+      "description": "An example response payload."
+    }
+  },
+  "required": ["path"],
+  "additionalProperties": false
+}

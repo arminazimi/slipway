@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["_config.yml"], "target": "file", "schema": "schema/slipway-config.schema.json" },
+    { "files": ["**/*.md", "**/*.markdown"], "target": "front-matter", "schema": "schema/front-matter/base.schema.json" }
+  ]
+}

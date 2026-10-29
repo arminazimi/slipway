@@ -43,6 +43,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `tags` | list or string |  |  | Tags: a list, or one space-separated string as Jekyll allows. |
 | `title` | string | yes | not empty | The page title, used in the heading, the tab, and feeds. |
 | `translation_key` | string |  | not empty | Links the translations of one page; pages with the same key are alternates of each other. |
+| `updated` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date the page was last substantially edited. A post shows it as "edited on" after its publish date, and feeds, the sitemap, and structured data use it as the last-modified date. |
 | `width` | `narrow` or `wide` or `full` |  |  | Page width: `narrow` (34rem), `wide` (64rem), or `full` (the whole window). Leave it out for the reading width. Inside any width, wrap a section in `.sl-wide` or `.sl-bleed` to widen it. |
 
 ## Only in `post`
@@ -51,6 +52,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | --- | --- | --- | --- | --- |
 | `author` | string or list |  |  | Who wrote the post: one key of `_data/authors.yml`, or a list of keys for several authors. The post shows a byline and an author box for each. |
 | `series` | string |  | not empty | The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part. |
+| `toc` | boolean |  |  | `true` shows a table of contents of the post's h2 and h3 headings after the header, and a reading-progress bar at the top of the viewport while scrolling. Long posts benefit most; the bar is drawn with CSS, so it works without JavaScript. |
 
 ## Only in `home`
 

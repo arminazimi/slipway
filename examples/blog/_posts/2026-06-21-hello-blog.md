@@ -2,6 +2,7 @@
 title: Hello, blog
 description: The first post on this example blog.
 layout: post
+updated: 2026-06-28
 author: ada
 permalink: /2026/06/21/hello-blog.html
 tags: [slipway, meta]

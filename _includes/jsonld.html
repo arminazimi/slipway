@@ -30,7 +30,8 @@
 ,"url":{{ sl_ld_url | jsonify }},"inLanguage":{{ sl_ld_lang | jsonify }}
 {%- if sl_desc and sl_desc != '' -%},"description":{{ sl_desc | jsonify }}{%- endif -%}
 {%- if sl_ld_type == 'BlogPosting' and page.date -%}
-,"datePublished":{{ page.date | date_to_xmlschema | jsonify }},"dateModified":{{ page.date | date_to_xmlschema | jsonify }}
+{%- assign sl_ld_modified = page.updated | default: page.last_modified_at | default: page.date -%}
+,"datePublished":{{ page.date | date_to_xmlschema | jsonify }},"dateModified":{{ sl_ld_modified | date_to_xmlschema | jsonify }}
 {%- endif -%}
 {%- if sl_ld_type == 'BlogPosting' or sl_ld_type == 'TechArticle' -%}
 {%- if sl_ld_author -%},"author":{"@type":"Person","name":{{ sl_ld_author | jsonify }}}{%- endif -%}

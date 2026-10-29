@@ -2,6 +2,7 @@
 title: Why plain Markdown
 description: Content that outlives the tool that renders it.
 layout: post
+toc: true
 series: Writing for the web
 author: sam
 permalink: /2026/10/20/why-plain-markdown.html

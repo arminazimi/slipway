@@ -1,0 +1,16 @@
+docs:
+  - title: Module 1
+    children:
+      - title: Lesson 1
+        url: /modules/module-1-lesson-1.html
+      - title: Lesson 2
+        url: /modules/module-1-lesson-2.html
+  - title: Module 2
+    children:
+      - title: Lesson 3
+        url: /modules/module-2-lesson-1.html
+main:
+  - title: Home
+    url: /
+  - title: Syllabus
+    url: /modules/module-1-lesson-1.html

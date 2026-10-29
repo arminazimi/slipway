@@ -503,6 +503,47 @@
   }
 }
 
+/* Post reading progress: a scroll-driven bar at the top of the viewport, pure CSS with no JavaScript.
+   Without `animation-timeline` support the fill stays at scaleX(0) and nothing shows. */
+@layer components {
+  .sl-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: 2px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .sl-progress-fill {
+    block-size: 100%;
+    background: var(--sl-color-rose);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  [dir="rtl"] .sl-progress-fill {
+    transform-origin: 100% 50%;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .sl-progress-fill {
+      animation: sl-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
+@keyframes sl-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Post series: the box after the post header with the parts and the previous and next part. */
 @layer components {
   .sl-series {

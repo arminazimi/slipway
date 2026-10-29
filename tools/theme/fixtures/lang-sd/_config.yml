@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: sd
+future: true
+languages:
+  - { code: sd, name: Sindhi, prefix: "" }
