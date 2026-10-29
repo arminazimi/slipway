@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: dv
+future: true
+languages:
+  - { code: dv, name: Dhivehi, prefix: "" }
