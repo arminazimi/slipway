@@ -331,7 +331,7 @@ Agents build, edit, and check Slipway sites as first-class users: instructions t
 | `agent.edit-button` | "Edit with your agent" on every section: copies a prompt with the source file, line, and current text | strong-agent | M | `sourcemap.lines` |
 
 ### Exit criteria
-- [ ] A fresh agent session creates a Slipway site, adds a page, breaks a link, sees the finding on the Markdown line, fixes it, and gets a clean `slipway doctor` report.
+- [ ] A fresh agent session creates a Slipway site, builds it locally, adds a page, introduces invalid front matter, sees a finding on the Markdown file and line, fixes it, and passes `slipway doctor . --build _site --level L2` (no failed MUST checks through L2). Broken content links at Markdown lines remain the Phase 6 `sourcemap.e2e` criterion (#69), not a standalone Doctor guarantee.
 
 ---
 

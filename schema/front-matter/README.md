@@ -37,3 +37,4 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `permalink` | string | a path starting with `/`, or `pretty`, `date`, `ordinal`, `weekdate`, `none` |
 | `published`, `sitemap`, `search` | boolean | `true`, `false` |
 | `translation_key` | string | not empty; the same key on every translation of a page |
+| `updated` | string | a date like `date`; a post shows it as "edited on", feeds and the sitemap use it as the last-modified date |
