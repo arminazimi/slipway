@@ -33,7 +33,7 @@ test("the feed, the sitemap, and the structured data prefer the updated date", (
 });
 
 test("every built-in language has the edited_on and scheduled strings", () => {
-  for (const lang of ["en", "fa", "ar", "he", "es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh", "ur", "ckb", "ps", "yi"]) {
+  for (const lang of ["en", "fa", "ar", "he", "es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh", "ur", "ckb", "ps", "yi", "pl"]) {
     const block = read(`_includes/i18n/${lang}.html`);
     assert.match(block, /when 'edited_on'/, lang);
     assert.match(block, /when 'scheduled'/, lang);
