@@ -145,10 +145,17 @@ export function main(env = process.env) {
     }
 
     for (const name of exampleNames()) {
-      // examples/bare relies on the Pages gem's default layout and front matter plugins (zero config on
-      // GitHub Pages); plain Jekyll 4 has neither, so a site there names its layouts.
-      if (name === "bare" && target() === "jekyll4") {
-        console.log(`SKIP: bare needs GitHub Pages' default plugins (${target()})`);
+      // Examples that only build on the GitHub Pages gem: its default plugins do the work, and plain
+      // Jekyll 4 has neither them nor a site that names its layouts.
+      const needsPages = {
+        // Zero config: the Pages gem's default layout gives every page a layout.
+        bare: "its layout comes from a default plugin",
+        // Pages' jekyll-default-layout lays out pages with no front matter and jekyll-relative-links
+        // rewrites their `.md` links; Jekyll 4 copies such a page as a static file instead.
+        "product-docs": "its pages have no front matter",
+      }[name];
+      if (needsPages && target() === "jekyll4") {
+        console.log(`SKIP: ${name} needs GitHub Pages' default plugins: ${needsPages} (${target()})`);
         continue;
       }
       for (const mode of checkedModes) {

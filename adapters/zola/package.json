@@ -1,0 +1,20 @@
+{
+  "name": "@slipway/zola",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zola adapter that emits sourcemap.json, Markdown twins, and data-source on headings",
+  "type": "module",
+  "scripts": {
+    "postbuild": "node src/index.mjs"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^14.0.3"
+  }
+}

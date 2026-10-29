@@ -90,6 +90,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
 | `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `status`, `since`, `replaced_by` | all | yes | `kit-status-banner.test.mjs` |
+| `owner`, `review_date` | all | yes | `page-layout.test.mjs` |
 | `sitemap: false` | all | yes, *not yet tested* | |
 | `search: false` | all | yes, *not yet tested* | |
 | `dir`, `nav_order`, `published` | all | in the schema (ADR 0003); layouts do not read `dir` or `nav_order` yet | `front-matter.test.mjs` |

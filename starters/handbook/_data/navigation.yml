@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+docs:
+  - title: Onboarding
+    url: /onboarding.html
+  - title: Policies
+    url: /policies/
+main:
+  - title: Policies
+    url: /policies/
+  - title: Onboarding
+    url: /onboarding.html

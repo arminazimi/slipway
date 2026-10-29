@@ -51,6 +51,10 @@
       "type": "number",
       "description": "Sort order in generated navigation."
     },
+    "owner": {
+      "type": "string",
+      "description": "The owner of this page."
+    },
     "permalink": {
       "type": "string",
       "pattern": "^(/|(pretty|date|ordinal|weekdate|none)$)",
@@ -63,6 +67,10 @@
     "replaced_by": {
       "$ref": "#/$defs/url",
       "description": "The URL of the page that replaces this one, if deprecated."
+    },
+    "review_date": {
+      "$ref": "#/$defs/date",
+      "description": "The date this page was last reviewed."
     },
     "search": {
       "type": "boolean",

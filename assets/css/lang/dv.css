@@ -1,0 +1,6 @@
+:lang(dv) {
+  font-family: "Noto Sans Thaana", "MV Boli", system-ui, sans-serif;
+}
+:lang(dv) :is(h1, h2, h3, h4, h5, h6) {
+  font-family: "Noto Sans Thaana", "MV Boli", system-ui, sans-serif;
+}
