@@ -39,12 +39,11 @@ test("the 404 page stays out of the sitemap and the search index", { skip }, () 
   assert.doesNotMatch(readFileSync(join(out, "search.json"), "utf8"), /Page not found/);
 });
 
-test("the 404 page contains the translation missing notice and script for switching", { skip }, () => {
+test("the 404 page contains the translation missing notice, with no inline script (CSP)", { skip }, () => {
   const out = buildExample("gem", tmpDir("404-site-notice"));
   const notFoundHtml = readFileSync(join(out, "404.html"), "utf8");
 
   assert.match(notFoundHtml, /This page hasn't been translated yet\. Read it in:/);
-  assert.match(notFoundHtml, /<script>/);
-  assert.match(notFoundHtml, /var path = location\.pathname;/);
-  assert.match(notFoundHtml, /class="sl-not-found-missing" hidden>/);
+  assert.doesNotMatch(notFoundHtml, /var path = location\.pathname;/);
+  assert.match(notFoundHtml, /class="sl-not-found-missing">/);
 });
