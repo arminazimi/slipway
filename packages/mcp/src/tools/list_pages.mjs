@@ -1,58 +1,67 @@
-import { Site } from "../../../doctor/src/site.mjs";
+import { relative, sep } from "node:path";
 import { insideSite } from "../tools.mjs";
+import { Site } from "../../../doctor/src/site.mjs";
 
 const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_modules)\//;
 const isMarkdown = (path) => /\.(md|markdown|html)$/i.test(path);
 
 export const definition = {
   name: "list_pages",
-  description: "List pages with URL, source path, layout, lang, translation_key, and title.",
+  description: "List pages with their URL, source file, layout, language, translation key, and title. Optionally filter by layout, language, or folder.",
   inputSchema: {
     type: "object",
     properties: {
-      folder: { type: "string", description: "Filter pages to only those inside this folder relative to the site directory." },
-      layout: { type: "string", description: "Filter pages by layout name." },
-      lang: { type: "string", description: "Filter pages by language code." },
+      layout: { type: "string", description: "Filter by layout name." },
+      lang: { type: "string", description: "Filter by language code." },
+      folder: { type: "string", description: "Filter by folder path relative to the site root." },
     },
     additionalProperties: false,
   },
   annotations: { readOnlyHint: true },
 };
 
-export function listPages(siteDir, { folder, layout, lang } = {}) {
-  const site = new Site(siteDir, { build: siteDir });
+function pageUrl(path, fm) {
+  if (fm && fm.permalink) return fm.permalink;
+  let url = "/" + path.replace(/\.(md|markdown)$/i, ".html");
+  if (url.endsWith("/index.html")) url = url.slice(0, -10);
+  return url;
+}
 
+export function listPages(siteDir, { layout, lang, folder } = {}) {
+  let safeFolder = null;
   if (folder) {
-    insideSite(siteDir, folder);
+    // insideSite throws if it escapes the site folder.
+    // It returns the real path, which we can compare.
+    const resolved = insideSite(siteDir, folder);
+    const siteRoot = insideSite(siteDir, ".");
+    safeFolder = relative(siteRoot, resolved).split(sep).join("/");
+    if (safeFolder !== "" && !safeFolder.endsWith("/")) safeFolder += "/";
   }
 
+  const site = new Site(siteDir);
   const pages = [];
 
   for (const path of site.files()) {
     if (notContent.test(path) || !isMarkdown(path)) continue;
 
-    if (folder && !path.startsWith(folder.replace(/^\/+|\/+$/g, '') + '/') && path !== folder.replace(/^\/+|\/+$/g, '')) continue;
-
-    const fm = site.frontMatterOf(path);
-    const data = fm && fm.data ? fm.data : {};
-
-    if (layout && data.layout !== layout) continue;
-    if (lang && data.lang !== lang) continue;
-
-    let pageUrl = "/" + path.replace(/\.(md|markdown)$/i, ".html");
-    if (pageUrl.endsWith("/index.html")) pageUrl = pageUrl.slice(0, -10) || "/";
-
-    if (typeof data.permalink === "string") {
-      pageUrl = data.permalink;
+    if (safeFolder && safeFolder !== "") {
+      if (!path.startsWith(safeFolder)) continue;
     }
 
+    const fm = site.frontMatterOf(path);
+    if (!fm || !fm.data || typeof fm.data !== "object") continue;
+
+    if (layout && fm.data.layout !== layout) continue;
+    if (lang && fm.data.lang !== lang) continue;
+
     pages.push({
-      url: pageUrl,
-      source: path,
-      layout: data.layout || null,
-      lang: data.lang || null,
-      translation_key: data.translation_key || null,
-      title: data.title || null,
+      url: pageUrl(path, fm.data),
+      file: path,
+      layout: typeof fm.data.layout === "string" ? fm.data.layout : null,
+      lang: typeof fm.data.lang === "string" ? fm.data.lang : null,
+      translation_key: typeof fm.data.translation_key === "string" ? fm.data.translation_key : null,
+      title: typeof fm.data.title === "string" ? fm.data.title : null,
+      line: fm.offset !== undefined ? fm.offset + 1 : 1,
     });
   }
 

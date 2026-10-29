@@ -1,4 +1,0 @@
----
-layout: llms-full
-permalink: /llms-full.txt
----

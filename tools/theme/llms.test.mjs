@@ -23,11 +23,6 @@ test("every example except bare publishes llms.txt and llms-full.txt", () => {
       const path = join(root, "examples", name, file);
       assert.ok(existsSync(path), `examples/${name}/${file} is missing`);
       const source = readFileSync(path, "utf8");
-      // A site may write the file itself (docs/site-files.md): then it is the text, not a stub selecting a layout.
-      if (!source.startsWith("---")) {
-        assert.ok(source.trim(), `examples/${name}/${file} is empty`);
-        continue;
-      }
       assert.match(source, new RegExp(`^layout: ${layout}$`, "m"));
       assert.match(source, new RegExp(`^permalink: /${file.replace(".", "\\.")}$`, "m"));
     }

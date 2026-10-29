@@ -25,12 +25,10 @@ response: |
 ---
 # {{ page.title }}
 
-<div markdown="0">
-<p>LTR example:</p>
+LTR example:
 {% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}
-</div>
 
-<div dir="rtl" markdown="0">
-<p>RTL example:</p>
+<div dir="rtl">
+RTL example:
 {% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}
 </div>
