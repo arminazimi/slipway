@@ -23,7 +23,8 @@ const generators = [
       return isFile(dir, "config.toml") && /^\s*baseURL\s*=/im.test(readFileSync(join(dir, "config.toml"), "utf8")) ? 1 : 0;
     },
   },
-  { generator: "astro", sourceDir: "src", outputDir: "dist", match: (dir, entries) => (stemFile(entries, "astro.config") ? 2 : 0) },
+  { generator: "starlight", sourceDir: "src", outputDir: "dist", match: (dir, entries) => (stemFile(entries, "astro.config") && readFileSync(join(dir, entries.find(n => n.startsWith("astro.config."))), "utf8").includes("starlight") ? 2 : 0) },
+  { generator: "astro", sourceDir: "src", outputDir: "dist", match: (dir, entries) => (stemFile(entries, "astro.config") && !readFileSync(join(dir, entries.find(n => n.startsWith("astro.config."))), "utf8").includes("starlight") ? 2 : 0) },
   { generator: "docusaurus", sourceDir: "docs", outputDir: "build", match: (dir, entries) => (stemFile(entries, "docusaurus.config") ? 2 : 0) },
   { generator: "mkdocs", sourceDir: "docs", outputDir: "site", match: (dir) => (anyFile(dir, ["mkdocs.yml", "mkdocs.yaml"]) ? 2 : 0) },
   {
@@ -39,6 +40,14 @@ const generators = [
     outputDir: "_site",
     match: (dir) => (isFile(dir, "_config.yml") && (isFile(dir, "Gemfile") || isDir(dir, "_layouts")) ? 1 : 0),
   },
+  { generator: "nextra", sourceDir: "pages", outputDir: ".next", match: (dir, entries) => (stemFile(entries, "theme.config") ? 2 : 0) },
+  { generator: "vitepress", sourceDir: ".", outputDir: ".vitepress/dist", match: (dir) => (isDir(dir, ".vitepress") && stemFile(readdirSync(join(dir, ".vitepress")), "config") ? 2 : 0) },
+  { generator: "zola", sourceDir: "content", outputDir: "public", match: (dir) => (isFile(dir, "config.toml") && /^\s*base_url\s*=/im.test(readFileSync(join(dir, "config.toml"), "utf8")) ? 1 : 0) },
+  { generator: "mdbook", sourceDir: "src", outputDir: "book", match: (dir) => (isFile(dir, "book.toml") ? 2 : 0) },
+  { generator: "hexo", sourceDir: "source", outputDir: "public", match: (dir) => (isFile(dir, "_config.yml") && readFileSync(join(dir, "_config.yml"), "utf8").includes("Hexo") ? 1 : 0) },
+  { generator: "quarto", sourceDir: ".", outputDir: "_site", match: (dir) => (isFile(dir, "_quarto.yml") ? 2 : 0) },
+  { generator: "sphinx", sourceDir: ".", outputDir: "_build/html", match: (dir) => (isFile(dir, "conf.py") ? 2 : 0) },
+  { generator: "pelican", sourceDir: "content", outputDir: "output", match: (dir) => (isFile(dir, "pelicanconf.py") ? 2 : 0) },
 ];
 
 /**
