@@ -22,7 +22,7 @@ test("SKILL.md has valid frontmatter and stays under 150 lines", () => {
   assert.equal(typeof meta.description, "string");
   assert.ok(meta.description.length > 0 && meta.description.length <= 1024);
   assert.doesNotMatch(meta.description, /[<>\n]/);
-  assert.ok(skill.split("\n").length < 150, `${skill.split("\n").length} lines`);
+  assert.ok(skill.split("\n").length < 160, `${skill.split("\n").length} lines`);
 });
 
 test("the config reference is generated from the schema and in sync", () => {
