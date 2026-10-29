@@ -31,9 +31,11 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `lang` | string |  | `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` | BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
 | `nav_order` | number |  |  | Sort order in generated navigation. |
+| `owner` | string |  |  | The owner of this page. |
 | `permalink` | string |  | `^(/\|(pretty\|date\|ordinal\|weekdate\|none)$)` | The output URL: a path starting with `/`, or one of Jekyll's built-in styles. |
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
 | `replaced_by` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of the page that replaces this one, if deprecated. |
+| `review_date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date this page was last reviewed. |
 | `search` | boolean |  |  | `false` leaves the page out of the search index. |
 | `since` | string |  |  | The version when the page status was set. |
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
