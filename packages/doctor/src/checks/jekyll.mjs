@@ -88,6 +88,7 @@ export const builtinKeys = [
   "tags",
   "theme",
   "translation_key",
+  "translation_missing",
   "type",
   "versions",
   "yes"
