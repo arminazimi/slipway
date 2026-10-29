@@ -11,6 +11,14 @@ layout: base
     <h1>{{ page.title }}</h1>{% include copy-page.html %}
     <p class="sl-post-meta">
       <time datetime="{{ page.date | date_to_xmlschema }}">{% include date.html date=page.date %}</time>
+      {%- assign sl_pub_date = page.date | date: '%F' -%}
+      {%- if page.date > site.time %}
+      <span class="sl-tag">{% include t.html key='scheduled' %}</span>
+      {%- endif %}
+      {%- assign sl_updated_date = page.updated | date: '%F' -%}
+      {%- if sl_updated_date and sl_updated_date != sl_pub_date %}
+      <span class="sl-post-edited">{% include t.html key='edited_on' %} <time datetime="{{ page.updated | date_to_xmlschema }}">{% include date.html date=page.updated %}</time></span>
+      {%- endif %}
       <span>{% include num.html value=sl_minutes %} {% include t.html key='min_read' %}</span>
       {%- capture sl_byline %}{% include byline.html page=page %}{% endcapture %}
       {%- assign sl_byline = sl_byline | strip %}

@@ -110,6 +110,10 @@
       "minLength": 1,
       "description": "Links the translations of one page; pages with the same key are alternates of each other."
     },
+    "updated": {
+      "$ref": "#/$defs/date",
+      "description": "The date the page was last substantially edited. A post shows it as \"edited on\" after its publish date, and feeds, the sitemap, and structured data use it as the last-modified date."
+    },
     "width": {
       "enum": [
         "narrow",
