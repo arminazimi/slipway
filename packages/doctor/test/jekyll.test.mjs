@@ -63,8 +63,9 @@ test("a site without _config.yml gets no Jekyll checks", async () => {
   assert.deepEqual(report.tests.filter((t) => t.scope === "jekyll"), []);
 });
 
-test("the stubs are the files of starter-files/ except its README", () => {
-  assert.deepEqual(walk(join(repo, "starter-files")).filter((path) => path !== "README.md").sort(), [...stubs].sort());
+test("the stubs are the files of starter-files/ except its READMEs and optional files", () => {
+  const isOptional = (path) => path === "README.md" || path.startsWith("optional/");
+  assert.deepEqual(walk(join(repo, "starter-files")).filter((path) => !isOptional(path)).sort(), [...stubs].sort());
 });
 
 test("the built-in UI string keys are the ones in _includes/i18n/en.html", () => {
