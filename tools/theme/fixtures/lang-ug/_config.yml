@@ -1,0 +1,5 @@
+theme: slipway-theme
+lang: ug
+future: true
+languages:
+  - { code: ug, name: Uyghur, prefix: "" }
