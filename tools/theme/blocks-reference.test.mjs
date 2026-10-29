@@ -23,11 +23,9 @@ test("blocks reference page renders correctly", { skip }, () => {
   for (const block of blocks) {
     assert.ok(html.toLowerCase().includes(block.replace("-", " ")), `Should mention ${block}`);
 
-    // Check if the exact phrase "include blocks/name.html" is present.
-    // GitHub actions failed because `html.includes(...)` wasn't working due to the Markdown HTML escaping logic in CI.
-    assert.ok(
-      html.includes(`include blocks/${block}.html`),
-      `Should include copyable snippet for ${block}`
-    );
+    // Check if the snippet is mentioned. Markdown processor might encode characters.
+    // E.g. {% include blocks/... %} might become something completely different or just part of a <code> block.
+    // The most robust check is a simple regex that matches `include blocks/name.html` ignoring any surrounding characters
+    assert.match(html, new RegExp(`include blocks/${block}\\.html`));
   }
 });
