@@ -30,10 +30,10 @@ slipway:
   const html = readFileSync(join(outDir, "2024/01/01/test.html"), "utf8");
   assert.ok(html.includes('class="giscus"'));
   assert.ok(html.includes('https://giscus.app/client.js'));
-  assert.ok(html.includes('data-repo="arminazimi/slipway"'));
-  assert.ok(html.includes('data-repo-id="R_kgDOMuTfQQ"'));
-  assert.ok(html.includes('data-category="Announcements"'));
-  assert.ok(html.includes('data-category-id="DIC_kwDOMuTfQc4CiRyL"'));
+  assert.ok(html.includes('"data-repo", "arminazimi/slipway"'));
+  assert.ok(html.includes('"data-repo-id", "R_kgDOMuTfQQ"'));
+  assert.ok(html.includes('"data-category", "Announcements"'));
+  assert.ok(html.includes('"data-category-id", "DIC_kwDOMuTfQc4CiRyL"'));
 
   const homeHtml = readFileSync(join(outDir, "index.html"), "utf8");
   assert.ok(!homeHtml.includes('class="giscus"'), "comments should not be on home page");
