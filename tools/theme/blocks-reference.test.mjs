@@ -15,6 +15,9 @@ test("blocks reference page renders correctly", { skip }, () => {
 
   const html = readFileSync(join(outDir, "blocks/index.html"), "utf8");
 
+  // Code blocks are syntax-highlighted into spans; compare the plain text.
+  const text = html.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&");
+
   const blocksDir = join(root, "site/blocks");
   const blocks = readdirSync(blocksDir)
     .filter((f) => f.endsWith(".md") && f !== "index.md")
@@ -26,6 +29,6 @@ test("blocks reference page renders correctly", { skip }, () => {
     // Check if the snippet is mentioned. Markdown processor might encode characters.
     // E.g. {% include blocks/... %} might become something completely different or just part of a <code> block.
     // The most robust check is a simple regex that matches `include blocks/name.html` ignoring any surrounding characters
-    assert.match(html, new RegExp(`include blocks/${block}\\.html`));
+    assert.match(text, new RegExp(`include blocks/${block}\\.html`));
   }
 });
