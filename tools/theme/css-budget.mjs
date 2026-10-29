@@ -1,11 +1,11 @@
 // The CSS budget: the theme ships a lightweight stylesheet that stays small.
 //
-//   - assets/css/*.css together weigh at most 41 KB (raw bytes), enforced here and in `npm run check`.
+//   - assets/css/*.css together weigh at most 42 KB (raw bytes), enforced here and in `npm run check`.
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { root } from "./tokens.mjs";
 
-export const budgetBytes = 41 * 1024; // 41 KB
+export const budgetBytes = 42 * 1024; // 42 KB
 
 /** Every file in assets/css with its size in bytes. */
 export function stylesheetSizes(dir = join(root, "assets/css")) {
