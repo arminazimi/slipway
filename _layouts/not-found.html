@@ -15,6 +15,14 @@ layout: base
     <h2>{% include t.html lang=l.code key='not_found_title' %}</h2>
     <p>{% include t.html lang=l.code key='not_found_text' %}</p>
     <p><a class="sl-button" href="{{ l.prefix | append: '/' | relative_url }}">{% include t.html lang=l.code key='go_home' %}</a></p>
+    {%- if sl_nf_langs.size > 1 %}
+    <p class="sl-not-found-missing">
+      {% include t.html lang=l.code key='translation_missing' %}
+      {%- for other in sl_nf_langs -%}
+        {%- if other.code != l.code %} <a href="{{ other.prefix | append: '/' | relative_url }}" hreflang="{{ other.code }}" lang="{{ other.code }}">{{ other.name }}</a>{% endif -%}
+      {%- endfor %}
+    </p>
+    {%- endif %}
   </section>
   {%- endfor %}
   {%- else %}
