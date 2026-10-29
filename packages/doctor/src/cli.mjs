@@ -27,7 +27,7 @@ Options:
 
 const formats = ["text", "json", "sarif"];
 
-/** Parses arguments. Returns \`{ options }\` or \`{ error }\`. */
+/** Parses arguments. Returns `{ options }` or `{ error }`. */
 export function parseArgs(args) {
   const [command, ...rest] = args;
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
@@ -71,7 +71,7 @@ export function parseArgs(args) {
 
 const display = (path) => relative(process.cwd(), path).split(sep).join("/") || ".";
 
-/** A finding as \`path:line key: message (allowed: ...) (fix: ...)\`, with the path from the current folder. */
+/** A finding as `path:line key: message (allowed: ...) (fix: ...)`, with the path from the current folder. */
 export function formatFinding(finding, { source, build }) {
   const base = finding.in === "output" ? build : source;
   const file = finding.file ? `${base ? display(resolve(base, finding.file)) : finding.file}${finding.line ? `:${finding.line}` : ""}` : "";
