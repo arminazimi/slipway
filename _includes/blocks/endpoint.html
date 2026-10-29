@@ -1,0 +1,50 @@
+{%- include component-css.html name="endpoint" -%}
+{%- assign method = include.method | upcase | default: "GET" -%}
+<div class="sl-endpoint">
+  <div class="sl-endpoint-header" dir="ltr">
+    <span class="sl-endpoint-method sl-endpoint-method-{{ method | downcase }}">{{ method }}</span>
+    <code class="sl-endpoint-path">{{ include.path }}</code>
+  </div>
+  {%- if include.parameters -%}
+    <div class="sl-endpoint-parameters">
+      <h2>{% include i18n-builtin.html key="parameters" %}</h2>
+      <div class="sl-endpoint-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{% include i18n-builtin.html key="name" %}</th>
+              <th scope="col">{% include i18n-builtin.html key="type" %}</th>
+              <th scope="col">{% include i18n-builtin.html key="description" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for param in include.parameters -%}
+              <tr>
+                <td class="sl-endpoint-param-name">
+                  <code>{{ param.name }}</code>
+                  {%- if param.required -%}
+                    <span class="sl-endpoint-param-required">{% include i18n-builtin.html key="required" %}</span>
+                  {%- endif -%}
+                </td>
+                <td class="sl-endpoint-param-type"><code>{{ param.type }}</code></td>
+                <td class="sl-endpoint-param-description">{{ param.description | markdownify }}</td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {%- endif -%}
+  {%- if include.request -%}
+    <div class="sl-endpoint-request">
+      <h2>{% include i18n-builtin.html key="example_request" %}</h2>
+      <pre><code>{{ include.request | escape }}</code></pre>
+    </div>
+  {%- endif -%}
+  {%- if include.response -%}
+    <div class="sl-endpoint-response">
+      <h2>{% include i18n-builtin.html key="example_response" %}</h2>
+      <pre><code>{{ include.response | escape }}</code></pre>
+    </div>
+  {%- endif -%}
+</div>
