@@ -29,6 +29,10 @@
       "type": "string",
       "minLength": 1,
       "description": "The name of the series the post belongs to. Posts with the same name and language form the series, oldest first; each shows a series box with its part, the other parts, and the previous and next part."
+    },
+    "toc": {
+      "type": "boolean",
+      "description": "`true` shows a table of contents of the post's h2 and h3 headings after the header, and a reading-progress bar at the top of the viewport while scrolling. Long posts benefit most; the bar is drawn with CSS, so it works without JavaScript."
     }
   }
 }

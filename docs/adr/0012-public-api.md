@@ -89,6 +89,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `variant`, `features`, `posts_limit` | `home` | yes | `home-layout.test.mjs` |
 | `author` (one id or a list of ids from `_data/authors.yml`) | `post`, `author` | yes | `authors.test.mjs` |
 | `series` (a series name; posts with the same name and language form the series) | `post` | yes | `series.test.mjs` |
+| `toc: true` (a table of contents of the post's headings and a reading-progress bar) | `post` | yes | `post-toc.test.mjs` |
 | `width` (`narrow`, `wide`, `full`) | all | yes | `widths.test.mjs` |
 | `status`, `since`, `replaced_by` | all | yes | `kit-status-banner.test.mjs` |
 | `owner`, `review_date` | all | yes | `page-layout.test.mjs` |
