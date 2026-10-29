@@ -14,5 +14,5 @@ layout: base
     <p class="sl-page-lead">{{ page.description }}</p>
     {%- endif %}
   </header>
-  {{ content }}
+  {% include edit-sources.html html=content %}
 </article>

@@ -25,7 +25,7 @@ _data/i18n/<lang>.yml      interface strings for a language the theme does not s
 
 ## Schemas
 
-Front matter and config are checked against JSON Schemas in the theme. Use only the keys they list:
+CLI starters include `content-schemas.json` and local schemas for offline checks. Front matter and config are checked against JSON Schemas in the theme. Use only the keys they list:
 
 - Config: https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json
 - Menus: https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json
@@ -99,7 +99,10 @@ After each edit, build the site and read every error and warning:
 
 ```sh
 bundle exec jekyll build
+npx slipway doctor . --build _site --level L2
 ```
+
+CLI starters target L2 after a local build (custom plugins must be enabled). L3 skill discovery is optional. Doctor checks structure and schemas; broken content links at Markdown lines are the separate Seaworthy integration tracked in Slipway #69.
 
 Each message names a file and often a line. Fix it there, build again, and repeat until the build is clean. If the site has no Gemfile, GitHub Pages builds it on push: check the front matter against the schemas above instead, and read the build log of the Pages run.
 

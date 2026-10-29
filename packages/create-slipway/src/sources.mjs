@@ -7,6 +7,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+export const agentDirs = ["schema", "_plugins"];
 export const themeDirs = ["_layouts", "_includes", "_sass", "assets"];
 
 /** Files of the starter that the CLI writes itself instead of copying. */
@@ -51,6 +52,10 @@ function copyTop(from, to, skip) {
 export function copyStarter(sources, site, { theme = false } = {}) {
   if (!existsSync(sources.starter)) throw new Error(`the starter is missing: ${sources.starter}`);
   const copied = [...copyTop(sources.starter, site, generated), ...copyTop(sources.stubs, site, stubDocs)];
+  for (const dir of agentDirs) {
+    cpSync(join(sources.theme, dir), join(site, dir), { recursive: true });
+    copied.push(dir);
+  }
   if (theme) {
     for (const dir of themeDirs) {
       if (!existsSync(join(sources.theme, dir))) continue;
@@ -67,7 +72,7 @@ export function copySources(sources, out) {
   if (!existsSync(sources.starter)) throw new Error(`the starter is missing: ${sources.starter}`);
   copyTop(sources.starter, target.starter, new Set());
   copyTop(sources.stubs, target.stubs, new Set());
-  for (const dir of themeDirs) {
+  for (const dir of [...themeDirs, ...agentDirs]) {
     if (existsSync(join(sources.theme, dir))) cpSync(join(sources.theme, dir), join(target.theme, dir), { recursive: true });
   }
 }

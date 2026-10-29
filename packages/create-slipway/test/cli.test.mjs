@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough } from "node:stream";
@@ -8,11 +8,13 @@ import { after, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { bundleAvailable, root } from "../../../tools/theme/build.mjs";
-import { main, siteConfig } from "../src/cli.mjs";
-import { repoSources, themeDirs } from "../src/sources.mjs";
+import { doctor } from "../../doctor/src/doctor.mjs";
+import { exitCode } from "../../doctor/src/cli.mjs";
+import { main, createSite, siteConfig } from "../src/cli.mjs";
+import { copySources, bundledSources, repoSources, themeDirs } from "../src/sources.mjs";
 
 const bin = fileURLToPath(new URL("../bin/create-slipway.mjs", import.meta.url));
-const work = mkdtempSync(join(tmpdir(), "create-slipway-"));
+const work = mkdtempSync(join(realpathSync(tmpdir()), "create-slipway-"));
 after(() => rmSync(work, { recursive: true, force: true }));
 
 /** Runs the real binary with stdin from a pipe, so it has no terminal. */
@@ -40,7 +42,7 @@ test("flags alone create a site from the starter without prompting", () => {
   assert.equal(result.status, 0, result.stderr);
   const site = join(work, "fa-site");
   const config = parse(readFileSync(join(site, "_config.yml"), "utf8"));
-  assert.deepEqual(config, { title: "T", lang: "fa", remote_theme: "arminazimi/slipway", plugins: ["jekyll-remote-theme", "jekyll-feed", "jekyll-sitemap"] });
+  assert.deepEqual(config, { title: "T", lang: "fa", remote_theme: "arminazimi/slipway", plugins: ["jekyll-remote-theme", "jekyll-feed", "jekyll-sitemap"], defaults: [{ scope: { path: "", type: "pages" }, values: { layout: "page" } }] });
   for (const name of readdirSync(repoSources().starter)) if (name !== "_config.yml") assert.ok(existsSync(join(site, name)), `${name} is copied from examples/bare`);
   assert.ok(existsSync(join(site, "Gemfile")));
   assert.match(result.stdout, /bundle exec jekyll serve/);
@@ -103,7 +105,7 @@ test("with a terminal it prompts only for the missing values", async () => {
   assert.match(out.text(), /Mode/);
   assert.doesNotMatch(out.text(), /Folder|Language code/);
   const config = parse(readFileSync(join(work, "prompted", "_config.yml"), "utf8"));
-  assert.deepEqual(config, { title: "My Title", lang: "de", theme: "slipway-theme", plugins: ["jekyll-feed", "jekyll-sitemap"] });
+  assert.deepEqual(config, { title: "My Title", lang: "de", theme: "slipway-theme", plugins: ["jekyll-feed", "jekyll-sitemap"], defaults: [{ scope: { path: "", type: "pages" }, values: { layout: "page" } }] });
   assert.match(readFileSync(join(work, "prompted", "Gemfile"), "utf8"), /gem "slipway-theme"/);
 });
 
@@ -136,13 +138,57 @@ for (const [mode, lang] of [["gem", "fa"], ["template", "en"]]) {
     const out = join(work, `${name}-out`);
     // Built with the repository's bundle, whose Gemfile carries the local theme gem.
     const result = spawnSync("bundle", ["exec", "jekyll", "build", "--source", join(work, name), "--destination", out, "--baseurl", ""], {
-      cwd: root,
+      cwd: join(work, name),
       encoding: "utf8",
-      env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production" },
+      env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production", JEKYLL_NO_BUNDLER_REQUIRE: "true", BUNDLE_GEMFILE: join(root, "Gemfile") },
     });
     assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
     const page = readFileSync(join(out, "index.html"), "utf8");
     assert.match(page, /<title>/);
     assert.match(page, new RegExp(`<html[^>]* lang="${lang}"`));
+  });
+}
+
+for (const mode of ["remote", "gem", "template"]) {
+  test(`packed ${mode} starter completes the L2 agent verification loop offline`, { skip: !ruby && "Ruby and `bundle install` are missing" }, async () => {
+    const packed = join(work, `packed-${mode}`);
+    copySources(repoSources(), packed);
+    const source = join(work, `agent-${mode}`);
+    createSite({ dir: source, title: "Agent loop", lang: "en", mode }, bundledSources(packed));
+    // Remote theme fetching is already covered separately. Build against the same local theme
+    // so this contract regression needs neither GitHub nor a published gem/package.
+    if (mode === "remote") {
+      const config = join(source, "_config.yml");
+      writeFileSync(config, readFileSync(config, "utf8").replace(/^remote_theme:.*$/m, "theme: slipway-theme").replace(/^  - jekyll-remote-theme\n/m, ""));
+    }
+    const build = join(source, "_site");
+    const rebuild = () => {
+      const result = spawnSync("bundle", ["exec", "jekyll", "build", "--source", source, "--destination", build, "--baseurl", ""], {
+        cwd: source, encoding: "utf8", timeout: 60_000,
+        env: { ...process.env, PAGES_REPO_NWO: "arminazimi/slipway", LANG: "en_US.UTF-8", LC_ALL: "en_US.UTF-8", JEKYLL_ENV: "production", JEKYLL_NO_BUNDLER_REQUIRE: "true", BUNDLE_GEMFILE: join(root, "Gemfile") },
+      });
+      assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
+    };
+    const clean = async () => {
+      const report = await doctor(source, { build });
+      assert.equal(exitCode(report, "L2"), 0, JSON.stringify(report.findings));
+      assert.deepEqual(report.tests.filter(t => t.keyword === "MUST" && ["L0", "L1", "L2"].includes(t.level) && t.status === "fail"), []);
+      assert.equal(report.tests.find(t => t.id === "ae.schemas.resolve").reason, undefined, "schemas resolve locally");
+    };
+    rebuild();
+    await clean();
+    const page = join(source, "about.md");
+    const valid = "---\ntitle: About\nlayout: page\n---\n\n## About us\n\nHello.\n";
+    writeFileSync(page, valid);
+    rebuild();
+    await clean();
+    writeFileSync(page, valid.replace("title: About", "title: [About]"));
+    rebuild();
+    const broken = await doctor(source, { build });
+    assert.equal(exitCode(broken, "L2"), 1);
+    assert.ok(broken.findings.some(f => f.id === "ae.schemas.valid" && f.in === "source" && f.file === "about.md" && f.line === 2));
+    writeFileSync(page, valid);
+    rebuild();
+    await clean();
   });
 }

@@ -20,3 +20,21 @@ It copies `examples/bare` and `starter-files/` from this repository, then writes
 Exit codes: `0` created, `1` bad usage, `2` the folder is not empty.
 
 In the repository, run it as `node packages/create-slipway/bin/create-slipway.mjs`. `npm pack` copies the starter and the theme into `template/` first (`scripts/bundle.mjs`), so the package works on its own.
+
+## Agent verification loop
+
+The Gemfile installs the Pages dependency versions with `require: false`: local builds use Jekyll directly so custom plugins run, rather than loading the Pages safe-mode wrapper.
+
+The CLI copies local schemas and the source-map/twin plugins in every mode, including the packed npm template. A local or Actions build targets **L2**; classic Pages safe mode does not run these plugins.
+
+```sh
+npx create-slipway my-site --yes
+cd my-site
+bundle install
+bundle exec jekyll build
+npx slipway doctor . --build _site --level L2
+```
+
+Add `about.md` with `title: About` and `layout: page` in YAML front matter. Build and run the same Doctor command. Change `title` to a list (`title: [About]`): Doctor reports `about.md:2`. Restore the string, rebuild, and Doctor exits 0 with no failed MUST checks through L2. L3 skill discovery and schema style warnings may still be reported; this is conformance at the starter's claimed level, not an empty report.
+
+Doctor does not check arbitrary broken content links. The link-break → Markdown-line → repair loop belongs to the Seaworthy integration tracked in [#69](https://github.com/arminazimi/slipway/issues/69). The standalone agent epic's exit criterion uses a schema error until that integration is delivered.
