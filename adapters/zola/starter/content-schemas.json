@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["config.toml"], "target": "file", "schema": "schema/zola-config.schema.json" },
+    { "files": ["content/**/*.md"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}
