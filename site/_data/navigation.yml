@@ -12,6 +12,8 @@ items:
     url: /recipes/
   - title: Guides
     url: /guides/
+  - title: Blocks
+    url: /blocks/
   - title: The Spec
     url: /spec/
   - title: Compare
