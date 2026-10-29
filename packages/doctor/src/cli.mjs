@@ -8,6 +8,7 @@ import * as infoCommand from "./commands/info.mjs";
 import * as completionCommand from "./commands/completion.mjs";
 import * as pinCommand from "./commands/pin.mjs";
 import * as navCommand from "./commands/nav.mjs";
+import * as translateCommand from "./commands/translate.mjs";
 import * as explainCommand from "./explain.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
@@ -26,11 +27,11 @@ Options:
 
 const formats = ["text", "json", "sarif"];
 
-/** Parses arguments. Returns `{ options }` or `{ error }`. */
+/** Parses arguments. Returns \`{ options }\` or \`{ error }\`. */
 export function parseArgs(args) {
   const [command, ...rest] = args;
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
-  if (command !== "doctor" && command !== "info" && command !== "completion" && command !== "pin" && command !== "nav") return { error: command ? `unknown command: ${command}` : "missing command" };
+  if (command !== "doctor" && command !== "info" && command !== "completion" && command !== "pin" && command !== "nav" && command !== "translate") return { error: command ? `unknown command: ${command}` : "missing command" };
   const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false, explain: null, explainGiven: false };
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
@@ -70,7 +71,7 @@ export function parseArgs(args) {
 
 const display = (path) => relative(process.cwd(), path).split(sep).join("/") || ".";
 
-/** A finding as `path:line key: message (allowed: ...) (fix: ...)`, with the path from the current folder. */
+/** A finding as \`path:line key: message (allowed: ...) (fix: ...)\`, with the path from the current folder. */
 export function formatFinding(finding, { source, build }) {
   const base = finding.in === "output" ? build : source;
   const file = finding.file ? `${base ? display(resolve(base, finding.file)) : finding.file}${finding.line ? `:${finding.line}` : ""}` : "";
@@ -115,6 +116,9 @@ export async function main(args, { log = console.log, error = console.error } = 
   }
   if (command === "nav") {
     return navCommand.main(args, { log, error });
+  }
+  if (command === "translate") {
+    return translateCommand.main(args, { log, error });
   }
   const parsed = parseArgs(args);
   if (parsed.help) {
