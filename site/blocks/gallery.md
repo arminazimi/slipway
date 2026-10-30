@@ -50,6 +50,10 @@ demo_images_rtl:
 {% include blocks/gallery.html images=page.demo_images %}
 {:/nomarkdown}
 
+```liquid
+{% raw %}{% include blocks/gallery.html images=page.demo_images %}{% endraw %}
+```
+
 ## Right-to-left
 
 {::nomarkdown}
@@ -57,3 +61,9 @@ demo_images_rtl:
 {% include blocks/gallery.html images=page.demo_images_rtl %}
 </div>
 {:/nomarkdown}
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/gallery.html images=page.demo_images_rtl %}
+</div>{% endraw %}
+```

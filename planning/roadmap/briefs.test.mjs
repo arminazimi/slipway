@@ -46,7 +46,7 @@ const KNOWN_MISSING_PARENTS = new Map([
 ]);
 // Tasks whose main file already merged but whose brief also lists a test or doc that has
 // not landed yet. They are not done, but their Create paths are not stale typos either.
-const PARTIAL_IMPLEMENTATIONS = new Set(["cli.info", "mcp.find-text", "og.render", "parallel.css-components", "starter.links"]);
+const PARTIAL_IMPLEMENTATIONS = new Set(["cli.info", "mcp.find-text", "og.render", "parallel.css-components", "starter.links", "host.build", "skill.blocks", "skill.deploy", "skill.design", "skill.release-notes", "skill.translate"]);
 
 const stripFences = (markdown) => {
   let fence = null;

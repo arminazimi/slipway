@@ -1,0 +1,7 @@
+.sl-chart{margin-block:var(--sl-space-4)}
+.sl-chart figcaption{color:var(--sl-color-muted);font-size:var(--sl-step-sm);margin-block-end:var(--sl-space-2)}
+.sl-chart-table{inline-size:100%;border-collapse:collapse}
+.sl-chart-table th,.sl-chart-table td{padding-block:var(--sl-space-1);text-align:start;vertical-align:middle}
+.sl-chart-table th{color:var(--sl-color-heading);font-weight:600;padding-inline-end:var(--sl-space-3);white-space:nowrap}
+.sl-chart-table td{background:var(--sl-color-surface);border-radius:var(--sl-radius-compact);padding-inline:var(--sl-space-2)}
+.sl-chart-bar{display:block;inline-size:var(--sl-chart-value,0%);block-size:var(--sl-space-2);background:var(--sl-color-rose-fill);border-radius:var(--sl-radius-compact);margin-block-start:var(--sl-space-1)}

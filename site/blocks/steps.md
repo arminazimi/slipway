@@ -24,8 +24,18 @@ steps_rtl:
 
 {% include blocks/steps.html steps=page.steps %}
 
+```liquid
+{% raw %}{% include blocks/steps.html steps=page.steps %}{% endraw %}
+```
+
 ## Right-to-left
 
 <div dir="rtl">
 {% include blocks/steps.html steps=page.steps_rtl %}
 </div>
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/steps.html steps=page.steps_rtl %}
+</div>{% endraw %}
+```

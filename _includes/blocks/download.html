@@ -1,0 +1,28 @@
+{%- if include.url -%}
+  {%- include component-css.html name="download" -%}
+  {%- assign has_meta = false -%}
+  {%- if include.name and include.name_label -%}{%- assign has_meta = true -%}{%- endif -%}
+  {%- if include.size and include.size_label -%}{%- assign has_meta = true -%}{%- endif -%}
+  {%- if include.checksum and include.checksum_label -%}{%- assign has_meta = true -%}{%- endif -%}
+  <div class="sl-download">
+    {%- if include.label -%}
+      <a class="sl-download-button" href="{{ include.url | relative_url }}" download>{{ include.label | escape }}</a>
+    {%- endif -%}
+    {%- if has_meta -%}
+      <dl class="sl-download-meta">
+        {%- if include.name and include.name_label -%}
+          <dt>{{ include.name_label | escape }}</dt>
+          <dd>{{ include.name | escape }}</dd>
+        {%- endif -%}
+        {%- if include.size and include.size_label -%}
+          <dt>{{ include.size_label | escape }}</dt>
+          <dd>{{ include.size | escape }}</dd>
+        {%- endif -%}
+        {%- if include.checksum and include.checksum_label -%}
+          <dt>{{ include.checksum_label | escape }}</dt>
+          <dd class="sl-download-checksum"><code dir="ltr">{{ include.checksum | escape }}</code></dd>
+        {%- endif -%}
+      </dl>
+    {%- endif -%}
+  </div>
+{%- endif -%}

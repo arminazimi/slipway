@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Slipway garden
+description: Notes that grow in public, one stage at a time.
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  header: minimal

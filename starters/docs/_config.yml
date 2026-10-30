@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Nimbus
+description: Keep plain-text notes in sync between your machine and a remote store.
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
