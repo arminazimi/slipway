@@ -1,0 +1,89 @@
+name: workflow-lint
+
+# Lints the workflows and the composite actions themselves: actionlint for syntax, expressions,
+# and the shell in `run:`, and zizmor for the security audits (unpinned actions, overly broad
+# permissions, cache poisoning). Both lint the whole repository, not only the changed files, so a
+# fix in one workflow cannot hide a problem in another. zizmor's findings go to code scanning as
+# SARIF, next to Evergreen's (lifecycle.yml).
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/**"
+      - "action/**"
+  pull_request:
+    paths:
+      - ".github/**"
+      - "action/**"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: workflow-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Lint every workflow
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
+        with:
+          version: 1.7.12
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # zizmor's action only produces SARIF when it uploads it too, and the upload is its own
+      # step here. The release archive is pinned by version and SHA-256 instead, so a tag moved
+      # upstream cannot change what runs. Bump both together.
+      - name: Install zizmor
+        env:
+          ZIZMOR_SHA256: d185f726bdaf92df78273217dfdd24ebcd6b0ef48cf3ce776ff5762b6e138c99
+          ZIZMOR_VERSION: 1.31.1
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/zizmor.tar.gz" \
+            "https://github.com/zizmorcore/zizmor/releases/download/v$ZIZMOR_VERSION/zizmor-x86_64-unknown-linux-gnu.tar.gz"
+          echo "$ZIZMOR_SHA256  $RUNNER_TEMP/zizmor.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/zizmor.tar.gz" -C "$RUNNER_TEMP" zizmor
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      # High severity and high confidence only: the gate is about problems a pull request must fix
+      # and can fix here, not about the whole backlog. `zizmor .` locally reports the rest.
+      # GitHub annotations for the pull request first, then the same findings as SARIF for code
+      # scanning; zizmor prints one format at a time.
+      - name: Audit the workflows and the composite actions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: zizmor --format github --min-severity high --min-confidence high .github action
+      - name: Write the SARIF report
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          zizmor --format sarif --min-severity high --min-confidence high \
+            .github action > "$RUNNER_TEMP/zizmor.sarif"
+      - name: Upload the findings to code scanning
+        if: always()
+        # A fork pull request's token cannot write to code scanning; the annotations above still show.
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: ${{ runner.temp }}/zizmor.sarif
+          category: zizmor
