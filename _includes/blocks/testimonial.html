@@ -1,0 +1,23 @@
+{%- assign sl_testimonial_quote = include.quote | strip -%}
+{%- if sl_testimonial_quote != "" -%}
+{%- include component-css.html name="testimonial" -%}
+<figure class="sl-testimonial">
+  <blockquote><p>{{ sl_testimonial_quote }}</p></blockquote>
+  {%- if include.avatar or include.name or include.role or include.source_url -%}
+  <figcaption class="sl-testimonial-credit">
+    {%- if include.avatar -%}
+    <img class="sl-testimonial-avatar" src="{{ include.avatar | relative_url | escape }}" alt="{{ include.avatar_alt | escape }}" width="48" height="48" loading="lazy">
+    {%- endif -%}
+    {%- if include.name or include.role -%}
+    <span class="sl-testimonial-person">
+      {%- if include.name -%}<cite class="sl-testimonial-name">{{ include.name }}</cite>{%- endif -%}
+      {%- if include.role -%}<span class="sl-testimonial-role">{{ include.role }}</span>{%- endif -%}
+    </span>
+    {%- endif -%}
+    {%- if include.source_url -%}
+    <a class="sl-testimonial-source" href="{{ include.source_url | escape }}">{{ include.source_label | default: include.source_url }}</a>
+    {%- endif -%}
+  </figcaption>
+  {%- endif -%}
+</figure>
+{%- endif -%}

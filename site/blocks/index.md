@@ -7,6 +7,13 @@ permalink: /blocks/
 
 Slipway includes several presentation blocks. Here is a live example of each, with copyable snippets you can use in your pages.
 
+## Annotations
+
+```liquid
+{% raw %}{% include blocks/annotations.html caption=page.annotations.caption language=page.annotations.language code=page.annotations.code notes=page.annotations.notes %}{% endraw %}
+```
+
+See [Annotations block](./annotations.html) for data setup.
 ## Audio
 
 ```liquid
@@ -23,6 +30,13 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Citation
+
+```liquid
+{% raw %}{% include blocks/citation.html references=page.references %}{% endraw %}
+```
+
+See [Citation block](./citation.html) for the in-text form.
 ## Code group
 
 ```liquid
@@ -46,6 +60,13 @@ See [Chart block](./chart.html) for data setup.
 
 See [Compare block](./compare.html) for data setup.
 
+## Diff
+
+```liquid
+{% raw %}{% include blocks/diff.html removed=page.diff.removed added=page.diff.added %}{% endraw %}
+```
+
+See [Diff block](./diff.html) for data setup.
 ## Download
 
 ```liquid
@@ -78,6 +99,14 @@ See [File tree block](./file-tree.html) for data setup.
 
 See [Gallery block](./gallery.html) for data setup.
 
+## Hero
+
+```liquid
+{% raw %}{% include blocks/hero.html id=page.hero.id title=page.hero.title lead=page.hero.lead primary_url=page.hero.primary_url primary_label=page.hero.primary_label secondary_url=page.hero.secondary_url secondary_label=page.hero.secondary_label image=page.hero.image image_alt=page.hero.image_alt %}{% endraw %}
+```
+
+See [Hero block](./hero.html) for data setup.
+
 ## Kbd
 
 ```liquid
@@ -86,6 +115,13 @@ See [Gallery block](./gallery.html) for data setup.
 
 {% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
 
+## Pricing
+
+```liquid
+{% raw %}{% include blocks/pricing.html plans=page.plans %}{% endraw %}
+```
+
+See [Pricing block](./pricing.html) for data setup.
 ## People
 
 ```liquid
@@ -124,6 +160,14 @@ See [Stats block](./stats.html) for data setup.
 ```
 
 See [Steps block](./steps.html) for data setup.
+
+## Testimonial
+
+```liquid
+{% raw %}{% include blocks/testimonial.html quote=page.testimonial.quote name=page.testimonial.name role=page.testimonial.role avatar=page.testimonial.avatar %}{% endraw %}
+```
+
+See [Testimonial block](./testimonial.html) for data setup.
 
 ## Terminal
 

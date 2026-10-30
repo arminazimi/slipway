@@ -1,0 +1,18 @@
+{%- if include.code.size > 0 -%}
+{%- include component-css.html name="annotations" -%}
+{%- assign language = include.language | default: "text" -%}
+{%- assign id_prefix = include.id_prefix | default: "sl-annotation" -%}
+<figure class="sl-annotations">
+  {%- if include.caption %}
+  <figcaption>{{ include.caption }}</figcaption>
+  {%- endif %}
+  <pre dir="ltr"><code class="language-{{ language }}">{{ include.code | escape }}</code></pre>
+  {%- if include.notes.size > 0 %}
+  <ol class="sl-annotations-notes">
+    {%- for note in include.notes %}
+    <li id="{{ id_prefix }}-{{ forloop.index }}">{%- assign note_text = note.text | default: note -%}{{ note_text }}</li>
+    {%- endfor %}
+  </ol>
+  {%- endif %}
+</figure>
+{%- endif -%}
