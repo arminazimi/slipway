@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: Publications
+    url: /publications.html
+  - title: Talks
+    url: /talks.html
+  - title: Teaching
+    url: /teaching.html
+  - title: CV
+    url: /cv.html
