@@ -48,11 +48,8 @@ export function buildSpecSite() {
   if (!existsSync(latestDir)) mkdirSync(latestDir, { recursive: true });
   writeFileSync(join(latestDir, "index.md"), "---\nlayout: doc\nredirect_to: /spec/0.1/\n---\n");
 
-  const adapters = readFileSync(join(root, "spec/adapters.md"), "utf8");
-  writeFileSync(join(docsSite, "adapters.md"), `---\ntitle: Adapters\ndescription: The generators with a Slipway adapter, and how to add one.\nlayout: doc\n---\n\n${adapters}`);
-
   writeFileSync(join(docsSite, "_config.yml"), "title: Slipway Spec\ndescription: The Slipway specification for agent-editable sites.\ntheme: slipway-theme\nplugins:\n  - jekyll-remote-theme\n");
-  writeFileSync(join(docsSite, "index.md"), "---\ntitle: The Spec\ndescription: The agent-editable site spec.\nlayout: doc\n---\n\nSlipway follows an open spec for agent-editable sites. See the spec for more details on how agents can read and edit your site reliably. (To be expanded in a future task.)\n\nThe [adapter list](adapters.html) covers the generators that implement the spec, and how to add one.\n");
+  writeFileSync(join(docsSite, "index.md"), "---\ntitle: The Spec\ndescription: The agent-editable site spec.\nlayout: doc\n---\n\nSlipway follows an open spec for agent-editable sites. See the spec for more details on how agents can read and edit your site reliably. (To be expanded in a future task.)\n");
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

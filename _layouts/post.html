@@ -6,7 +6,7 @@ layout: base
 {%- assign sl_words = content | number_of_words -%}
 {%- assign sl_minutes = sl_words | divided_by: 200.0 | ceil -%}
 {%- if sl_minutes < 1 %}{% assign sl_minutes = 1 %}{% endif -%}
-<article class="sl-post" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
+<article class="sl-post" hidden data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
   <header class="sl-post-header">
     <h1>{{ page.title }}</h1>{% include copy-page.html %}
     <p class="sl-post-meta">

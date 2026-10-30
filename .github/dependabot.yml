@@ -9,17 +9,6 @@ updates:
         patterns:
           - "*"
 
-  # A root directory only covers .github/workflows and the action.yml at the repo root,
-  # so the composite action in action/doctor needs its own entry to keep its pins current.
-  - package-ecosystem: "github-actions"
-    directory: "/action/doctor"
-    schedule:
-      interval: "weekly"
-    groups:
-      github-actions-composite:
-        patterns:
-          - "*"
-
   - package-ecosystem: "npm"
     directory: "/"
     schedule:

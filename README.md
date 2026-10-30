@@ -7,8 +7,6 @@
 
 # Slipway
 
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/arminazimi/slipway/badge)](https://securityscorecards.dev/viewer/?uri=github.com/arminazimi/slipway)
-
 **Build on Slipway. Ship Seaworthy.**
 
 Sites that agents can edit safely, and prove it. Slipway is two things:

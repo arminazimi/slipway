@@ -5,7 +5,7 @@ A terminal session block that marks prompts, commands, and output; the copy butt
 Only these files. Another agent may be working on any other file right now.
 
 **Create**
-- `_includes/blocks/terminal.html`
+- `_includes/terminal.html`
 - `assets/css/components/terminal.css`
 - `tools/theme/kit-terminal.test.mjs`
 

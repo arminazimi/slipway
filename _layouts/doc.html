@@ -60,7 +60,7 @@ layout: base
   </details>
   {%- endif %}
 
-  <article class="sl-doc-body" data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
+  <article class="sl-doc-body" hidden data-edit-label="{{ sl_edit_label | escape }}" data-edit-prompt="{{ sl_edit_prompt | escape }}">
     {% include breadcrumbs.html %}
     {% include page-status.html %}
     {%- assign sl_start = content | strip -%}

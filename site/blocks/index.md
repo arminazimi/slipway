@@ -79,14 +79,6 @@ See [Stats block](./stats.html) for data setup.
 
 See [Steps block](./steps.html) for data setup.
 
-## Terminal
-
-```liquid
-{% raw %}{% include blocks/terminal.html commands=page.commands output=page.output %}{% endraw %}
-```
-
-See [Terminal block](./terminal.html) for data setup.
-
 ## Timeline
 
 ```liquid
