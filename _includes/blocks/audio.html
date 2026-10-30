@@ -2,9 +2,6 @@
 {%- include component-css.html name="audio" -%}
 <figure class="sl-audio">
   <audio controls preload="metadata" src="{{ include.src | relative_url | escape }}"></audio>
-  {%- if include.title %}
-  <figcaption>{{ include.title | escape }}</figcaption>
-  {%- endif %}
   {%- if include.chapters %}
   <ol class="sl-audio-chapters">
     {%- for chapter in include.chapters %}
@@ -17,6 +14,9 @@
     <summary>{{ include.transcript_label | escape }}</summary>
     {{ include.transcript | markdownify }}
   </details>
+  {%- endif %}
+  {%- if include.title %}
+  <figcaption>{{ include.title | escape }}</figcaption>
   {%- endif %}
 </figure>
 {%- endif -%}

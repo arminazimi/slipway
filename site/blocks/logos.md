@@ -30,14 +30,20 @@ logos_rtl:
 
 Logos sit on a token surface, desaturated and dimmed; a link lifts its logo to full opacity on hover, and dark mode shows every logo at full opacity.
 
+{::nomarkdown}
 {% include blocks/logos.html title="Trusted by" logos=page.logos %}
+{:/nomarkdown}
 
 ## Without a title
 
+{::nomarkdown}
 {% include blocks/logos.html logos=page.logos_plain %}
+{:/nomarkdown}
 
 ## Right-to-left
 
 <div dir="rtl">
+{::nomarkdown}
 {% include blocks/logos.html title="مورد اعتماد" logos=page.logos_rtl %}
+{:/nomarkdown}
 </div>

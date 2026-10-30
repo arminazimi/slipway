@@ -39,12 +39,16 @@ people_rtl:
 
 ## Left-to-right
 
+{::nomarkdown}
 {% include blocks/people.html people=page.people id="team" %}
+{:/nomarkdown}
 
 ## Right-to-left
 
 <div dir="rtl">
+{::nomarkdown}
 {% include blocks/people.html people=page.people_rtl %}
+{:/nomarkdown}
 </div>
 
 ## Data
