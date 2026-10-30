@@ -33,6 +33,7 @@ import * as c29 from "./checks/twin-fresh.mjs";
 
 import * as c30 from "./checks/schema-coverage.mjs";
 import * as c31 from "./checks/lang-mismatch.mjs";
+import * as c32 from "./checks/agent.skill-hint.mjs";
 
 export const checks = {
   [c30.id]: c30.run,
@@ -67,4 +68,5 @@ export const checks = {
   [c27.id]: c27.run,
   [c28.id]: c28.run,
   [c29.id]: c29.run,
+  [c32.id]: c32.run,
 };

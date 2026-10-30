@@ -1,0 +1,63 @@
+name: actions
+
+# Every Action under action/ must work on Linux, macOS, and Windows: composite Actions run
+# their bash steps through Git Bash on Windows, and the doctor resolves paths on every OS.
+# The steps below run the doctor Action; when #793 lands its shared action/test.mjs, extend
+# this job to run that test over every action/*/action.yml instead of one Action here.
+on:
+  push:
+    branches: [main]
+    paths:
+      - action/**
+      - packages/doctor/**
+      - .github/workflows/actions-os.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - action/**
+      - packages/doctor/**
+      - .github/workflows/actions-os.yml
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: actions-os-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  doctor:
+    name: doctor (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      # One OS failing must not hide the result on the other two.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - run: npm ci
+      # The Action itself: its bash steps must run through Git Bash on Windows, and its
+      # inputs must reach the doctor unchanged. A site at L3 must pass on every runner.
+      - name: Run the doctor Action
+        uses: ./action/doctor
+        with:
+          path: packages/doctor/test/fixtures/conforming
+          build: packages/doctor/test/fixtures/conforming/build
+          level: L3
+          setup-node: "false"
+      # The Action's step runs through bash. This one runs under the runner's default shell
+      # (pwsh on Windows) and checks that run.mjs resolves the paths itself, without bash.
+      - name: Run the doctor with Node directly
+        env:
+          SLIPWAY_PATH: packages/doctor/test/fixtures/conforming
+          SLIPWAY_BUILD: packages/doctor/test/fixtures/conforming/build
+          SLIPWAY_LEVEL: L3
+          SLIPWAY_FORMAT: text
+        run: node action/doctor/run.mjs
