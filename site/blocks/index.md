@@ -7,6 +7,14 @@ permalink: /blocks/
 
 Slipway includes several presentation blocks. Here is a live example of each, with copyable snippets you can use in your pages.
 
+## Audio
+
+```liquid
+{% raw %}{% include blocks/audio.html src=page.audio.src title=page.audio.title chapters=page.audio.chapters transcript=page.audio.transcript transcript_label=page.audio.transcript_label %}{% endraw %}
+```
+
+See [Audio block](./audio.html) for data setup.
+
 ## Badge
 
 ```liquid
