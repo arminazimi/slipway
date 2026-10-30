@@ -1,0 +1,75 @@
+{
+  "title": "Widget",
+  "type": "object",
+  "required": ["mode", "name"],
+  "properties": {
+    "advanced": {
+      "type": "object",
+      "description": "Advanced settings.",
+      "required": ["timeout"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Shown in the header."
+        },
+        "timeout": {
+          "type": "number",
+          "default": 30,
+          "description": "Seconds before giving up."
+        }
+      }
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the widget runs."
+    },
+    "layout": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "columns": {
+              "type": "integer"
+            }
+          }
+        }
+      ],
+      "description": "A preset name or a custom layout."
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["auto", "manual"],
+      "default": "auto",
+      "description": "How the widget runs."
+    },
+    "name": {
+      "type": "string",
+      "description": "The widget name."
+    },
+    "notes": {},
+    "retries": {
+      "type": "integer",
+      "default": 0
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "Step title."
+          }
+        }
+      }
+    }
+  }
+}
