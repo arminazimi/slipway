@@ -30,8 +30,18 @@ events_rtl:
 
 {% include blocks/timeline.html events=page.events %}
 
+```liquid
+{% raw %}{% include blocks/timeline.html events=page.events %}{% endraw %}
+```
+
 ## Right-to-left
 
 <div dir="rtl">
 {% include blocks/timeline.html events=page.events_rtl %}
 </div>
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/timeline.html events=page.events_rtl %}
+</div>{% endraw %}
+```
