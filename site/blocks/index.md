@@ -15,6 +15,14 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Chart
+
+```liquid
+{% raw %}{% include blocks/chart.html data=site.data.chart %}{% endraw %}
+```
+
+See [Chart block](./chart.html) for data setup.
+
 ## Compare
 
 ```liquid
