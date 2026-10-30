@@ -15,3 +15,4 @@
 | [0013](0013-astro-adapter.md) | The Astro adapter follows the framework-neutral content model using content loaders and endpoints | Accepted |
 | [0014](0014-evergreen.md) | Evergreen is optional: Slipway may use it and offer it to sites, and the dependency points one way | Accepted |
 | [0015](0015-og-images.md) | Per-page social images: an `image` key everywhere, a generated default in Actions mode | Accepted |
+| [0018](0018-cms.md) | Visual editing: Sveltia CMS with the GitHub backend, config generated from the schemas, sign-in with a token or a relay | Accepted |
