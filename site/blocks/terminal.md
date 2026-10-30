@@ -12,16 +12,22 @@ output: |-
 
 ## Commands and output
 
+{::nomarkdown}
 {% include blocks/terminal.html commands=page.commands output=page.output %}
+{:/nomarkdown}
 
 ## Custom prompt
 
+{::nomarkdown}
 {% include blocks/terminal.html commands=page.commands prompt="%" %}
+{:/nomarkdown}
 
 ## Right-to-left page
 
 The terminal stays left to right because commands are code, even when the surrounding page is right to left.
 
+{::nomarkdown}
 <div dir="rtl">
 {% include blocks/terminal.html commands=page.commands output=page.output %}
 </div>
+{:/nomarkdown}
