@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../schema/navigation.schema.json
-# The header menu. spec/docs-site/_data/navigation.yml carries the same items in the same order,
-# so the theme docs and the spec site at /spec/ show one navigation and link to each other.
-main:
+# yaml-language-server: $schema=../../schema/navigation.schema.json
+# yaml-language-server: $schema=../../schema/navigation.schema.json
+items:
   - title: Home
     url: /
   - title: Install

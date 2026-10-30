@@ -10,6 +10,5 @@ planning/roadmap/out/
 spec/docs-site/
 __pycache__/
 test-results/
-.tmp-*/
 .tmp/
 .jules/
