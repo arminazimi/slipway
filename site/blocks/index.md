@@ -63,6 +63,14 @@ See [Gallery block](./gallery.html) for data setup.
 
 {% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
 
+## Logos
+
+```liquid
+{% raw %}{% include blocks/logos.html logos=page.logos %}{% endraw %}
+```
+
+See [Logos block](./logos.html) for data setup.
+
 ## Pull quote
 
 ```liquid
