@@ -27,6 +27,10 @@ Exit codes: `0` the target level is reached, `1` findings, `2` a usage error or 
 
 Agents can run it without a shell: the [MCP server](../mcp/README.md) has a `doctor` tool that returns the JSON report, and the [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) says when to run it and how to fix what it finds.
 
+## Commands
+
+`bin/slipway.mjs` runs `src/cli.mjs`, which loads every file in `src/commands/` by file name and dispatches `slipway <command> [options]`. `slipway --help` lists them with a one-line summary, and `slipway <command> --help` prints that command's options. `doctor` is one of those files (`src/commands/doctor.mjs`); adding a command is adding a file, and [the command template](src/commands/README.md) has the shape. Every command returns the same exit codes: `0` success, `1` findings or a failed check, `2` a usage error or a missing folder.
+
 ## Output
 
 Text output names the level, then each failed test with its findings as `path:line key: message (allowed: ...)`, then the tests not run. A failed MUST is an `error`; a failed SHOULD is a `warning` and never lowers the level.

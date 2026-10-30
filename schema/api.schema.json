@@ -50,6 +50,15 @@
         "source"
       ],
       "properties": {
+        "deprecated": {
+          "$ref": "#/$defs/deprecated"
+        },
+        "description": {
+          "$ref": "#/$defs/description"
+        },
+        "examples": {
+          "$ref": "#/$defs/examples"
+        },
         "kind": {
           "enum": [
             "class",
@@ -76,15 +85,6 @@
         },
         "source": {
           "$ref": "#/$defs/source"
-        },
-        "deprecated": {
-          "$ref": "#/$defs/deprecated"
-        },
-        "description": {
-          "$ref": "#/$defs/description"
-        },
-        "examples": {
-          "$ref": "#/$defs/examples"
         }
       },
       "additionalProperties": false
@@ -157,15 +157,6 @@
         "type"
       ],
       "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "type": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The type as source text, such as `string` or `CreateOptions`; a converter that cannot infer it writes `unknown`."
-        },
         "default": {
           "type": "string",
           "description": "The default value as source text, not as JSON, so `{}` and `\"\"` stay distinct."
@@ -174,9 +165,18 @@
           "type": "string",
           "description": "The parameter's doc comment in Markdown."
         },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
         "optional": {
           "type": "boolean",
           "description": "True when the caller may leave it out."
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The type as source text, such as `string` or `CreateOptions`; a converter that cannot infer it writes `unknown`."
         }
       },
       "additionalProperties": false
@@ -194,14 +194,14 @@
         "type"
       ],
       "properties": {
+        "description": {
+          "type": "string",
+          "description": "The return value's doc comment in Markdown."
+        },
         "type": {
           "type": "string",
           "minLength": 1,
           "description": "The return type as source text, such as `Promise<Site>`; `void` when it returns nothing."
-        },
-        "description": {
-          "type": "string",
-          "description": "The return value's doc comment in Markdown."
         }
       },
       "additionalProperties": false
@@ -250,21 +250,6 @@
         "source"
       ],
       "properties": {
-        "kind": {
-          "enum": [
-            "constant",
-            "endpoint",
-            "function",
-            "method",
-            "type"
-          ]
-        },
-        "name": {
-          "$ref": "#/$defs/name"
-        },
-        "source": {
-          "$ref": "#/$defs/source"
-        },
         "deprecated": {
           "$ref": "#/$defs/deprecated"
         },
@@ -273,6 +258,15 @@
         },
         "examples": {
           "$ref": "#/$defs/examples"
+        },
+        "kind": {
+          "enum": [
+            "constant",
+            "endpoint",
+            "function",
+            "method",
+            "type"
+          ]
         },
         "method": {
           "enum": [
@@ -285,6 +279,9 @@
             "PUT"
           ],
           "description": "The HTTP method, only on an endpoint."
+        },
+        "name": {
+          "$ref": "#/$defs/name"
         },
         "parameters": {
           "$ref": "#/$defs/parameters"
@@ -299,6 +296,9 @@
         },
         "signature": {
           "$ref": "#/$defs/signature"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
         }
       },
       "additionalProperties": false,

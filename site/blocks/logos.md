@@ -5,22 +5,32 @@ layout: page
 logos:
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     url: /
     alt: Slipway logo
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: Slipway logo without a link
 logos_plain:
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: Slipway logo
 logos_rtl:
   - name: اسلیپ‌وی
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     url: /
     alt: نشان اسلیپ‌وی
   - name: اسلیپ‌وی
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: نشان اسلیپ‌وی بدون پیوند
 ---
 
@@ -30,14 +40,20 @@ logos_rtl:
 
 Logos sit on a token surface, desaturated and dimmed; a link lifts its logo to full opacity on hover, and dark mode shows every logo at full opacity.
 
+{::nomarkdown}
 {% include blocks/logos.html title="Trusted by" logos=page.logos %}
+{:/nomarkdown}
 
 ## Without a title
 
+{::nomarkdown}
 {% include blocks/logos.html logos=page.logos_plain %}
+{:/nomarkdown}
 
 ## Right-to-left
 
+{::nomarkdown}
 <div dir="rtl">
 {% include blocks/logos.html title="مورد اعتماد" logos=page.logos_rtl %}
 </div>
+{:/nomarkdown}

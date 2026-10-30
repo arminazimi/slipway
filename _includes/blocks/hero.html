@@ -24,7 +24,7 @@
   </div>
   {%- if include.image %}
   <div class="sl-hero-media">
-    <img src="{{ include.image | relative_url | escape }}" alt="{{ include.image_alt | escape }}">
+    <img src="{{ include.image | relative_url | escape }}" alt="{{ include.image_alt | escape }}"{% if include.image_width and include.image_height %} width="{{ include.image_width }}" height="{{ include.image_height }}"{% endif %}>
   </div>
   {%- endif %}
 </section>
