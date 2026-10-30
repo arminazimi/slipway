@@ -1,6 +1,7 @@
 {%- include component-css.html name="code-group" -%}
 {%- assign group_id = include.id | default: "code-group" -%}
-<div class="sl-code-group">
+<div class="sl-code-group" role="radiogroup" aria-labelledby="{{ group_id }}-label">
+  <span class="sl-code-group-label" id="{{ group_id }}-label">{{ include.label | default: "Code examples" | escape }}</span>
   {%- for item in include.items -%}
     <input class="sl-code-group-input" type="radio" name="{{ group_id }}" id="{{ group_id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>
     <label class="sl-code-group-tab" for="{{ group_id }}-{{ forloop.index }}">{{ item.label | escape }}</label>

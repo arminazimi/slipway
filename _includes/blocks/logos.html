@@ -10,7 +10,7 @@
           {%- if logo.url -%}
             <a href="{{ logo.url | relative_url }}">
           {%- endif -%}
-          <img src="{{ logo.image | relative_url }}" alt="{{ logo.alt | default: logo.name | escape }}" loading="lazy">
+          <img src="{{ logo.image | relative_url }}" alt="{{ logo.alt | default: logo.name | escape }}"{% if logo.width and logo.height %} width="{{ logo.width }}" height="{{ logo.height }}"{% endif %} loading="lazy">
           {%- if logo.url -%}
             </a>
           {%- endif -%}

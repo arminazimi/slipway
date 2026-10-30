@@ -34,7 +34,7 @@ audio_rtl:
     **مهمان:** و اینکه متن گفتار چگونه قسمت را برای موتورهای جستجو و کسانی که به‌جای شنیدن می‌خوانند باز می‌کند.
 ---
 
-The sample points at `audio/podcast-episode-12.mp3`. This repository ships no audio file, so add your own episode at that path; until then the player shows its native error. The player needs no JavaScript, and the transcript works with the native disclosure.
+The sample points at `audio/podcast-episode-12.mp3`, a second of silence that stands in for your own episode; replace the file at that path. The player needs no JavaScript, and the transcript works with the native disclosure.
 
 ## Left-to-right
 

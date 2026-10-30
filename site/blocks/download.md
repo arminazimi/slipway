@@ -26,10 +26,14 @@ download_rtl:
 
 ## Left-to-right
 
+{::nomarkdown}
 {% include blocks/download.html url=page.download.url label=page.download.label name=page.download.name size=page.download.size checksum=page.download.checksum name_label=page.download.name_label size_label=page.download.size_label checksum_label=page.download.checksum_label %}
+{:/nomarkdown}
 
 ## Right-to-left
 
+{::nomarkdown}
 <div dir="rtl">
 {% include blocks/download.html url=page.download_rtl.url label=page.download_rtl.label name=page.download_rtl.name size=page.download_rtl.size checksum=page.download_rtl.checksum name_label=page.download_rtl.name_label size_label=page.download_rtl.size_label checksum_label=page.download_rtl.checksum_label %}
 </div>
+{:/nomarkdown}
