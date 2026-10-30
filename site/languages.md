@@ -8,7 +8,7 @@ author: Slipway
 ---
 <!-- Generated from _includes/i18n/*.html and _includes/i18n-builtin.html by tools/theme/languages-page.mjs. Do not edit below this line. -->
 
-Slipway ships interface strings in 30 languages. Each translation is one file in `_includes/i18n/`, with one {% raw %}`{%- when 'key' -%}`{% endraw %} per key in the English `en.html`. A translation is complete when it has every key, and a test fails when one is missing or extra. `_includes/i18n-builtin.html` names the codes Slipway ships in `sl_supported` and falls back to English for any other code.
+Slipway ships interface strings in 31 languages. Each translation is one file in `_includes/i18n/`, with one {% raw %}`{%- when 'key' -%}`{% endraw %} per key in the English `en.html`. A translation is complete when it has every key, and a test fails when one is missing or extra. `_includes/i18n-builtin.html` names the codes Slipway ships in `sl_supported` and falls back to English for any other code.
 
 | Language | Code | Direction | Keys | Built in |
 | --- | --- | --- | --- | --- |
@@ -41,6 +41,7 @@ Slipway ships interface strings in 30 languages. Each translation is one file in
 | uk | uk | LTR | 74/74 | yes |
 | ro | ro | LTR | 74/74 | yes |
 | sw | sw | LTR | 74/74 | yes |
+| hi | hi | LTR | 74/74 | yes |
 | English | en | LTR | 74/74 | yes |
 
 To add a language, copy `en.html`, translate every string in place, and add its code to `sl_supported`. Then regenerate this page with `node tools/theme/languages-page.mjs --write`.
