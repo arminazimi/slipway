@@ -35,6 +35,7 @@ export const builtinKeys = [
   "copy",
   "copy_failed",
   "copy_page_md",
+  "default",
   "deprecated",
   "description",
   "docs_nav",
