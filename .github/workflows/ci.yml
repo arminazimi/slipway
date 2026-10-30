@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # The merge queue tests a batch of pull requests on a temporary
+  # gh-readonly-queue/main/... branch. Without this trigger its checks never
+  # start, and every queued pull request waits forever.
+  merge_group:
 
 permissions:
   contents: read
