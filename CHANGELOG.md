@@ -6,6 +6,76 @@ Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a l
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+This is the first release Evergreen pins: `remote_theme: arminazimi/slipway@v0.2.0`. It adds a block library, eleven starters, the `slipway` command line and its agent tools, and 25 more interface languages. Nothing in it breaks 0.1.0 sites.
+
+### Highlights
+
+- **A site with only `remote_theme` and a title builds.** New sites copy search and 404 stubs from `starter-files/`, and `jekyll-feed` and `jekyll-sitemap` generate the feed and sitemap without copied pages.
+- **Starters.** Academic, versioned documentation, portfolio, project homepage, bilingual (English and Persian), developer tool, team handbook, resume, digital garden, nonprofit, and links (#86, #87, #89, #90, #91, #515, #522).
+- **Content blocks.** Hero, code group, annotations, diff, chart, people, testimonial, pricing, logos, audio, citation, download, file tree, API endpoint, gallery, badge, and numbered steps, with a block author guide and a test that every block has a docs page, a test, and a stylesheet (#851, #859).
+- **Agent tools.** New `slipway` commands, MCP tools, and Agent Skills let an agent create, edit, translate, deploy, and check a site.
+- **Evergreen-shaped sites.** Pages without front matter, generated sections with hundreds of pages, and a site's own `sitemap.xml`, `llms.txt`, and `robots.txt` all work (#406 to #412).
+
+### Added
+
+#### Theme and content
+
+- Per-page social image: `image` in front matter wins over the shared `assets/images/social.png`, the Twitter card follows the picture, and in Actions mode a site that adds `_plugins/slipway_og.rb` gets a default picture generated from each page's title (printable-ASCII titles).
+- Posts opt into a table of contents and a reading-progress bar with `toc: true`; the bar is pure CSS and works without JavaScript.
+- Posts accept an `updated` date shown as "edited on" and reported by the feed, the sitemap, and the structured data. Future-dated posts show as Scheduled in preview, and drafts live in `_drafts/`.
+- Optional comments through giscus, opt-in with `slipway.comments` (#209).
+- Doc pages show when they last changed: `last_modified_at` in front matter, or in Actions mode the file's last git commit through `_plugins/slipway_last_modified.rb`.
+- `canonical_url` in front matter controls the `<link rel="canonical">` and JSON-LD URLs.
+- A `changelog` layout with stable version anchors, a version list, and an Atom release feed.
+- A schema table include that renders a JSON Schema from `_data` as a property table.
+- ADR metadata and an index grouped by decision status, with translated labels and supersession links.
+- A `snippet` include that embeds a region of a repository file by marker; a check fails when the region is gone (#729).
+- Static redirect pages for moved URLs through the `redirects` config.
+- Pages can cap their search text with `slipway.search.text` and index only the description with `search: excerpt` (#651).
+- A themed 404 page on the Slipway site, a public roadmap at `/roadmap/` generated from `ROADMAP.md` (#706), and a Customization Guide.
+- Guides and recipes: how each page picks its social card, deploying to GitLab Pages, redirects with `jekyll-redirect-from`, `rel="me"` links and Mastodon verification, and verifying a release's CycloneDX SBOM and gem provenance attestation.
+- The spec site lists every adapter and explains how to add one by pull request (#240).
+- `examples/product-docs`, a documentation site shaped like Evergreen's, built and checked in CI (#412).
+
+#### Command line, MCP, and Skills
+
+- `slipway nav` edits navigation items while preserving comments, `slipway translate` creates a translated copy of a page, and `slipway info` prints the site's mode, theme pin, versions, and spec level.
+- `slipway --help` lists every command in `packages/doctor/src/commands/`; adding a command is adding a file.
+- `slipway doctor --explain [<id>]` explains a check id and suggests the right one for a typo. The check pages ship in the package, so it works from a published install (#600).
+- New MCP tools: `list_pages`, `read_section`, and `move_page`, which keeps the old URL with `redirect_from` and updates navigation and links (#478).
+- New Agent Skills: `slipway-blocks`, `slipway-translate`, `slipway-deploy`, `slipway-design`, and `slipway-release-notes` (#771, #774).
+- New sites made with the CLI carry offline schemas and the source-map and twin plugins, with an explicit L2 doctor loop.
+- `slipway doctor` prints a one-line hint pointing at the Skills when a site publishes none (text output only).
+- The doctor Action writes a job summary with the level and a findings table, and an optional shields.io badge JSON (#799).
+
+#### Doctor checks
+
+- `doctor.agents-commands` warns when a site's `AGENTS.md` names an npm script or a file the site does not have.
+- `doctor.nav-targets` finds broken links in `_data/navigation.yml`.
+- `doctor.lang-mismatch` warns when a page's text script cannot be written in its `lang`.
+- Docs pages without a description, headings that skip a level, and pages nothing links to now produce warnings (#745).
+
+#### Languages
+
+- New built-in interface languages: Central Kurdish (`ckb`), Pashto, Uyghur (`ug`), Dhivehi (Thaana, right to left; #460), Sindhi (`sd`), Korean, Hindi, Bengali, Indonesian, Malay, Vietnamese, Thai, Polish, Ukrainian, Czech, Swedish, Danish, Norwegian Bokmål, Finnish, Greek, Romanian, Hungarian, Azerbaijani, Swahili, and Tamil (#816 to #838).
+- Dhivehi, Hebrew, Sindhi, and Uyghur sites show every theme string, and the docs list each language's completeness (#816).
+
+#### Tools
+
+- A page-weight tool measures transferred bytes and enforces budgets per page type.
+- An opt-in lifecycle workflow for sites in `starter-files/optional/`.
+
+### Changed
+
+- Pages whose content starts with an h1 no longer get a second one from the doc and page layouts (#406).
+- Docs navigation accepts a `match` path prefix for generated sections, marks the section in the sidebar and breadcrumbs, and keeps per-page previous and next links hidden (#408).
+- Search keeps only the title, URL, headings, and a 300-character excerpt per entry, loads its index when the search field is first used, and skips pages with `search: false` (#409).
+- Edit prompts prefix section source paths with `slipway.source_dir` or GitHub Pages' source folder; source-map paths stay relative to the site (#410).
+- Doctor never asks a site for its own `sitemap.xml`, `llms.txt`, `llms-full.txt`, or `robots.txt`; `docs/site-files.md` lists what Slipway generates and what a site may own (#407).
+- Every GitHub Action the repository runs is pinned to a commit SHA, with a test that fails on an unpinned `uses:` (#528).
+
 ## [0.1.0] - 2026-10-27
 
 - Added honest comparison page (`/compare/`) evaluating Slipway against Minimal Mistakes, Just the Docs, Chirpy, and hosted platforms.
@@ -92,7 +162,8 @@ Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a l
 - The release workflow now pushes `slipway-theme` to RubyGems after the GitHub release, through trusted publishing (#175).
 - Changelog fragments in `changelog.d/` and a self-discovering `npm run check`, so parallel pull requests no longer conflict on `CHANGELOG.md`, `package.json`, or `ci.yml` (#389).
 
-[Unreleased]: https://github.com/arminazimi/slipway/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/arminazimi/slipway/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/arminazimi/slipway/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/arminazimi/slipway/releases/tag/v0.1.0
 - Guide: make any generator conform to the spec, level by level
 - **doctor:** Add `--fix` and `--dry-run` to fix safe cases automatically (missing stubs, deprecated keys).
