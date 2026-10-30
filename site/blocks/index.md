@@ -71,6 +71,22 @@ See [Gallery block](./gallery.html) for data setup.
 
 See [Stats block](./stats.html) for data setup.
 
+## Steps
+
+```liquid
+{% raw %}{% include blocks/steps.html steps=page.steps %}{% endraw %}
+```
+
+See [Steps block](./steps.html) for data setup.
+
+## Terminal
+
+```liquid
+{% raw %}{% include blocks/terminal.html commands=page.commands output=page.output %}{% endraw %}
+```
+
+See [Terminal block](./terminal.html) for data setup.
+
 ## Timeline
 
 ```liquid
