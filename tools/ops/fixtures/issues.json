@@ -1,0 +1,232 @@
+[
+  {
+    "number": 666,
+    "title": "Epic: Persian and Arabic typography checks",
+    "state": "open",
+    "labels": [
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: epic"
+      },
+      {
+        "name": "area: i18n"
+      },
+      {
+        "name": "area: agent"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: E-persian-type -->\n> **Epic** · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n\n## Outcome\n`slipway doctor` catches and fixes the typography mistakes that make Persian and Arabic text look careless (missing zero-width non-joiners, Arabic yeh and kaf in Persian, mixed digits, Latin punctuation), and never touches code.\n\n## Scope\n- Each rule is one check file in `packages/doctor/src/checks/`; rules are warnings and never change the level\n\n## Tasks\n- [ ] #805\n- [ ] #806\n- [ ] #807\n- [ ] #808\n- [ ] #809\n- [ ] #810\n- [ ] #811\n- [ ] #812\n- [ ] #813\n- [ ] #814\n- [ ] #815\n\n## Exit criteria\n- [ ] The rules run on the Persian example and on Evergreen's Persian pages with no false positives, and `--fix` corrects the safe ones.\n\n---\n<sub>Pick any open task above whose dependencies are closed. Lane labels say who it suits.</sub>"
+  },
+  {
+    "number": 862,
+    "title": "Download block: file name, size, checksum, and a button",
+    "state": "open",
+    "labels": [
+      {
+        "name": "help wanted"
+      },
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "type: block"
+      },
+      {
+        "name": "lane: free-agent"
+      },
+      {
+        "name": "size: S"
+      },
+      {
+        "name": "area: core"
+      },
+      {
+        "name": "area: theme"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: block3.download -->\n> **Epic:** #669 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: free-agent` — free or lightweight agents, and newcomers · **Size:** S (a few hours)\n\n## Goal\nDownload block: file name, size, checksum, and a button. Follow `docs/blocks.md`: semantic HTML, logical CSS properties only, readable without JavaScript, UI text through `t.html`.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Create**\n- `_includes/blocks/download.html`\n- `assets/css/components/download.css`\n- `site/blocks/download.md`\n- `tools/theme/block-download.test.mjs`\n\n## Done when\n- [ ] The block renders in LTR and RTL, passes `npm run check:logical`, and its docs page shows it live.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n## Depends on\n- #850\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 850,
+    "title": "Block author guide and a test that every block has an include, a stylesheet when it has styles, a docs page, and a test",
+    "state": "closed",
+    "labels": [
+      {
+        "name": "help wanted"
+      },
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "type: block"
+      },
+      {
+        "name": "lane: free-agent"
+      },
+      {
+        "name": "size: S"
+      },
+      {
+        "name": "area: core"
+      },
+      {
+        "name": "area: theme"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: block3.guide -->\n> **Epic:** #669 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: free-agent` — free or lightweight agents, and newcomers · **Size:** S (a few hours)\n\n## Goal\nWrite down the pattern the existing blocks follow and enforce it.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Create**\n- `docs/blocks.md`\n- `tools/theme/blocks-complete.test.mjs`\n\n## Done when\n- [ ] The test passes on every existing block, or the pull request lists the gaps as issues.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 849,
+    "title": "The blog and docs starters ship the CMS turned off, with one line to turn it on",
+    "state": "open",
+    "labels": [
+      {
+        "name": "help wanted"
+      },
+      {
+        "name": "good first issue"
+      },
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "lane: free-agent"
+      },
+      {
+        "name": "size: XS"
+      },
+      {
+        "name": "area: core"
+      },
+      {
+        "name": "area: ecosystem"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: cms.starter -->\n> **Epic:** #668 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: free-agent` — free or lightweight agents, and newcomers · **Size:** XS (under an hour)\n\n## Goal\nAdd the generated `admin/` to the starters with `cms: false`.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Edit**\n- `starters/`\n\n## Done when\n- [ ] Setting `cms: true` is the only step to enable it.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n## Depends on\n- #842\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 842,
+    "title": "Collections for pages, docs, posts, authors, and navigation, from the site's folders",
+    "state": "open",
+    "labels": [
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "lane: strong-agent"
+      },
+      {
+        "name": "size: S"
+      },
+      {
+        "name": "area: core"
+      },
+      {
+        "name": "area: ecosystem"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: cms.collections -->\n> **Epic:** #668 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: strong-agent` — a strong coding agent or an experienced contributor · **Size:** S (a few hours)\n\n## Goal\nDetect which collections the site has and generate only those.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Edit**\n- `tools/cms/generate.mjs`\n\n## Done when\n- [ ] The blog and docs examples get the right collections.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n## Depends on\n- #840\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 840,
+    "title": "`tools/cms/generate.mjs`: write `admin/config.yml` from the config and front matter schemas, with a stale check",
+    "state": "open",
+    "labels": [
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "lane: strong-agent"
+      },
+      {
+        "name": "size: M"
+      },
+      {
+        "name": "area: core"
+      },
+      {
+        "name": "area: ecosystem"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: cms.generate -->\n> **Epic:** #668 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: strong-agent` — a strong coding agent or an experienced contributor · **Size:** M (about a day)\n\n## Goal\nMap JSON Schema types, enums, and formats to CMS widgets; one collection per layout.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Create**\n- `tools/cms/generate.mjs`\n- `tools/cms/run.mjs`\n- `tools/cms/generate.test.mjs`\n\n## Done when\n- [ ] Each schema property becomes a field with the right widget and required flag.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n## Depends on\n- #839\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 720,
+    "title": "Branch ruleset on `main`: required `ci-ok`, no force push, no deletion, and the merge queue",
+    "state": "open",
+    "labels": [
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "lane: maintainer"
+      },
+      {
+        "name": "size: XS"
+      },
+      {
+        "name": "area: devops"
+      },
+      {
+        "name": "area: security"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: sec.rules -->\n> **Epic:** #658 · **Phase:** v0.3 — Ready to scale (2026-10-30 → 2026-11-08)\n> **Lane:** `lane: maintainer` — a maintainer (accounts, credentials, or decisions) · **Size:** XS (under an hour)\n\n## Goal\nBranch ruleset on `main`: required `ci-ok`, no force push, no deletion, and the merge queue.\n\n## Agent brief\n\n**Do not**\n- Do not expand scope beyond this issue; open a follow-up instead.\n- Do not change a versioned contract (report schema, check IDs, config schema) without updating its spec and changelog.\n- Do not add network access to checks unless the check is marked opt-in.\n\n## Done when\n- [ ] The outcome is recorded in the issue (what was done, links, decisions).\n\n## Depends on\n- #670\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 805,
+    "title": "Prose reader for typography rules: text from Markdown without code, front matter, URLs, or Liquid, with the page language and source lines",
+    "state": "open",
+    "labels": [
+      {
+        "name": "roadmap"
+      },
+      {
+        "name": "type: task"
+      },
+      {
+        "name": "lane: strong-agent"
+      },
+      {
+        "name": "size: M"
+      },
+      {
+        "name": "area: i18n"
+      },
+      {
+        "name": "area: agent"
+      }
+    ],
+    "body": "<!-- slipway-roadmap-key: fa.prose -->\n> **Epic:** #666 · **Phase:** v0.6 — Content and languages (2026-11-16 → 2026-12-20)\n> **Lane:** `lane: strong-agent` — a strong coding agent or an experienced contributor · **Size:** M (about a day)\n\n## Goal\nEvery rule needs the same input. Export `prose(file)` from `packages/doctor/src/prose.mjs`, returning text runs with line and column, skipping fenced and inline code, front matter, HTML attributes, URLs, and Liquid tags, and the language from front matter or the site.\n\n## Files\nOnly these files. Another agent may be working on any other file right now.\n\n**Create**\n- `packages/doctor/src/prose.mjs`\n- `packages/doctor/test/prose.test.mjs`\n\n## Done when\n- [ ] Tests cover each skipped construct and line numbers after front matter.\n- [ ] `npm run check` passes.\n\n## Working in parallel\n- Do not edit `CHANGELOG.md`. If a site owner would notice the change, add `changelog.d/<this issue number>.md` with one line instead.\n- Do not edit `package.json`, `package-lock.json`, `.github/workflows/`, `.gitignore`, `ROADMAP.md`, `AGENTS.md`, `_layouts/base.html`, `_includes/head.html`, or `assets/css/slipway.css`. `npm run check` finds new `tools/<name>/run.mjs` and `*.test.mjs` files on its own.\n- Write temporary builds to the OS temp folder or under `.tmp/`, never to a new top-level folder.\n- Keep schema properties and UI string keys in alphabetical order, and add yours at its sorted place.\n- If the task needs a file not listed above, stop and explain why in the pull request instead of editing it.\n\n## Run\n```bash\nnpm ci\nnpm run check\n```\n\n---\n<sub>Part of the Slipway roadmap. New here? Read `CONTRIBUTING.md` and `AGENTS.md`, then comment to claim this issue. One issue = one pull request.</sub>"
+  },
+  {
+    "number": 954,
+    "title": "feat(doctor): prose reader for typography rules (#805)",
+    "state": "open",
+    "labels": [],
+    "body": "Closes #805\n\nAdds `packages/doctor/src/prose.mjs`, exporting `prose(file)` — the shared input for typography rules. It takes a Markdown string or `{ text, lang }` and returns `{ lang, runs }`, where each run is `{ text, line, column }` with 1-based lines and columns.\n\nSkipped, per the issue:\n\n- front matter (the first `---` block, and `lang:` in it wins over the site language)\n- fenced code in both ``` and ~~~ blocks\n- inline code spans (the backticks and their contents)\n- HTML tags, attributes, and comments\n- image syntax and link destinations (link labels stay prose)\n- bare URLs (`https:`, `http:`, `mailto:`, `ftp:`, `www.`)\n- Liquid tags, outputs, and comments\n\nHeading, blockquote, and list markers are stripped so a run starts at its text; columns stay relative to the source line so they map straight back to the file.\n\nOnly the two files the issue lists are touched.\n\n## Tests\n\n`node --test packages/doctor/test/prose.test.mjs` — 11 pass, covering each skipped construct, line numbers after front matter, the `lang:` precedence, and columns from the line start.\n\n`node --test packages/doctor/test/*.test.mjs` — 140 pass.",
+    "pull_request": {
+      "url": "https://api.github.com/repos/arminazimi/slipway/pulls/954"
+    }
+  }
+]
