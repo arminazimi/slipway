@@ -31,6 +31,14 @@ See [Chart block](./chart.html) for data setup.
 
 See [Compare block](./compare.html) for data setup.
 
+## Download
+
+```liquid
+{% raw %}{% include blocks/download.html url=page.download.url label=page.download.label name=page.download.name size=page.download.size checksum=page.download.checksum name_label=page.download.name_label size_label=page.download.size_label checksum_label=page.download.checksum_label %}{% endraw %}
+```
+
+See [Download block](./download.html) for data setup.
+
 ## Endpoint
 
 ```liquid
