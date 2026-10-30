@@ -77,8 +77,16 @@
       "description": "The date this page was last reviewed."
     },
     "search": {
-      "type": "boolean",
-      "description": "`false` leaves the page out of the search index."
+      "description": "`false` leaves the page out of the search index; `excerpt` indexes only its description.",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "const": "excerpt",
+          "type": "string"
+        }
+      ]
     },
     "since": {
       "type": "string",

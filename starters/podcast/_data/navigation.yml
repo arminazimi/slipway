@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: Episodes
+    url: /episodes/
+  - title: Tags
+    url: /tags/
+  - title: About
+    url: /about.html

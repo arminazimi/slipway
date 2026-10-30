@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Studio North
+description: An independent product design studio. Research, interfaces, and design systems.
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  header: centered
+  social:
+    - title: GitHub
+      url: https://github.com/example
+      icon: github

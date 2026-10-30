@@ -20,14 +20,45 @@ demo_stats_2:
     value: 1.2
     unit: "%"
     trend: -0.5%
+demo_stats_rtl:
+  - label: قواعد
+    value: ۵۱۶
+  - label: بوم‌سازگان
+    value: ۱۴
+  - label: کاربران
+    value: ۱۰
+    unit: هزار
+    trend: +۵٪
 ---
 
 {::nomarkdown}{% include component-css.html name="stats" %}{:/nomarkdown}
 
-## Basic
+## Left-to-right
+
+### Basic
 
 {% include blocks/stats.html items=page.demo_stats_1 %}
 
-## With Units and Trends
+```liquid
+{% raw %}{% include blocks/stats.html items=page.demo_stats_1 %}{% endraw %}
+```
+
+### With Units and Trends
 
 {% include blocks/stats.html items=page.demo_stats_2 %}
+
+```liquid
+{% raw %}{% include blocks/stats.html items=page.demo_stats_2 %}{% endraw %}
+```
+
+## Right-to-left
+
+<div dir="rtl">
+{% include blocks/stats.html items=page.demo_stats_rtl %}
+</div>
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/stats.html items=page.demo_stats_rtl %}
+</div>{% endraw %}
+```
