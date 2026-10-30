@@ -10,19 +10,29 @@ output: |-
   Build successful.
 ---
 
-## Commands and output
+## Left-to-right
+
+### Commands and output
 
 {::nomarkdown}
 {% include blocks/terminal.html commands=page.commands output=page.output %}
 {:/nomarkdown}
 
-## Custom prompt
+```liquid
+{% raw %}{% include blocks/terminal.html commands=page.commands output=page.output %}{% endraw %}
+```
+
+### Custom prompt
 
 {::nomarkdown}
 {% include blocks/terminal.html commands=page.commands prompt="%" %}
 {:/nomarkdown}
 
-## Right-to-left page
+```liquid
+{% raw %}{% include blocks/terminal.html commands=page.commands prompt="%" %}{% endraw %}
+```
+
+## Right-to-left
 
 The terminal stays left to right because commands are code, even when the surrounding page is right to left.
 
@@ -31,3 +41,9 @@ The terminal stays left to right because commands are code, even when the surrou
 {% include blocks/terminal.html commands=page.commands output=page.output %}
 </div>
 {:/nomarkdown}
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/terminal.html commands=page.commands output=page.output %}
+</div>{% endraw %}
+```

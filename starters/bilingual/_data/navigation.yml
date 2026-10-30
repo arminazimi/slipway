@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: About
+    url: /about.html
+  - title: Guide
+    url: /guide.html
+main_fa:
+  - title: خانه
+    url: /fa/
+  - title: درباره
+    url: /fa/about.html
+  - title: راهنما
+    url: /fa/guide.html

@@ -1,0 +1,17 @@
+{%- comment -%}
+  The notes that list this one in their `links` front matter, in title order.
+  Every note sets `note:` to a short key, and links are written as those keys.
+{%- endcomment -%}
+{%- assign garden_key = page.note -%}
+{%- capture garden_backlinks -%}
+{%- for other in site.pages -%}
+  {%- if other.links contains garden_key -%}
+  <li><a href="{{ other.url | relative_url }}">{{ other.title }}</a></li>
+  {%- endif -%}
+{%- endfor -%}
+{%- endcapture -%}
+{%- if garden_backlinks contains "<li>" -%}
+<ul>{{ garden_backlinks }}</ul>
+{%- else -%}
+<p>No other note links here yet.</p>
+{%- endif -%}

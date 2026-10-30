@@ -1,0 +1,44 @@
+---
+layout: null
+permalink: /feed.xml
+---
+<?xml version="1.0" encoding="utf-8"?>
+{%- assign sl_f_lang = site.lang | default: 'en' -%}
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title | xml_escape }}</title>
+    <link>{{ '/' | absolute_url }}</link>
+    <description>{{ site.description | default: site.title | xml_escape }}</description>
+    <language>{{ sl_f_lang }}</language>
+    <copyright>{{ site.author.name | default: site.author | default: site.title | xml_escape }}</copyright>
+    <atom:link href="{{ page.url | absolute_url }}" rel="self" type="application/rss+xml"/>
+    <itunes:author>{{ site.author.name | default: site.author | default: site.title | xml_escape }}</itunes:author>
+    <itunes:subtitle>{{ site.description | default: site.title | xml_escape }}</itunes:subtitle>
+    <itunes:summary>{{ site.description | default: site.title | xml_escape }}</itunes:summary>
+    <itunes:type>episodic</itunes:type>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:category text="Technology"/>
+    <itunes:image href="{{ '/assets/img/cover.svg' | absolute_url }}"/>
+    <itunes:owner>
+      <itunes:name>{{ site.author.name | default: site.author | default: site.title | xml_escape }}</itunes:name>
+      <itunes:email>podcast@example.com</itunes:email>
+    </itunes:owner>
+    {%- for post in site.posts -%}
+    {%- assign sl_f_post_lang = post.lang | default: sl_f_lang -%}
+    {%- if sl_f_post_lang != sl_f_lang %}{% continue %}{% endif %}
+    <item>
+      <title>{{ post.title | xml_escape }}</title>
+      <link>{{ post.url | absolute_url }}</link>
+      <guid isPermaLink="false">{{ post.url | absolute_url }}</guid>
+      <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+      <description>{{ post.description | xml_escape }}</description>
+      <enclosure url="{{ post.audio | absolute_url }}" length="{{ post.audio_length }}" type="{{ post.audio_type | default: 'audio/mpeg' }}"/>
+      <itunes:duration>{{ post.duration }}</itunes:duration>
+      <itunes:episode>{{ post.number }}</itunes:episode>
+      <itunes:season>{{ post.season }}</itunes:season>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:explicit>{{ post.explicit | default: false }}</itunes:explicit>
+    </item>
+    {%- endfor -%}
+  </channel>
+</rss>
