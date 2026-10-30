@@ -1,0 +1,8 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["_config.yml"], "target": "file", "schema": "schema/config.schema.json" },
+    { "files": ["_posts/*.md"], "target": "front-matter", "schema": "schema/episode.schema.json" },
+    { "files": ["*.md", "authors/*.md", "transcripts/*.md"], "target": "front-matter", "schema": "schema/page.schema.json" }
+  ]
+}

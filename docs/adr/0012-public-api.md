@@ -47,6 +47,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.logo.touch_icon` | yes | `head.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
+| `slipway.search.text` | yes | `search-options.test.mjs` |
 | `slipway.social` | yes | `links-layout.test.mjs` |
 | `slipway.arabic.digits` | yes | `arabic.test.mjs` |
 | `slipway.arabic.hijri` | yes | `hijri.test.mjs` |
