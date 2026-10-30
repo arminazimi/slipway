@@ -40,17 +40,13 @@ The sample points at `audio/podcast-episode-12.mp3`, a second of silence that st
 
 {::nomarkdown}
 {% include component-css.html name="audio" %}
-{::nomarkdown}
 {% include blocks/audio.html src=page.audio.src title=page.audio.title chapters=page.audio.chapters transcript=page.audio.transcript transcript_label=page.audio.transcript_label %}
-{:/nomarkdown}
 {:/nomarkdown}
 
 ## Right-to-left
 
 {::nomarkdown}
 <div dir="rtl">
-{::nomarkdown}
 {% include blocks/audio.html src=page.audio_rtl.src title=page.audio_rtl.title chapters=page.audio_rtl.chapters transcript=page.audio_rtl.transcript transcript_label=page.audio_rtl.transcript_label %}
-{:/nomarkdown}
 </div>
 {:/nomarkdown}

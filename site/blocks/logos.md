@@ -42,8 +42,8 @@ Logos sit on a token surface, desaturated and dimmed; a link lifts its logo to f
 
 ## Right-to-left
 
-<div dir="rtl">
 {::nomarkdown}
+<div dir="rtl">
 {% include blocks/logos.html title="مورد اعتماد" logos=page.logos_rtl %}
-{:/nomarkdown}
 </div>
+{:/nomarkdown}

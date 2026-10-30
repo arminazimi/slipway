@@ -45,11 +45,11 @@ people_rtl:
 
 ## Right-to-left
 
-<div dir="rtl">
 {::nomarkdown}
+<div dir="rtl">
 {% include blocks/people.html people=page.people_rtl %}
-{:/nomarkdown}
 </div>
+{:/nomarkdown}
 
 ## Data
 
