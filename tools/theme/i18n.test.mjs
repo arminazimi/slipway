@@ -63,7 +63,7 @@ test("every key in the English block has a translation in each new built-in lang
   const enSource = read("_includes/i18n/en.html");
   const keysOf = (block) => [...block.matchAll(/{%- when '([^']+)' -%}/g)].map((m) => m[1]);
   const english = keysOf(enSource);
-  for (const lang of ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh", "ur", "ckb", "yi", "ps", "el", "az", "hu", "nb", "th", "ta", "uk", "ro"]) {
+  for (const lang of ["es", "fr", "pt", "de", "it", "ru", "tr", "nl", "ja", "zh", "ur", "ckb", "yi", "ps", "el", "az", "hu", "nb", "th", "ta", "uk", "ro", "sw"]) {
     const block = read(`_includes/i18n/${lang}.html`);
     assert.deepEqual(keysOf(block), english, `${lang} has every key`);
   }
