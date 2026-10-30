@@ -1,0 +1,19 @@
+{%- comment -%}
+  A region of a repository file, copied into _data/snippets.json by tools/snippets/sync.mjs.
+  Usage: {% include snippet.html file="src/app.ts" region="setup" %}
+{%- endcomment -%}
+{%- assign snippet_key = include.file | downcase | replace: '/', '-' | replace: '.', '-' | replace: '_', '-' | replace: ' ', '-' -%}
+{%- assign snippet_key = snippet_key | append: '--' | append: include.region | downcase | replace: ' ', '-' -%}
+{%- assign snippet = site.data.snippets[snippet_key] -%}
+{%- if snippet -%}
+<figure class="sl-snippet">
+  <pre><code class="language-{{ snippet.lang | escape }}">{{ snippet.text | escape }}</code></pre>
+  <figcaption>
+    {%- if site.repository -%}
+    <a href="{{ site.repository }}/blob/{{ site.branch | default: 'main' }}/{{ snippet.file }}#L{{ snippet.line }}">{{ snippet.file }}:{{ snippet.line }}</a>
+    {%- else -%}
+    {{ snippet.file }}:{{ snippet.line }}
+    {%- endif -%}
+  </figcaption>
+</figure>
+{%- endif -%}
