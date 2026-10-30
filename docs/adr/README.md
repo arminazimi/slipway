@@ -16,3 +16,5 @@
 | [0014](0014-evergreen.md) | Evergreen is optional: Slipway may use it and offer it to sites, and the dependency points one way | Accepted |
 | [0015](0015-og-images.md) | Per-page social images: an `image` key everywhere, a generated default in Actions mode | Accepted |
 | [0020](0020-social-cards.md) | Social cards: one 1200 × 630 template, filled per page and rasterized when a renderer is available | Accepted |
+| [0017](0017-threat-model.md) | A threat model for each distributable: threats, controls, and the gap that closes each | Accepted |
+| [0018](0018-cms.md) | Visual editing: Sveltia CMS with the GitHub backend, config generated from the schemas, sign-in with a token or a relay | Accepted |

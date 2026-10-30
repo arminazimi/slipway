@@ -30,10 +30,10 @@ import * as c26 from "./checks/ae.sourcemap.urls-exist.mjs";
 import * as c27 from "./checks/unknown-config.mjs";
 import * as c28 from "./checks/unknown-front-matter.mjs";
 import * as c29 from "./checks/twin-fresh.mjs";
-
 import * as c30 from "./checks/schema-coverage.mjs";
 import * as c31 from "./checks/lang-mismatch.mjs";
 import * as c32 from "./checks/agent.skill-hint.mjs";
+import * as c33 from "./checks/agents-commands.mjs";
 
 export const checks = {
   [c30.id]: c30.run,
@@ -69,4 +69,5 @@ export const checks = {
   [c28.id]: c28.run,
   [c29.id]: c29.run,
   [c32.id]: c32.run,
+  [c33.id]: c33.run,
 };
