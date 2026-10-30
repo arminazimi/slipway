@@ -1,0 +1,12 @@
+{%- if include.references -%}
+{%- include component-css.html name="citation" -%}
+<ol class="sl-citation-list" id="{{ include.id | default: 'references' }}">
+  {%- for reference in include.references -%}
+    {%- assign reference_id = reference.id | default: forloop.index -%}
+    <li id="ref-{{ reference_id }}">{{ reference.text }}{% if reference.url %} <a href="{{ reference.url }}" dir="ltr">{{ reference.url }}</a>{% endif %}</li>
+  {%- endfor -%}
+</ol>
+{%- endif -%}
+{%- if include.ref -%}
+<span class="sl-citation"><a href="#ref-{{ include.ref }}">[{{ include.text | default: include.ref }}]</a></span>
+{%- endif -%}

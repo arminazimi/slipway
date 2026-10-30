@@ -1,0 +1,5 @@
+.sl-citation-list{margin-block:var(--sl-space-4);padding-inline-start:var(--sl-space-6);color:var(--sl-color-text);font-size:var(--sl-step-sm)}
+.sl-citation-list li{padding-inline-start:var(--sl-space-1);margin-block-end:var(--sl-space-2)}
+.sl-citation-list li:target{background:var(--sl-color-surface);border-radius:var(--sl-radius-compact)}
+.sl-citation-list a,.sl-citation a{color:var(--sl-color-rose)}
+.sl-citation{font-size:var(--sl-step-sm);vertical-align:super;line-height:0;white-space:nowrap}

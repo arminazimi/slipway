@@ -15,6 +15,14 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Citation
+
+```liquid
+{% raw %}{% include blocks/citation.html references=page.references %}{% endraw %}
+```
+
+See [Citation block](./citation.html) for the in-text form.
+
 ## Compare
 
 ```liquid
