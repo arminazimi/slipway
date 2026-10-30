@@ -23,6 +23,14 @@ See [Annotations block](./annotations.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Citation
+
+```liquid
+{% raw %}{% include blocks/citation.html references=page.references %}{% endraw %}
+```
+
+See [Citation block](./citation.html) for the in-text form.
+
 ## Compare
 
 ```liquid
