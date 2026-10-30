@@ -23,6 +23,13 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Code group
+
+```liquid
+{% raw %}{% include blocks/code-group.html items=page.group %}{% endraw %}
+```
+
+See [Code group block](./code-group.html) for data setup.
 ## Chart
 
 ```liquid
