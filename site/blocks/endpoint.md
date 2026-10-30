@@ -25,16 +25,26 @@ response: |
 ---
 # {{ page.title }}
 
-LTR example:
+## Left-to-right
 
 {::nomarkdown}
 {% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}
 {:/nomarkdown}
 
-RTL example:
+```liquid
+{% raw %}{% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}{% endraw %}
+```
+
+## Right-to-left
 
 {::nomarkdown}
 <div dir="rtl">
 {% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}
 </div>
 {:/nomarkdown}
+
+```html
+{% raw %}<div dir="rtl">
+  {% include blocks/endpoint.html method=page.method path=page.path parameters=page.parameters request=page.request response=page.response %}
+</div>{% endraw %}
+```

@@ -1,0 +1,13 @@
+# gitleaks rules for Slipway, used by .github/workflows/secrets.yml.
+#
+# The default rules cover cloud keys, registry tokens, private keys, and
+# high-entropy assignments. This file keeps all of them and adds no path
+# allowlist: nothing in tools/, examples/, or the other fixtures holds a fake
+# credential, so no file needs to be skipped. Allowlisting a path would blind
+# gitleaks to every future line in that file.
+#
+# For a false positive, add its fingerprint to .gitleaksignore instead: that
+# names one finding in one commit, and leaves the rest of the file scanned.
+
+[extend]
+useDefault = true

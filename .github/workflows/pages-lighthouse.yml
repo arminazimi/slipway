@@ -1,0 +1,82 @@
+name: pages-lighthouse
+
+# Lighthouse budgets for the demo site deploy-site publishes to
+# https://arminazimi.github.io/slipway/. Audit it after every successful
+# deploy on main (and on demand). tools/pages/lighthouse.json holds the URLs
+# and the 95-or-more budgets; the run fails when a score drops below one.
+on:
+  workflow_run:
+    workflows: [deploy-site]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pages-lighthouse
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse budgets
+    # workflow_run only reports the deploy's conclusion after it finishes.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+      - name: Audit the deployed pages
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12, release 12.6.2
+        with:
+          # The config asserts every category at 0.95; the action fails the
+          # step (and the job) on an error-level assertion below it.
+          configPath: tools/pages/lighthouse.json
+          uploadArtifacts: true
+      - name: Write scores to the job summary
+        if: always()
+        env:
+          RESULTS_PATH: ${{ steps.lighthouse.outputs.resultsPath }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync, existsSync, readFileSync } from 'node:fs'
+
+          const resultsPath = process.env.RESULTS_PATH || '.lighthouseci'
+          const manifestPath = `${resultsPath}/manifest.json`
+
+          if (!existsSync(manifestPath)) {
+            console.log('No Lighthouse results to summarize.')
+            process.exit(0)
+          }
+
+          const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+          const representative = manifest.filter((run) => run.isRepresentativeRun)
+          const runs = representative.length > 0 ? representative : manifest
+          const percent = (run, category) => Math.round((run.summary?.[category] ?? 0) * 100)
+
+          const rows = runs.map((run) => {
+            const scores = ['performance', 'accessibility', 'best-practices', 'seo'].map((category) =>
+              percent(run, category),
+            )
+            return `| ${run.url} | ${scores.join(' | ')} |`
+          })
+
+          const summary = [
+            '## Lighthouse scores',
+            '',
+            '| Page | Performance | Accessibility | Best practices | SEO |',
+            '| --- | --- | --- | --- | --- |',
+            ...rows,
+            '',
+            'Budgets: 95 or more in every category (`tools/pages/lighthouse.json`).',
+            '',
+          ].join('\n')
+
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary)
+          console.log(summary)
+          NODE

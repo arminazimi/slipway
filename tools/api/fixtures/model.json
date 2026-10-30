@@ -1,0 +1,201 @@
+{
+  "generator": "typedoc",
+  "modules": [
+    {
+      "kind": "module",
+      "members": [
+        {
+          "kind": "class",
+          "members": [
+            {
+              "kind": "constant",
+              "name": "TokenSet.LIGHT",
+              "signature": "static readonly LIGHT: TokenSet",
+              "source": {
+                "commit": "0f11473",
+                "file": "packages/tokens/src/token-set.ts",
+                "line": 21
+              }
+            },
+            {
+              "kind": "method",
+              "name": "TokenSet.get",
+              "signature": "get(name: string): string | undefined",
+              "deprecated": {
+                "description": "Use `read`, which also reports an unknown token instead of returning `undefined`.",
+                "replacement": "TokenSet.read",
+                "since": "0.4.0"
+              },
+              "parameters": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "description": "The token name with its `--sl-` prefix, such as `--sl-color-text`."
+                }
+              ],
+              "returns": {
+                "description": "The token's value in this set, or `undefined` when the set does not define it.",
+                "type": "string | undefined"
+              },
+              "source": {
+                "commit": "0f11473",
+                "file": "packages/tokens/src/token-set.ts",
+                "line": 48
+              }
+            }
+          ],
+          "description": "A named set of design tokens, such as the light or dark palette.",
+          "name": "TokenSet",
+          "source": {
+            "commit": "0f11473",
+            "file": "packages/tokens/src/token-set.ts",
+            "line": 12
+          }
+        },
+        {
+          "kind": "constant",
+          "name": "version",
+          "signature": "const version: string",
+          "description": "The package version, the same string `package.json` carries.",
+          "source": {
+            "commit": "0f11473",
+            "file": "packages/tokens/src/index.ts",
+            "line": 9
+          }
+        },
+        {
+          "kind": "function",
+          "name": "themeTokens",
+          "signature": "themeTokens(name?: ThemeName): Record<string, string>",
+          "description": "Every token in a theme, keyed by its `--sl-` name.",
+          "examples": [
+            {
+              "code": "const tokens = themeTokens(\"dark\");\nconsole.log(tokens[\"--sl-color-bg\"]);",
+              "lang": "js",
+              "title": "Read the dark palette"
+            }
+          ],
+          "parameters": [
+            {
+              "name": "name",
+              "type": "ThemeName",
+              "default": "\"light\"",
+              "description": "The theme to read. The light theme is the default.",
+              "optional": true
+            }
+          ],
+          "returns": {
+            "description": "Token names and their values, both as strings.",
+            "type": "Record<string, string>"
+          },
+          "source": {
+            "commit": "0f11473",
+            "file": "packages/tokens/src/index.ts",
+            "line": 24
+          }
+        },
+        {
+          "kind": "type",
+          "name": "ThemeName",
+          "signature": "type ThemeName = \"light\" | \"dark\"",
+          "description": "The themes a site can pick from.",
+          "source": {
+            "commit": "0f11473",
+            "file": "packages/tokens/src/index.ts",
+            "line": 14
+          }
+        }
+      ],
+      "name": "tokens",
+      "description": "The design tokens the theme is built from, as JavaScript values.",
+      "source": {
+        "commit": "0f11473",
+        "file": "packages/tokens/src/index.ts",
+        "line": 1
+      }
+    },
+    {
+      "kind": "module",
+      "members": [
+        {
+          "kind": "endpoint",
+          "name": "getSite",
+          "signature": "GET /sites/{id}",
+          "description": "One site by its id.",
+          "method": "GET",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "description": "The site's id."
+            }
+          ],
+          "path": "/sites/{id}",
+          "returns": {
+            "type": "Site"
+          },
+          "source": {
+            "commit": "0f11473",
+            "file": "docs/api/openapi.yaml",
+            "line": 41
+          }
+        },
+        {
+          "kind": "endpoint",
+          "name": "listSites",
+          "signature": "GET /sites",
+          "method": "GET",
+          "parameters": [
+            {
+              "name": "limit",
+              "type": "number",
+              "default": "20",
+              "description": "How many sites to return, at most 100.",
+              "optional": true
+            }
+          ],
+          "path": "/sites",
+          "returns": {
+            "type": "Site[]"
+          },
+          "source": {
+            "commit": "0f11473",
+            "file": "docs/api/openapi.yaml",
+            "line": 18
+          }
+        }
+      ],
+      "name": "api",
+      "description": "The HTTP API, one symbol per endpoint.",
+      "source": {
+        "commit": "0f11473",
+        "file": "docs/api/openapi.yaml",
+        "line": 1
+      }
+    },
+    {
+      "kind": "module",
+      "members": [
+        {
+          "kind": "interface",
+          "members": [],
+          "description": "The options `createSite` accepts.",
+          "name": "SiteOptions",
+          "source": {
+            "commit": "0f11473",
+            "file": "packages/tokens/src/site.ts",
+            "line": 6
+          }
+        }
+      ],
+      "name": "site",
+      "description": "Helpers that build a site's configuration.",
+      "source": {
+        "commit": "0f11473",
+        "file": "packages/tokens/src/site.ts",
+        "line": 1
+      }
+    }
+  ],
+  "version": "0.1"
+}

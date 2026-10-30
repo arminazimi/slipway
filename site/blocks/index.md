@@ -14,6 +14,13 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 ```
 
 See [Annotations block](./annotations.html) for data setup.
+## Audio
+
+```liquid
+{% raw %}{% include blocks/audio.html src=page.audio.src title=page.audio.title chapters=page.audio.chapters transcript=page.audio.transcript transcript_label=page.audio.transcript_label %}{% endraw %}
+```
+
+See [Audio block](./audio.html) for data setup.
 
 ## Badge
 
@@ -30,6 +37,20 @@ See [Annotations block](./annotations.html) for data setup.
 ```
 
 See [Citation block](./citation.html) for the in-text form.
+## Code group
+
+```liquid
+{% raw %}{% include blocks/code-group.html items=page.group %}{% endraw %}
+```
+
+See [Code group block](./code-group.html) for data setup.
+## Chart
+
+```liquid
+{% raw %}{% include blocks/chart.html data=site.data.chart %}{% endraw %}
+```
+
+See [Chart block](./chart.html) for data setup.
 
 ## Compare
 
@@ -46,6 +67,13 @@ See [Compare block](./compare.html) for data setup.
 ```
 
 See [Diff block](./diff.html) for data setup.
+## Download
+
+```liquid
+{% raw %}{% include blocks/download.html url=page.download.url label=page.download.label name=page.download.name size=page.download.size checksum=page.download.checksum name_label=page.download.name_label size_label=page.download.size_label checksum_label=page.download.checksum_label %}{% endraw %}
+```
+
+See [Download block](./download.html) for data setup.
 
 ## Endpoint
 
@@ -94,6 +122,20 @@ See [Hero block](./hero.html) for data setup.
 ```
 
 See [Pricing block](./pricing.html) for data setup.
+## People
+
+```liquid
+{% raw %}{% include blocks/people.html people=site.data.authors %}{% endraw %}
+```
+
+See [People block](./people.html) for data setup.
+## Logos
+
+```liquid
+{% raw %}{% include blocks/logos.html logos=page.logos %}{% endraw %}
+```
+
+See [Logos block](./logos.html) for data setup.
 
 ## Pull quote
 

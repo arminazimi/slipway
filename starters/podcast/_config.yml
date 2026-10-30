@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Slipway Podcast
+description: A small show about making things for the web, recorded twice a month.
+lang: en
+# The address the site is published at. Podcast directories need absolute URLs in the feed,
+# so set this to your own domain before you submit the feed.
+url: https://example.com
+author:
+  name: Ada Rahimi
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  header: centered
