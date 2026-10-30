@@ -1,0 +1,32 @@
+{%- include component-css.html name="chart" -%}
+{%- if include.data and include.data.size > 0 -%}
+  {%- assign _sl_max = include.max | default: 0 | plus: 0.0 -%}
+  {%- if _sl_max <= 0 -%}
+    {%- for row in include.data -%}
+      {%- assign _sl_value = row.value | default: 0 | plus: 0.0 -%}
+      {%- if _sl_value > _sl_max -%}{%- assign _sl_max = _sl_value -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+  <figure class="sl-chart">
+    {%- if include.caption -%}
+      <figcaption>{{ include.caption | escape }}</figcaption>
+    {%- endif -%}
+    <table class="sl-chart-table">
+      <tbody>
+        {%- for row in include.data -%}
+          {%- assign _sl_percent = 0 -%}
+          {%- if _sl_max > 0 -%}
+            {%- assign _sl_value = row.value | default: 0 | plus: 0.0 -%}
+            {%- assign _sl_percent = _sl_value | times: 100.0 | divided_by: _sl_max | round: 1 -%}
+            {%- if _sl_percent > 100 -%}{%- assign _sl_percent = 100 -%}{%- endif -%}
+            {%- if _sl_percent < 0 -%}{%- assign _sl_percent = 0 -%}{%- endif -%}
+          {%- endif -%}
+          <tr>
+            <th scope="row">{{ row.label | escape }}</th>
+            <td>{{ row.value }}<span class="sl-chart-bar" style="--sl-chart-value: {{ _sl_percent }}%"></span></td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </figure>
+{%- endif -%}
