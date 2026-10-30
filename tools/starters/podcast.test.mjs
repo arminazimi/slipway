@@ -155,7 +155,7 @@ test("the built feed is RSS with the iTunes namespace, and every episode is in i
 test("the site reads without JavaScript", { skip }, () => {
   const { out } = site();
   const page = readFileSync(join(out, "episodes/episode-1/index.html"), "utf8");
-  for (const [, attributes] of page.matchAll(/<script\b([^>]*)>/g)) {
+  for (const [, attributes] of page.matchAll(/<script\b([^>]*)>/gi)) {
     if (/\bsrc=/.test(attributes)) assert.match(attributes, /\bdefer\b/, "every script with a source is deferred");
   }
   assert.match(page, /In this episode/, "the show notes are in the HTML");
