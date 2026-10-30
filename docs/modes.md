@@ -33,6 +33,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | JSON-LD per layout (`WebSite`, `BlogPosting`, `TechArticle`, `CollectionPage`, `WebPage`) | yes, in Liquid | | yes | [theme.jsonld](../ROADMAP.md) |
 | Canonical link, Open Graph, Twitter card, and `hreflang` alternates in `<head>` | yes, in Liquid | | yes | [pub.seo](../ROADMAP.md) |
 | Per-page social image: `image` in the front matter, or a default generated from the title (printable-ASCII titles) | `image` and the shared default, in Liquid | | yes, `_plugins/slipway_og.rb` | [pub.og-image](../ROADMAP.md) |
+| "Last updated" on doc pages from `last_modified_at` in the front matter | yes, in Liquid | | Also from the file's last git commit (`_plugins/slipway_last_modified.rb`) | [kit.last-updated](../ROADMAP.md) |
 | `llms.txt` and `llms-full.txt` (pages with `sitemap: false` are left out; `llms-full.txt` is text taken from the HTML, since Liquid cannot read the Markdown) | yes, in Liquid | | yes | [ROADMAP.md](../ROADMAP.md) |
 | Related posts by shared tags, after each post | yes, in Liquid | | yes | [pub.related](../ROADMAP.md) |
 | Post series: a series box with the parts and the previous and next part (`series` in the front matter) | yes, in Liquid | | yes | [pub.series](../ROADMAP.md) |

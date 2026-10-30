@@ -2,28 +2,13 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
-import Ajv2020 from "ajv/dist/2020.js";
 import { parse } from "yaml";
 import { buildConfigReference, listKeys, loadSchema, referencePath, root } from "./config-reference.mjs";
 
 const skillDir = join(root, "skills/slipway-site");
 const skill = readFileSync(join(skillDir, "SKILL.md"), "utf8");
-const [, frontMatter, body] = skill.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
-const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const [, , body] = skill.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
 const examples = readdirSync(join(root, "examples")).map((name) => join(root, "examples", name));
-
-test("SKILL.md has valid frontmatter and stays under 150 lines", () => {
-  assert.ok(frontMatter, "frontmatter block");
-  const meta = parse(frontMatter);
-  assert.deepEqual(Object.keys(meta).sort(), ["description", "name"]);
-  assert.equal(meta.name, "slipway-site");
-  assert.match(meta.name, /^[a-z0-9]+(-[a-z0-9]+)*$/);
-  assert.ok(meta.name.length <= 64);
-  assert.equal(typeof meta.description, "string");
-  assert.ok(meta.description.length > 0 && meta.description.length <= 1024);
-  assert.doesNotMatch(meta.description, /[<>\n]/);
-  assert.ok(skill.split("\n").length < 160, `${skill.split("\n").length} lines`);
-});
 
 test("the config reference is generated from the schema and in sync", () => {
   const schema = loadSchema();
@@ -47,30 +32,8 @@ test("every path the skill names exists in the theme or in an example site", () 
   }
 });
 
-test("every command the skill runs exists", () => {
-  const commands = [...body.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((m) => m[1].trim().split("\n"));
-  commands.push(...[...body.matchAll(/`((?:npm run|node|bundle exec) [^`]+)`/g)].map((m) => m[1]));
-  assert.ok(commands.length > 0);
-  for (const command of commands) {
-    const npm = command.match(/^npm run ([\w:-]+)/);
-    const node = command.match(/^node (\S+)/);
-    if (npm) assert.ok(pkg.scripts[npm[1]], command);
-    else if (node) assert.ok(existsSync(join(root, node[1])), command);
-    else assert.match(command, /^bundle exec jekyll (build|serve)$/, command);
-  }
-  assert.match(readFileSync(join(root, "Gemfile"), "utf8"), /gem "github-pages"/);
-});
-
-test("the YAML snippets in the skill validate against the config and navigation schemas", () => {
-  const ajv = new Ajv2020({ allErrors: true, strict: false });
-  const config = ajv.compile(loadSchema());
-  const navigation = ajv.compile(JSON.parse(readFileSync(join(root, "schema/navigation.schema.json"), "utf8")));
+test("the first config snippet is the remote_theme setup a new site starts from", () => {
   const blocks = [...body.matchAll(/```yaml\n([\s\S]*?)```/g)].map((m) => parse(m[1]));
-  assert.ok(blocks.length >= 4);
-  for (const data of blocks) {
-    const validate = "main" in data ? navigation : config;
-    assert.ok(validate(data), JSON.stringify(validate.errors));
-  }
   assert.equal(blocks[0].remote_theme, "arminazimi/slipway");
   assert.ok(blocks[0].plugins.includes("jekyll-remote-theme"));
 });

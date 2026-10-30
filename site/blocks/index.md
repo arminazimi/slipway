@@ -7,6 +7,14 @@ permalink: /blocks/
 
 Slipway includes several presentation blocks. Here is a live example of each, with copyable snippets you can use in your pages.
 
+## Audio
+
+```liquid
+{% raw %}{% include blocks/audio.html src=page.audio.src title=page.audio.title chapters=page.audio.chapters transcript=page.audio.transcript transcript_label=page.audio.transcript_label %}{% endraw %}
+```
+
+See [Audio block](./audio.html) for data setup.
+
 ## Badge
 
 ```liquid
@@ -15,6 +23,21 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Code group
+
+```liquid
+{% raw %}{% include blocks/code-group.html items=page.group %}{% endraw %}
+```
+
+See [Code group block](./code-group.html) for data setup.
+## Chart
+
+```liquid
+{% raw %}{% include blocks/chart.html data=site.data.chart %}{% endraw %}
+```
+
+See [Chart block](./chart.html) for data setup.
+
 ## Compare
 
 ```liquid
@@ -22,6 +45,14 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 ```
 
 See [Compare block](./compare.html) for data setup.
+
+## Download
+
+```liquid
+{% raw %}{% include blocks/download.html url=page.download.url label=page.download.label name=page.download.name size=page.download.size checksum=page.download.checksum name_label=page.download.name_label size_label=page.download.size_label checksum_label=page.download.checksum_label %}{% endraw %}
+```
+
+See [Download block](./download.html) for data setup.
 
 ## Endpoint
 
@@ -54,6 +85,21 @@ See [Gallery block](./gallery.html) for data setup.
 ```
 
 {% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
+
+## People
+
+```liquid
+{% raw %}{% include blocks/people.html people=site.data.authors %}{% endraw %}
+```
+
+See [People block](./people.html) for data setup.
+## Logos
+
+```liquid
+{% raw %}{% include blocks/logos.html logos=page.logos %}{% endraw %}
+```
+
+See [Logos block](./logos.html) for data setup.
 
 ## Pull quote
 

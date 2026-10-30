@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title">
+  <title id="title">Slipway social card template</title>
+  <!-- Placeholders: ${site}, ${section}, ${title.line1}, ${title.line2}, ${title.line3}, ${url}.
+       Fill them with XML-escaped values and remove the title lines a page does not need.
+       The three line positions are the maximum; a filler moves the remaining lines down so the last sits at y=468.
+       RTL pages: direction="rtl" text-anchor="start" (the right edge) on the title, x=1120 on every tspan, and no letter-spacing on the title or the section.
+       Colors and the mark come from brand/tokens.json and tools/brand/mark.mjs; see docs/adr/0020-social-cards.md. -->
+  <defs>
+    <clipPath id="og-above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath>
+    <clipPath id="og-below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="#17130F"/>
+
+  <g transform="translate(80 64) scale(0.46)" fill="none" stroke-width="16">
+    <g clip-path="url(#og-above)" stroke="#F4EFE4">
+      <circle cx="128" cy="128" r="88"/>
+      <circle cx="128" cy="128" r="58"/>
+    </g>
+    <g clip-path="url(#og-below)" stroke="#B8975A">
+      <circle cx="128" cy="128" r="88"/>
+      <circle cx="128" cy="128" r="58"/>
+    </g>
+  </g>
+
+  <text x="224" y="120" fill="#F4EFE4" font-family="Inter, Vazirmatn, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="34" font-weight="700" letter-spacing="1.2">${site}</text>
+
+  <text x="1120" y="120" fill="#B8975A" font-family="'IBM Plex Mono', Vazirmatn, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace" font-size="22" letter-spacing="3" text-anchor="end">${section}</text>
+
+  <text fill="#F4EFE4" font-family="Inter, Vazirmatn, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="72" font-weight="700" letter-spacing="-1">
+    <tspan x="80" y="300">${title.line1}</tspan>
+    <tspan x="80" y="384">${title.line2}</tspan>
+    <tspan x="80" y="468">${title.line3}</tspan>
+  </text>
+
+  <line x1="80" y1="508" x2="1120" y2="508" stroke="#B8975A" stroke-opacity="0.35" stroke-width="2"/>
+
+  <text x="80" y="545" fill="#A39880" font-family="'IBM Plex Mono', Vazirmatn, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace" font-size="22">${url}</text>
+</svg>
