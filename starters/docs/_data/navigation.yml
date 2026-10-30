@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Docs
+    url: /v2/
+  - title: Version 1
+    url: /v1/
+docs:
+  - title: Version 2 (latest)
+    children:
+      - title: Overview
+        url: /v2/
+      - title: Install
+        url: /v2/install.html
+      - title: Commands
+        url: /v2/cli.html
+  - title: Version 1 (legacy)
+    children:
+      - title: Overview
+        url: /v1/
+      - title: Install
+        url: /v1/install.html
+      - title: Commands
+        url: /v1/cli.html
