@@ -10,6 +10,7 @@ author: Slipway
 A social card is the picture a chat app, a social network, or a search result shows when someone shares a link to your site. Slipway gives every page one, and this site's pages share the card below unless a page sets its own.
 
 ![The shared Slipway social card: a dark 1200 by 630 image with the Slipway mark and name](/assets/images/social.png)
+{: width="1200" height="630"}
 
 ## How a page picks its picture
 
