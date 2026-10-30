@@ -1,0 +1,9 @@
+{
+  "skills": [
+    {
+      "name": "edit-podcast",
+      "description": "Edit the podcast site: where episodes, transcripts and audio live, the front-matter schema, and how to check a change.",
+      "url": "/.well-known/agent-skills/edit-podcast/SKILL.md"
+    }
+  ]
+}
