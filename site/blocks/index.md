@@ -95,6 +95,14 @@ See [Stats block](./stats.html) for data setup.
 
 See [Steps block](./steps.html) for data setup.
 
+## Testimonial
+
+```liquid
+{% raw %}{% include blocks/testimonial.html quote=page.testimonial.quote name=page.testimonial.name role=page.testimonial.role avatar=page.testimonial.avatar %}{% endraw %}
+```
+
+See [Testimonial block](./testimonial.html) for data setup.
+
 ## Terminal
 
 ```liquid
