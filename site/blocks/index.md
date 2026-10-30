@@ -23,6 +23,14 @@ Slipway includes several presentation blocks. Here is a live example of each, wi
 
 See [Compare block](./compare.html) for data setup.
 
+## Diff
+
+```liquid
+{% raw %}{% include blocks/diff.html removed=page.diff.removed added=page.diff.added %}{% endraw %}
+```
+
+See [Diff block](./diff.html) for data setup.
+
 ## Endpoint
 
 ```liquid
