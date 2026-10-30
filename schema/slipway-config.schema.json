@@ -254,6 +254,19 @@
             }
           }
         },
+        "search": {
+          "type": "object",
+          "description": "The search index the theme builds.",
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 300,
+              "description": "The most characters of a page's text the index keeps, per page. Titles and headings are always indexed."
+            }
+          }
+        },
         "social": {
           "type": "array",
           "description": "Social icons for the links layout.",
