@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/navigation.schema.json
+main:
+  - title: Home
+    url: /
+  - title: Docs
+    url: /docs/
+  - title: Changelog
+    url: /changelog/
+docs:
+  - title: Getting started
+    children:
+      - title: Overview
+        url: /docs/
+      - title: Install
+        url: /docs/install/
+  - title: Reference
+    children:
+      - title: Commands
+        url: /docs/commands/

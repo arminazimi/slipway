@@ -1,0 +1,122 @@
+{%- comment -%}
+  Renders a JSON Schema (usually from _data) as a property table: name, type,
+  required, default, and description. Nested object properties render as a
+  sub-table one level deep; enum and oneOf show in the type cell.
+
+    {% include schema-table.html schema=site.data.widget_schema %}
+{%- endcomment -%}
+{%- if include.schema.properties and include.schema.properties.size > 0 -%}
+  {%- include component-css.html name="schema-table" -%}
+  <div class="sl-schema-table-wrapper">
+    <table class="sl-schema-table">
+      <thead>
+        <tr>
+          <th scope="col">{% include i18n-builtin.html key="name" %}</th>
+          <th scope="col">{% include i18n-builtin.html key="type" %}</th>
+          <th scope="col">{% include i18n-builtin.html key="required" %}</th>
+          <th scope="col">{% include i18n-builtin.html key="default" %}</th>
+          <th scope="col">{% include i18n-builtin.html key="description" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for sl_property in include.schema.properties -%}
+          {%- assign sl_name = sl_property[0] -%}
+          {%- assign sl_prop = sl_property[1] -%}
+          <tr class="sl-schema-row">
+            <th scope="row" class="sl-schema-name"><code>{{ sl_name }}</code></th>
+            <td class="sl-schema-type">
+              {%- if sl_prop.type -%}
+                <code>{{ sl_prop.type | join: " | " }}</code>
+              {%- elsif sl_prop.oneOf -%}
+                <code>{{ sl_prop.oneOf | map: "type" | join: " | " }}</code>
+              {%- elsif sl_prop.properties -%}
+                <code>object</code>
+              {%- elsif sl_prop.items -%}
+                <code>array</code>
+              {%- endif -%}
+              {%- if sl_prop.enum -%}
+                <ul class="sl-schema-values">
+                  {%- for sl_value in sl_prop.enum -%}
+                    <li><code>{{ sl_value }}</code></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </td>
+            <td class="sl-schema-required">
+              {%- if include.schema.required contains sl_name -%}
+                {% include i18n-builtin.html key="yes" %}
+              {%- else -%}
+                {% include i18n-builtin.html key="no" %}
+              {%- endif -%}
+            </td>
+            <td class="sl-schema-default">
+              {%- if sl_prop.default != nil -%}<code>{{ sl_prop.default | jsonify }}</code>{%- endif -%}
+            </td>
+            <td class="sl-schema-description">{%- if sl_prop.description %} {{ sl_prop.description | markdownify | strip }}{%- endif -%}</td>
+          </tr>
+          {%- assign sl_children = sl_prop.properties -%}
+          {%- assign sl_children_required = sl_prop.required -%}
+          {%- unless sl_children -%}
+            {%- assign sl_children = sl_prop.items.properties -%}
+            {%- assign sl_children_required = sl_prop.items.required -%}
+          {%- endunless -%}
+          {%- if sl_children and sl_children.size > 0 -%}
+            <tr class="sl-schema-children">
+              <td colspan="5">
+                <table class="sl-schema-table sl-schema-table-nested">
+                  <thead>
+                    <tr>
+                      <th scope="col">{% include i18n-builtin.html key="name" %}</th>
+                      <th scope="col">{% include i18n-builtin.html key="type" %}</th>
+                      <th scope="col">{% include i18n-builtin.html key="required" %}</th>
+                      <th scope="col">{% include i18n-builtin.html key="default" %}</th>
+                      <th scope="col">{% include i18n-builtin.html key="description" %}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {%- for sl_child in sl_children -%}
+                      {%- assign sl_child_name = sl_child[0] -%}
+                      {%- assign sl_child_prop = sl_child[1] -%}
+                      <tr class="sl-schema-row sl-schema-row-child">
+                        <th scope="row" class="sl-schema-name"><code>{{ sl_child_name }}</code></th>
+                        <td class="sl-schema-type">
+                          {%- if sl_child_prop.type -%}
+                            <code>{{ sl_child_prop.type | join: " | " }}</code>
+                          {%- elsif sl_child_prop.oneOf -%}
+                            <code>{{ sl_child_prop.oneOf | map: "type" | join: " | " }}</code>
+                          {%- elsif sl_child_prop.properties -%}
+                            <code>object</code>
+                          {%- elsif sl_child_prop.items -%}
+                            <code>array</code>
+                          {%- endif -%}
+                          {%- if sl_child_prop.enum -%}
+                            <ul class="sl-schema-values">
+                              {%- for sl_value in sl_child_prop.enum -%}
+                                <li><code>{{ sl_value }}</code></li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </td>
+                        <td class="sl-schema-required">
+                          {%- if sl_children_required contains sl_child_name -%}
+                            {% include i18n-builtin.html key="yes" %}
+                          {%- else -%}
+                            {% include i18n-builtin.html key="no" %}
+                          {%- endif -%}
+                        </td>
+                        <td class="sl-schema-default">
+                          {%- if sl_child_prop.default != nil -%}<code>{{ sl_child_prop.default | jsonify }}</code>{%- endif -%}
+                        </td>
+                        <td class="sl-schema-description">{%- if sl_child_prop.description %} {{ sl_child_prop.description | markdownify | strip }}{%- endif -%}</td>
+                      </tr>
+                    {%- endfor -%}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          {%- endif -%}
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+{%- endif -%}

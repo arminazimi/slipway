@@ -4,27 +4,9 @@ description: A folder structure with notes per file.
 layout: page
 ---
 
-## From items array (not supported directly in yaml front matter for includes, use capture)
+{::nomarkdown}{% include component-css.html name="file-tree" %}{:/nomarkdown}
 
-{% capture my_tree %}
-- name: "docs/"
-  note: "Documentation files"
-  children:
-    - name: "README.md"
-    - name: "setup/"
-      children:
-        - name: "install.md"
-        - name: "config.md"
-          note: "Important configuration steps"
-- name: "src/"
-  children:
-    - name: "index.js"
-    - name: "styles.css"
-{% endcapture %}
-
-{% comment %} No built-in fromyaml filter without plugin, using list instead for simplicity of demo {% endcomment %}
-
-## From markdown list
+## Left-to-right
 
 {% capture my_markdown_list %}
 - `docs/` *Documentation files*
@@ -38,3 +20,52 @@ layout: page
 {% endcapture %}
 
 {% include blocks/file-tree.html list=my_markdown_list %}
+
+```liquid
+{% raw %}{% capture my_markdown_list %}
+- `docs/` *Documentation files*
+  - `README.md`
+  - `setup/`
+    - `install.md`
+    - `config.md` *Important configuration steps*
+- `src/`
+  - `index.js`
+  - `styles.css`
+{% endcapture %}
+
+{% include blocks/file-tree.html list=my_markdown_list %}{% endraw %}
+```
+
+## Right-to-left
+
+{% capture my_markdown_list_rtl %}
+- `docs/` *پرونده‌های مستندات*
+  - `README.md`
+  - `setup/`
+    - `install.md`
+    - `config.md` *مراحل مهم پیکربندی*
+- `src/`
+  - `index.js`
+  - `styles.css`
+{% endcapture %}
+
+<div dir="rtl">
+{% include blocks/file-tree.html list=my_markdown_list_rtl %}
+</div>
+
+```html
+{% raw %}{% capture my_markdown_list_rtl %}
+- `docs/` *پرونده‌های مستندات*
+  - `README.md`
+  - `setup/`
+    - `install.md`
+    - `config.md` *مراحل مهم پیکربندی*
+- `src/`
+  - `index.js`
+  - `styles.css`
+{% endcapture %}
+
+<div dir="rtl">
+  {% include blocks/file-tree.html list=my_markdown_list_rtl %}
+</div>{% endraw %}
+```

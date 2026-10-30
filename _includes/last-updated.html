@@ -1,0 +1,12 @@
+{%- comment -%}
+  "Last updated" for a doc page: page.last_modified_at from front matter, or, in Actions mode, from
+  the page's last git commit (_plugins/slipway_last_modified.rb). A page without a date shows nothing,
+  so classic Pages keeps working without the plugin. The date is localized by date.html; the
+  datetime attribute stays the machine-readable ISO 8601 value. Plain HTML, so it reads without
+  JavaScript and follows the text direction.
+{%- endcomment -%}
+{%- assign sl_lu_date = page.last_modified_at -%}
+{%- if sl_lu_date -%}
+{%- capture sl_lu_text -%}{% include date.html date=sl_lu_date %}{%- endcapture -%}
+<p class="sl-last-updated">{% include t.html key='last_updated' %} <time datetime="{{ sl_lu_date | date_to_xmlschema }}">{{ sl_lu_text | strip }}</time></p>
+{%- endif -%}

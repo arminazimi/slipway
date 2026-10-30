@@ -43,6 +43,8 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.persian` | object |  | Opt-in Persian conventions for pages whose lang is fa. |
 | `slipway.persian.digits` | boolean | `false` | Print dates, reading time, and section numbers with Persian digits. |
 | `slipway.persian.jalali` | boolean | `false` | Print post dates in the Jalali calendar. |
+| `slipway.search` | object |  | The search index the theme builds. |
+| `slipway.search.text` | integer | `300` | The most characters of a page's text the index keeps, per page. Titles and headings are always indexed. |
 | `slipway.social` | list of object |  | Social icons for the links layout. |
 | `slipway.social[].icon` | string | required | The icon name in _includes/icons/. |
 | `slipway.social[].title` | string | required | Accessible name for the social icon. |

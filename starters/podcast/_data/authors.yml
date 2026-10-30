@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../schema/authors.schema.json
+ada:
+  name: Ada Rahimi
+  bio: Hosts the show and writes about type, speed, and plain text on the web.
+  avatar: /assets/img/ada.svg
+  links:
+    - title: Website
+      url: https://example.org/ada
