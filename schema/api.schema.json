@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/schema/api.schema.json",
+  "title": "Slipway API model",
+  "description": "api.json: one language-neutral model of a library's modules, classes, functions, methods, types, constants, and endpoints, written by a converter and read by the theme. Version 0.1; see docs/adr/0019-api-model.md.",
+  "type": "object",
+  "required": [
+    "generator",
+    "modules",
+    "version"
+  ],
+  "properties": {
+    "generator": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The tool that wrote the file, such as typedoc, rustdoc, griffe, go/doc, or a hand-written converter."
+    },
+    "modules": {
+      "type": "array",
+      "description": "Top-level modules, in the order the converter wants them read.",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/container"
+          },
+          {
+            "properties": {
+              "kind": {
+                "const": "module"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "version": {
+      "const": "0.1",
+      "description": "The format version. Only \"0.1\" exists."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "container": {
+      "type": "object",
+      "description": "A module, class, or interface: a named thing that holds other symbols.",
+      "required": [
+        "kind",
+        "members",
+        "name",
+        "source"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "class",
+            "interface",
+            "module"
+          ]
+        },
+        "members": {
+          "type": "array",
+          "description": "The symbols and containers directly inside it. What nests where is the converter's call; a class with no members is an empty array.",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/container"
+              },
+              {
+                "$ref": "#/$defs/symbol"
+              }
+            ]
+          }
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "deprecated": {
+          "$ref": "#/$defs/deprecated"
+        },
+        "description": {
+          "$ref": "#/$defs/description"
+        },
+        "examples": {
+          "$ref": "#/$defs/examples"
+        }
+      },
+      "additionalProperties": false
+    },
+    "deprecated": {
+      "type": "object",
+      "description": "Present when the symbol is deprecated. Every field is optional because converters know different amounts; an empty object still marks the deprecation.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Why and what to do instead, in Markdown."
+        },
+        "replacement": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The symbol that replaces it, as the source writes it, such as `createSite`."
+        },
+        "since": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The version that deprecated it, as the project numbers versions."
+        }
+      },
+      "additionalProperties": false
+    },
+    "description": {
+      "type": "string",
+      "description": "The doc comment in Markdown, without the comment markers and without the tags a converter moved into fields (parameters, returns, examples, deprecated)."
+    },
+    "example": {
+      "type": "object",
+      "required": [
+        "code",
+        "lang"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The example as source, without code fences."
+        },
+        "lang": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The syntax-highlighting language, such as js, py, rs, or go."
+        },
+        "title": {
+          "type": "string",
+          "description": "A short label, such as \"Create a site\"."
+        }
+      },
+      "additionalProperties": false
+    },
+    "examples": {
+      "type": "array",
+      "description": "Examples in the order the source lists them.",
+      "items": {
+        "$ref": "#/$defs/example"
+      }
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\s]+$",
+      "description": "The name as the source writes it, without the module prefix, such as `createSite` or `Site.url`."
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name",
+        "type"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The type as source text, such as `string` or `CreateOptions`; a converter that cannot infer it writes `unknown`."
+        },
+        "default": {
+          "type": "string",
+          "description": "The default value as source text, not as JSON, so `{}` and `\"\"` stay distinct."
+        },
+        "description": {
+          "type": "string",
+          "description": "The parameter's doc comment in Markdown."
+        },
+        "optional": {
+          "type": "boolean",
+          "description": "True when the caller may leave it out."
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameters": {
+      "type": "array",
+      "description": "Parameters in call order. An empty array means the symbol takes none.",
+      "items": {
+        "$ref": "#/$defs/parameter"
+      }
+    },
+    "returns": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The return type as source text, such as `Promise<Site>`; `void` when it returns nothing."
+        },
+        "description": {
+          "type": "string",
+          "description": "The return value's doc comment in Markdown."
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "description": "Where the symbol is written, so the page can link to it and say when it last changed.",
+      "required": [
+        "commit",
+        "file",
+        "line"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$",
+          "description": "The commit the symbol was read from, as a lowercase hex hash of 7 to 40 characters."
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The source file, relative to the project root, with forward slashes.",
+          "not": {
+            "pattern": "^([a-zA-Z]:)?[\\\\/]|(^|/)\\.\\.(/|$)|\\\\"
+          }
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The 1-based line where the symbol starts."
+        }
+      },
+      "additionalProperties": false
+    },
+    "signature": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The declaration as source text, such as `createSite(options: CreateOptions): Promise<Site>`. Overloads live here, one per line, because the model has one symbol per name."
+    },
+    "symbol": {
+      "type": "object",
+      "description": "A function, method, type, constant, or endpoint: a named thing the page documents on its own.",
+      "required": [
+        "kind",
+        "name",
+        "source"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "constant",
+            "endpoint",
+            "function",
+            "method",
+            "type"
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "deprecated": {
+          "$ref": "#/$defs/deprecated"
+        },
+        "description": {
+          "$ref": "#/$defs/description"
+        },
+        "examples": {
+          "$ref": "#/$defs/examples"
+        },
+        "method": {
+          "enum": [
+            "DELETE",
+            "GET",
+            "HEAD",
+            "OPTIONS",
+            "PATCH",
+            "POST",
+            "PUT"
+          ],
+          "description": "The HTTP method, only on an endpoint."
+        },
+        "parameters": {
+          "$ref": "#/$defs/parameters"
+        },
+        "path": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "The URL path from the server root, such as `/sites/{id}`, only on an endpoint."
+        },
+        "returns": {
+          "$ref": "#/$defs/returns"
+        },
+        "signature": {
+          "$ref": "#/$defs/signature"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "endpoint"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "method",
+              "path"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "not": {
+                  "const": "endpoint"
+                }
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "method"
+                  ]
+                },
+                {
+                  "required": [
+                    "path"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
