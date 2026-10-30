@@ -1,161 +1,58 @@
-// slipway doctor <dir> [--build <dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network]
-// Exit codes: 0 the target level is reached (with no --level: no MUST fails), 1 findings, 2 usage error.
-import { relative, resolve, sep } from "node:path";
-import { doctor, levels } from "./doctor.mjs";
-import { describe, toSarif } from "./report.mjs";
-import { applyFixes } from "./fix.mjs";
-import * as infoCommand from "./commands/info.mjs";
-import * as completionCommand from "./commands/completion.mjs";
-import * as pinCommand from "./commands/pin.mjs";
-import * as navCommand from "./commands/nav.mjs";
-import * as translateCommand from "./commands/translate.mjs";
-import * as stubsCommand from "./commands/stubs.mjs";
-import * as explainCommand from "./explain.mjs";
-import { hintFor } from "./checks/agent.skill-hint.mjs";
+// slipway <command> [options]: loads every command in src/commands/ by file name.
+import { readdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-export const usage = `Usage: slipway doctor <source-dir> [options]
+const commandsDir = join(dirname(fileURLToPath(import.meta.url)), "commands");
 
-Checks a site against the agent-editable site spec and prints the level it reaches.
+let cache;
 
-Options:
-  --explain [<id>]     print the check's page, or list all checks
-  --build <dir>        the built output folder; tests on the output fail without it
-  --format <format>    text, json, or sarif (default: text)
-  --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
-  --network            fetch https schemas named in content-schemas.json
-  --fix                automatically fix safe cases (e.g., missing stubs, deprecated keys)
-  --dry-run            print a diff of what --fix would do, without changing files
-  -h, --help           show this help`;
-
-const formats = ["text", "json", "sarif"];
-
-/** Parses arguments. Returns `{ options }` or `{ error }`. */
-export function parseArgs(args) {
-  const [command, ...rest] = args;
-  if (command === "-h" || command === "--help" || command === "help") return { help: true };
-  if (command !== "doctor" && command !== "info" && command !== "completion" && command !== "pin" && command !== "nav" && command !== "translate" && command !== "stubs") return { error: command ? `unknown command: ${command}` : "missing command" };
-  const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false, explain: null, explainGiven: false };
-  for (let i = 0; i < rest.length; i++) {
-    const arg = rest[i];
-    const value = () => {
-      const next = rest[++i];
-      if (next === undefined || next.startsWith("--")) throw new Error(`${arg} needs a value`);
-      return next;
-    };
-    try {
-      if (arg === "-h" || arg === "--help") return { help: true };
-      else if (arg === "--build") options.build = value();
-      else if (arg === "--format") options.format = value();
-      else if (arg === "--level") options.level = value();
-      else if (arg === "--network") options.network = true;
-      else if (arg === "--fix") options.fix = true;
-      else if (arg === "--dry-run") options.dryRun = true;
-      else if (arg === "--explain") {
-        options.explainGiven = true;
-        const next = rest[i + 1];
-        if (next !== undefined && !next.startsWith("-")) {
-          options.explain = next;
-          i++;
-        }
-      }
-      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
-      else if (options.source === null) options.source = arg;
-      else return { error: `unexpected argument: ${arg}` };
-    } catch (error) {
-      return { error: error.message };
-    }
-  }
-  if (!options.explainGiven && options.source === null) return { error: "missing <source-dir>" };
-  if (!formats.includes(options.format)) return { error: `--format must be text, json, or sarif, not ${options.format}` };
-  if (options.level !== null && !levels.includes(options.level)) return { error: `--level must be one of ${levels.join(", ")}` };
-  return { options };
+/** One line for `slipway --help`: the module's `summary`, or the description in its usage text. */
+export function summaryOf(module) {
+  if (module.summary) return module.summary;
+  const lines = String(module.usage ?? "").split("\n");
+  const start = lines.findIndex((line) => line.startsWith("Usage:"));
+  if (start === -1) return "";
+  const description = lines.slice(start + 1).find((line) => line.trim());
+  return description ? description.trim() : "";
 }
 
-const display = (path) => relative(process.cwd(), path).split(sep).join("/") || ".";
-
-/** A finding as `path:line key: message (allowed: ...) (fix: ...)`, with the path from the current folder. */
-export function formatFinding(finding, { source, build }) {
-  const base = finding.in === "output" ? build : source;
-  const file = finding.file ? `${base ? display(resolve(base, finding.file)) : finding.file}${finding.line ? `:${finding.line}` : ""}` : "";
-  return `${file ? `${file} ` : ""}${describe(finding)}`;
+/** Every command module in `src/commands/`, sorted by name. */
+export async function loadCommands() {
+  if (cache) return cache;
+  const files = readdirSync(commandsDir).filter((file) => file.endsWith(".mjs")).sort();
+  cache = await Promise.all(files.map(async (file) => {
+    const module = await import(`./commands/${file}`);
+    return { name: module.id ?? file.replace(/\.mjs$/, ""), summary: summaryOf(module), module };
+  }));
+  return cache;
 }
 
-export function formatText(report, folders) {
-  const lines = [`slipway doctor: ${display(folders.source)}${folders.build ? ` (output: ${display(folders.build)})` : ""}`];
-  lines.push(`level: ${report.level ?? "none"} (agent-editable ${report.version})`);
-  const hint = hintFor(folders);
-  if (hint) lines.push(hint);
-  const failed = report.tests.filter((test) => test.status === "fail");
-  for (const test of failed) {
-    lines.push("", `${test.keyword === "MUST" ? "error" : "warning"} ${test.id} (${test.level ? `${test.level} ${test.keyword}` : test.scope})`);
-    for (const finding of test.findings) lines.push(`  ${formatFinding(finding, folders)}`);
+/** The top-level help: one block per command, taken from the folder. */
+export function helpText(commands) {
+  const width = Math.max(...commands.map((command) => command.name.length));
+  const lines = ["Usage: slipway <command> [options]", "", "Commands:"];
+  for (const command of commands) {
+    lines.push(`  ${command.name.padEnd(width)}  ${command.summary}`.trimEnd());
+    lines.push(`  ${" ".repeat(width)}  ${String(command.module.usage ?? "").split("\n")[0]}`);
   }
-  const notRun = report.tests.filter((test) => test.status === "not-run");
-  if (notRun.length) {
-    lines.push("", "not run:");
-    for (const test of notRun) lines.push(`  ${test.id} (${test.level}): ${test.reason}`);
-  }
-  const passed = report.tests.length - failed.length - notRun.length;
-  lines.push("", `${passed} passed, ${failed.length} failed, ${notRun.length} not run`);
+  lines.push("", "Run `slipway <command> --help` for all of a command's options.");
   return lines.join("\n");
 }
 
-/** The exit code for a report: 0 when the target level is reached, or with no target when no MUST fails. */
-export function exitCode(report, target) {
-  if (target) return report.level !== null && levels.indexOf(report.level) >= levels.indexOf(target) ? 0 : 1;
-  return report.tests.some((test) => test.keyword === "MUST" && test.status === "fail") ? 1 : 0;
-}
-
 export async function main(args, { log = console.log, error = console.error } = {}) {
-  const [command] = args;
-
-  if (command === "info") {
-    return infoCommand.main(args, { log, error });
-  }
-  if (command === "completion") {
-    return completionCommand.main(args, { log, error });
-  }
-  if (command === "pin") {
-    return pinCommand.main(args, { log, error });
-  }
-  if (command === "nav") {
-    return navCommand.main(args, { log, error });
-  }
-  if (command === "translate") {
-    return translateCommand.main(args, { log, error });
-  }
-  if (command === "stubs") {
-    return stubsCommand.main(args, { log, error });
-  }
-  const parsed = parseArgs(args);
-  if (parsed.help) {
-    log(usage);
+  const [name] = args;
+  const commands = await loadCommands();
+  if (!name || name === "-h" || name === "--help" || name === "help") {
+    log(helpText(commands));
     return 0;
   }
-  if (parsed.error) {
-    error(`slipway: ${parsed.error}\n\n${usage}`);
+  const command = commands.find((entry) => entry.name === name);
+  if (!command) {
+    error(`slipway: unknown command: ${name}\n\n${helpText(commands)}`);
     return 2;
   }
-  const { options } = parsed;
-  if (options.explainGiven) return explainCommand.main(options.explain, { log, error });
-  const folders = { source: resolve(options.source), build: options.build ? resolve(options.build) : null };
-  let report;
-  try {
-    report = await doctor(folders.source, { build: folders.build, network: options.network });
-  } catch (caught) {
-    error(`slipway: ${caught.message}`);
-    return 2;
-  }
-
-  if (options.fix || options.dryRun) {
-    const diffs = applyFixes(report, folders.source, { dryRun: options.dryRun });
-    if (diffs.length > 0) {
-      log(diffs.join("\n"));
-    }
-  }
-
-  if (options.format === "json") log(JSON.stringify(report, null, 2));
-  else if (options.format === "sarif") log(JSON.stringify(toSarif(report, folders), null, 2));
-  else log(formatText(report, folders));
-  return exitCode(report, options.level);
+  return command.module.main(args, { log, error });
 }
+
+export { usage, parseArgs, formatFinding, formatText, exitCode } from "./commands/doctor.mjs";
