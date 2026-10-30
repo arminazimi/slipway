@@ -79,6 +79,13 @@ See [Gallery block](./gallery.html) for data setup.
 
 {% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
 
+## People
+
+```liquid
+{% raw %}{% include blocks/people.html people=site.data.authors %}{% endraw %}
+```
+
+See [People block](./people.html) for data setup.
 ## Logos
 
 ```liquid

@@ -1,0 +1,47 @@
+{%- comment -%} A grid of people from include.people: a list of { name, role, avatar, avatar_alt, url, links }, or a map shaped like _data/authors.yml { name, bio, avatar, links[].title }. include.id sets the list id. {%- endcomment -%}
+{%- include component-css.html name="people" -%}
+{%- if include.people -%}
+<ul class="sl-people"{% if include.id %} id="{{ include.id | escape }}"{% endif %}>
+  {%- for sl_person in include.people -%}
+    {%- assign sl_p = sl_person -%}
+    {%- if sl_person[1].name -%}{%- assign sl_p = sl_person[1] -%}{%- endif -%}
+    {%- if sl_p.name -%}
+      <li class="sl-person">
+        {%- if sl_p.avatar -%}
+          {%- assign sl_avatar = sl_p.avatar -%}
+          {%- unless sl_avatar contains '://' -%}{%- assign sl_avatar = sl_avatar | relative_url -%}{%- endunless -%}
+          {%- assign sl_alt = sl_p.avatar_alt | default: sl_p.name -%}
+        <img class="sl-person-avatar" src="{{ sl_avatar | escape }}" alt="{{ sl_alt | escape }}" width="64" height="64" loading="lazy">
+        {%- endif -%}
+        <div class="sl-person-body">
+          <span class="sl-person-name">
+            {%- if sl_p.url -%}
+              {%- assign sl_url = sl_p.url -%}
+              {%- unless sl_url contains '://' -%}{%- assign sl_url = sl_url | relative_url -%}{%- endunless -%}
+              <a href="{{ sl_url | escape }}">{{ sl_p.name | escape }}</a>
+            {%- else -%}
+              {{ sl_p.name | escape }}
+            {%- endif -%}
+          </span>
+          {%- assign sl_role = sl_p.role | default: sl_p.bio -%}
+          {%- if sl_role -%}
+          <span class="sl-person-role">{{ sl_role | escape }}</span>
+          {%- endif -%}
+          {%- if sl_p.links.size > 0 -%}
+          <ul class="sl-person-links">
+            {%- for sl_link in sl_p.links -%}
+              {%- if sl_link.url -%}
+                {%- assign sl_href = sl_link.url -%}
+                {%- unless sl_href contains '://' -%}{%- assign sl_href = sl_href | relative_url -%}{%- endunless -%}
+                {%- assign sl_label = sl_link.label | default: sl_link.title -%}
+            <li><a href="{{ sl_href | escape }}">{{ sl_label | escape }}</a></li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+          {%- endif -%}
+        </div>
+      </li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>
+{%- endif -%}
