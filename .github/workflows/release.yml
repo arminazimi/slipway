@@ -1,8 +1,9 @@
 name: release
 
 # A maintainer pushes a tag vX.Y.Z after merging the pull request from `node tools/release/prepare.mjs X.Y.Z`.
-# This workflow checks the tag against the gemspec, runs the full check, creates the GitHub release,
-# and then pushes the gem to RubyGems (standalone.gem-publish) with trusted publishing: no API key is stored.
+# This workflow checks the tag against the gemspec, runs the full check, creates the GitHub release with a
+# CycloneDX SBOM of the gem and the npm packages, and then pushes the gem to RubyGems (standalone.gem-publish)
+# with trusted publishing: no API key is stored.
 # One-time maintainer setup: add a trusted publisher for `slipway-theme` on rubygems.org (repository
 # arminazimi/slipway, workflow release.yml, environment rubygems) and create the `rubygems` environment.
 on:
@@ -28,7 +29,10 @@ jobs:
         with:
           node-version: 22
       - name: Tag matches the gemspec version
-        run: node tools/release/prepare.mjs --check "$TAG"
+        id: version
+        run: |
+          node tools/release/prepare.mjs --check "$TAG"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
       - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
           ruby-version: .ruby-version
@@ -39,12 +43,28 @@ jobs:
           key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
       - run: npm ci
       - run: npm run check
+      # What the release contains: the theme files and slipway-theme.gemspec at the root (their runtime gems
+      # come from Gemfile.lock), the npm packages under packages/ and plugins/, and their dependencies from
+      # package-lock.json. Scanning "." covers all of them, so one CycloneDX document describes the release.
+      # The action SHA pins the Syft version; nothing is downloaded at site build time.
+      - name: Generate the CycloneDX SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: slipway-${{ steps.version.outputs.version }}.cdx.json
+          upload-artifact: false
+          upload-release-assets: false
       - name: Release notes from CHANGELOG.md
         run: node tools/release/prepare.mjs --notes "$TAG" > "$RUNNER_TEMP/notes.md"
       - name: Create the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh release create "$TAG" --title "$TAG" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag
+      - name: Attach the SBOM to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "slipway-${{ steps.version.outputs.version }}.cdx.json" --clobber
 
   publish-gem:
     needs: release
