@@ -1,10 +1,12 @@
 {%- comment -%}
   One JSON array entry per HTML page in this language: title, url, the text of its h2/h3 headings, and
-  the first 300 characters of its text, so a 600-page site keeps its index well under a megabyte. Pages
-  with `search: false`, pages with `layout: none`, and non-HTML output (a URL whose last segment ends in
-  a file extension other than .html/.htm, such as llms.txt or a data feed) stay out.
+  the first `slipway.search.text` characters of its text (300 by default), so a 600-page site keeps its
+  index well under a megabyte. A page with `search: excerpt` indexes its description instead of its text.
+  Pages with `search: false`, pages with `layout: none`, and non-HTML output (a URL whose last segment
+  ends in a file extension other than .html/.htm, such as llms.txt or a data feed) stay out.
 {%- endcomment -%}
 {%- assign sl_ix_lang = page.lang | default: site.lang | default: 'en' -%}
+{%- assign sl_ix_cap = site.slipway.search.text | default: 300 -%}
 {%- assign sl_ix_all = site.pages | concat: site.documents -%}
 {%- assign sl_ix_n = 0 -%}
 [
@@ -30,6 +32,11 @@
   {%- endcapture -%}
   {%- if sl_ix_n > 0 -%},{%- endif -%}
   {%- assign sl_ix_n = sl_ix_n | plus: 1 %}
-{"title":{{ item.title | jsonify }},"url":{{ item.url | relative_url | jsonify }},"headings":{{ sl_ix_heads | normalize_whitespace | truncate: 300 | jsonify }},"text":{{ sl_ix_html | strip_html | normalize_whitespace | truncate: 300 | jsonify }}}
+  {%- if item.search == 'excerpt' -%}
+    {%- assign sl_ix_text = item.description | default: '' -%}
+  {%- else -%}
+    {%- assign sl_ix_text = sl_ix_html | strip_html | normalize_whitespace -%}
+  {%- endif %}
+{"title":{{ item.title | jsonify }},"url":{{ item.url | relative_url | jsonify }},"headings":{{ sl_ix_heads | normalize_whitespace | truncate: 300 | jsonify }},"text":{{ sl_ix_text | truncate: sl_ix_cap | jsonify }}}
 {%- endfor %}
 ]

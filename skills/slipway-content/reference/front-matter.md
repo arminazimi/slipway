@@ -37,7 +37,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
 | `replaced_by` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of the page that replaces this one, if deprecated. |
 | `review_date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date this page was last reviewed. |
-| `search` | boolean |  |  | `false` leaves the page out of the search index. |
+| `search` | boolean or string |  |  | `false` leaves the page out of the search index; `excerpt` indexes only its description. |
 | `since` | string |  |  | The version when the page status was set. |
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
 | `status` | `experimental` or `beta` or `deprecated` or `proposed` or `accepted` or `rejected` or `superseded` |  |  | The page status; ADR records also accept proposed, accepted, rejected, and superseded. |
