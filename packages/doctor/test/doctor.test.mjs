@@ -63,7 +63,7 @@ test("invalid front matter stops at L0 with the file, line, key, and allowed val
 test("every automated test in tests.json has a check, except the one that needs generator detection", () => {
   const ids = loadTests().tests.filter((t) => t.how === "automated").map((t) => t.id);
   assert.deepEqual(ids.filter((id) => !checks[id]), []);
-assert.deepEqual(Object.keys(checks).filter((id) => !ids.includes(id)), ["doctor.schema-coverage", "doctor.lang-mismatch", "unknown-config", "unknown-front-matter", "doctor.twin-fresh", "agent.skill-hint", "doctor.agents-commands"]);
+assert.deepEqual(Object.keys(checks).filter((id) => !ids.includes(id)), ["doctor.schema-coverage", "doctor.lang-mismatch", "unknown-config", "unknown-front-matter", "doctor.twin-fresh", "agent.skill-hint", "doctor.agents-commands", "i18n.kashida"]);
 });
 
 test("the packaged spec files match the repository's", () => {
