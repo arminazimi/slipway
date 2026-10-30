@@ -1,0 +1,6 @@
+.sl-annotations{margin-block:var(--sl-space-4)}
+.sl-annotations figcaption{margin-block-end:var(--sl-space-2);color:var(--sl-color-muted)}
+.sl-annotations pre{margin:0;padding:var(--sl-space-3);background:var(--sl-color-surface);border:var(--sl-rule) solid var(--sl-color-line);border-radius:var(--sl-radius-compact);overflow-x:auto}
+.sl-annotations-notes{counter-reset:sl-annotations;list-style:none;margin:var(--sl-space-3) 0 0;padding-inline-start:var(--sl-space-4);border-inline-start:var(--sl-rule) solid var(--sl-color-line)}
+.sl-annotations-notes li{counter-increment:sl-annotations;padding-inline-start:var(--sl-space-8);padding-block-end:var(--sl-space-2);position:relative}
+.sl-annotations-notes li::before{content:counter(sl-annotations);position:absolute;inset-inline-start:0;inline-size:var(--sl-space-6);text-align:center;color:var(--sl-color-heading);font-weight:600}

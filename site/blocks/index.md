@@ -7,6 +7,14 @@ permalink: /blocks/
 
 Slipway includes several presentation blocks. Here is a live example of each, with copyable snippets you can use in your pages.
 
+## Annotations
+
+```liquid
+{% raw %}{% include blocks/annotations.html caption=page.annotations.caption language=page.annotations.language code=page.annotations.code notes=page.annotations.notes %}{% endraw %}
+```
+
+See [Annotations block](./annotations.html) for data setup.
+
 ## Badge
 
 ```liquid
