@@ -14,6 +14,7 @@ const allowed = new Set([
   ".gitattributes",
   ".github",
   ".gitignore",
+  ".gitleaks.toml",
   ".htmlvalidate.cjs",
   ".ruby-version",
   "AGENTS.md",
