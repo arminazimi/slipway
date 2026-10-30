@@ -37,6 +37,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `direction` | `ltr` or `rtl` |  |  | Text direction as the base layout reads it today; same meaning as `dir`. |
 | `image` | string |  | `^(/\|https://)[^\s"<>]*$` | The page's own social image (`og:image`): a path on this site or an https link. Without it, Actions mode generates one from the title, and every mode falls back to the shared `assets/images/social.png`. |
 | `lang` | string |  | `^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$` | BCP 47 language tag, for example `en`, `fa`, or `pt-BR`. Defaults to the site language. |
+| `last_modified_at` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date the page last changed, shown at the bottom of a doc page. Actions mode fills it from the file's last git commit when it is absent; classic Pages shows nothing without it. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
 | `nav_order` | number |  |  | Sort order in generated navigation. |
 | `owner` | string |  |  | The owner of this page. |
@@ -44,7 +45,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
 | `replaced_by` | string |  | `^(/\|https://)[^\s"<>]*$` | The URL of the page that replaces this one, if deprecated. |
 | `review_date` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date this page was last reviewed. |
-| `search` | boolean |  |  | `false` leaves the page out of the search index. |
+| `search` | boolean or string |  |  | `false` leaves the page out of the search index; `excerpt` indexes only its description. |
 | `since` | string |  |  | The version when the page status was set. |
 | `sitemap` | boolean |  |  | `false` leaves the page out of sitemap.xml. |
 | `status` | `experimental` or `beta` or `deprecated` or `proposed` or `accepted` or `rejected` or `superseded` |  |  | The page status; ADR records also accept proposed, accepted, rejected, and superseded. |

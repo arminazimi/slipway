@@ -47,6 +47,7 @@ The `slipway` block, described by [`schema/slipway-config.schema.json`](../../sc
 | `slipway.logo.touch_icon` | yes | `head.test.mjs` |
 | `slipway.persian.digits` | yes | `persian.test.mjs` |
 | `slipway.persian.jalali` | yes | `persian.test.mjs` |
+| `slipway.search.text` | yes | `search-options.test.mjs` |
 | `slipway.social` | yes | `links-layout.test.mjs` |
 | `slipway.arabic.digits` | yes | `arabic.test.mjs` |
 | `slipway.arabic.hijri` | yes | `hijri.test.mjs` |
@@ -83,6 +84,7 @@ Jekyll keys the theme reads: `title` and `lang` are public (every layout test). 
 | `lang`, `direction` | all | yes | `i18n.test.mjs`, `not-found.test.mjs` |
 | `translation_key` | all | yes | `i18n.test.mjs` |
 | `updated` | all | yes | `pub-dates.test.mjs` |
+| `last_modified_at` | all | yes | `kit-last-updated.test.mjs` |
 | `canonical_url` | all | yes | `kit-canonical.test.mjs` |
 | `image` (a path on the site or an https URL: the page's own social image) | all | yes | `seo.test.mjs`, `og.test.mjs` |
 | `permalink` | all (Jekyll's) | yes | `doc-layout.test.mjs` |

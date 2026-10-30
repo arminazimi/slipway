@@ -54,6 +54,9 @@ When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote
 | Check id | What it finds |
 | --- | --- |
 | `doctor.root-links` | Root-relative links in Markdown files that skip `baseurl`. |
+| `docs.description` | A Markdown page of a site with a docs navigation that has no non-empty `description` in its front matter. |
+| `docs.heading-order` | A docs page whose heading levels jump, like an `h2` followed by an `h4`. |
+| `docs.orphan` | A docs page that neither the docs navigation nor another page links to. |
 | `jekyll.stubs` | A file from `starter-files/` (except its README) that the site has not copied. A site that writes its own `sitemap.xml`, `llms.txt`, `llms-full.txt`, or `robots.txt` is never asked for it; see [docs/site-files.md](../../docs/site-files.md). |
 | `jekyll.deprecated` | A deprecated config key or front-matter field from `schema/deprecations.json` (ADR 0012), with its replacement. |
 | `jekyll.liquid-in-content` | `{{` or `{%` in the body of a Markdown page, outside code spans and code blocks: content that only Jekyll can render. |

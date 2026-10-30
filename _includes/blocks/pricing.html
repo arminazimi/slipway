@@ -1,0 +1,28 @@
+{%- include component-css.html name="pricing" -%}
+<ul class="sl-pricing"{% if include.id %} id="{{ include.id | escape }}"{% endif %}>
+  {%- for plan in include.plans -%}
+    <li class="sl-pricing-plan{% if plan.highlighted %} sl-pricing-featured{% endif %}">
+      {%- if plan.highlighted and plan.highlight_label -%}
+        <p class="sl-pricing-badge">{{ plan.highlight_label }}</p>
+      {%- endif -%}
+      <h3 class="sl-pricing-name">{{ plan.name }}</h3>
+      <p class="sl-pricing-price">
+        <span class="sl-pricing-amount">{{ plan.price }}</span>
+        {%- if plan.period %} <span class="sl-pricing-period">{{ plan.period }}</span>{% endif -%}
+      </p>
+      {%- if plan.description -%}
+        <p class="sl-pricing-description">{{ plan.description }}</p>
+      {%- endif -%}
+      {%- if plan.features -%}
+        <ul class="sl-pricing-features">
+          {%- for feature in plan.features -%}
+            <li>{{ feature }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if plan.cta_label and plan.cta_url -%}
+        <a class="sl-button sl-pricing-cta" href="{{ plan.cta_url | relative_url }}">{{ plan.cta_label }}</a>
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+</ul>

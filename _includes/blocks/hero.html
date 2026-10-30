@@ -1,0 +1,30 @@
+{%- include component-css.html name="hero" -%}
+<section class="sl-hero"{% if include.id %} id="{{ include.id | escape }}"{% endif %}{% if include.id and include.title %} aria-labelledby="{{ include.id | escape }}-title"{% endif %}>
+  <div class="sl-hero-body">
+    {%- if include.title %}
+    <h2 class="sl-hero-title"{% if include.id %} id="{{ include.id | escape }}-title"{% endif %}>{{ include.title }}</h2>
+    {%- endif %}
+    {%- if include.lead %}
+    <p class="sl-hero-lead">{{ include.lead }}</p>
+    {%- endif %}
+    {%- assign show_primary = false -%}
+    {%- if include.primary_url and include.primary_label -%}{%- assign show_primary = true -%}{%- endif -%}
+    {%- assign show_secondary = false -%}
+    {%- if include.secondary_url and include.secondary_label -%}{%- assign show_secondary = true -%}{%- endif -%}
+    {%- if show_primary or show_secondary %}
+    <div class="sl-hero-actions">
+      {%- if show_primary %}
+      <a class="sl-hero-action sl-hero-action-primary" href="{{ include.primary_url | relative_url }}">{{ include.primary_label }}</a>
+      {%- endif %}
+      {%- if show_secondary %}
+      <a class="sl-hero-action sl-hero-action-secondary" href="{{ include.secondary_url | relative_url }}">{{ include.secondary_label }}</a>
+      {%- endif %}
+    </div>
+    {%- endif %}
+  </div>
+  {%- if include.image %}
+  <div class="sl-hero-media">
+    <img src="{{ include.image | relative_url | escape }}" alt="{{ include.image_alt | escape }}">
+  </div>
+  {%- endif %}
+</section>

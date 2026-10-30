@@ -1,0 +1,31 @@
+{%- include component-css.html name="diff" -%}
+{%- assign removed = include.removed | default: "" -%}
+{%- assign added = include.added | default: "" -%}
+{%- assign language = include.language | default: "plaintext" -%}
+{%- assign nl = "
+" -%}
+<figure class="sl-diff">
+  {%- if include.caption -%}
+    <figcaption>{{ include.caption | escape }}</figcaption>
+  {%- endif -%}
+  {%- if removed != "" -%}
+    {%- assign removed_lines = removed | escape | split: nl -%}
+    <div class="sl-diff-side sl-diff-removed">
+      <pre dir="ltr"><code class="language-{{ language }}">
+        {%- for line in removed_lines -%}
+          <span class="sl-diff-line"><span class="sl-diff-sign" aria-hidden="true">−</span>{{ line }}</span>
+        {%- endfor -%}
+      </code></pre>
+    </div>
+  {%- endif -%}
+  {%- if added != "" -%}
+    {%- assign added_lines = added | escape | split: nl -%}
+    <div class="sl-diff-side sl-diff-added">
+      <pre dir="ltr"><code class="language-{{ language }}">
+        {%- for line in added_lines -%}
+          <span class="sl-diff-line"><span class="sl-diff-sign" aria-hidden="true">+</span>{{ line }}</span>
+        {%- endfor -%}
+      </code></pre>
+    </div>
+  {%- endif -%}
+</figure>

@@ -1,11 +1,12 @@
 // The doctor Action's step: runs slipway doctor once, prints the report and one annotation per finding, and writes
-// SARIF when asked. Inputs arrive as SLIPWAY_* variables from action.yml.
+// SARIF, the job summary, and the badge when asked. Inputs arrive as SLIPWAY_* variables from action.yml.
 import { appendFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { doctor, levels } from "../../packages/doctor/src/doctor.mjs";
 import { exitCode, formatText } from "../../packages/doctor/src/cli.mjs";
 import { toSarif } from "../../packages/doctor/src/report.mjs";
 import { toAnnotations } from "../../packages/doctor/src/github.mjs";
+import { badgeJson, summaryMarkdown } from "./src/summary.mjs";
 
 const input = (name) => (process.env[`SLIPWAY_${name}`] ?? "").trim();
 const fail = (message) => {
@@ -31,6 +32,8 @@ try {
 console.log(format === "json" ? JSON.stringify(report, null, 2) : formatText(report, folders));
 for (const line of toAnnotations(report, folders)) console.log(line);
 if (sarif) writeFileSync(sarifFile, `${JSON.stringify(toSarif(report, folders), null, 2)}\n`);
+if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summaryMarkdown(report, folders)}\n`);
+if (process.env.SLIPWAY_BADGE_FILE) writeFileSync(process.env.SLIPWAY_BADGE_FILE, `${JSON.stringify(badgeJson(report))}\n`);
 if (process.env.GITHUB_OUTPUT) {
   appendFileSync(process.env.GITHUB_OUTPUT, `level=${report.level ?? "none"}\nsarif-file=${sarif ? sarifFile : ""}\n`);
 }
