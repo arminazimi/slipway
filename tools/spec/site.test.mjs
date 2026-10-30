@@ -30,3 +30,20 @@ test("spec site builds and schemas are valid", () => {
 
   rmSync(join(root, "_site/gem/spec-docs-site"), { recursive: true, force: true });
 });
+
+test("the adapter list is generated with every adapter and linked from the index", () => {
+  buildSpecSite();
+
+  const page = readFileSync(join(specSiteDir, "adapters.md"), "utf8");
+  assert.match(page, /^---\ntitle: Adapters\ndescription: The generators with a Slipway adapter, and how to add one\.\nlayout: doc\n---\n/);
+
+  const adapters = readdirSync(join(root, "adapters"), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+  for (const name of adapters) {
+    assert.ok(page.includes(`https://github.com/arminazimi/slipway/tree/main/adapters/${name}`), `adapters.md does not link ${name}`);
+  }
+
+  const index = readFileSync(join(specSiteDir, "index.md"), "utf8");
+  assert.ok(index.includes("](adapters.html)"), "index.md does not link the adapter list");
+});
