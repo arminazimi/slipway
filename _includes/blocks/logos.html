@@ -1,0 +1,21 @@
+{%- if include.logos -%}
+  {%- include component-css.html name="logos" -%}
+  <div class="sl-logos">
+    {%- if include.title -%}
+      <p class="sl-logos-title">{{ include.title | escape }}</p>
+    {%- endif -%}
+    <ul>
+      {%- for logo in include.logos -%}
+        <li>
+          {%- if logo.url -%}
+            <a href="{{ logo.url | relative_url }}">
+          {%- endif -%}
+          <img src="{{ logo.image | relative_url }}" alt="{{ logo.alt | default: logo.name | escape }}" loading="lazy">
+          {%- if logo.url -%}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

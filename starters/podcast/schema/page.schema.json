@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/starters/podcast/schema/page.schema.json",
+  "title": "Podcast starter page front matter",
+  "description": "The front matter of a page of the podcast site: every Markdown file outside _posts/.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title"],
+  "properties": {
+    "author": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+      "description": "The host of the page: a key of _data/authors.yml."
+    },
+    "cta_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The label of the call-to-action button on the home page."
+    },
+    "cta_url": {
+      "type": "string",
+      "pattern": "^(/|https://)[^\\s\"<>]*$",
+      "description": "Where the call-to-action button on the home page goes."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence for search results and link previews."
+    },
+    "lang": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "description": "The language of the page, as a BCP 47 tag. Defaults to the language of the site."
+    },
+    "layout": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The layout that renders the page: page, home, archive, tags, author, or not-found."
+    },
+    "nav_order": {
+      "type": "number",
+      "description": "The order of the page in the generated navigation."
+    },
+    "permalink": {
+      "type": "string",
+      "pattern": "^(/|(pretty|date|ordinal|weekdate|none)$)",
+      "description": "The address of the page, when it is not the one the file name gives it."
+    },
+    "published": {
+      "type": "boolean",
+      "description": "false leaves the page out of the build. AGENTS.md uses it to stay out of the site."
+    },
+    "search": {
+      "type": "boolean",
+      "description": "false leaves the page out of the search index."
+    },
+    "sitemap": {
+      "type": "boolean",
+      "description": "false leaves the page out of sitemap.xml."
+    },
+    "tags": {
+      "type": "array",
+      "description": "The topics of the page, shown on the tags page.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One topic."
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The title of the page, shown in the heading and in the browser tab."
+    },
+    "variant": {
+      "type": "string",
+      "enum": ["editorial", "landing", "blog", "docs"],
+      "description": "How the home page is laid out. blog lists every episode."
+    }
+  }
+}
