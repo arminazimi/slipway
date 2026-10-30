@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/starters/podcast/schema/config.schema.json",
+  "title": "Podcast starter config",
+  "description": "The settings of the podcast site, as they are in _config.yml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "lang", "theme"],
+  "properties": {
+    "author": {
+      "type": "object",
+      "description": "Who makes the show. The name is shown in the feed and in the author box.",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The name of the host or the studio."
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the show, used in the feed and in link previews."
+    },
+    "lang": {
+      "type": "string",
+      "minLength": 2,
+      "description": "The language of the show, as a BCP 47 tag such as en or fa."
+    },
+    "plugins": {
+      "type": "array",
+      "description": "The GitHub Pages plugins the site uses.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The name of a plugin, such as jekyll-remote-theme."
+      }
+    },
+    "slipway": {
+      "type": "object",
+      "description": "The theme's own settings.",
+      "additionalProperties": false,
+      "properties": {
+        "header": {
+          "type": "string",
+          "enum": ["classic", "centered", "minimal"],
+          "description": "How the header is laid out. centered stacks the title and the navigation."
+        }
+      }
+    },
+    "theme": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The theme gem the site uses, or null with remote_theme in the overlay."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The name of the show, shown in the header and in the feed."
+    },
+    "url": {
+      "type": "string",
+      "pattern": "^(https?://[^/\\s]+)?$",
+      "description": "The address the site is published at, without a trailing slash. Podcast directories need it for the absolute URLs in the feed."
+    }
+  }
+}

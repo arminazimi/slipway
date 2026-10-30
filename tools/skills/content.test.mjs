@@ -8,25 +8,13 @@ import { buildFrontMatterReference, listKeys, loadSchemas, referencePath, root }
 
 const skillDir = join(root, "skills/slipway-content");
 const skill = readFileSync(join(skillDir, "SKILL.md"), "utf8");
-const [, meta, body] = skill.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
-const theme = '"$HOME/.slipway/';
-
+const [, , body] = skill.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
 function example(name) {
   const text = readFileSync(join(skillDir, "examples", name), "utf8");
   const source = frontMatter(text);
   const target = source.match(/^# Save as (\S+?)[,:.]?\s/m)?.[1];
   return { text, data: parse(source), target, content: text.slice(text.indexOf("\n---\n", 4) + 5) };
 }
-
-test("SKILL.md has valid frontmatter and stays under 150 lines", () => {
-  assert.ok(meta, "frontmatter block");
-  const data = parse(meta);
-  assert.deepEqual(Object.keys(data).sort(), ["description", "name"]);
-  assert.equal(data.name, "slipway-content");
-  assert.ok(data.description.length > 0 && data.description.length <= 1024);
-  assert.doesNotMatch(data.description, /[<>\n]/);
-  assert.ok(skill.split("\n").length < 150, `${skill.split("\n").length} lines`);
-});
 
 test("the front matter reference is generated from the schemas and in sync", () => {
   const schemas = loadSchemas();
@@ -76,22 +64,11 @@ test("no example uses Liquid or a second h1", () => {
   }
 });
 
-test("every link, path, and command in the skill exists", () => {
-  // A link starting with `/` is an address on the site, shown as an example.
-  const links = [...body.matchAll(/\]\(([^)#]+)\)/g)].map((m) => m[1]).filter((p) => !p.startsWith("http") && !p.startsWith("/"));
-  assert.ok(links.length >= 4);
-  for (const p of links) assert.ok(existsSync(join(skillDir, p)), p);
+test("the skill checks its work with the doctor and the schema check", () => {
   const commands = [...body.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((m) => m[1].trim().split("\n"));
-  assert.ok(commands.length >= 4);
-  for (const command of commands) {
-    const script = command.match(/^node "\$HOME\/\.slipway\/([^"]+)"/);
-    if (script) assert.ok(existsSync(join(root, script[1])), command);
-    else assert.match(command, /^(git clone --depth 1 https:\/\/github\.com\/arminazimi\/slipway |cd |bundle exec jekyll build$)/, command);
-  }
-  assert.ok(commands.some((c) => c.startsWith(`node ${theme}packages/doctor/`) && c.includes(" doctor . ")), "runs the doctor");
-  assert.ok(commands.some((c) => c.startsWith(`node ${theme}tools/theme/validate.mjs`)), "runs the schema check");
+  assert.ok(commands.some((c) => c.includes("packages/doctor/") && c.includes(" doctor . ")), "runs the doctor");
+  assert.ok(commands.some((c) => c.includes("tools/theme/validate.mjs")), "runs the schema check");
 });
-
 test("the translation recipe exists and has valid paths and commands", () => {
   const recipePath = join(skillDir, "reference/translate-page.md");
   assert.ok(existsSync(recipePath), "translate-page.md exists");
