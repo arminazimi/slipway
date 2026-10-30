@@ -4,6 +4,9 @@
 import { blocks } from "../markdown.mjs";
 import { findDeprecations, packagedDeprecations } from "../deprecations.mjs";
 import { detect } from "../detect.mjs";
+import * as docsDescription from "./docs.description.mjs";
+import * as docsHeadingOrder from "./docs.heading-order.mjs";
+import * as docsOrphan from "./docs.orphan.mjs";
 import * as rootLinks from "./root-links.mjs";
 
 /** The files of starter-files/ in the repository, except its README: every site copies them. */
@@ -137,6 +140,9 @@ function pages(site) {
 const result = (findings) => ({ status: findings.length ? "fail" : "pass", findings });
 
 export const checks = {
+  [docsDescription.id]: docsDescription.run,
+  [docsHeadingOrder.id]: docsHeadingOrder.run,
+  [docsOrphan.id]: docsOrphan.run,
   [rootLinks.id]: rootLinks.run,
   "jekyll.stubs": (site) =>
     result(
