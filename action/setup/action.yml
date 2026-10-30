@@ -1,0 +1,67 @@
+name: slipway setup
+description: Installs Node, the slipway doctor's dependencies, and puts `slipway` on the PATH for the rest of the job.
+author: Slipway
+branding:
+  icon: terminal
+  color: blue
+
+inputs:
+  cache:
+    description: Cache the npm download cache between jobs, keyed on the checkout's package-lock.json. Set to false to skip it.
+    default: "true"
+  node-version:
+    description: The Node version actions/setup-node installs. The doctor needs 22 or later.
+    default: "22"
+  path:
+    description: The Slipway checkout that holds packages/doctor, relative to the repository root. When the folder has no Slipway checkout, the Action uses its own copy.
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    # Resolve the checkout once. setup-node's cache hashing rejects paths with '..' segments,
+    # and the shims need a native absolute path, so both get one from here.
+    - name: Find the Slipway checkout
+      id: checkout
+      shell: bash
+      env:
+        SLIPWAY_PATH: ${{ inputs.path }}
+      run: |
+        set -euo pipefail
+        repo_root="$SLIPWAY_PATH"
+        if [ ! -f "$repo_root/packages/doctor/bin/slipway.mjs" ]; then
+          repo_root="$GITHUB_ACTION_PATH/../.."
+        fi
+        repo_root="$(cd "$repo_root" && pwd -P)"
+        # Git Bash prints POSIX paths; cmd.exe and PowerShell need the native C:/ form.
+        if native="$(cd "$repo_root" && pwd -W 2>/dev/null)"; then
+          repo_root="$native"
+        fi
+        printf 'SLIPWAY_REPO_ROOT=%s\n' "$repo_root" >> "$GITHUB_ENV"
+        printf 'lockfile=%s/package-lock.json\n' "$repo_root" >> "$GITHUB_OUTPUT"
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ inputs.cache == 'true' && 'npm' || '' }}
+        cache-dependency-path: ${{ steps.checkout.outputs.lockfile }}
+    # Install once, in the Slipway checkout that holds packages/doctor, never in the caller's site.
+    - name: Install the doctor's dependencies
+      shell: bash
+      run: |
+        set -euo pipefail
+        cd "$SLIPWAY_REPO_ROOT"
+        if [ ! -d node_modules/ajv ] || [ ! -d node_modules/yaml ]; then
+          npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+        fi
+    - name: Put slipway on the PATH
+      shell: bash
+      run: |
+        set -euo pipefail
+        shim_dir="$RUNNER_TEMP/slipway-bin"
+        mkdir -p "$shim_dir"
+        cli="$SLIPWAY_REPO_ROOT/packages/doctor/bin/slipway.mjs"
+        printf '#!/bin/sh\nexec node "%s" "$@"\n' "$cli" > "$shim_dir/slipway"
+        chmod +x "$shim_dir/slipway"
+        # cmd.exe and PowerShell find slipway through PATHEXT; bash finds the shim above.
+        printf '@echo off\r\nnode "%s" %%*\r\n' "$cli" > "$shim_dir/slipway.cmd"
+        printf '%s\n' "$shim_dir" >> "$GITHUB_PATH"
