@@ -71,6 +71,14 @@ See [Gallery block](./gallery.html) for data setup.
 
 {% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
 
+## Pricing
+
+```liquid
+{% raw %}{% include blocks/pricing.html plans=page.plans %}{% endraw %}
+```
+
+See [Pricing block](./pricing.html) for data setup.
+
 ## Pull quote
 
 ```liquid
