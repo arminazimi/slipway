@@ -29,13 +29,13 @@ hero_rtl:
 ## Left-to-right
 
 {::nomarkdown}
-{% include blocks/hero.html id=page.hero.id title=page.hero.title lead=page.hero.lead primary_url=page.hero.primary_url primary_label=page.hero.primary_label secondary_url=page.hero.secondary_url secondary_label=page.hero.secondary_label image=page.hero.image image_alt=page.hero.image_alt %}
+{% include blocks/hero.html id=page.hero.id title=page.hero.title lead=page.hero.lead primary_url=page.hero.primary_url primary_label=page.hero.primary_label secondary_url=page.hero.secondary_url secondary_label=page.hero.secondary_label image=page.hero.image image_alt=page.hero.image_alt image_width=1200 image_height=630 %}
 {:/nomarkdown}
 
 ## Right-to-left
 
 {::nomarkdown}
 <div dir="rtl">
-{% include blocks/hero.html id=page.hero_rtl.id title=page.hero_rtl.title lead=page.hero_rtl.lead primary_url=page.hero_rtl.primary_url primary_label=page.hero_rtl.primary_label secondary_url=page.hero_rtl.secondary_url secondary_label=page.hero_rtl.secondary_label image=page.hero_rtl.image image_alt=page.hero_rtl.image_alt %}
+{% include blocks/hero.html id=page.hero_rtl.id title=page.hero_rtl.title lead=page.hero_rtl.lead primary_url=page.hero_rtl.primary_url primary_label=page.hero_rtl.primary_label secondary_url=page.hero_rtl.secondary_url secondary_label=page.hero_rtl.secondary_label image=page.hero_rtl.image image_alt=page.hero_rtl.image_alt image_width=1200 image_height=630 %}
 </div>
 {:/nomarkdown}

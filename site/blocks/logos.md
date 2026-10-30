@@ -5,22 +5,32 @@ layout: page
 logos:
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     url: /
     alt: Slipway logo
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: Slipway logo without a link
 logos_plain:
   - name: Slipway
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: Slipway logo
 logos_rtl:
   - name: اسلیپ‌وی
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     url: /
     alt: نشان اسلیپ‌وی
   - name: اسلیپ‌وی
     image: /assets/images/social.png
+    width: 1200
+    height: 630
     alt: نشان اسلیپ‌وی بدون پیوند
 ---
 
