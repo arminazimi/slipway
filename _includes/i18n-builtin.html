@@ -1,6 +1,6 @@
 {%- comment -%} Built-in UI strings. A site overrides or adds languages in _data/i18n/<lang>.yml. {%- endcomment -%}
 {%- assign sl_builtin_lang = include.lang -%}
-{%- assign sl_supported = 'fa,ar,he,ur,ckb,dv,ps,sd,yi,ug,es,fr,pt,de,it,ru,tr,nl,ja,zh,en,uk' | split: ',' -%}
+{%- assign sl_supported = 'el,fa,ar,he,ur,ckb,dv,ps,sd,yi,ug,es,fr,pt,de,it,ru,tr,nl,ja,zh,az,hu,nb,th,ta,uk,en' | split: ',' -%}
 {%- unless sl_supported contains sl_builtin_lang -%}
   {%- assign sl_builtin_lang = 'en' -%}
 {%- endunless -%}
