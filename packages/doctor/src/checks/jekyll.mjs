@@ -46,6 +46,7 @@ export const builtinKeys = [
   "go_home",
   "home",
   "language",
+  "last_updated",
   "latest_posts",
   "links",
   "main_nav",
