@@ -5,12 +5,13 @@
 {%- assign snippet_key = include.file | downcase | replace: '/', '-' | replace: '.', '-' | replace: '_', '-' | replace: ' ', '-' -%}
 {%- assign snippet_key = snippet_key | append: '--' | append: include.region | downcase | replace: ' ', '-' -%}
 {%- assign snippet = site.data.snippets[snippet_key] -%}
+{%- assign snippet_repo = site.github.repository_url | default: site.repository_url -%}
 {%- if snippet -%}
 <figure class="sl-snippet">
   <pre><code class="language-{{ snippet.lang | escape }}">{{ snippet.text | escape }}</code></pre>
   <figcaption>
-    {%- if site.repository -%}
-    <a href="{{ site.repository }}/blob/{{ site.branch | default: 'main' }}/{{ snippet.file }}#L{{ snippet.line }}">{{ snippet.file }}:{{ snippet.line }}</a>
+    {%- if snippet_repo -%}
+    <a href="{{ snippet_repo }}/blob/HEAD/{{ snippet.file }}#L{{ snippet.line }}">{{ snippet.file }}:{{ snippet.line }}</a>
     {%- else -%}
     {{ snippet.file }}:{{ snippet.line }}
     {%- endif -%}
