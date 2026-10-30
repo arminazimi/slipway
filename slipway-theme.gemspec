@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "slipway-theme"
-  spec.version       = "0.1.0"
+  spec.version       = "0.2.0"
   spec.authors       = ["Slipway contributors"]
   spec.summary       = "An editorial, RTL-ready, agent-native Jekyll theme, verified by Seaworthy."
   spec.homepage      = "https://github.com/arminazimi/slipway"
