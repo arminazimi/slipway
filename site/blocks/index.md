@@ -47,6 +47,14 @@ See [File tree block](./file-tree.html) for data setup.
 
 See [Gallery block](./gallery.html) for data setup.
 
+## Hero
+
+```liquid
+{% raw %}{% include blocks/hero.html id=page.hero.id title=page.hero.title lead=page.hero.lead primary_url=page.hero.primary_url primary_label=page.hero.primary_label secondary_url=page.hero.secondary_url secondary_label=page.hero.secondary_label image=page.hero.image image_alt=page.hero.image_alt %}{% endraw %}
+```
+
+See [Hero block](./hero.html) for data setup.
+
 ## Kbd
 
 ```liquid
