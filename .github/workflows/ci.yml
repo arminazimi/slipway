@@ -34,6 +34,8 @@ jobs:
       SLIPWAY_REQUIRE_SEAWORTHY: "1"
       LANG: C.UTF-8
     steps:
+      - name: Start timer
+        run: echo "START=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -102,6 +104,12 @@ jobs:
           path: examples/docs
           level: none
           setup-node: "false"
+      - name: Summary
+        if: always()
+        run: |
+          start=${START:-$(date +%s)}
+          echo "### check (${{ matrix.jekyll }})" >> "$GITHUB_STEP_SUMMARY"
+          echo "Duration: $(( $(date +%s) - start ))s" >> "$GITHUB_STEP_SUMMARY"
 
   browser:
     name: browser tests
@@ -110,6 +118,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Start timer
+        run: echo "START=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -119,9 +129,22 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
       - run: npm ci
+      - name: Playwright version
+        id: playwright
+        run: echo "version=$(node -p 'require("./package-lock.json").packages["node_modules/playwright"].version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - run: npx playwright install --with-deps
       # Every tools/*/run.mjs (cross-browser, no-JS, screenshots, axe, and any added later).
       # The screenshot baselines are not stable on the runner yet, and this job never ran them.
       - run: npm run check:tools
         env:
           SLIPWAY_SKIP_TOOLS: screenshots
+      - name: Summary
+        if: always()
+        run: |
+          start=${START:-$(date +%s)}
+          echo "### browser tests" >> "$GITHUB_STEP_SUMMARY"
+          echo "Duration: $(( $(date +%s) - start ))s" >> "$GITHUB_STEP_SUMMARY"
