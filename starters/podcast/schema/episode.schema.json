@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/arminazimi/slipway/starters/podcast/schema/episode.schema.json",
+  "title": "Podcast starter episode front matter",
+  "description": "The front matter of an episode: a Markdown file under _posts/ with its audio and its place in the season.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "audio", "audio_length"],
+  "properties": {
+    "audio": {
+      "type": "string",
+      "pattern": "^/[^\\s\"<>]*$",
+      "description": "The audio file of the episode, as a path on this site."
+    },
+    "audio_length": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The size of the audio file in bytes, which the feed needs for the enclosure."
+    },
+    "audio_type": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The media type of the audio file, such as audio/mpeg."
+    },
+    "author": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+      "description": "The host of the episode: a key of _data/authors.yml."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the episode, used in the feed and in link previews."
+    },
+    "duration": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How long the episode runs, in seconds."
+    },
+    "explicit": {
+      "type": "boolean",
+      "description": "Whether the episode has explicit content. Podcast directories ask for it."
+    },
+    "layout": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The layout that renders the episode: post."
+    },
+    "number": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The number of the episode in its season."
+    },
+    "permalink": {
+      "type": "string",
+      "pattern": "^(/|(pretty|date|ordinal|weekdate|none)$)",
+      "description": "The address of the episode, such as /episodes/episode-1/."
+    },
+    "published": {
+      "type": "boolean",
+      "description": "false leaves the episode out of the build."
+    },
+    "season": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The season the episode belongs to."
+    },
+    "tags": {
+      "type": "array",
+      "description": "The topics of the episode, shown on the tags page.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "description": "One topic."
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The title of the episode, shown in the heading and in the feed."
+    }
+  }
+}

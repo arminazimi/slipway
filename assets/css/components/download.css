@@ -1,0 +1,7 @@
+.sl-download{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sl-space-3);margin-block:var(--sl-space-4)}
+.sl-download-button{display:inline-flex;padding-block:var(--sl-space-2);padding-inline:var(--sl-space-4);border-radius:var(--sl-button-radius);background:var(--sl-button-bg);color:var(--sl-button-fg);font-family:var(--sl-font-ui);text-decoration:none}
+.sl-download-button:hover{background:var(--sl-color-rose-hover)}
+.sl-download-meta{display:grid;grid-template-columns:auto 1fr;gap:var(--sl-space-1) var(--sl-space-3);margin:0}
+.sl-download-meta dt{color:var(--sl-color-muted)}
+.sl-download-meta dd{margin:0}
+.sl-download-meta code{overflow-wrap:anywhere}

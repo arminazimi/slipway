@@ -1,0 +1,4 @@
+# The fixture site of the last updated tests (tools/theme/kit-last-updated.test.mjs).
+title: Last updated fixture
+url: "https://example.com"
+theme: slipway-theme
