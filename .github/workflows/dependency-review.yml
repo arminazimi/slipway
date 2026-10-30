@@ -1,0 +1,41 @@
+name: dependency review
+
+# Fails a pull request that adds a dependency with a known vulnerability of high
+# severity or above, or a license outside Slipway's list: MIT, Apache-2.0,
+# BSD-2-Clause, BSD-3-Clause, ISC, and OFL-1.1. It runs only when a manifest or
+# lock file changes, so a docs-only pull request pays nothing. The summary stays
+# in the job log (no pull-request comment), so the job needs read access only.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - Gemfile
+      - Gemfile.lock
+      - adapters/**/package-lock.json
+      - adapters/**/package.json
+      - package-lock.json
+      - package.json
+      - packages/**/package.json
+      - plugins/**/package.json
+      - slipway-theme.gemspec
+
+permissions: {}
+
+concurrency:
+  group: dependency-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: dependency review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Review dependencies
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, OFL-1.1

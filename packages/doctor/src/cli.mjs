@@ -11,6 +11,7 @@ import * as navCommand from "./commands/nav.mjs";
 import * as translateCommand from "./commands/translate.mjs";
 import * as stubsCommand from "./commands/stubs.mjs";
 import * as explainCommand from "./explain.mjs";
+import { hintFor } from "./checks/agent.skill-hint.mjs";
 
 export const usage = `Usage: slipway doctor <source-dir> [options]
 
@@ -82,6 +83,8 @@ export function formatFinding(finding, { source, build }) {
 export function formatText(report, folders) {
   const lines = [`slipway doctor: ${display(folders.source)}${folders.build ? ` (output: ${display(folders.build)})` : ""}`];
   lines.push(`level: ${report.level ?? "none"} (agent-editable ${report.version})`);
+  const hint = hintFor(folders);
+  if (hint) lines.push(hint);
   const failed = report.tests.filter((test) => test.status === "fail");
   for (const test of failed) {
     lines.push("", `${test.keyword === "MUST" ? "error" : "warning"} ${test.id} (${test.level ? `${test.level} ${test.keyword}` : test.scope})`);
