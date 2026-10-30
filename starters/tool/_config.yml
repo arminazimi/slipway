@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/slipway-config.schema.json
+title: Orbit
+description: Deploy a folder to your own server in one command.
+lang: en
+theme: slipway-theme
+plugins:
+  - jekyll-remote-theme
+slipway:
+  header: minimal
