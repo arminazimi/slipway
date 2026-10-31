@@ -13,6 +13,7 @@ import {
   render,
   reportTitle,
   reported,
+  weekMetrics,
   weekRanges,
 } from "./weekly.mjs";
 
@@ -159,6 +160,16 @@ test("a pull request merged before its task was ready is left out of the median"
   ];
   const week = [Date.parse("2026-10-26T00:00:00Z"), Date.parse("2026-11-02T00:00:00Z")];
   assert.deepEqual(medianReadyToMerge(early, week), { days: null, sample: 0 });
+});
+
+test("a pull request that closes a plain issue counts as merged but not in the median", () => {
+  const plain = [
+    issue(60, { labels: [], state: "closed", created: "2026-10-01T00:00:00Z", closed: "2026-10-20T00:00:00Z" }),
+    issue(61, { body: "Closes #60", created: "2026-10-20T01:00:00Z", merged: "2026-10-28T00:00:00Z" }),
+  ];
+  const week = [Date.parse("2026-10-26T00:00:00Z"), Date.parse("2026-11-02T00:00:00Z")];
+  assert.deepEqual(medianReadyToMerge(plain, week), { days: null, sample: 0 });
+  assert.equal(weekMetrics(plain, [], week).pullsMerged, 1);
 });
 
 test("a linked issue counts once, and an epic is not a task", () => {

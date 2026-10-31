@@ -17,6 +17,7 @@
 // `readRuns`. `buildReport` and `render` take a fixture of events and never call
 // the API, so the test is offline and deterministic.
 import { execFileSync } from "node:child_process";
+import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { dependencies, roadmapKey } from "./graph.mjs";
 import { readIssues } from "./github.mjs";
@@ -112,9 +113,9 @@ export function median(values) {
     : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
-// One pull request per task: the first issue it closes that the input knows. A
-// pull request with no linked task, or one whose task was never unblocked, is
-// left out of the median but still counted as merged.
+// One pull request per task: the first roadmap task it closes that the input
+// knows. A pull request with no linked task, or one whose task was never
+// unblocked, is left out of the median but still counted as merged.
 export function medianReadyToMerge(issues, range) {
   const byNumber = index(issues);
   const days = [];
@@ -123,7 +124,7 @@ export function medianReadyToMerge(issues, range) {
     const merged = Date.parse(pull.pull_request.merged_at);
     const issue = closingNumbers(pull.body)
       .map((number) => byNumber.get(number))
-      .find((candidate) => candidate && !candidate.pull_request);
+      .find((candidate) => candidate && isTask(candidate));
     if (!issue) continue;
     const ready = readyAt(issue, byNumber);
     if (ready === null || merged < ready) continue;
@@ -303,4 +304,4 @@ function main() {
   console.log(url || `Opened ${reportTitle(report)}`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
