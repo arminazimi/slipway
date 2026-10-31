@@ -1,0 +1,6 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["src/content/docs/**/*.md", "src/content/docs/**/*.mdx"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}
