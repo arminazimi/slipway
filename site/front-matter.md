@@ -40,6 +40,7 @@ The `layout` key picks the schema. A page without `layout` gets the schema of it
 | `last_modified_at` | string |  | `^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?( ?(Z\|[+-]\d{2}:?\d{2}))?)?$` | The date the page last changed, shown at the bottom of a doc page. Actions mode fills it from the file's last git commit when it is absent; classic Pages shows nothing without it. |
 | `layout` | string |  | not empty | The layout that renders the page. Picks the schema in schema/front-matter/README.md. |
 | `nav_order` | number |  |  | Sort order in generated navigation. |
+| `og` | boolean |  |  | `false` drops this page's Open Graph and Twitter card tags, and the image in its structured data; the canonical link and translation alternates stay. Use it for a page that should not unfurl as a card, such as a private or interior page. |
 | `owner` | string |  |  | The owner of this page. |
 | `permalink` | string |  | `^(/\|(pretty\|date\|ordinal\|weekdate\|none)$)` | The output URL: a path starting with `/`, or one of Jekyll's built-in styles. |
 | `published` | boolean |  |  | `false` leaves the page out of the build. |
