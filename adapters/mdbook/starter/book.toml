@@ -1,0 +1,14 @@
+# Merge these tables into your site's book.toml and keep your own [book], [build], and
+# [output.html] settings. The two commands assume the adapter is in tools/slipway-mdbook/.
+[book]
+title = "My book"
+language = "en"
+src = "src"
+
+[preprocessor.slipway]
+command = "node tools/slipway-mdbook/src/preprocess.mjs"
+
+# A second renderer is what makes mdBook 0.5 write the HTML to book/html/ and gives the Slipway
+# renderer its own folder, book/slipway/. Deploy book/html/.
+[output.slipway]
+command = "node tools/slipway-mdbook/src/render.mjs"
