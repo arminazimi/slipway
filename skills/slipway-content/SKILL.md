@@ -1,6 +1,8 @@
 ---
 name: slipway-content
 description: Write or edit a page, doc page, or post on a Slipway site, or translate one into another language, so it passes the front matter schemas and slipway doctor.
+metadata:
+  version: "0.2.0"
 ---
 
 # Write pages and posts on a Slipway site

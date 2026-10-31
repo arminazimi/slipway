@@ -1,6 +1,8 @@
 ---
 name: slipway-design
 description: Restyle a Slipway site with design tokens and a preset, add CSS through the override slots, and keep light and dark contrast passing.
+metadata:
+  version: "0.2.0"
 ---
 
 # Restyle a Slipway site

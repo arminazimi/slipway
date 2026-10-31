@@ -1,6 +1,8 @@
 ---
 name: slipway-translate
 description: Add a language to a Slipway site, translate pages and posts, and keep every translation linked through lang, translation_key, the language switcher, and hreflang.
+metadata:
+  version: "0.2.0"
 ---
 
 # Translate a Slipway site

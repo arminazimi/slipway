@@ -1,6 +1,8 @@
 ---
 name: slipway-deploy
 description: Publish a Slipway site to GitHub Pages in classic or Actions mode, set a custom domain, and fix the common build, baseurl, theme, and plugin failures.
+metadata:
+  version: "0.2.0"
 ---
 
 # Publish a Slipway site to GitHub Pages
