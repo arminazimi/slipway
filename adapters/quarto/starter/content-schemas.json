@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["_quarto.yml"], "target": "file", "schema": "schema/quarto-config.schema.json" },
+    { "files": ["**/*.md", "**/*.qmd"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}

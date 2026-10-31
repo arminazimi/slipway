@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quarto project configuration",
+  "description": "The site's _quarto.yml. It lists the keys an edit usually touches; add the keys your site uses, each with a description.",
+  "type": "object",
+  "properties": {
+    "abstract": { "type": "string", "description": "A short summary of the site, shown on pages that do not set their own." },
+    "author": { "type": ["string", "object", "array"], "description": "The site's author or authors: a name, an object of details, or a list of either." },
+    "bibliography": { "type": ["string", "array"], "items": { "type": "string" }, "description": "The citation database file or files, such as references.bib." },
+    "book": { "type": "object", "description": "Book settings: chapters, parts, and cover, when the project type is book." },
+    "categories": { "type": "array", "items": { "type": "string" }, "description": "The categories pages can name, for listing pages on the site." },
+    "citation": { "type": "object", "description": "How the site cites its own pages, as an object of citation details." },
+    "date": { "type": ["string", "number"], "description": "The site's date, shown on pages that do not set their own." },
+    "description": { "type": "string", "description": "One sentence about the site, for search results and link previews." },
+    "doi": { "type": "string", "description": "The site's DOI, shown on pages that do not set their own." },
+    "editor": { "type": ["string", "object", "array"], "description": "The site's editor or editors, for books and collections." },
+    "execute": { "type": "object", "description": "Default execution settings for code blocks: echo, warning, freeze, and their like." },
+    "filters": { "type": ["string", "array"], "items": { "type": "string" }, "description": "The Pandoc and Lua filters every page runs; the Slipway extension adds slipway here." },
+    "format": { "type": ["string", "object"], "description": "The output format or formats the project renders." },
+    "jupyter": { "type": ["string", "object"], "description": "Jupyter settings, such as the kernel to run Python code with." },
+    "keywords": { "type": "array", "items": { "type": "string" }, "description": "Keywords for search engines and related pages." },
+    "lang": { "type": "string", "description": "The site's language as a tag such as en or fa-IR." },
+    "license": { "type": ["string", "object"], "description": "The license the site's content is published under." },
+    "metadata": { "type": "object", "description": "Document metadata shared by every page, such as author or date." },
+    "project": {
+      "type": "object",
+      "description": "Project settings: the type, the files to render, and the output folder.",
+      "required": ["type"],
+      "properties": {
+        "execute-dir": { "type": "string", "description": "The folder code runs from, when not the folder of each page." },
+        "lib-dir": { "type": "string", "description": "The folder Quarto copies libraries into." },
+        "output-dir": { "type": "string", "description": "The folder the built site goes in; the Slipway starter uses _site." },
+        "output-file": { "type": "string", "description": "The name of the built file, for a project with a single output." },
+        "post-render": { "type": ["string", "array"], "description": "The command or commands to run after each render; Slipway's post-render script goes here." },
+        "pre-render": { "type": ["string", "array"], "description": "The command or commands to run before each render." },
+        "render": { "type": ["string", "array"], "items": { "type": "string" }, "description": "The files and folders to render; other files are left out of the site." },
+        "resources": { "type": ["string", "array"], "items": { "type": "string" }, "description": "Files to copy into the output folder unchanged." },
+        "type": { "type": "string", "enum": ["default", "website", "book", "manuscript", "confluence"], "description": "The kind of project: website, book, or a plain default project." }
+      },
+      "additionalProperties": true
+    },
+    "subtitle": { "type": "string", "description": "A second line under the site title." },
+    "title": { "type": "string", "description": "The site title, when pages do not set their own." },
+    "website": {
+      "type": "object",
+      "description": "Website settings: the title, navigation, search, and footer.",
+      "properties": {
+        "bread-crumbs": { "type": "boolean", "description": "true shows the path to the page above its title." },
+        "description": { "type": "string", "description": "One sentence about the site, for search results and link previews." },
+        "favicon": { "type": "string", "description": "The small icon shown in the browser tab." },
+        "navbar": { "type": "object", "description": "The bar at the top: its title, logo, links, and tools." },
+        "page-footer": { "type": "object", "description": "The footer under every page." },
+        "repo-actions": { "type": ["string", "array"], "items": { "type": "string" }, "description": "The links to the page's source or history shown beside it." },
+        "repo-url": { "type": "string", "description": "The address of the site's repository." },
+        "search": { "type": ["boolean", "object"], "description": "true adds a search box; an object sets its options." },
+        "sidebar": { "type": ["boolean", "object"], "description": "The sidebar: its title, contents, and position." },
+        "site-url": { "type": "string", "description": "The address the site is served at, ending in /." },
+        "title": { "type": "string", "description": "The site title, shown in the navbar and the browser tab." },
+        "toc": { "type": "boolean", "description": "true shows a table of contents beside each page." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
