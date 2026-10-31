@@ -1,0 +1,27 @@
+{%- if include.id -%}
+  {%- assign embed_provider = include.provider | default: "youtube" | downcase -%}
+  {%- case embed_provider -%}
+  {%- when "vimeo" -%}
+    {%- assign embed_name = "Vimeo" -%}
+    {%- assign embed_url = "https://vimeo.com/" | append: include.id -%}
+  {%- when "aparat" -%}
+    {%- assign embed_name = "Aparat" -%}
+    {%- assign embed_url = "https://www.aparat.com/v/" | append: include.id -%}
+  {%- else -%}
+    {%- assign embed_provider = "youtube" -%}
+    {%- assign embed_name = "YouTube" -%}
+    {%- assign embed_url = "https://www.youtube-nocookie.com/watch?v=" | append: include.id -%}
+  {%- endcase -%}
+  {%- capture embed_default_title -%}{{ embed_name }} video{%- endcapture -%}
+  {%- assign embed_title = include.title | default: embed_default_title -%}
+  {%- include component-css.html name="embed" -%}
+  <a class="sl-embed sl-embed-{{ embed_provider }}" href="{{ embed_url | escape }}" target="_blank" rel="noopener noreferrer">
+    {%- if include.poster %}
+    <img class="sl-embed-poster" src="{{ include.poster | relative_url | escape }}" alt="" loading="lazy">
+    {%- endif %}
+    <span class="sl-embed-body">
+      <span class="sl-embed-provider">{{ embed_name }}</span>
+      <span class="sl-embed-title">{{ embed_title | escape }}</span>
+    </span>
+  </a>
+{%- endif -%}

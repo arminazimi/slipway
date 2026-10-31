@@ -1,0 +1,8 @@
+.sl-embed{display:flex;flex-direction:column;margin-block:var(--sl-space-8);border:var(--sl-rule) solid var(--sl-color-line);border-radius:var(--sl-radius-card);background:var(--sl-color-surface);color:var(--sl-color-text);text-decoration:none;overflow:hidden}
+.sl-embed:hover{border-color:var(--sl-color-rose)}
+.sl-embed:focus-visible{outline:var(--sl-rule) solid var(--sl-color-rose);outline-offset:var(--sl-space-1)}
+.sl-embed-poster{display:block;inline-size:100%;aspect-ratio:16/9;object-fit:cover}
+.sl-embed-body{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sl-space-2);padding:var(--sl-space-4)}
+.sl-embed-provider{font-size:var(--sl-step-sm);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.sl-embed-title{font-weight:600}
+.sl-embed:hover .sl-embed-title{text-decoration:underline}
