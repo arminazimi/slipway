@@ -1,0 +1,9 @@
+# Hexo Configuration
+title: Fixture
+description: A small site that exercises the Slipway adapter.
+url: https://example.com
+root: /
+permalink: :year/:month/:day/:title/
+source_dir: source
+public_dir: public
+theme: fixture

@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hexo post and page front matter",
+  "description": "The front matter of a Markdown file under source/: a post in source/_posts/ or a page anywhere else. Hexo reads more keys than these; add one here when the site uses it.",
+  "type": "object",
+  "properties": {
+    "author": {
+      "type": "string",
+      "description": "The author shown on the page when it is not the site's author."
+    },
+    "categories": {
+      "type": ["array", "string"],
+      "items": {
+        "type": "string"
+      },
+      "description": "The categories the post belongs to; the first one can appear in its address through permalink."
+    },
+    "comments": {
+      "type": "boolean",
+      "description": "false turns comments off for this page."
+    },
+    "date": {
+      "type": "string",
+      "description": "When the page was written, such as 2026-01-02 03:04:05; a post's date is part of its address."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the page, for search results and link previews."
+    },
+    "excerpt": {
+      "type": "string",
+      "description": "A summary shown in lists instead of the start of the page."
+    },
+    "image": {
+      "type": "string",
+      "description": "The image shown in link previews: a path or URL."
+    },
+    "keywords": {
+      "type": ["array", "string"],
+      "items": {
+        "type": "string"
+      },
+      "description": "Keywords for the keywords meta tag."
+    },
+    "lang": {
+      "type": "string",
+      "description": "The page language as a tag such as en or fa-IR, when it differs from the site's."
+    },
+    "layout": {
+      "type": ["string", "boolean"],
+      "description": "The theme layout to use, such as page or post; false writes the page without a layout."
+    },
+    "permalink": {
+      "type": "string",
+      "description": "An address for this page that overrides the permalink pattern."
+    },
+    "published": {
+      "type": "boolean",
+      "description": "false keeps a post out of the build until it is published."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The tags the post is listed under."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The page title, shown in the heading, the browser tab, and search results."
+    },
+    "toc": {
+      "type": "boolean",
+      "description": "false hides the table of contents the theme may add to this page."
+    },
+    "updated": {
+      "type": "string",
+      "description": "When the page last changed, such as 2026-01-02 03:04:05."
+    }
+  },
+  "additionalProperties": false
+}
