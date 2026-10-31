@@ -30,6 +30,14 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Cards
+
+```liquid
+{% raw %}{% include blocks/cards.html items=page.cards columns=3 %}{% endraw %}
+```
+
+See [Cards block](./cards.html) for data setup.
+
 ## Citation
 
 ```liquid

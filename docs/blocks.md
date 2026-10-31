@@ -66,6 +66,7 @@ Parameters used by the blocks in this repository:
 | Block | Parameters and defaults |
 | --- | --- |
 | `badge` | `label` (required), `status` (`"stable"`) |
+| `cards` | `items` (required; `title`, `url`, and optional `description`, `label`), `columns` (3, clamped to 1–4) |
 | `compare` | `pros` and `cons`, or `headers` and `features`; renders nothing when neither pair is set |
 | `endpoint` | `method` (`"GET"`), `path`, `parameters`, `request`, `response` |
 | `file-tree` | `list` (a Markdown list), or `items` (nested `name`, `note`, `children`, up to four levels) |
