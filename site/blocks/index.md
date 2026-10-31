@@ -75,6 +75,14 @@ See [Diff block](./diff.html) for data setup.
 
 See [Download block](./download.html) for data setup.
 
+## Embed
+
+```liquid
+{% raw %}{% include blocks/embed.html provider="youtube" id="aqz-KE-bpKQ" title="Big Buck Bunny" %}{% endraw %}
+```
+
+See [Embed block](./embed.html) for data setup.
+
 ## Endpoint
 
 ```liquid
