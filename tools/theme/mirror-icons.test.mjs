@@ -16,6 +16,7 @@ test("Directional icons mirror in right-to-left; others never do", async () => {
     "icons/x.svg",
     "icons/youtube.svg",
     "blocks/compare.html",
+    "blocks/callout.html",
     "header.html",
   ]);
 

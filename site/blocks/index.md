@@ -30,6 +30,14 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Callout
+
+```liquid
+{% raw %}{% include blocks/callout.html type="tip" title="Tip" body="Save the file before you run the build." %}{% endraw %}
+```
+
+See [Callout block](./callout.html) for data setup.
+
 ## Citation
 
 ```liquid
