@@ -1,6 +1,8 @@
 ---
 name: slipway-doctor
 description: Check a static site with slipway doctor after you edit it, read the findings, and fix them until the site reaches its conformance level. Use for any Slipway site or any site that follows the agent-editable site spec.
+metadata:
+  version: "0.2.0"
 ---
 
 # Check a site with slipway doctor

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { root } from "../theme/tokens.mjs";
-import { bumpGemspec, bumpLockfile, gemspecVersion, lockfiles, main, prepare, readFragments, releaseChangelog, releaseNotes, sections, tagMatches } from "./prepare.mjs";
+import { bumpGemspec, bumpLockfile, bumpSkillVersion, gemspecVersion, lockfiles, main, prepare, readFragments, releaseChangelog, releaseNotes, sections, tagMatches } from "./prepare.mjs";
 
 const gemspec = 'Gem::Specification.new do |spec|\n  spec.name = "slipway-theme"\n  spec.version = "0.1.0"\nend\n';
 const changelog = `# Changelog
@@ -110,6 +110,26 @@ function withFragments(files) {
   for (const [name, text] of Object.entries(files)) writeFileSync(join(dir, "changelog.d", name), text);
   return dir;
 }
+
+test("bumpSkillVersion sets metadata.version in the front matter only", () => {
+  const markdown = `---\nname: slipway-site\ndescription: Do a thing.\nmetadata:\n  version: "0.1.0"\n---\n\n# Body\n\nversion: "0.1.0"\n`;
+  const next = bumpSkillVersion(markdown, "0.2.0");
+  assert.match(next, /^metadata:\n {2}version: "0\.2\.0"$/m);
+  assert.match(next, /^version: "0\.1\.0"$/m, "a version line in the body changed");
+  assert.throws(() => bumpSkillVersion("---\nname: x\n---\n", "0.2.0"), /no metadata.version/);
+  assert.throws(() => bumpSkillVersion("# No front matter\n", "0.2.0"), /no front matter/);
+});
+
+test("prepare bumps every skill's version with the gemspec", () => {
+  const dir = withFragments({ "1.md": "A change." });
+  mkdirSync(join(dir, "skills", "slipway-site"), { recursive: true });
+  writeFileSync(
+    join(dir, "skills", "slipway-site", "SKILL.md"),
+    '---\nname: slipway-site\ndescription: Do a thing.\nmetadata:\n  version: "0.1.0"\n---\n',
+  );
+  prepare({ version: "9.0.0", dir, date: "2026-11-01" });
+  assert.match(readFileSync(join(dir, "skills", "slipway-site", "SKILL.md"), "utf8"), /^ {2}version: "9\.0\.0"$/m);
+});
 
 test("prepare bumps a temp copy of the gemspec and changelog and prints the git commands", () => {
   const dir = withFragments({ "1.md": "A change." });

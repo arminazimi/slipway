@@ -1,6 +1,8 @@
 ---
 name: slipway-site
 description: Create a new GitHub Pages site with the Slipway Jekyll theme, or customize an existing one through _config.yml, navigation, languages, tokens, and override slots.
+metadata:
+  version: "0.2.0"
 ---
 
 # Create and customize a Slipway site
