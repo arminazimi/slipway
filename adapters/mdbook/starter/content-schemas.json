@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["book.toml"], "target": "file", "schema": "schema/book-config.schema.json" },
+    { "files": ["src/**/*.md"], "target": "front-matter", "schema": "schema/page.schema.json" }
+  ]
+}
