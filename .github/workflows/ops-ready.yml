@@ -1,0 +1,40 @@
+name: ops-ready
+
+# Keeps `status: ready` true. When an issue closes, its dependents may become
+# ready; the hourly run also catches labels that drifted (a blocked task that
+# still carries the label). The graph comes from the issue bodies, so one read
+# decides every change, then one call adds or removes each label.
+on:
+  issues:
+    types: [closed]
+  schedule:
+    # Every hour at :17, off the top of the hour when GitHub is busiest.
+    - cron: "17 * * * *"
+
+permissions: {}
+
+concurrency:
+  group: ops-ready
+  cancel-in-progress: false
+
+jobs:
+  label:
+    name: "keep status: ready true"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Add and remove the label.
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Update the ready labels
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/ops/ready.mjs
