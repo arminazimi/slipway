@@ -1,0 +1,17 @@
+{%- assign src = include.src | default: "" -%}
+{%- if src != "" -%}
+{%- include component-css.html name="figure" -%}
+<figure class="sl-figure">
+  <img src="{{ src | relative_url | escape }}" alt="{{ include.alt | escape }}"{% if include.srcset %} srcset="{{ include.srcset | escape }}"{% endif %}{% if include.sizes %} sizes="{{ include.sizes | escape }}"{% endif %}{% if include.width %} width="{{ include.width | escape }}"{% endif %}{% if include.height %} height="{{ include.height | escape }}"{% endif %} loading="{{ include.loading | default: "lazy" | escape }}" decoding="{{ include.decoding | default: "async" | escape }}">
+  {%- if include.caption or include.credit %}
+  <figcaption>
+    {%- if include.caption %}
+    <span class="sl-figure-caption">{{ include.caption | escape }}</span>
+    {%- endif %}
+    {%- if include.credit %}
+    <span class="sl-figure-credit">{% if include.credit_url %}<a href="{{ include.credit_url | relative_url | escape }}" rel="noopener noreferrer" target="_blank">{{ include.credit | escape }}</a>{% else %}{{ include.credit | escape }}{% endif %}</span>
+    {%- endif %}
+  </figcaption>
+  {%- endif %}
+</figure>
+{%- endif -%}
