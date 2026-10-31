@@ -17,6 +17,7 @@ Each adapter name links to its folder on GitHub.
 | [Eleventy](https://github.com/arminazimi/slipway/tree/main/adapters/eleventy) | Eleventy plugin | `sourcemap.json`, Markdown twins, `data-source` on headings | Eleventy 3; Node.js 18 or later |
 | [Hugo](https://github.com/arminazimi/slipway/tree/main/adapters/hugo) | Hugo module | `sourcemap.json`, Markdown twins, `data-source` on headings | Hugo 0.123 or later |
 | [MkDocs](https://github.com/arminazimi/slipway/tree/main/adapters/mkdocs) | MkDocs plugin | `sourcemap.json`, Markdown twins, `data-source` on headings | MkDocs 1.5 or later; Beautiful Soup 4.12 or later |
+| [Starlight](https://github.com/arminazimi/slipway/tree/main/adapters/starlight) | Astro integration and a Markdown plugin | `sourcemap.json`, Markdown twins, `data-source` on headings | Astro 7 and Starlight 0.42; Node.js 22.23.4 or later |
 | [Zola](https://github.com/arminazimi/slipway/tree/main/adapters/zola) | Node.js script run after `zola build` | `sourcemap.json`, Markdown twins, `data-source` on headings | Zola; no minimum version is pinned |
 
 ## Add an adapter by pull request
