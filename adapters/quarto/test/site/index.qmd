@@ -1,0 +1,8 @@
+---
+title: Home
+description: The fixture home page.
+---
+
+## Welcome
+
+Read the [docs](docs/intro.qmd).

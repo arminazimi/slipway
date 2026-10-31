@@ -1,0 +1,27 @@
+# A Quarto website with Slipway's source map, Markdown twins, and heading lines.
+# Copy _extensions/slipway/ and starter/ into the site, then adapt the paths below.
+
+project:
+  type: website
+  output-dir: _site
+  # Only .qmd pages render, so AGENTS.md and README.md stay source files, not pages.
+  render:
+    - "*.qmd"
+    - "docs/"
+  # Writes _site/sourcemap.json, the Markdown twin of each page, and a link to it in <head>.
+  post-render: node _extensions/slipway/post-render.mjs
+
+website:
+  title: "Slipway site"
+  description: "A site you and your agent can edit."
+
+# Pandoc writes each heading's id on a <section> wrapper by default; Slipway needs the id
+# on the heading itself, so the source map's section can name it.
+format:
+  html:
+    section-divs: false
+
+# The filter that puts data-source="<source>:<line>" on each heading. It resolves to
+# _extensions/slipway/_extension.yml.
+filters:
+  - slipway

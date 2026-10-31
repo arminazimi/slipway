@@ -1,0 +1,24 @@
+---
+title: Intro
+description: The fixture intro page.
+---
+
+# Install the *package*
+
+Install it with `quarto` and see [home](../index.qmd).
+
+## What is new?
+
+```sh
+npm install package
+
+```
+
+## Notes {#custom-notes}
+
+Links in `[code](ignored.qmd)` are not links; see [home](../index.qmd).
+
+Setext heading
+==============
+
+## Notes
