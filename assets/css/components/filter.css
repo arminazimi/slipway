@@ -1,0 +1,36 @@
+/* Filter field for long tables and lists. Hidden in the markup until filter.js runs. */
+.sl-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sl-space-2);
+  margin-block-end: var(--sl-space-4);
+}
+
+.sl-filter[hidden] {
+  display: none;
+}
+
+.sl-filter-input {
+  inline-size: 100%;
+  max-inline-size: 24rem;
+  box-sizing: border-box;
+  padding: var(--sl-space-1) var(--sl-space-3);
+  font-family: var(--sl-font-ui);
+  font-size: var(--sl-step-sm);
+  color: var(--sl-color-text);
+  background: var(--sl-color-surface);
+  border: var(--sl-rule) solid var(--sl-color-line);
+  border-radius: var(--sl-radius-compact);
+}
+
+.sl-filter-status {
+  margin: 0;
+  color: var(--sl-color-muted);
+  font-size: var(--sl-step-sm);
+}
+
+[data-filtered] tr[hidden],
+[data-filtered] > li[hidden] {
+  display: none;
+}

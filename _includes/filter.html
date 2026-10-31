@@ -1,0 +1,17 @@
+{%- comment -%}
+  A filter field for a long table or list: typing narrows the rows to those whose text matches, and
+  the field stays hidden without JavaScript so every row shows. Put it directly before the table or
+  list, or name one elsewhere with a CSS selector.
+
+    {% include filter.html %}
+    {% include filter.html target="#rules" %}
+{%- endcomment -%}
+{%- include component-css.html name="filter" -%}
+{%- unless slipway_filter_script -%}
+  {%- assign slipway_filter_script = true -%}
+  <script src="{{ '/assets/js/filter.js' | relative_url }}" defer></script>
+{%- endunless -%}
+<div class="sl-filter" data-filter{% if include.target %} data-filter-target="{{ include.target | escape }}"{% endif %} hidden>
+  <input type="search" class="sl-filter-input" name="filter" autocomplete="off" spellcheck="false" aria-label="{% include t.html key='search' %}" placeholder="{% include t.html key='search' %}" data-filter-none="{% include t.html key='search_none' %}" data-filter-count="{% include t.html key='search_count' %}">
+  <p class="sl-filter-status" aria-live="polite"></p>
+</div>
