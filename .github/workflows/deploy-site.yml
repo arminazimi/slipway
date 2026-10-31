@@ -24,6 +24,9 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      # The path Pages serves the repository under: /slipway/ on github.io, or "/" on a custom domain.
+      - id: pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - name: Build spec site content
         run: node tools/spec/build.mjs
       - name: Build site
@@ -32,9 +35,8 @@ jobs:
           PAGES_REPO_NWO: ${{ github.repository }}
           JEKYLL_ENV: production
         run: |
-
-          bundle exec jekyll build --source site --destination _site --baseurl ""
-          bundle exec jekyll build --source spec/docs-site --destination _site/spec --baseurl ""
+          bundle exec jekyll build --source site --destination _site --baseurl "${{ steps.pages.outputs.base_path }}"
+          bundle exec jekyll build --source spec/docs-site --destination _site/spec --baseurl "${{ steps.pages.outputs.base_path }}/spec"
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
