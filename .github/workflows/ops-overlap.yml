@@ -1,0 +1,37 @@
+name: ops-overlap
+
+# On every pull request event, compare its changed files with the other open pull
+# requests and keep one comment listing the shared files; remove the comment when
+# the overlap is gone. `changelog.d/` fragments never count. The script reads and
+# writes only through the API, so a merge is never attempted.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ops-overlap
+  cancel-in-progress: false
+
+jobs:
+  overlap:
+    name: comment on overlapping pull requests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # One comment per pull request.
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Comment on overlaps
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/ops/overlap.mjs
