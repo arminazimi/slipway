@@ -96,3 +96,12 @@ test("in classic mode nothing is generated and pages share the site's default im
   assert.match(home, /<meta property="og:image" content="https:\/\/example\.com\/assets\/images\/social\.png">/);
   assert.match(home, /<meta name="twitter:card" content="summary">/);
 });
+
+test("og: false drops the social tags and the JSON-LD image, and keeps the canonical link", { skip }, () => {
+  const out = withoutPlugin();
+  const page = head(join(out, "no-card.html"));
+  assert.match(page, /<link rel="canonical" href="https:\/\/example\.com\/no-card\.html">/);
+  assert.doesNotMatch(page, /property="og:/);
+  assert.doesNotMatch(page, /name="twitter:card"/);
+  assert.doesNotMatch(page, /"image":/);
+});
