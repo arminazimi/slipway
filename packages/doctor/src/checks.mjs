@@ -34,6 +34,7 @@ import * as c30 from "./checks/schema-coverage.mjs";
 import * as c31 from "./checks/lang-mismatch.mjs";
 import * as c32 from "./checks/agent.skill-hint.mjs";
 import * as c33 from "./checks/agents-commands.mjs";
+import * as c34 from "./checks/sourcemap-fresh.mjs";
 
 export const checks = {
   [c30.id]: c30.run,
@@ -70,4 +71,5 @@ export const checks = {
   [c29.id]: c29.run,
   [c32.id]: c32.run,
   [c33.id]: c33.run,
+  [c34.id]: c34.run,
 };
