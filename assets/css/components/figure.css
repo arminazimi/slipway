@@ -1,0 +1,6 @@
+.sl-figure{margin-block:var(--sl-space-8);margin-inline:0;text-align:start}
+.sl-figure img{display:block;max-inline-size:100%;block-size:auto;border-radius:var(--sl-radius-card)}
+.sl-figure figcaption{margin-block-start:var(--sl-space-2);font-size:.9em;color:var(--sl-color-muted)}
+.sl-figure-caption{display:block}
+.sl-figure-credit{display:block;font-style:italic;margin-block-start:var(--sl-space-1)}
+.sl-figure-credit a{color:inherit}

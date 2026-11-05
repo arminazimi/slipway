@@ -40,6 +40,7 @@ test("invalid samples report the key and the allowed values", () => {
     [{ title: "x", layout: "post", date: "18 Oct 2026" }, "date", /pattern/, [base.$defs.date.description]],
     [{ title: "x", tags: { a: 1 } }, "tags", /list or a string/, ["a list", "a space-separated string"]],
     [{ title: "x", published: "no" }, "published", /boolean/, ["a boolean"]],
+    [{ title: "x", og: "no" }, "og", /boolean/, ["a boolean"]],
     [{ title: "x", nav_order: "first" }, "nav_order", /number/, ["a number"]],
     [{ title: "x", permalink: "docs/" }, "permalink", /pattern/, [base.properties.permalink.description]],
     [{ title: "x", translation_key: "" }, "translation_key", /fewer than 1/, ["a non-empty string"]],
@@ -62,7 +63,7 @@ test("unknown keys, Jekyll tag strings, and dates with a time are accepted", () 
     { title: "x", my_key: { anything: true } },
     { title: "x", layout: "post", tags: "one two", categories: ["a", 2026], date: "2026-10-18 09:30:00 +0330" },
     { title: "x", permalink: "pretty" },
-    { title: "x", lang: "pt-BR", dir: "rtl", sitemap: false, search: false, published: true, nav_order: 2.5 },
+    { title: "x", lang: "pt-BR", dir: "rtl", sitemap: false, search: false, published: true, nav_order: 2.5, og: false },
     { title: "x", layout: "home", cta_text: "Go", cta_url: "https://example.com/" },
   ];
   for (const data of ok) assert.deepEqual(validateFrontMatter(data), [], JSON.stringify(data));

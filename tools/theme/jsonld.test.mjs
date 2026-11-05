@@ -66,3 +66,23 @@ test("every page of every example has valid JSON-LD of its layout's type, and th
     assert.equal(get("de/index.html").inLanguage, "de");
   }
 });
+
+test("every page's JSON-LD image is the picture its og:image names", { skip }, () => {
+  for (const name of ["minimal", "blog", "docs", "persian", "bare"]) {
+    const out = buildExample("gem", tmpDir(`jsonld-image-${name}`), name);
+    for (const page of htmlPages(out)) {
+      const html = readFileSync(join(out, page), "utf8");
+      const ld = jsonLd(html).filter((b) => b["@type"] !== "BreadcrumbList");
+      if (page === "404.html") {
+        assert.equal(ld.length, 0, `${name}/${page}`);
+        continue;
+      }
+      const meta = /<meta property="og:image" content="([^"]*)">/.exec(html);
+      assert.ok(meta, `${name}/${page} has an og:image`);
+      assert.equal(ld[0].image, meta[1], `${name}/${page}`);
+    }
+    if (name !== "blog") continue;
+    const post = jsonLd(readFileSync(join(out, "2026/09/12/a-slow-site-is-a-broken-site.html"), "utf8"));
+    assert.match(post.find((b) => b["@type"] === "BlogPosting").image, /\/assets\/img\/cover\.png$/);
+  }
+});

@@ -59,6 +59,10 @@
       "type": "number",
       "description": "Sort order in generated navigation."
     },
+    "og": {
+      "type": "boolean",
+      "description": "`false` drops this page's Open Graph and Twitter card tags, and the image in its structured data; the canonical link and translation alternates stay. Use it for a page that should not unfurl as a card, such as a private or interior page."
+    },
     "owner": {
       "type": "string",
       "description": "The owner of this page."

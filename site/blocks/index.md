@@ -30,6 +30,14 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Cards
+
+```liquid
+{% raw %}{% include blocks/cards.html items=page.cards columns=3 %}{% endraw %}
+```
+
+See [Cards block](./cards.html) for data setup.
+
 ## Citation
 
 ```liquid
@@ -90,6 +98,14 @@ See [Endpoint block](./endpoint.html) for data setup.
 ```
 
 See [File tree block](./file-tree.html) for data setup.
+
+## Figure
+
+```liquid
+{% raw %}{% include blocks/figure.html src=page.figure.src alt=page.figure.alt caption=page.figure.caption credit=page.figure.credit credit_url=page.figure.credit_url %}{% endraw %}
+```
+
+See [Figure block](./figure.html) for data setup.
 
 ## Gallery
 

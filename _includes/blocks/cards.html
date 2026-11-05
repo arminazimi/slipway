@@ -1,0 +1,31 @@
+{%- comment -%} A responsive grid of link or feature cards from include.items: a list of { title, url, description, label }. include.columns (1-4, default 3) caps the column count. {%- endcomment -%}
+{%- include component-css.html name="cards" -%}
+{%- assign sl_cards_columns = include.columns | default: 3 | plus: 0 -%}
+{%- if sl_cards_columns == 0 -%}{%- assign sl_cards_columns = 3 -%}{%- endif -%}
+{%- if sl_cards_columns < 1 -%}{%- assign sl_cards_columns = 1 -%}{%- endif -%}
+{%- if sl_cards_columns > 4 -%}{%- assign sl_cards_columns = 4 -%}{%- endif -%}
+{%- if include.items -%}
+<ul class="sl-cards" style="--sl-cards-columns: {{ sl_cards_columns }}">
+  {%- for sl_card in include.items -%}
+    {%- if sl_card.title -%}
+  <li class="sl-card">
+    {%- if sl_card.url -%}
+      {%- assign sl_card_url = sl_card.url -%}
+      {%- unless sl_card_url contains '://' -%}{%- assign sl_card_url = sl_card_url | relative_url -%}{%- endunless -%}
+    <a class="sl-card-link" href="{{ sl_card_url | escape }}">
+    {%- else -%}
+    <div class="sl-card-body">
+    {%- endif -%}
+      {%- if sl_card.label %}
+      <span class="sl-card-label">{{ sl_card.label | escape }}</span>
+      {%- endif %}
+      <span class="sl-card-title">{{ sl_card.title | escape }}</span>
+      {%- if sl_card.description %}
+      <span class="sl-card-description">{{ sl_card.description | escape }}</span>
+      {%- endif %}
+    {%- if sl_card.url %}</a>{%- else %}</div>{%- endif %}
+  </li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>
+{%- endif -%}
