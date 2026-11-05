@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mdBook page",
+  "description": "The YAML front matter of a Markdown page. The Slipway preprocessor strips it before mdBook renders the page, so it never shows as text. The first # heading names the page when title is absent.",
+  "type": "object",
+  "properties": {
+    "description": { "type": "string", "description": "One sentence about the page, for search results and link previews." },
+    "title": { "type": "string", "minLength": 1, "description": "The page's title, shown in the sidebar and the browser tab. Use the same words as the first heading." }
+  },
+  "additionalProperties": false
+}

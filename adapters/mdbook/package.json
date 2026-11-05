@@ -1,0 +1,19 @@
+{
+  "name": "slipway-mdbook",
+  "version": "0.0.0",
+  "private": true,
+  "description": "mdBook preprocessor and renderer that make a book agent-editable: sourcemap.json, Markdown twins, and data-source on headings.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "mdbook-slipway-preprocess": "./src/preprocess.mjs",
+    "mdbook-slipway-render": "./src/render.mjs"
+  },
+  "files": [
+    "src",
+    "starter"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

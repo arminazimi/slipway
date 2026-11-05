@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mdBook configuration",
+  "description": "The site's book.toml. mdBook reads more keys than these, so other keys are allowed; these are the ones an edit usually touches, and the two tables the Slipway adapter needs.",
+  "type": "object",
+  "properties": {
+    "book": {
+      "type": "object",
+      "description": "The book's title, language, and source folder.",
+      "properties": {
+        "authors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "The people who wrote the book, as the page footer shows them."
+        },
+        "description": {
+          "type": "string",
+          "description": "One sentence about the book, used for its metadata."
+        },
+        "language": {
+          "type": "string",
+          "description": "The book's language as a tag such as en or fa-IR."
+        },
+        "src": {
+          "type": "string",
+          "description": "The folder holding the Markdown chapters, relative to book.toml. Default: src."
+        },
+        "text-direction": {
+          "type": "string",
+          "enum": ["ltr", "rtl"],
+          "description": "The direction the pages lay out text in; rtl for Persian, Arabic, or Hebrew."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The book's title, shown in the sidebar and the page titles."
+        }
+      },
+      "additionalProperties": true
+    },
+    "build": {
+      "type": "object",
+      "description": "Where and how mdBook builds the book.",
+      "properties": {
+        "build-dir": {
+          "type": "string",
+          "description": "The folder mdBook writes, relative to book.toml. Default: book. With the Slipway renderer the HTML lands in its html subfolder, book/html."
+        },
+        "create-missing": {
+          "type": "boolean",
+          "description": "Whether mdBook creates a chapter file that SUMMARY.md names and the source folder does not have."
+        },
+        "extra-watch-dirs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Folders outside the source folder that mdbook serve watches for changes."
+        },
+        "use-default-preprocessors": {
+          "type": "boolean",
+          "description": "Whether the built-in links and index preprocessors run before the Slipway preprocessor."
+        }
+      },
+      "additionalProperties": true
+    },
+    "output": {
+      "type": "object",
+      "description": "One table per renderer. The Slipway adapter adds slipway.",
+      "properties": {
+        "html": {
+          "type": "object",
+          "description": "The built-in HTML renderer: theme, search, and the address the book is served at."
+        },
+        "slipway": {
+          "type": "object",
+          "description": "The Slipway renderer's table; it needs the command that starts src/render.mjs.",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The command mdBook runs after the HTML renderer, such as node tools/slipway-mdbook/src/render.mjs."
+            }
+          },
+          "required": ["command"],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "preprocessor": {
+      "type": "object",
+      "description": "One table per preprocessor. The Slipway adapter adds slipway.",
+      "properties": {
+        "slipway": {
+          "type": "object",
+          "description": "The Slipway preprocessor's table; it needs the command that starts src/preprocess.mjs.",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The command mdBook runs before rendering, such as node tools/slipway-mdbook/src/preprocess.mjs."
+            }
+          },
+          "required": ["command"],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "rust": {
+      "type": "object",
+      "description": "Settings for the Rust code samples that mdbook test compiles.",
+      "properties": {
+        "edition": {
+          "type": "string",
+          "description": "The Rust edition for code samples, such as 2021."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

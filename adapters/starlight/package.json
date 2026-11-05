@@ -1,0 +1,23 @@
+{
+  "name": "slipway-starlight",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Astro Starlight integration that makes a site agent-editable: sourcemap.json, Markdown twins, and data-source on headings.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src",
+    "starter"
+  ],
+  "peerDependencies": {
+    "astro": ">=7.0.0",
+    "@astrojs/starlight": ">=0.42.0",
+    "@astrojs/markdown-satteri": ">=0.1.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

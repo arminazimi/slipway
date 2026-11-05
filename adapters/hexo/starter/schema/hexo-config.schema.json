@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Hexo site configuration",
+  "description": "The site's _config.yml. Hexo reads many more keys than these, so other keys are allowed; these are the ones an edit usually touches.",
+  "type": "object",
+  "required": ["title"],
+  "properties": {
+    "author": {
+      "type": "string",
+      "description": "The name shown as the site's author in feeds and metadata."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the site, for search results and feeds."
+    },
+    "language": {
+      "type": "string",
+      "description": "The site language as a tag such as en or fa-IR."
+    },
+    "permalink": {
+      "type": "string",
+      "description": "The address pattern for posts; the default is :year/:month/:day/:title/."
+    },
+    "public_dir": {
+      "type": "string",
+      "description": "The folder Hexo writes the built site to; public by default."
+    },
+    "root": {
+      "type": "string",
+      "description": "The path the site is served under, such as / for a domain or /docs/ for a project site."
+    },
+    "source_dir": {
+      "type": "string",
+      "description": "The folder that holds the content; source by default."
+    },
+    "theme": {
+      "type": "string",
+      "description": "The folder under themes/ whose layout the site uses."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "The time zone post dates are read in, such as Europe/Berlin."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The site title."
+    },
+    "url": {
+      "type": "string",
+      "description": "The address the site is served at, without a trailing slash."
+    }
+  },
+  "additionalProperties": true
+}

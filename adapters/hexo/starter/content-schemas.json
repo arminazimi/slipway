@@ -1,0 +1,7 @@
+{
+  "version": "0.1",
+  "schemas": [
+    { "files": ["_config.yml", "_config.yaml"], "target": "file", "schema": "schema/hexo-config.schema.json" },
+    { "files": ["source/**/*.md", "source/**/*.markdown"], "target": "front-matter", "schema": "schema/front-matter.schema.json" }
+  ]
+}

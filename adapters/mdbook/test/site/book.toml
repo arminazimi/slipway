@@ -1,0 +1,14 @@
+# The test replaces both commands with the absolute path to this adapter.
+
+[book]
+title = "Slipway mdBook fixture"
+language = "en"
+src = "src"
+
+[output.html]
+
+[preprocessor.slipway]
+command = "node /absolute/path/to/adapters/mdbook/src/preprocess.mjs"
+
+[output.slipway]
+command = "node /absolute/path/to/adapters/mdbook/src/render.mjs"
