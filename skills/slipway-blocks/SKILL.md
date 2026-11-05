@@ -1,6 +1,8 @@
 ---
 name: slipway-blocks
 description: Choose a Slipway content block for a page and insert it with options that match the block's schema, then check that the page builds, reads without JavaScript, and passes slipway doctor.
+metadata:
+  version: "0.2.0"
 ---
 
 # Insert content blocks

@@ -1,0 +1,48 @@
+name: ops-weekly
+
+# Opens one report issue every Monday with the agent pipeline's numbers for the
+# week that just ended and the week before: tasks closed, pull requests merged,
+# the median time from ready to merged, and the CI failure rate. The report is
+# data for the roadmap, not a gate; it writes only issues and reads only runs.
+on:
+  schedule:
+    # Mondays 05:13 UTC, after the nightly runs of the week have finished.
+    - cron: "13 5 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ops-weekly
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: weekly report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      # The series is collected under one label. `gh label create` fails when the
+      # label exists, so the list is the idempotent guard.
+      - name: Ensure the report label exists
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label list --limit 200 --json name --jq '.[].name' | grep -qx report ||
+            gh label create report --description "Weekly agent pipeline report" --color 0e8a16
+      - name: Open the weekly report
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/ops/weekly.mjs

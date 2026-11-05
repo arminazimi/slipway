@@ -9,8 +9,10 @@ import Ajv2020 from "ajv/dist/2020.js";
 import { parse } from "yaml";
 import { root } from "./config-reference.mjs";
 import { validateFrontMatter } from "../theme/front-matter.mjs";
+import { gemspecVersion } from "../release/prepare.mjs";
 
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const themeVersion = gemspecVersion(readFileSync(join(root, "slipway-theme.gemspec"), "utf8"));
 const skills = readdirSync(join(root, "skills"), { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && existsSync(join(root, "skills", entry.name, "SKILL.md")))
   .map((entry) => entry.name)
@@ -39,7 +41,8 @@ assert.ok(skills.length >= 3, "found the skill folders");
 for (const name of skills) {
   test(`${name}: front matter names the skill and fits the limits`, () => {
     const { source, meta } = read(name);
-    assert.deepEqual(Object.keys(meta).sort(), ["description", "name"], "only name and description");
+    assert.deepEqual(Object.keys(meta).sort(), ["description", "metadata", "name"], "only name, description, and metadata");
+    assert.deepEqual(meta.metadata, { version: themeVersion }, `the skill records the theme version ${themeVersion}`);
     assert.equal(meta.name, name, "the name matches the folder");
     assert.match(meta.name, /^[a-z0-9]+(-[a-z0-9]+)*$/);
     assert.ok(meta.name.length <= 64);

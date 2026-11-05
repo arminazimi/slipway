@@ -1,6 +1,8 @@
 ---
 name: slipway-release-notes
 description: Write a release post and a changelog entry from merged pull requests, for a site built with Slipway or for the Slipway theme itself.
+metadata:
+  version: "0.2.0"
 ---
 
 # Write a release post and a changelog entry

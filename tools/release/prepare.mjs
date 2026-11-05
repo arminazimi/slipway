@@ -48,6 +48,17 @@ export function bumpLockfile(lockfile, version) {
   return next;
 }
 
+/** Skills ship with the theme, so each SKILL.md records the theme version in its front matter and a release bumps it. */
+const frontMatter = /^---\n([\s\S]*?)\n---\n/;
+
+export function bumpSkillVersion(markdown, version) {
+  const front = frontMatter.exec(markdown);
+  if (!front) throw new Error("SKILL.md has no front matter");
+  const next = front[1].replace(/^( {2}version:\s*)"[^"]*"$/m, `$1"${version}"`);
+  if (next === front[1]) throw new Error("SKILL.md front matter has no metadata.version");
+  return `---\n${next}\n---\n${markdown.slice(front[0].length)}`;
+}
+
 /** Every `## [name]` section of a Keep a Changelog file, with its body. */
 export function sections(changelog) {
   const found = [...changelog.matchAll(heading)];
@@ -124,6 +135,14 @@ export function prepare({ version, dir = root, date = new Date().toISOString().s
     const file = join(dir, name);
     if (!existsSync(file)) continue;
     writeFileSync(file, bumpLockfile(readFileSync(file, "utf8"), text));
+  }
+  const skills = join(dir, "skills");
+  if (existsSync(skills)) {
+    for (const entry of readdirSync(skills, { withFileTypes: true })) {
+      const file = join(skills, entry.name, "SKILL.md");
+      if (!entry.isDirectory() || !existsSync(file)) continue;
+      writeFileSync(file, bumpSkillVersion(readFileSync(file, "utf8"), text));
+    }
   }
   for (const { file } of fragments) rmSync(join(dir, "changelog.d", file));
   return [
