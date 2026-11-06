@@ -125,3 +125,24 @@ jobs:
       - run: npm run check:tools
         env:
           SLIPWAY_SKIP_TOOLS: screenshots
+
+  # The one check branch protection and the merge queue require. It runs even when a job it
+  # needs failed or was cancelled, and fails unless every one of them succeeded.
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [check, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          for r in $RESULTS; do
+            if [ "$r" != success ]; then
+              echo "a job ci-ok needs finished as: $r"
+              exit 1
+            fi
+          done
+          echo "all jobs succeeded"
