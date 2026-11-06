@@ -32,21 +32,12 @@ const OTHER_REPOSITORY = /This pull request goes to \*\*(?!arminazimi\/slipway\b
 // Known gaps in today's briefs. Each is reported as a test diagnostic instead of a failure
 // so the suite stays green while the brief cannot be corrected without inventing content.
 // Add an entry only with a note in the pull request that explains the gap.
-const KNOWN_INCOMPLETE = new Map([
-  ["agent.plugins", "legacy Context/Steps brief: no Goal, Files, or Done when"],
-  ["parallel.merge-safe", "legacy proposal: no Goal or Files"],
-]);
-const KNOWN_MISSING_EDITS = new Map([
-  ["og.layouts", "tools/og/render.mjs"],
-  ["pages.spec-nav", "spec/docs-site/_config.yml"],
-]);
-const KNOWN_MISSING_PARENTS = new Map([
-  ["host.build", "tools/host/fixtures"],
-  ["host.import-wiki", "tools/host/fixtures"],
-]);
+const KNOWN_INCOMPLETE = new Map([]);
+const KNOWN_MISSING_EDITS = new Map([]);
+const KNOWN_MISSING_PARENTS = new Map([]);
 // Tasks whose main file already merged but whose brief also lists a test or doc that has
 // not landed yet. They are not done, but their Create paths are not stale typos either.
-const PARTIAL_IMPLEMENTATIONS = new Set(["cli.info", "mcp.find-text", "og.render", "parallel.css-components", "starter.links", "host.build", "skill.blocks", "skill.deploy", "skill.design", "skill.release-notes", "skill.translate"]);
+const PARTIAL_IMPLEMENTATIONS = new Set([]);
 
 const stripFences = (markdown) => {
   let fence = null;

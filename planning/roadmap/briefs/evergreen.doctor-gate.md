@@ -1,22 +1,15 @@
-> [!IMPORTANT]
-> This pull request goes to **arminazimi/evergreen**, not to Slipway. Link it here with `Closes arminazimi/slipway#<this issue>`.
-
 ## Goal
-Evergreen's pull requests show `slipway doctor` findings on its documentation, so a docs change that breaks the site fails review.
+This pull request goes to **arminazimi/evergreen**. Add the doctor Action to Evergreen's CI for `docs/` and record the level reached.
 
 ## Files
-Only these files. Another agent may be working on any other file right now.
 
-**Create**
-- a job in Evergreen's workflow that runs `arminazimi/slipway/action/doctor@v0.2.0` on `docs/` (pinned to the tag's commit SHA)
+- `.github/workflows/` (one new job)
 
-**Edit**
-- docs/README or the docs contributing section: how to run `npx slipway doctor docs` locally
+Touch no other file. If one must change, stop and say why in the issue.
 
 ## Steps
-1. Start report-only; switch to failing on errors once the site is clean.
-2. Record the reached level in this issue, and file a Slipway issue for every finding that is Slipway's fault.
+1. Use `action/doctor` pinned by commit.
+2. Fail on errors; report warnings.
 
 ## Done when
-- [ ] The job runs on every pull request that touches `docs/`.
-- [ ] The reached level is recorded here.
+- [ ] The job runs on Evergreen pull requests and the level is in its README.

@@ -9,12 +9,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { BUILTIN_LABELS, EPIC_AREAS, LABELS, LANES, SIZES, TRACKS, typeFor } from "./labels.mjs";
+import { BUILTIN_LABELS, EPIC_AREAS, LABELS, LANES, PRIORITIES, SIZES, TRACKS, typeFor } from "./labels.mjs";
 import { parseRoadmap } from "./parse.mjs";
 import { DONE, TRANSFER_FROM } from "./status.mjs";
-
-/** Tasks that wait on a Seaworthy deliverable (see "Depends on Seaworthy" in ROADMAP.md). */
-const NEEDS_SEAWORTHY = new Set(["foundation.seaworthy-cli", "theme.action", "agent.verified-gate", "agent.mcp-verify", "sourcemap.e2e", "seaworthy.doctor", "seaworthy.sourcemap", "seaworthy.badge", "seaworthy.fixtures", "launch.demo-video", "launch.co-launch", "spec.theme"]);
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
@@ -27,8 +24,10 @@ const FOOTER_EPIC = "<sub>Pick any open task above whose dependencies are closed
 
 const DEFAULT_DONT = [
   "Do not expand scope beyond this issue; open a follow-up instead.",
-  "Do not change a versioned contract (report schema, check IDs, config schema) without updating its spec and changelog.",
-  "Do not add network access to checks unless the check is marked opt-in.",
+  "Do not edit files outside the Files list. If another file must change, stop and say why in this issue.",
+  "Do not change a frozen contract (`packages/engine/src/contracts/`, report schema, check IDs, config schema) without an ADR.",
+  "Do not import Slipway names, colors, or layouts into `packages/engine/`: the engine knows nothing about the theme.",
+  "Do not add a runtime dependency without saying why in the pull request.",
 ];
 
 function defaultDone(task) {
@@ -75,7 +74,9 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
     if (!phaseById.has(epic.phase)) errors.push(`${epic.key}: phase ${epic.phase} is not in the phase table`);
     if (!EPIC_AREAS[epic.key]) errors.push(`${epic.key}: add its area labels to EPIC_AREAS in labels.mjs`);
     if (!epic.outcome) errors.push(`${epic.key}: missing ### Outcome`);
+    if (!epic.exit.length) errors.push(`${epic.key}: missing ### Exit criteria (its done-when list)`);
     if (!tasks.some((t) => t.epic === epic.key)) errors.push(`${epic.key}: has no tasks`);
+    if (epic.priority && !PRIORITIES[epic.priority]) errors.push(`${epic.key}: unknown priority ${epic.priority}`);
   }
   for (const key of strict ? Object.keys(EPIC_AREAS) : []) {
     if (!epics.some((e) => e.key === key)) errors.push(`EPIC_AREAS lists ${key}, which is not an epic in ROADMAP.md`);
@@ -84,6 +85,7 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
     if (!LANES[task.lane]) errors.push(`${task.key}: unknown lane "${task.lane}"`);
     if (!SIZES[task.size]) errors.push(`${task.key}: size must be XS, S, or M (got "${task.size}")`);
     if (!task.epic) errors.push(`${task.key}: not inside an epic`);
+    if (!PRIORITIES[task.priority]) errors.push(`${task.key}: priority must be P0 to P3 (got "${task.priority}")`);
     for (const dep of task.deps) {
       if (!byKey.has(dep)) errors.push(`${task.key}: unknown dependency ${dep}`);
       else if (byKey.get(dep).kind !== "task") errors.push(`${task.key}: depends on epic ${dep}; depend on a task instead`);
@@ -113,6 +115,36 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
   };
   for (const task of tasks) visit(task.key, []);
 
+  // Execution order: a task comes after everything it depends on; among tasks that are free at the same
+  // time, higher priority first, then roadmap order. Wave = 1 + the deepest wave among its dependencies.
+  const taskByKey = new Map(tasks.map((t) => [t.key, t]));
+  const wave = new Map();
+  const waveOf = (key, seen = new Set()) => {
+    if (wave.has(key)) return wave.get(key);
+    if (seen.has(key)) return 1;
+    seen.add(key);
+    const deps = (taskByKey.get(key)?.deps ?? []).filter((d) => taskByKey.has(d));
+    const w = deps.length ? 1 + Math.max(...deps.map((d) => waveOf(d, seen))) : 1;
+    wave.set(key, w);
+    return w;
+  };
+  for (const task of tasks) waveOf(task.key);
+  const rank = (t) => Number(t.priority?.slice(1) ?? 2);
+  const order = new Map();
+  const placed = new Set();
+  const pending = [...tasks];
+  while (pending.length) {
+    const free = pending.filter((t) => t.deps.every((d) => placed.has(d) || !taskByKey.has(d)));
+    if (!free.length) break; // a cycle, already reported
+    free.sort((a, b) => rank(a) - rank(b) || wave.get(a.key) - wave.get(b.key) || a.line - b.line);
+    const next = free[0];
+    placed.add(next.key);
+    order.set(next.key, order.size + 1);
+    pending.splice(pending.indexOf(next), 1);
+  }
+  const blocks = new Map(tasks.map((t) => [t.key, []]));
+  for (const task of tasks) for (const dep of task.deps) blocks.get(dep)?.push(task.key);
+
   const phaseLine = (id) => {
     const p = phaseById.get(id);
     return p ? `${p.id} — ${p.title} (${p.start} → ${p.end})` : id;
@@ -123,12 +155,12 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
     const epicKey = item.kind === "epic" ? item.key : item.epic;
     for (const area of EPIC_AREAS[epicKey] ?? []) set.add(area);
     if (item.track && TRACKS[item.track]) set.add(TRACKS[item.track].label);
+    if (PRIORITIES[item.priority]) set.add(PRIORITIES[item.priority].label);
     if (item.kind === "epic") {
       set.add("type: epic");
       return [...set];
     }
     set.add("type: task");
-    if (NEEDS_SEAWORTHY.has(item.key)) set.add("needs: seaworthy");
     const type = typeFor(item.key);
     if (type) set.add(type);
     if (LANES[item.lane]) set.add(LANES[item.lane].label);
@@ -147,12 +179,18 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
     const lines = [
       marker(task.key),
       `> **Epic:** ${ref(task.epic)} · **Phase:** ${phaseLine(task.phase)}`,
-      `> **Lane:** \`${lane?.label ?? task.lane}\` — ${lane?.who ?? ""} · **Size:** ${task.size} (${size?.meaning ?? ""})`,
+      `> **Lane:** \`${lane?.label ?? task.lane}\` · **Size:** ${task.size} (${size?.meaning ?? ""}) · **Priority:** ${task.priority} · **Wave:** ${wave.get(task.key)} · **Order:** ${order.get(task.key)} of ${tasks.length}`,
       "",
     ];
     const brief = briefs.get(task.key);
     if (brief) {
-      lines.push(brief, "");
+      // Same order as the briefs in Evergreen: Goal, Files, Steps, Do not, Run, then Done when.
+      const at = brief.search(/^## Done when$/m);
+      const [head, tail] = at >= 0 ? [brief.slice(0, at).trimEnd(), brief.slice(at)] : [brief, ""];
+      lines.push(head, "");
+      if (!/^## Do not$/m.test(brief)) lines.push("## Do not", ...DEFAULT_DONT.map((d) => `- ${d}`), "");
+      if (!/^## Run$/m.test(brief) && task.lane !== "maintainer") lines.push("## Run", "```bash", "npm ci", "npm run check", "```", "");
+      if (tail) lines.push(tail, "");
     } else {
       lines.push("## Goal", `${task.title.replace(/\.$/, "")}.`, "");
       lines.push("## Agent brief", "");
@@ -167,7 +205,9 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
       if (task.lane !== "maintainer") lines.push("**Run**", "```bash", "npm ci", "npm run check", "```", "");
       lines.push("## Done when", ...defaultDone(task).map((d) => `- [ ] ${d}`), "");
     }
-    if (task.deps.length) lines.push("## Depends on", ...task.deps.map((d) => `- ${ref(d)}`), "");
+    lines.push("## Depends on", ...(task.deps.length ? task.deps.map((d) => `- ${ref(d)}`) : ["None: this task can start as soon as the milestone opens."]), "");
+    const after = blocks.get(task.key) ?? [];
+    if (after.length) lines.push("## Blocks", ...after.map((d) => `- ${ref(d)}`), "");
     lines.push("---", FOOTER_TASK);
     return lines.join("\n");
   }
@@ -175,10 +215,11 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
   function epicBody(epic, children) {
     const extra = epic.header.replace(/^\*\*Epic\*\*\s*·\s*\*\*Phase:\*\*\s*[^·]+/, "").trim();
     const lines = [marker(epic.key), `> **Epic** · **Phase:** ${phaseLine(epic.phase)}${extra ? ` ${extra}` : ""}`, "", "## Outcome", epic.outcome, ""];
+    const sorted = [...children].sort((a, b) => order.get(a.key) - order.get(b.key));
     if (epic.scope.length) lines.push("## Scope", ...epic.scope.map((s) => `- ${s}`), "");
     if (epic.nonGoals.length) lines.push("## Non-goals", ...epic.nonGoals.map((s) => `- ${s}`), "");
-    lines.push("## Tasks", ...children.map((c) => `- [ ] ${ref(c.key)}`), "");
-    if (epic.exit.length) lines.push("## Exit criteria", ...epic.exit.map((s) => `- [ ] ${s}`), "");
+    lines.push("## Tasks", "In execution order (wave, then priority).", "", ...sorted.map((c) => `- [ ] ${ref(c.key)} · wave ${wave.get(c.key)} · ${c.priority}`), "");
+    if (epic.exit.length) lines.push("## Done when", ...epic.exit.map((s) => `- [ ] ${s}`), "");
     lines.push("---", FOOTER_EPIC);
     return lines.join("\n");
   }
@@ -193,6 +234,9 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
       epic: item.kind === "task" ? item.epic : null,
       lane: item.lane ?? null,
       size: item.size ?? null,
+      priority: item.priority ?? null,
+      wave: item.kind === "task" ? wave.get(item.key) : null,
+      order: item.kind === "task" ? order.get(item.key) : null,
       deps: item.deps ?? [],
       hasBrief: item.kind === "task" ? briefs.has(item.key) : null,
       labels: labelsFor(item),
@@ -209,6 +253,7 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
     epics: count((i) => i.kind === "epic"),
     tasks: count((i) => i.kind === "task"),
     withBrief: count((i) => i.hasBrief === true),
+    byWave: Object.fromEntries([...new Set(wave.values())].sort((a, b) => a - b).map((w) => [w, [...wave.values()].filter((x) => x === w).length])),
     byLane: Object.fromEntries(Object.keys(LANES).map((l) => [l, count((i) => i.lane === l)])),
     byPhase: Object.fromEntries(phases.map((p) => [p.id, { epics: count((i) => i.phase === p.id && i.kind === "epic"), tasks: count((i) => i.phase === p.id && i.kind === "task") }])),
   };
@@ -223,15 +268,17 @@ function preview({ issues, phases, stats }) {
     const lane = (l) => issues.filter((i) => i.phase === p.id && i.lane === l).length;
     return `| ${p.id} | ${p.start} → ${p.end} | ${s.epics} | ${s.tasks} | ${lanes.map(lane).join(" | ")} |`;
   });
-  const sampleKeys = ["E-source-map", "sourcemap.lines", "agent.edit-button", "theme.tokens"];
+  const sampleKeys = [issues.find((i) => i.kind === "epic")?.key, issues.find((i) => i.order === 1)?.key, issues.find((i) => i.order === Math.ceil(stats.tasks / 2))?.key];
   return [
-    "# Slipway H1 roadmap — issue preview",
+    "# Slipway roadmap — issue preview",
     "",
     "Generated locally by `planning/roadmap/build.mjs` from `ROADMAP.md`. Nothing has been sent to GitHub.",
     "",
     `- Issues: **${issues.length}** (${stats.epics} epics, ${stats.tasks} tasks)`,
     `- Tasks with a detailed brief: **${stats.withBrief}** of ${stats.tasks} (the rest are labeled \`status: needs-brief\`, except maintainer tasks)`,
     `- Milestones: one per phase (${phases.length})`,
+    "",
+    `Tasks per wave: ${Object.entries(stats.byWave).map(([w, n]) => `wave ${w}: ${n}`).join(" · ")}`,
     "",
     `| Phase | Dates | Epics | Tasks | ${lanes.join(" | ")} |`,
     `|---|---|---|---|${lanes.map(() => "---").join("|")}|`,

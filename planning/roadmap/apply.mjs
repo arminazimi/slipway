@@ -162,6 +162,7 @@ console.log(`- transfer ${toTransfer.length} issues from ${TRANSFER_FROM.repo} (
 console.log(`- create ${newIssues.length} new issues (${newIssues.filter((i) => i.kind === "epic").length} epics, ${newIssues.filter((i) => i.kind === "task").length} tasks)`);
 console.log(`- sync title, body, labels, and milestone on ${issues.length} issues (unchanged ones are skipped)`);
 console.log(`- close ${toClose.length} tasks already done: ${toClose.join(", ") || "none"}`);
+console.log(`- link ${issues.filter((i) => i.kind === "task").length} tasks to their epics as sub-issues, and ${issues.reduce((n, i) => n + i.deps.length, 0)} dependencies as "blocked by"`);
 if (orphaned.length) console.log(`- WARNING: ${orphaned.length} issues are no longer in ROADMAP.md : ${orphaned.join(", ")}`);
 if (!apply) {
   console.log("\nNothing was changed. Re-run with --apply after maintainer approval.");
@@ -245,5 +246,39 @@ for (const key of toClose) {
   save();
   console.log(`✓ #${n} closed (${key})`);
   await sleep(DELAY_MS / 2);
+}
+
+// 6. Link each task to its epic as a sub-issue, and record every dependency as "blocked by" on GitHub.
+state.ids ??= {};
+state.linked ??= {};
+const idOf = (key) => (state.ids[key] ??= gh([`repos/${REPO}/issues/${state.numbers[key]}`]).id);
+const alreadyLinked = (error) => /already|duplicate|exists|422/i.test(String(error?.stderr ?? error?.message ?? error));
+for (const issue of issues.filter((i) => i.kind === "task")) {
+  const n = state.numbers[issue.key];
+  const parentKey = `${issue.key}>parent`;
+  if (issue.epic && !state.linked[parentKey]) {
+    try {
+      gh([`repos/${REPO}/issues/${state.numbers[issue.epic]}/sub_issues`, "-X", "POST"], { sub_issue_id: idOf(issue.key) });
+    } catch (error) {
+      if (!alreadyLinked(error)) throw error;
+    }
+    state.linked[parentKey] = true;
+    save();
+    console.log(`↳ #${n} under epic #${state.numbers[issue.epic]}`);
+    await sleep(DELAY_MS / 2);
+  }
+  for (const dep of issue.deps) {
+    const depKey = `${issue.key}<${dep}`;
+    if (state.linked[depKey]) continue;
+    try {
+      gh([`repos/${REPO}/issues/${n}/dependencies/blocked_by`, "-X", "POST"], { issue_id: idOf(dep) });
+    } catch (error) {
+      if (!alreadyLinked(error)) throw error;
+    }
+    state.linked[depKey] = true;
+    save();
+    console.log(`⛓ #${n} blocked by #${state.numbers[dep]}`);
+    await sleep(DELAY_MS / 2);
+  }
 }
 console.log("Done.");
