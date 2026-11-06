@@ -2,6 +2,7 @@
 // ships links to /assets/... that 404 (issue #698). Two checks: the workflow takes the base URL
 // from Pages, and the site and /spec/ built with that base URL link only below it.
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -26,6 +27,8 @@ function htmlFiles(dir) {
 }
 
 test("the docs site and /spec/ link only below the base URL", { skip: bundleAvailable() ? false : "bundle not available" }, () => {
+  // spec/docs-site is generated, so it is absent on a fresh checkout.
+  execFileSync(process.execPath, [join(root, "tools/spec/build.mjs")], { cwd: root, stdio: "ignore" });
   const work = mkdtempSync(join(tmpdir(), "slipway-pages-baseurl-"));
   try {
     const sites = [
