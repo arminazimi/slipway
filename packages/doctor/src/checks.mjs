@@ -37,6 +37,7 @@ import * as c33 from "./checks/agents-commands.mjs";
 import * as c34 from "./checks/i18n.zwnj.mjs";
 import * as c35 from "./checks/sourcemap-fresh.mjs";
 import * as c36 from "./checks/i18n.kashida.mjs";
+import * as c37 from "./checks/i18n.spacing.mjs";
 
 export const checks = {
   [c30.id]: c30.run,
@@ -76,4 +77,5 @@ export const checks = {
   [c34.id]: c34.run,
   [c35.id]: c35.run,
   [c36.id]: c36.run,
+  [c37.id]: c37.run,
 };
