@@ -15,9 +15,10 @@ test("deploy-site.yml builds with the base URL Pages reports", () => {
   const workflow = readFileSync(join(root, ".github/workflows/deploy-site.yml"), "utf8");
   assert.doesNotMatch(workflow, /--baseurl\s+(""|'')/, 'deploy-site.yml must not build with --baseurl ""');
   assert.match(workflow, /actions\/configure-pages@/, "deploy-site.yml must run actions/configure-pages");
+  assert.match(workflow, /BASE_PATH:\s*\$\{\{\s*steps\.pages\.outputs\.base_path\s*\}\}/, "BASE_PATH comes from the configure-pages output");
   const builds = workflow.match(/jekyll build[^\n]*/g) ?? [];
   assert.equal(builds.length, 2, "one Jekyll build for the site and one for /spec/");
-  for (const line of builds) assert.match(line, /--baseurl\s+"?\$\{\{\s*steps\.pages\.outputs\.base_path\s*\}\}/, `build line lacks the Pages base_path: ${line}`);
+  for (const line of builds) assert.match(line, /--baseurl\s+"\$\{BASE_PATH\}/, `build line lacks BASE_PATH: ${line}`);
 });
 
 function htmlFiles(dir) {
