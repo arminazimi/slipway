@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
-import { buildIssues, loadBriefs } from "./build.mjs";
+import { buildIssues, loadBriefs, preview } from "./build.mjs";
 import { parseRoadmap } from "./parse.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -155,4 +155,24 @@ test("the real ROADMAP.md and briefs build without errors", () => {
     const deps = issue.deps.map((d) => issues.find((i) => i.key === d));
     for (const dep of deps) assert.ok(dep.order < issue.order && dep.wave < issue.wave, `${issue.key} must come after ${dep.key}`);
   }
+});
+
+test("the preview counts issues per wave and lane and shows sample bodies", () => {
+  const result = buildIssues(real, loadBriefs());
+  const text = preview(result);
+  assert.match(text, /- Issues: \*\*216\*\* \(12 epics, 204 tasks\)/);
+  assert.match(text, /Tasks per wave: wave 1: \d+/);
+  assert.match(text, /\| v0\.3\.0 \| 2026-11-09 → 2027-01-31 \| 12 \| 204 \|/);
+  assert.match(text, /### Epic: Foundations and frozen contracts/);
+});
+
+test("tasks without a brief get the default done list for their kind", () => {
+  const kinds = SAMPLE.replace("| `foundation.layout` | Create the layout | strong-agent | S | none |", "| `check.layout` | Create the layout | strong-agent | S | none |").replace(
+    "| `foundation.check` | Add the check | free-agent | XS | `foundation.layout` |",
+    "| `spike.check` | Add the check | free-agent | XS | `check.layout` |",
+  );
+  const { issues, errors } = buildIssues(kinds, new Map(), PARTIAL);
+  assert.deepEqual(errors, []);
+  assert.match(issues.find((i) => i.key === "check.layout").body, /fires on its broken fixture/);
+  assert.match(issues.find((i) => i.key === "spike.check").body, /An ADR in `docs\/adr\/` records the question/);
 });

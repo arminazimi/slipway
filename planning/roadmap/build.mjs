@@ -261,7 +261,7 @@ export function buildIssues(markdown, briefs = new Map(), { done = DONE, strict 
   return { issues, labels: LABELS, phases, errors, stats };
 }
 
-function preview({ issues, phases, stats }) {
+export function preview({ issues, phases, stats }) {
   const lanes = Object.keys(LANES);
   const rows = phases.map((p) => {
     const s = stats.byPhase[p.id];
