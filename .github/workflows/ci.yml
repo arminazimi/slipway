@@ -34,6 +34,8 @@ jobs:
       SLIPWAY_REQUIRE_SEAWORTHY: "1"
       LANG: C.UTF-8
     steps:
+      - name: Start the check timer
+        run: echo "CI_STARTED=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
@@ -102,6 +104,13 @@ jobs:
           path: examples/docs
           level: none
           setup-node: "false"
+      - name: Print the check time
+        if: always()
+        env:
+          JOB: check (${{ matrix.jekyll }})
+        run: |
+          elapsed=$(( $(date +%s) - CI_STARTED ))
+          echo "$JOB: $(( elapsed / 60 )) min $(( elapsed % 60 )) s" >> "$GITHUB_STEP_SUMMARY"
 
   browser:
     name: browser tests
@@ -110,6 +119,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Start the check timer
+        run: echo "CI_STARTED=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -119,12 +130,26 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
       - run: npm ci
+      # The browser folder is keyed on the installed Playwright version, so a new release downloads once.
+      - id: playwright
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - run: npx playwright install --with-deps
       # Every tools/*/run.mjs (cross-browser, no-JS, screenshots, axe, and any added later).
       # The screenshot baselines are not stable on the runner yet, and this job never ran them.
       - run: npm run check:tools
         env:
           SLIPWAY_SKIP_TOOLS: screenshots
+      - name: Print the check time
+        if: always()
+        env:
+          JOB: browser tests
+        run: |
+          elapsed=$(( $(date +%s) - CI_STARTED ))
+          echo "$JOB: $(( elapsed / 60 )) min $(( elapsed % 60 )) s" >> "$GITHUB_STEP_SUMMARY"
 
   # The one check branch protection and the merge queue require. It runs even when a job it
   # needs failed or was cancelled, and fails unless every one of them succeeded.
