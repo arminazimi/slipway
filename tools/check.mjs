@@ -4,10 +4,12 @@
 //   node tools/check.mjs --tools   only the tools/*/run.mjs checks (the browser job in ci.yml)
 //   node tools/check.mjs --test    only the tests (`npm test`)
 //
-// Tests: every `*.test.mjs` in tools/, tools/<name>/, planning/roadmap/, packages/*/test/ and adapters/*/test/. A tool folder
+// Tests: every `*.test.mjs` in tools/, tools/<name>/, planning/roadmap/, packages/*/test/ and adapters/*/test/, plus every
+// `*.test.ts` there (Node strips the types; packages/engine is TypeScript). A tool folder
 // with a playwright.config.js holds Playwright tests that its run.mjs starts, so node --test skips that folder.
 // Tools: every tools/<name>/run.mjs except the generators below. A run.mjs prints SKIP and exits 0 when its optional
 // dependency (Playwright, Ruby, Seaworthy) is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
+// Type check: every workspace with a `typecheck` script (`tsc --noEmit`) runs it after the tests.
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
@@ -20,7 +22,7 @@ export const notChecks = new Set(["html-validate", "sourcemap", "twins"]);
 export const fixedChecks = ["brand", "tokens", "contrast", "logical", "js", "css", "schemas", "site", "docs"];
 
 const dirs = (path) => (existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []);
-const testsIn = (path) => (existsSync(path) ? readdirSync(path).filter((f) => f.endsWith(".test.mjs")).sort().map((f) => join(path, f)) : []);
+const testsIn = (path) => (existsSync(path) ? readdirSync(path).filter((f) => /\.test\.(mjs|ts)$/.test(f)).sort().map((f) => join(path, f)) : []);
 
 export function testFiles(dir = root) {
   const folders = [
@@ -49,6 +51,7 @@ export function main(args = process.argv.slice(2), dir = root) {
   else if (!onlyTools) {
     steps.push(["roadmap", "node", ["planning/roadmap/build.mjs", "--check"]]);
     steps.push(["tests", "node", ["--test", ...testFiles(dir)]]);
+    steps.push(["typecheck", "npm", ["run", "--silent", "--workspaces", "--if-present", "typecheck"]]);
     for (const name of fixedChecks) steps.push([`check:${name}`, "npm", ["run", "--silent", `check:${name}`]]);
   }
   if (!onlyTests) for (const file of toolChecks(dir)) steps.push([file, "node", [file]]);

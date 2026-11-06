@@ -1,0 +1,21 @@
+{
+  "name": "@slipway/engine",
+  "version": "0.3.0-dev",
+  "private": true,
+  "description": "The docs engine: config, content, Markdown, navigation, rendering, outputs, and diagnostics.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2"
+  }
+}
