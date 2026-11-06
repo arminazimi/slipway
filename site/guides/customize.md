@@ -24,7 +24,7 @@ slipway:
     radius: "0.5rem"
 ```
 
-These overrides apply to both light and dark modes. Ensure your chosen colors maintain sufficient contrast in both. For a full list of available tokens, see the [Tokens reference](/config/).
+These overrides apply to both light and dark modes. Ensure your chosen colors maintain sufficient contrast in both. For a full list of available tokens, see the [Tokens reference]({{ "/config/" | relative_url }}).
 
 ## Presets
 
