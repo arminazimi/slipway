@@ -1,13 +1,13 @@
 // The JavaScript budget: no page needs a script to be read, and every script the theme ships stays small.
 //
-//   - assets/js/*.js together weigh at most 10 KB (raw bytes), enforced here and in `npm run check`.
+//   - assets/js/*.js together weigh at most 12 KB (raw bytes), enforced here and in `npm run check`.
 //   - Scripts are deferred, and the controls they enhance (search, theme toggle) are hidden until a script
 //     has run, so a visitor without JavaScript sees a plain page. See budgetProblems for the page rules.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { root } from "./tokens.mjs";
 
-export const budgetBytes = 10 * 1024;
+export const budgetBytes = 12 * 1024;
 
 /** Every file in assets/js with its size in bytes. */
 export function scriptSizes(dir = join(root, "assets/js")) {

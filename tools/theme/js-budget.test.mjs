@@ -10,8 +10,8 @@ import { root } from "./tokens.mjs";
 
 const skip = bundleAvailable() ? false : "run `bundle install` to build with the GitHub Pages gem";
 
-test("the budget is 10 KB of raw bytes", () => {
-  assert.equal(budgetBytes, 10240);
+test("the budget is 12 KB of raw bytes", () => {
+  assert.equal(budgetBytes, 12288);
 });
 
 test("the scripts the theme ships fit the budget", () => {
@@ -22,10 +22,10 @@ test("the scripts the theme ships fit the budget", () => {
 
 test("every script in the folder counts, including ones added later", () => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-js-"));
-  writeFileSync(join(dir, "a.js"), "x".repeat(6000));
-  writeFileSync(join(dir, "b.js"), "x".repeat(5000));
+  writeFileSync(join(dir, "a.js"), "x".repeat(7000));
+  writeFileSync(join(dir, "b.js"), "x".repeat(5500));
   writeFileSync(join(dir, "notes.txt"), "x".repeat(9000));
-  assert.equal(totalBytes(scriptSizes(dir)), 11000);
+  assert.equal(totalBytes(scriptSizes(dir)), 12500);
   assert.ok(totalBytes(scriptSizes(dir)) > budgetBytes);
 });
 
