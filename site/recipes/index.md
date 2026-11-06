@@ -16,7 +16,7 @@ We have recipes for various common tasks. Pick one below:
 <ul>
 {% for r in filtered_recipes %}
   <li>
-    <a href="{{ r.url }}">{{ r.title }}</a>
+    <a href="{{ r.url | relative_url }}">{{ r.title }}</a>
     {% if r.description %}
       <p>{{ r.description }}</p>
     {% endif %}

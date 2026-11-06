@@ -1,0 +1,26 @@
+{%- comment -%}
+  "Open in Claude" and "Open in ChatGPT": pass the page's Markdown twin
+  (ADR 0006) so the agent reads Markdown, not HTML. Twin URLs follow
+  `twin_url` in `_plugins/slipway_twins.rb`.
+{%- endcomment -%}
+{%- assign sl_oia_last = page.url | slice: -1, 1 -%}
+{%- assign sl_oia_end5 = page.url | slice: -5, 5 -%}
+{%- assign sl_oia_end4 = page.url | slice: -4, 4 -%}
+{%- assign sl_oia_twin = page.url -%}
+{%- if sl_oia_last == '/' -%}
+  {%- assign sl_oia_twin = page.url | append: 'index.md' -%}
+{%- elsif sl_oia_end5 == '.html' -%}
+  {%- assign sl_oia_twin = page.url | replace_first: '.html', '.md' -%}
+{%- elsif sl_oia_end4 == '.htm' -%}
+  {%- assign sl_oia_twin = page.url | replace_first: '.htm', '.md' -%}
+{%- else -%}
+  {%- assign sl_oia_twin = page.url | append: '.md' -%}
+{%- endif -%}
+{%- assign sl_oia_url = sl_oia_twin | absolute_url -%}
+{%- assign sl_oia_prompt = 'Read ' | append: sl_oia_url | append: ' and wait for my question.' -%}
+{%- assign sl_oia_query = sl_oia_prompt | url_encode -%}
+{%- include component-css.html name="open-in-agent" -%}
+<nav class="sl-open-in-agent" aria-label="Open in Claude or ChatGPT">
+  <a class="sl-open-in-agent-link" href="https://claude.ai/new?q={{ sl_oia_query }}" target="_blank" rel="noopener noreferrer">Open in Claude</a>
+  <a class="sl-open-in-agent-link" href="https://chatgpt.com/?q={{ sl_oia_query }}" target="_blank" rel="noopener noreferrer">Open in ChatGPT</a>
+</nav>

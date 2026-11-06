@@ -3,7 +3,7 @@ name: release
 # A maintainer pushes a tag vX.Y.Z after merging the pull request from `node tools/release/prepare.mjs X.Y.Z`.
 # This workflow checks the tag against the gemspec, runs the full check, creates the GitHub release with a
 # CycloneDX SBOM of the gem and the npm packages, and then pushes the gem to RubyGems (standalone.gem-publish)
-# with trusted publishing: no API key is stored.
+# with trusted publishing: no API key is stored. The gem gets a build provenance attestation before it is pushed.
 # One-time maintainer setup: add a trusted publisher for `slipway-theme` on rubygems.org (repository
 # arminazimi/slipway, workflow release.yml, environment rubygems) and create the `rubygems` environment.
 on:
@@ -73,14 +73,22 @@ jobs:
     environment: rubygems
     permissions:
       contents: read
+      # Trusted publishing and the build provenance attestation both sign with the job's OIDC token.
       id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
         with:
           ruby-version: .ruby-version
       - uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a # v2.1.0
-      - name: Build and push the gem
-        run: |
-          gem build slipway-theme.gemspec
-          gem push slipway-theme-*.gem
+      - name: Build the gem
+        run: gem build slipway-theme.gemspec
+      # Signs where the gem came from before it is pushed; verify with
+      # `gh attestation verify slipway-theme-X.Y.Z.gem --repo arminazimi/slipway`.
+      - name: Attest the gem's build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: slipway-theme-*.gem
+      - name: Push the gem
+        run: gem push slipway-theme-*.gem

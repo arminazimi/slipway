@@ -1,0 +1,20 @@
+{
+  "version": 0,
+  "pages": [
+    {
+      "url": "/moved/",
+      "source": "moved.md",
+      "sections": [
+        { "id": "install", "level": 1, "line": 2, "text": "Install" },
+        { "id": "usage", "level": 2, "line": 6, "text": "Usage" }
+      ],
+      "links": []
+    },
+    {
+      "url": "/clean/",
+      "source": "clean.md",
+      "sections": [{ "id": "intro", "level": 1, "line": 5, "text": "Intro" }],
+      "links": []
+    }
+  ]
+}

@@ -9,7 +9,7 @@ author: Slipway
 
 A social card is the picture a chat app, a social network, or a search result shows when someone shares a link to your site. Slipway gives every page one, and this site's pages share the card below unless a page sets its own.
 
-![The shared Slipway social card: a dark 1200 by 630 image with the Slipway mark and name](/assets/images/social.png){: width="1200" height="630"}
+![The shared Slipway social card: a dark 1200 by 630 image with the Slipway mark and name]({{ "/assets/images/social.png" | relative_url }}){: width="1200" height="630"}
 
 ## How a page picks its picture
 
@@ -31,7 +31,7 @@ To use your own picture for the whole site, put a file at the same path in your 
 assets/images/social.png
 ```
 
-Your file replaces the theme's, and theme updates leave it alone. This is the fourth [override slot](/guides/customize/#override-slots); it works with `remote_theme`, the gem, and "Use this template". Use a 1200 × 630 PNG, which is the size the theme ships and the size `seo.html` declares in the page head.
+Your file replaces the theme's, and theme updates leave it alone. This is the fourth [override slot]({{ "/guides/customize/#override-slots" | relative_url }}); it works with `remote_theme`, the gem, and "Use this template". Use a 1200 × 630 PNG, which is the size the theme ships and the size `seo.html` declares in the page head.
 
 ## Actions mode: one picture per page
 
@@ -63,7 +63,7 @@ image: /assets/images/cards/release-1-0.png
 ---
 ```
 
-The page then points at that picture in both modes, whether or not the plugin runs. A 1200 × 630 image gives a large preview; other sizes work, but Slipway cannot declare their dimensions because it does not know them. The full set of keys is in the [front matter reference](/front-matter/).
+The page then points at that picture in both modes, whether or not the plugin runs. A 1200 × 630 image gives a large preview; other sizes work, but Slipway cannot declare their dimensions because it does not know them. The full set of keys is in the [front matter reference]({{ "/front-matter/" | relative_url }}).
 
 ## What the page head contains
 

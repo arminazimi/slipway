@@ -1,0 +1,40 @@
+name: scope
+
+# A pull request edits only the files its issue's brief lists under `## Files`
+# (plus changelog.d/<issue>.md). The label `scope: wide` skips the check.
+# The check lives in tools/scope/scope.mjs.
+#
+# `pull_request_target` lets the job read issues of the base repository for a fork's pull
+# request. It checks out the default branch only and reads the pull request through the API,
+# so no code from the pull request ever runs.
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions: {}
+
+concurrency:
+  group: scope-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  scope:
+    name: scope
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Check the changed files against the brief
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node tools/scope/scope.mjs

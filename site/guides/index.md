@@ -16,7 +16,7 @@ We have guides for various tasks. Pick one below:
 <ul>
 {% for g in filtered_guides %}
   <li>
-    <a href="{{ g.url }}">{{ g.title }}</a>
+    <a href="{{ g.url | relative_url }}">{{ g.title }}</a>
     {% if g.description %}
       <p>{{ g.description }}</p>
     {% endif %}

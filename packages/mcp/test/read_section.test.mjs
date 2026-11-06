@@ -37,8 +37,8 @@ test("returns a section by url and heading", () => {
   assert.equal(result.file, "guide/configure.md");
   assert.equal(result.heading, "Tokens");
   assert.equal(result.level, 2);
-  assert.equal(result.startLine, 8);
-  assert.equal(result.endLine, 16);
+  assert.equal(result.startLine, 10);
+  assert.equal(result.endLine, 18);
   assert.equal(result.markdown, [
     "## Tokens",
     "",
@@ -66,7 +66,7 @@ test("a section ends at the next heading of the same or higher level", () => {
 test("a heading is found by its slug too", () => {
   const result = readSection(testDir, { file: "guide/configure.md", heading: "languages" });
   assert.equal(result.heading, "Languages");
-  assert.equal(result.startLine, 18);
+  assert.equal(result.startLine, 20);
 });
 
 test("returns the section that holds a line", () => {

@@ -9,7 +9,7 @@ author: Slipway
 
 When choosing a theme or platform for your documentation or blog, it's important to understand the trade-offs. This page honestly compares Slipway against other popular Jekyll themes—[Minimal Mistakes](#minimal-mistakes), [Just the Docs](#just-the-docs), and [Chirpy](#chirpy)—as well as [hosted docs platforms](#hosted-docs-platforms).
 
-Slipway is designed to be **agent-editable**, explicitly verifying edits against [strict schemas and Seaworthy tests](/spec/). It prioritizes robust **Right-to-Left (RTL)** support, zero-JavaScript graceful degradation, and standard JSON-LD structured data. However, it might not be the right fit for everyone.
+Slipway is designed to be **agent-editable**, explicitly verifying edits against [strict schemas and Seaworthy tests]({{ "/spec/" | relative_url }}). It prioritizes robust **Right-to-Left (RTL)** support, zero-JavaScript graceful degradation, and standard JSON-LD structured data. However, it might not be the right fit for everyone.
 
 ## Slipway vs. Minimal Mistakes {#minimal-mistakes}
 

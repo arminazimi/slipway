@@ -69,6 +69,7 @@ layout: base
   {%- endif %}
   {%- include series.html %}
   {% include edit-sources.html html=content %}
+  {% include open-in-agent.html %}
   {%- include author-ids.html page=page -%}
   {%- capture sl_author_cards %}{% for id in sl_ai_ids %}{% include author-card.html id=id link=true %}{% endfor %}{% endcapture %}
   {%- assign sl_author_cards_clean = sl_author_cards | strip %}

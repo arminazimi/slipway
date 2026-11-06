@@ -30,6 +30,14 @@ See [Audio block](./audio.html) for data setup.
 
 {% include blocks/badge.html label="Beta" status="beta" %}
 
+## Callout
+
+```liquid
+{% raw %}{% include blocks/callout.html type="tip" title="Tip" body="Save the file before you run the build." %}{% endraw %}
+```
+
+See [Callout block](./callout.html) for data setup.
+
 ## Cards
 
 ```liquid
@@ -82,6 +90,14 @@ See [Diff block](./diff.html) for data setup.
 ```
 
 See [Download block](./download.html) for data setup.
+
+## Embed
+
+```liquid
+{% raw %}{% include blocks/embed.html provider="youtube" id="aqz-KE-bpKQ" title="Big Buck Bunny" %}{% endraw %}
+```
+
+See [Embed block](./embed.html) for data setup.
 
 ## Endpoint
 

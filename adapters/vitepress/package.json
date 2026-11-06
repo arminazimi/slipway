@@ -1,0 +1,21 @@
+{
+  "name": "slipway-vitepress",
+  "version": "0.0.0",
+  "private": true,
+  "description": "VitePress plugin that makes a site agent-editable: sourcemap.json, Markdown twins, and data-source on headings.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "files": [
+    "src",
+    "starter"
+  ],
+  "peerDependencies": {
+    "vitepress": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,36 @@
+name: coverage
+
+# Runs the Node tests with Node's built-in coverage, writes the table to the job summary and fails
+# when line coverage drops below tools/coverage/floor.json. The logic lives in tools/coverage/coverage.mjs.
+on:
+  pull_request:
+    paths:
+      - "packages/**"
+      - "tools/**"
+      - "planning/**"
+      - ".github/workflows/coverage.yml"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  coverage:
+    name: coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Measure coverage and compare it with the floor
+        run: node tools/coverage/coverage.mjs

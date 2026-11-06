@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VitePress front matter",
+  "description": "The front matter of a Markdown page in a VitePress site. It lists VitePress's own keys; add the keys your site reads, each with a description.",
+  "type": "object",
+  "properties": {
+    "aside": {
+      "type": [
+        "boolean",
+        "string"
+      ],
+      "description": "false hides the outline beside the page; \"left\" moves it to the start side."
+    },
+    "description": {
+      "type": "string",
+      "description": "One sentence about the page, for search results and link previews."
+    },
+    "dir": {
+      "type": "string",
+      "enum": [
+        "ltr",
+        "rtl"
+      ],
+      "description": "The page's text direction; VitePress sets the html element's dir from it."
+    },
+    "editLink": {
+      "type": [
+        "boolean",
+        "string",
+        "object"
+      ],
+      "description": "The \"Edit this page\" link: false hides it, a string is its address, or an object has pattern and text."
+    },
+    "features": {
+      "type": "array",
+      "description": "The cards under the hero on a home page, each with icon, title, details, and an optional link."
+    },
+    "footer": {
+      "type": "boolean",
+      "description": "false hides the footer on this page."
+    },
+    "head": {
+      "type": "array",
+      "description": "Extra tags for this page's head, each as [tag, attributes, innerHTML]."
+    },
+    "hero": {
+      "type": "object",
+      "description": "The hero block on a home page: name, text, tagline, image, and actions."
+    },
+    "lang": {
+      "type": "string",
+      "description": "The page's language, such as fa, when it differs from the site's."
+    },
+    "lastUpdated": {
+      "type": "boolean",
+      "description": "false hides the last-updated time on this page."
+    },
+    "layout": {
+      "type": "string",
+      "enum": [
+        "doc",
+        "home",
+        "page"
+      ],
+      "description": "The theme layout: doc for documentation, home for a landing page, or page for a bare page."
+    },
+    "outline": {
+      "type": [
+        "boolean",
+        "number",
+        "string",
+        "array",
+        "object"
+      ],
+      "description": "The outline beside the page: false hides it, a number or [min, max] sets its heading levels, and \"deep\" shows h2 to h6."
+    },
+    "pageClass": {
+      "type": "string",
+      "description": "An extra CSS class on the page's wrapper element."
+    },
+    "sidebar": {
+      "type": "boolean",
+      "description": "false hides the sidebar on this page."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The page title, shown in the browser tab and search results."
+    },
+    "titleTemplate": {
+      "type": [
+        "boolean",
+        "string"
+      ],
+      "description": "false leaves the site title off this page's tab title; a string is the pattern, with :title where the page title goes."
+    }
+  },
+  "additionalProperties": false
+}
