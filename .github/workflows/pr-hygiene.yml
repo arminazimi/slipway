@@ -1,0 +1,40 @@
+name: pr-hygiene
+
+# Every pull request says `Closes #<issue>`, and a change to files a site owner sees (`_layouts/`,
+# `_includes/`, `assets/`, `schema/`, `skills/`) adds `changelog.d/<issue>.md`; the label
+# `no-changelog` skips the second rule. The check lives in tools/pr-hygiene/check.mjs.
+#
+# `pull_request_target` gives a fork's pull request a token that can comment. The job checks out the
+# default branch only and reads the pull request through the API, so no code from the pull request
+# ever runs with that token.
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+
+permissions: {}
+
+concurrency:
+  group: pr-hygiene-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    name: pull request hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      # One sticky comment.
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Check the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node tools/pr-hygiene/check.mjs
