@@ -50,8 +50,8 @@ function main() {
   if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary(percent, floor, table));
   const verdict = judge(percent, floor);
   console.log(verdict.message);
-  if (run.status !== 0) console.log("coverage: the tests themselves failed");
-  if (!dry && (!verdict.ok || run.status !== 0)) process.exit(1);
+  if (run.status !== 0) console.log("coverage: some tests failed here; npm run check is the gate for that");
+  if (!dry && !verdict.ok) process.exit(1);
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) main();
