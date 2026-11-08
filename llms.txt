@@ -1,0 +1,12 @@
+# Slipway
+
+> Index for language models and coding assistants interacting with the Slipway repository and site.
+
+## Resources
+
+- [Slipway GitHub Repository](https://github.com/arminazimi/slipway): Official source code and documentation.
+
+## AI Agent Indexing
+
+- Follows the standard /llms.txt specification for language model indexing.
+- Validated via [AccessGuard AI-Readiness Suite](https://ronanchnlps-bit.github.io/).
