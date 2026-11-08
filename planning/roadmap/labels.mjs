@@ -22,20 +22,20 @@ export const PRIORITIES = {
 
 export const TRACKS = {};
 
-/** Area labels per epic. Every epic in ROADMAP.md must appear here. */
+/** Area labels per epic. Every epic in ROADMAP.md must appear here, with `area: engine`, `area: theme`, or both (ADR 0025). */
 export const EPIC_AREAS = {
-  "E-foundation": ["area: core", "area: devops"],
+  "E-foundation": ["area: core", "area: devops", "area: engine"],
   "E-engine": ["area: engine"],
   "E-outputs": ["area: engine", "area: agent"],
-  "E-design": ["area: design"],
+  "E-design": ["area: design", "area: theme"],
   "E-layouts": ["area: theme"],
   "E-components": ["area: theme"],
   "E-quality": ["area: devops", "area: theme"],
-  "E-tooling": ["area: agent", "area: core"],
-  "E-evergreen": ["area: dogfood"],
-  "E-site": ["area: docs"],
-  "E-cleanup": ["area: core", "area: devops"],
-  "E-release": ["area: docs", "area: devops"],
+  "E-tooling": ["area: agent", "area: core", "area: engine"],
+  "E-evergreen": ["area: dogfood", "area: engine"],
+  "E-site": ["area: docs", "area: engine", "area: theme"],
+  "E-cleanup": ["area: core", "area: devops", "area: engine"],
+  "E-release": ["area: docs", "area: devops", "area: engine", "area: theme"],
 };
 
 /** Type label from a task key prefix. First match wins. */

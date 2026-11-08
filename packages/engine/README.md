@@ -1,8 +1,8 @@
-# @slipway/engine
+# Mizzen (`@velella/mizzen`)
 
-The docs engine: config, the content model, Markdown, navigation, the render host, outputs, diagnostics, and the CLI ([ADR 0022](../../docs/adr/0022-engine.md), [ADR 0023](../../docs/adr/0023-engine-theme-boundary.md)). The name is temporary; the final one comes when the engine gets its own repository.
+A deterministic docs engine with exact source positions: config, the content model, Markdown, navigation, the render host, outputs, diagnostics, and the CLI ([ADR 0022](../../docs/adr/0022-engine.md), [ADR 0023](../../docs/adr/0023-engine-theme-boundary.md)). It moves to its own repository, `velella-sh/mizzen`, after 0.3.0 (ADR 0025 in [docs/adr](../../docs/adr/README.md)).
 
-It knows nothing about the theme: nothing here imports from `packages/theme/`, and no Slipway name, color, or layout appears in it.
+It knows nothing about the theme: nothing here imports from `packages/theme/`, and no theme name, color, or layout appears in it. `tools/engine-boundary` enforces it.
 
 ## No build step
 
@@ -13,8 +13,8 @@ The source is TypeScript that Node runs directly through type stripping (Node 24
 From the repository root:
 
 - `npm run check` runs the tests below and the type check with everything else.
-- `npm test --workspace @slipway/engine` runs `node --test` on `test/**/*.test.ts`.
-- `npm run typecheck --workspace @slipway/engine` runs `tsc --noEmit`.
+- `npm test --workspace @velella/mizzen` runs `node --test` on `test/**/*.test.ts`.
+- `npm run typecheck --workspace @velella/mizzen` runs `tsc --noEmit`.
 
 ## Layout
 

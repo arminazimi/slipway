@@ -1,8 +1,10 @@
-# @slipway/theme
+# Lateen (`@velella/lateen`)
 
-Slipway's docs theme: layouts, chrome, components, design tokens, and styles ([ADR 0023](../../docs/adr/0023-engine-theme-boundary.md)). The engine reads it only by listing the folders below; adding a unit never edits a shared index file.
+A docs theme for people and agents, built on Mizzen: layouts, chrome, components, design tokens, and styles ([ADR 0023](../../docs/adr/0023-engine-theme-boundary.md)). The engine reads it only by listing the folders below; adding a unit never edits a shared index file.
 
-The theme may `import type` from `packages/engine/src/contracts/` and imports nothing else from the engine. Preact is a peer dependency, with `jsx: react-jsx` and `jsxImportSource: preact` in `tsconfig.json`.
+It moves to its own repository, `velella-sh/lateen`, after 0.3.0 ([ADR 0025](../../docs/adr/0025-mizzen-and-lateen.md)).
+
+The theme may `import type` from `@velella/mizzen/contracts`, by package name and never by relative path, and imports nothing else from the engine. Preact is a peer dependency, with `jsx: react-jsx` and `jsxImportSource: preact` in `tsconfig.json`.
 
 ## Folders
 
@@ -18,8 +20,8 @@ The theme may `import type` from `packages/engine/src/contracts/` and imports no
 
 From the repository root, `npm run check` runs the tests and the type check with everything else. For this package alone:
 
-- `npm test --workspace @slipway/theme`
-- `npm run typecheck --workspace @slipway/theme`
+- `npm test --workspace @velella/lateen`
+- `npm run typecheck --workspace @velella/lateen`
 
 ## Layout
 

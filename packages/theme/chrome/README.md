@@ -10,6 +10,6 @@ Example, `chrome/footer/index.ts`:
 import { h } from "preact";
 
 export default function footer() {
-  return h("footer", null, "Built with Slipway");
+  return h("footer", null, "Built with Lateen");
 }
 ```

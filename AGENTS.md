@@ -61,7 +61,7 @@ Up to 20 tasks run at once and merge in any order ([ADR 0023](docs/adr/0023-engi
 - **The engine owns** config, the content model, Markdown, navigation, the render host, outputs, diagnostics, and the CLI. **The theme owns** layouts, chrome, components, tokens, styles, and client islands.
 - **One folder or file per unit:** `packages/engine/src/outputs/<name>.ts`, `packages/engine/src/markdown/plugins/<name>.ts`, `packages/theme/layouts/<name>.ts`, `packages/theme/chrome/<name>/`, `packages/theme/components/<name>/`, `packages/theme/tokens/<group>.json`.
 - **Registries discover units by folder.** Adding a unit never edits a shared index file, the pipeline, or another unit.
-- **The engine knows nothing about the theme:** nothing in `packages/engine/` imports from `packages/theme/`, and the engine has no Slipway name, color, or layout. `quality.boundary` enforces it.
+- **The engine knows nothing about the theme:** nothing in `packages/engine/` imports from `packages/theme/`, and the engine has no Lateen name, color, or layout; it may use its own name, Mizzen ([ADR 0025](docs/adr/0025-mizzen-and-lateen.md)). `quality.boundary` enforces it.
 - **Contracts are frozen:** `packages/engine/src/contracts/` changes only through an ADR.
 - Touch only the files your issue lists; if another must change, stop and say why in the issue.
 

@@ -49,6 +49,14 @@ Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.
 4. The [release workflow](.github/workflows/release.yml) fails if the tag does not match the gemspec version, runs `npm run check`, and creates the GitHub release with that `CHANGELOG.md` section as its notes.
 5. Once the GitHub release exists, the workflow's `publish-gem` job builds `slipway-theme.gemspec` and pushes the gem to RubyGems with trusted publishing (the `rubygems` environment, no stored API key). Setting up that trusted publisher on rubygems.org is a one-time maintainer step.
 
+### Mizzen and Lateen
+
+`packages/engine` (`@velella/mizzen`, Apache-2.0) and `packages/theme` (`@velella/lateen`, MIT) are released on their own, never with a `v*` tag ([ADR 0025](docs/adr/0025-mizzen-and-lateen.md)):
+
+- Tags are `mizzen-vX.Y.Z` and `lateen-vX.Y.Z`; Mizzen is tagged first when both change.
+- Each package keeps its own `CHANGELOG.md`, `LICENSE`, `README.md`, `tsconfig.json`, and tests, and depends on nothing in the root `tools/`, so it can move to its own repository with `git filter-repo`.
+- Neither is published yet: the release tool for them is `tooling.release-tool`, and both move to `velella-sh` after 0.3.0.
+
 ## Proposing starters, blocks, and migrations
 
 Open an issue that names who the starter or block is for, links two or three real sites it should be able to build, and lists what it needs from the core theme.

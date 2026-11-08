@@ -1,15 +1,16 @@
 {
-  "name": "@slipway/engine",
+  "name": "@velella/mizzen",
   "version": "0.3.0-dev",
   "private": true,
-  "description": "The docs engine: config, content, Markdown, navigation, rendering, outputs, and diagnostics.",
-  "license": "MIT",
+  "description": "A deterministic docs engine with exact source positions.",
+  "license": "Apache-2.0",
   "type": "module",
   "engines": {
     "node": ">=24"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts/index.ts"
   },
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",

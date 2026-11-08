@@ -18,6 +18,10 @@ Decided on 2026-11-06 (ADR 0021 records it):
 3. **Theme, then standard.** First the theme reaches the acceptable level below and Evergreen moves to it; work on the agent-editable
    standard (spec, doctor on other generators) comes after 0.3.0.
 4. **Jekyll is removed in 0.3.0.** The last Jekyll version stays on branch `legacy/jekyll` and tag `v0.2.0`.
+5. **Mizzen and Lateen.** The engine is Mizzen (`@velella/mizzen`) and the theme is Lateen (`@velella/lateen`); after 0.3.0 they move to their
+   own repositories under `velella-sh` (ADR 0025). Older tasks still say `slipway.yml`, `slipway build`, or `@slipway/*`: read them with the
+   table in ADR 0025 (`mizzen.yml`, `mizzen build`, `@velella/mizzen`, `@velella/lateen`). Every task has `area: engine` or `area: theme`,
+   which decides where its issue goes on the day of the split.
 
 ## Milestones
 
@@ -47,7 +51,7 @@ and `area:`. `status: ready` marks a task whose dependencies are all closed.
 Every task issue shows three numbers:
 
 - **Wave**: 1 + the deepest wave among its dependencies. Wave 1 tasks can start on day one.
-- **Order**: its place in one global execution order (1 to 204): dependencies first, then priority, then position in this file.
+- **Order**: its place in one global execution order (1 to 216): dependencies first, then priority, then position in this file.
 - **Priority**: how much the release needs it.
 
 Rules that let up to 20 tasks run at once and merge in any order (ADR 0023):
@@ -126,6 +130,7 @@ The decisions behind 0.3.0 are written down, `packages/engine` and `packages/the
 | `engine.config-schema` | JSON Schema for `slipway.yml` | strong-agent | S | P0 | `foundation.contracts` |
 | `engine.config-load` | Load and validate `slipway.yml` into `SiteConfig` | strong-agent | S | P0 | `engine.config-schema`, `engine.diagnostics` |
 | `engine.diagnostics` | Diagnostics: one format with file and line, printed as text, JSON, or SARIF | strong-agent | S | P0 | `foundation.contracts` |
+| `engine.diagnostic-fix` | ADR 0027 and contract: a `fix` suggestion on diagnostics that have a safe fix | strong-agent | S | P1 | `engine.diagnostics`, `adr.source-spans` |
 | `engine.discover` | Discover content files, assets, and app-page folders | strong-agent | S | P0 | `foundation.contracts` |
 | `engine.frontmatter` | Parse front matter with positions | strong-agent | S | P0 | `foundation.contracts` |
 | `engine.markdown` | Markdown parser with positions and auto-discovered remark plugins | strong-agent | M | P0 | `foundation.contracts` |
@@ -134,6 +139,8 @@ The decisions behind 0.3.0 are written down, `packages/engine` and `packages/the
 | `engine.md-code` | Code fence meta: title, line marks, diff, and tab groups | strong-agent | S | P0 | `engine.markdown` |
 | `engine.md-links` | Rewrite links to `.md` files into page URLs | strong-agent | S | P1 | `engine.markdown`, `engine.permalink` |
 | `engine.md-html` | Markdown to HTML with a source position on every block element | strong-agent | M | P0 | `engine.markdown` |
+| `adr.source-spans` | ADR 0026: every block's source span has a start and an end line and column | strong-agent | S | P0 | `foundation.contracts` |
+| `engine.source-spans` | Full source spans on every block, and a lookup from block ID to span | strong-agent | M | P0 | `adr.source-spans`, `engine.md-html`, `output.sourcemap` |
 | `engine.title` | Page titles from front matter or the first heading, one `h1` | strong-agent | S | P1 | `engine.frontmatter`, `engine.md-html` |
 | `engine.permalink` | URL rules: pretty URLs, `permalink`, index pages, base path | strong-agent | S | P0 | `foundation.contracts` |
 | `engine.data` | Load `_data` files | free-agent | S | P1 | `foundation.contracts` |
@@ -198,6 +205,7 @@ From one site model, a build writes the HTML pages and every machine-readable fi
 | `output.app-pages` | Keep app pages out of search, llms files, twins, and the source map | strong-agent | S | P1 | `engine.assets` |
 | `output.redirects` | Redirect pages from `redirects` and `redirect_from` | free-agent | S | P2 | `engine.model` |
 | `output.manifest` | Build manifest for doctor and MCP | strong-agent | S | P1 | `engine.model` |
+| `output.build-hash` | Build hash in the manifest, and `mizzen verify` to check a build against it | strong-agent | S | P1 | `output.manifest`, `engine.cli` |
 | `output.page-json` | Per-page JSON for agents | strong-agent | S | P2 | `engine.model` |
 | `output.feed` | Atom feed of changed pages | free-agent | S | P3 | `engine.model` |
 | `output.pages-files` | GitHub Pages files: `.nojekyll` and `CNAME` | free-agent | XS | P1 | `engine.model` |
@@ -288,6 +296,9 @@ A three-column docs layout (sidebar, article, on-this-page) with a sticky header
 | `layout.breadcrumb` | Breadcrumbs | free-agent | S | P1 | `foundation.contracts`, `design.tokens-pipeline` |
 | `layout.pager` | Previous and next links | free-agent | S | P1 | `foundation.contracts`, `design.tokens-pipeline` |
 | `layout.page-footer` | Page footer: last updated, edit source, edit with your agent, feedback | strong-agent | S | P1 | `foundation.contracts`, `design.tokens-pipeline` |
+| `layout.block-actions` | Block actions: "Edit with your agent" on every block, with its exact source span | strong-agent | M | P0 | `engine.source-spans`, `layout.base` |
+| `layout.page-agent-menu` | Page agent menu: copy or view the Markdown, open it in Claude, ChatGPT, or Cursor | strong-agent | S | P0 | `output.twins`, `layout.base` |
+| `layout.calendar-dates` | "Last updated" in the Persian and Hijri calendars on Persian and Arabic pages | free-agent | S | P2 | `layout.page-footer` |
 | `layout.search` | Search dialog | strong-agent | M | P0 | `foundation.contracts`, `design.tokens-pipeline`, `output.search` |
 | `layout.search-shortcut` | Keyboard shortcuts for search: ⌘K, Ctrl+K, and / | free-agent | XS | P1 | `layout.search` |
 | `layout.theme-toggle` | Light, dark, and system theme switch | free-agent | S | P1 | `foundation.contracts`, `design.tokens-pipeline` |
@@ -379,6 +390,8 @@ CI proves the acceptable-level criteria on every pull request: Lighthouse at lea
 | `quality.build-fixtures` | Shared fixture build for every gate | strong-agent | S | P0 | `engine.cli`, `foundation.fixture` |
 | `quality.boundary` | Gate: the engine imports nothing from the theme | strong-agent | S | P0 | `foundation.engine-package` |
 | `quality.deterministic` | Gate: two builds are byte-identical | strong-agent | S | P0 | `quality.build-fixtures` |
+| `quality.twin-parity` | Gate: each page's Markdown twin has the same text as its HTML | strong-agent | S | P1 | `quality.build-fixtures`, `output.twins` |
+| `quality.agent-ui` | Gate: block actions and the page agent menu work by keyboard and stay inside the JS budget | free-agent | S | P1 | `quality.keyboard`, `quality.js-budget`, `layout.block-actions`, `layout.page-agent-menu` |
 | `quality.lighthouse` | Gate: Lighthouse at least 95 | strong-agent | M | P1 | `quality.build-fixtures`, `layout.doc`, `layout.home` |
 | `quality.axe` | Gate: zero axe violations | strong-agent | S | P1 | `quality.build-fixtures`, `layout.doc`, `layout.home` |
 | `quality.keyboard` | Gate: keyboard flows | strong-agent | M | P1 | `quality.build-fixtures`, `layout.doc`, `layout.search`, `layout.drawer`, `component.code-tabs` |
@@ -431,6 +444,7 @@ CI proves the acceptable-level criteria on every pull request: Lighthouse at lea
 | `tooling.twins-tool` | Twins tool on the engine; remove the Ruby version | free-agent | S | P1 | `output.twins` |
 | `tooling.mcp-config` | MCP config and token tools on engine sites | strong-agent | S | P1 | `engine.config-load`, `design.tokens-pipeline` |
 | `tooling.mcp-pages` | MCP page tools on engine sites | strong-agent | S | P1 | `engine.dev`, `output.redirects` |
+| `tooling.mcp-edit-block` | MCP `edit_block`: edit one block by ID and prove that only its span changed | strong-agent | M | P0 | `engine.source-spans`, `tooling.mcp-pages` |
 | `tooling.create-slipway` | `npm create slipway` makes an engine docs site | strong-agent | M | P0 | `engine.cli`, `tooling.action-deploy` |
 | `tooling.action-deploy` | GitHub Action: build with the engine and deploy to Pages | strong-agent | M | P0 | `engine.cli` |
 | `tooling.action-setup` | Setup Action without Ruby | free-agent | S | P1 | `tooling.action-deploy` |
@@ -511,6 +525,8 @@ Slipway's documentation site is built by the engine with the new theme and deplo
 | `site.config` | Build Slipway's site with the engine | strong-agent | S | P1 | `engine.cli`, `tooling.action-deploy` |
 | `site.nav` | Docs-only navigation for Slipway's site | free-agent | XS | P2 | `site.config` |
 | `site.home` | Slipway's home page | strong-agent | S | P2 | `site.config`, `layout.home`, `component.cards` |
+| `site.a11y-report` | WCAG 2.2 AA conformance page built from the gate results | strong-agent | S | P2 | `quality.axe`, `quality.keyboard`, `site.config` |
+| `site.perf-budget` | Performance budget page with the real numbers from the gates | free-agent | S | P2 | `quality.js-budget`, `quality.css-budget`, `quality.lighthouse`, `quality.build-time`, `site.config` |
 | `site.guides` | Rewrite the guides for the engine | strong-agent | M | P2 | `site.config` |
 | `site.components` | Component reference pages | strong-agent | M | P2 | `site.config`, `component.code-tabs`, `component.callout`, `component.cards` |
 | `site.config-ref` | Generated config reference | strong-agent | S | P2 | `engine.config-schema`, `site.config` |
