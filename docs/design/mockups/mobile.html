@@ -1,0 +1,451 @@
+<!doctype html>
+<!--
+  Mockup for #1086: the mobile views at 375 px.
+  Follows docs/design/brief.md.
+
+  Deviations from the brief (mockup only):
+  - Geist, Geist Mono and Vazirmatn are not bundled (no assets in this task). The font
+    stacks name them first and fall back to system fonts. The real theme self-hosts WOFF2.
+  - No JavaScript. Each state (drawer open or closed, search open, on-this-page open) is
+    drawn as its own static frame so all of them can be judged at once. The real drawer and
+    palette need a little script; "on this page" is a native <details> element and needs none.
+  - The page around the frames uses fixed dark colors; only the frames use the two palettes.
+  - The hover popover is not shown: there is no hover on touch. Symbols open on tap in the
+    real theme (to be designed with the reference mockup, #1085).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile mockup · Slipway docs theme</title>
+<style>
+  :root { color-scheme: dark; }
+  [data-theme="night"] {
+    --bg:#1f1f28; --surface:#2a2a37; --overlay:#363646; --highlight:#54546d; --muted:#727169; --subtle:#c8c093; --text:#dcd7ba;
+    --accent:#7e9cd8; --accent-text:#7fb4ca; --on-accent:#1f1f28; --string:#98bb6c; --function:#7e9cd8; --type:#7aa89f; --variable:#e6c384; --keyword:#957fb8;
+    --scrim: rgb(0 0 0 / .55); color-scheme: dark;
+  }
+  [data-theme="day"] {
+    --bg:#eceff4; --surface:#e5e9f0; --overlay:#d8dee9; --highlight:#c5cddc; --muted:#8892a6; --subtle:#4c566a; --text:#2e3440;
+    --accent:#5e81ac; --accent-text:#4c6f9a; --on-accent:#ffffff; --string:#6c8a52; --function:#3f7f8c; --type:#4f8a88; --variable:#b07d2b; --keyword:#5e81ac;
+    --scrim: rgb(46 52 64 / .4); color-scheme: light;
+  }
+  :root {
+    --font-body:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font-code:"Geist Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --font-fa:"Vazirmatn","Geist",ui-sans-serif,system-ui,sans-serif;
+    --r-ctl:6px; --r-card:10px;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  body { margin:0; font:400 1rem/1.65 var(--font-body); background:#16161d; color:#dcd7ba; }
+  .page-h { padding:1.5rem 1.5rem 0; max-inline-size:90rem; margin-inline:auto; }
+  .page-h h1 { margin:0 0 .5rem; font-size:1.5rem; letter-spacing:-.02em; }
+  .page-h p { margin:0; color:#c8c093; max-inline-size:46rem; }
+  .row { padding:1.5rem; max-inline-size:100%; }
+  .row > h2 { margin:0 0 1rem; font-size:1rem; color:#c8c093; font-weight:600; letter-spacing:0; }
+  .strip { display:flex; gap:1.5rem; overflow-x:auto; padding-block-end:1rem; }
+  .fr { margin:0; flex:none; }
+  .fr figcaption { font-size:.8125rem; color:#c8c093; margin-block-end:.5rem; }
+  /* the frame is exactly 375 px wide */
+  .phone { position:relative; inline-size:375px; block-size:720px; overflow:hidden; overflow-y:auto;
+    background:var(--bg); color:var(--text); border:1px solid var(--highlight); border-radius:var(--r-card); font-size:1rem; }
+  .phone[dir="rtl"] { font-family:var(--font-fa); line-height:1.9; }
+  .phone a { color:var(--accent-text); text-decoration:none; }
+  .phone svg { inline-size:1.125rem; block-size:1.125rem; flex:none; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+  .phone code, .phone kbd, .phone pre { font-family:var(--font-code); font-feature-settings:"liga" 0; }
+  .phone h1,.phone h2,.phone h3 { margin:0; letter-spacing:-.02em; line-height:1.2; }
+  .phone p { margin:0; }
+  .phone :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--r-ctl); }
+  .phone { --border: color-mix(in srgb, var(--highlight) 55%, var(--bg)); }
+
+  .hd { position:sticky; inset-block-start:0; z-index:2; display:flex; align-items:center; gap:.5rem; block-size:3.5rem; padding-inline:.5rem 1rem; background:var(--bg); border-block-end:1px solid var(--border); }
+  .logo { display:inline-flex; align-items:center; gap:.5rem; font-weight:650; color:var(--text) !important; letter-spacing:-.01em; }
+  .mark { inline-size:1.4rem; block-size:1.4rem; border-radius:5px; background:var(--accent); color:var(--on-accent); display:grid; place-items:center; font:700 .8rem var(--font-code); }
+  .end { margin-inline-start:auto; display:flex; }
+  .ib { all:unset; cursor:pointer; inline-size:2.75rem; block-size:2.75rem; display:grid; place-items:center; color:var(--subtle); border-radius:var(--r-ctl); box-sizing:border-box; }
+  .ib:hover { background:var(--overlay); color:var(--text); }
+  .ib.sm { inline-size:2rem; block-size:2rem; }
+  .ib:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+
+  .art { padding:1.25rem 1.25rem 2rem; }
+  .crumb { display:flex; align-items:center; gap:.25rem; font-size:.8125rem; color:var(--subtle); margin-block-end:.5rem; }
+  .crumb svg { inline-size:.8rem; block-size:.8rem; }
+  [dir="rtl"] .crumb svg, [dir="rtl"] .otp summary svg:last-child, [dir="rtl"] .tabs + nav svg { transform:scaleX(-1); }
+  .art h1 { font-size:2rem; }
+  .chip { display:inline-flex; align-items:center; gap:.35rem; margin-block:.75rem 1rem; padding:.1rem .6rem; font-size:.8125rem; color:var(--subtle); border:1px solid var(--border); border-radius:99px; }
+  .chip svg { inline-size:.85rem; block-size:.85rem; color:var(--string); }
+  .art h2 { font-size:1.5rem; margin-block:1.5rem .5rem; }
+  .art code { font-size:.875em; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:0 .3em; }
+  .lead { color:var(--subtle); margin-block-end:1rem; }
+
+  /* on this page: a disclosure at the top of the article (brief: below 64rem it folds into a list) */
+  .otp { margin-block-end:1rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-ctl); }
+  .otp summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:.5rem; min-block-size:2.75rem; padding-inline:.75rem; font-size:.9375rem; color:var(--subtle); }
+  .otp summary::-webkit-details-marker { display:none; }
+  .otp summary svg:last-child { margin-inline-start:auto; transform:rotate(90deg); transition:transform .15s; }
+  [dir="rtl"] .otp summary svg:last-child { transform:scaleX(-1) rotate(90deg); }
+  .otp[open] summary svg:last-child { transform:rotate(-90deg); }
+  [dir="rtl"] .otp[open] summary svg:last-child { transform:scaleX(-1) rotate(-90deg); }
+  .otp ol { list-style:none; margin:0; padding:0 0 .5rem; border-block-start:1px solid var(--border); }
+  .otp li a { display:flex; align-items:center; min-block-size:2.75rem; padding-inline:.75rem 1rem; color:var(--subtle); font-size:.9375rem; border-inline-start:3px solid transparent; }
+  .otp li a[aria-current] { color:var(--accent-text); background:var(--overlay); border-inline-start-color:var(--accent); }
+
+  .code { margin-block:1rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-card); overflow:hidden; }
+  .code-h { display:flex; align-items:center; justify-content:space-between; padding-inline:.75rem .25rem; background:var(--overlay); font:400 .8125rem var(--font-code); color:var(--subtle); }
+  .code pre { margin:0; padding:.75rem; overflow-x:auto; font-size:.875rem; line-height:1.8; }
+  .code code { background:none; border:0; padding:0; font-size:inherit; }
+  .code .c { color:var(--function); } .code .s { color:var(--string); }
+
+  .callout { background:var(--overlay); border-inline-start:3px solid var(--accent); border-radius:var(--r-ctl); padding:.75rem 1rem; font-size:.9375rem; }
+  .callout b { display:flex; align-items:center; gap:.4rem; color:var(--accent-text); margin-block-end:.15rem; }
+
+  .pager { display:grid; gap:.75rem; margin-block-start:2rem; }
+  .pager a { display:block; padding:.75rem 1rem; min-block-size:2.75rem; border:1px solid var(--border); border-radius:var(--r-card); color:var(--text); font-weight:600; }
+  .pager small { display:block; font-weight:400; font-size:.8125rem; color:var(--subtle); }
+
+  .scrim { position:absolute; inset:0; z-index:3; background:var(--scrim); }
+  .drawer { position:absolute; inset-block:0; inset-inline-start:0; z-index:4; inline-size:min(20rem, 85%); background:var(--bg); border-inline-end:1px solid var(--border); display:flex; flex-direction:column; box-shadow:0 8px 24px rgb(0 0 0 / .35); }
+  .drawer-h { display:flex; align-items:center; justify-content:space-between; block-size:3.5rem; padding-inline:1rem .5rem; border-block-end:1px solid var(--border); flex:none; }
+  .tabs { display:flex; gap:.25rem; padding:.5rem .75rem 0; border-block-end:1px solid var(--border); flex:none; }
+  .tabs a { padding:.5rem .6rem; min-block-size:2.75rem; display:flex; align-items:center; color:var(--subtle) !important; font-size:.9375rem; border-block-end:2px solid transparent; margin-block-end:-1px; }
+  .tabs a[aria-current] { color:var(--accent-text) !important; border-block-end-color:var(--accent); }
+  .drawer nav { flex:1; overflow-y:auto; padding:.75rem; }
+  .drawer h3 { font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--subtle); padding:.75rem .5rem .25rem; }
+  [dir="rtl"] .drawer h3 { letter-spacing:0; }
+  .drawer ul { list-style:none; margin:0; padding:0; }
+  .drawer li a { display:flex; align-items:center; min-block-size:2.75rem; padding-inline:.5rem; border-radius:var(--r-ctl); color:var(--subtle); font-size:.9375rem; }
+  .drawer li a[aria-current] { background:var(--overlay); color:var(--accent-text); font-weight:600; }
+  .drawer-f { display:flex; gap:1rem; padding:.75rem 1rem; border-block-start:1px solid var(--border); font-size:.8125rem; color:var(--subtle); flex:none; }
+
+  .pal { position:absolute; inset-inline:.5rem; inset-block-start:.5rem; z-index:4; background:var(--bg); border:1px solid var(--highlight); border-radius:var(--r-card); box-shadow:0 8px 24px rgb(0 0 0 / .35); overflow:hidden; }
+  .pal-in { display:flex; align-items:center; gap:.6rem; min-block-size:3.25rem; padding-inline:.75rem .25rem; color:var(--subtle); border-block-end:1px solid var(--border); }
+  .pal-in span { flex:1; font-size:1rem; }
+  .pal-res { padding:.25rem .5rem .5rem; }
+  .pal h3 { font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:var(--subtle); padding:.6rem .5rem .25rem; }
+  [dir="rtl"] .pal h3 { letter-spacing:0; }
+  .pal ul { list-style:none; margin:0; padding:0; }
+  .pal li { display:flex; align-items:center; gap:.6rem; min-block-size:2.75rem; padding-inline:.5rem; border-radius:var(--r-ctl); font-size:.9375rem; color:var(--text); }
+  .pal li small { margin-inline-start:auto; color:var(--subtle); font-size:.8125rem; }
+  .pal li kbd { margin-inline-start:auto; font-size:.75rem; color:var(--subtle); background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:0 .35rem; line-height:1.4rem; }
+  .pal li[aria-selected] { background:var(--overlay); color:var(--accent-text); }
+  .pal li svg { color:var(--subtle); }
+
+  .notes { max-inline-size:90rem; margin-inline:auto; padding:0 1.5rem 2rem; color:#c8c093; font-size:.9375rem; }
+  .notes h2 { font-size:1rem; margin:0 0 .5rem; color:#dcd7ba; }
+  .notes ul { margin:0; padding-inline-start:1.25rem; }
+</style>
+</head>
+<body>
+<div class="page-h">
+  <h1>Mobile views at 375 px</h1>
+  <p>The guide page below 48 rem: drawer navigation, search, and the on-this-page menu. Night (Kanagawa) is the default and comes first, then day (Nord), then right-to-left in night.</p>
+</div>
+<section class="row"><h2>Night</h2><div class="strip"><figure class="fr"><figcaption>Drawer closed</figcaption><div class="phone" data-theme="night" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main></div></figure><figure class="fr"><figcaption>Drawer open</figcaption><div class="phone" data-theme="night" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main><div class="scrim"></div>
+  <aside class="drawer" aria-label="Navigation">
+    <div class="drawer-h"><a class="logo" href="#"><span class="mark">S</span>Evergreen</a><button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="tabs"><a href="#">Docs</a><a href="#" aria-current="page">Guides</a><a href="#">API</a></div>
+    <nav><h3>Start</h3><ul><li><a href="#">Introduction</a></li><li><a href="#">Install</a></li><li><a href="#">Your first site</a></li></ul><h3>Guides</h3><ul><li><a href="#" aria-current="page">Configure a site</a></li><li><a href="#">Navigation</a></li><li><a href="#">Write a page</a></li><li><a href="#">Deploy</a></li></ul><h3>Reference</h3><ul><li><a href="#">Config options</a></li><li><a href="#">Front matter</a></li><li><a href="#">Layouts</a></li></ul></nav>
+    <div class="drawer-f"><span>EN</span><span>فارسی</span><span>GitHub</span></div>
+  </aside></div></figure><figure class="fr"><figcaption>Search</figcaption><div class="phone" data-theme="night" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main><div class="scrim"></div>
+  <div class="pal" role="dialog" aria-label="Search">
+    <div class="pal-in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><button class="ib sm" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pal-res"><h3>Guides</h3><ul><li aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Configure a site</span><small>Guides</small></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Set the title</span><small>Configure a site</small></li></ul><h3>API</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>title</span><small>Config options</small></li></ul><h3>Actions</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Copy page as Markdown</span><kbd>m</kbd></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Switch theme</span><kbd>t</kbd></li></ul></div>
+  </div></div></figure><figure class="fr"><figcaption>On this page</figcaption><div class="phone" data-theme="night" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp" open>
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main></div></figure></div></section>
+<section class="row"><h2>Day</h2><div class="strip"><figure class="fr"><figcaption>Drawer closed</figcaption><div class="phone" data-theme="day" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main></div></figure><figure class="fr"><figcaption>Drawer open</figcaption><div class="phone" data-theme="day" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main><div class="scrim"></div>
+  <aside class="drawer" aria-label="Navigation">
+    <div class="drawer-h"><a class="logo" href="#"><span class="mark">S</span>Evergreen</a><button class="ib" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="tabs"><a href="#">Docs</a><a href="#" aria-current="page">Guides</a><a href="#">API</a></div>
+    <nav><h3>Start</h3><ul><li><a href="#">Introduction</a></li><li><a href="#">Install</a></li><li><a href="#">Your first site</a></li></ul><h3>Guides</h3><ul><li><a href="#" aria-current="page">Configure a site</a></li><li><a href="#">Navigation</a></li><li><a href="#">Write a page</a></li><li><a href="#">Deploy</a></li></ul><h3>Reference</h3><ul><li><a href="#">Config options</a></li><li><a href="#">Front matter</a></li><li><a href="#">Layouts</a></li></ul></nav>
+    <div class="drawer-f"><span>EN</span><span>فارسی</span><span>GitHub</span></div>
+  </aside></div></figure><figure class="fr"><figcaption>Search</figcaption><div class="phone" data-theme="day" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main><div class="scrim"></div>
+  <div class="pal" role="dialog" aria-label="Search">
+    <div class="pal-in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>Search docs</span><button class="ib sm" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pal-res"><h3>Guides</h3><ul><li aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Configure a site</span><small>Guides</small></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Set the title</span><small>Configure a site</small></li></ul><h3>API</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>title</span><small>Config options</small></li></ul><h3>Actions</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Copy page as Markdown</span><kbd>m</kbd></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>Switch theme</span><kbd>t</kbd></li></ul></div>
+  </div></div></figure><figure class="fr"><figcaption>On this page</figcaption><div class="phone" data-theme="day" lang="en" dir="ltr"><header class="hd">
+    <button class="ib" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="Search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">Guides <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>Configure a site</span></nav>
+    <h1>Configure a site</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>4/4 examples tested</p>
+    <details class="otp" open>
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>On this page<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">Set the title</a></li><li><a href="#">Choose a layout</a></li><li><a href="#">Add navigation</a></li><li><a href="#">Turn on search</a></li><li><a href="#">Next steps</a></li></ol>
+    </details>
+    <p class="lead">Every option lives in <code>_config.yml</code>. Start with the defaults and change one thing at a time.</p>
+    <h2>Set the title</h2>
+    <p>Set <code>title</code> and <code>description</code>. They appear in the header, the page title and social cards.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"Docs for builders"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Tip</b>Changes show after the next build.</div>
+    <div class="pager"><a href="#"><small>Previous</small>Install</a><a href="#"><small>Next</small>Navigation</a></div>
+  </main></div></figure></div></section>
+<section class="row"><h2>Right-to-left, night (Persian)</h2><div class="strip"><figure class="fr"><figcaption>Drawer closed</figcaption><div class="phone" data-theme="night" lang="fa" dir="rtl"><header class="hd">
+    <button class="ib" aria-label="منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="جستجو"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">راهنما <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>پیکربندی سایت</span></nav>
+    <h1>پیکربندی سایت</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>۴ از ۴ نمونه آزمایش شده</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>در این صفحه<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">تعیین عنوان</a></li><li><a href="#">انتخاب قالب</a></li><li><a href="#">افزودن ناوبری</a></li><li><a href="#">روشن کردن جستجو</a></li><li><a href="#">گام بعدی</a></li></ol>
+    </details>
+    <p class="lead">همه گزینه‌ها در <code>_config.yml</code> هستند. با مقدارهای پیش‌فرض شروع کنید و هر بار یک چیز را عوض کنید.</p>
+    <h2>تعیین عنوان</h2>
+    <p><code>title</code> و <code>description</code> را تنظیم کنید. در هدر، عنوان صفحه و کارت‌های شبکه‌های اجتماعی دیده می‌شوند.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"مستندات برای سازندگان"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>نکته</b>تغییرها پس از ساخت بعدی دیده می‌شوند.</div>
+    <div class="pager"><a href="#"><small>قبلی</small>نصب</a><a href="#"><small>بعدی</small>ناوبری</a></div>
+  </main></div></figure><figure class="fr"><figcaption>Drawer open</figcaption><div class="phone" data-theme="night" lang="fa" dir="rtl"><header class="hd">
+    <button class="ib" aria-label="منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="جستجو"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">راهنما <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>پیکربندی سایت</span></nav>
+    <h1>پیکربندی سایت</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>۴ از ۴ نمونه آزمایش شده</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>در این صفحه<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">تعیین عنوان</a></li><li><a href="#">انتخاب قالب</a></li><li><a href="#">افزودن ناوبری</a></li><li><a href="#">روشن کردن جستجو</a></li><li><a href="#">گام بعدی</a></li></ol>
+    </details>
+    <p class="lead">همه گزینه‌ها در <code>_config.yml</code> هستند. با مقدارهای پیش‌فرض شروع کنید و هر بار یک چیز را عوض کنید.</p>
+    <h2>تعیین عنوان</h2>
+    <p><code>title</code> و <code>description</code> را تنظیم کنید. در هدر، عنوان صفحه و کارت‌های شبکه‌های اجتماعی دیده می‌شوند.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"مستندات برای سازندگان"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>نکته</b>تغییرها پس از ساخت بعدی دیده می‌شوند.</div>
+    <div class="pager"><a href="#"><small>قبلی</small>نصب</a><a href="#"><small>بعدی</small>ناوبری</a></div>
+  </main><div class="scrim"></div>
+  <aside class="drawer" aria-label="Navigation">
+    <div class="drawer-h"><a class="logo" href="#"><span class="mark">S</span>Evergreen</a><button class="ib" aria-label="بستن"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="tabs"><a href="#">Docs</a><a href="#" aria-current="page">راهنما</a><a href="#">API</a></div>
+    <nav><h3>شروع</h3><ul><li><a href="#">معرفی</a></li><li><a href="#">نصب</a></li><li><a href="#">اولین سایت</a></li></ul><h3>راهنما</h3><ul><li><a href="#" aria-current="page">پیکربندی سایت</a></li><li><a href="#">ناوبری</a></li><li><a href="#">نوشتن صفحه</a></li><li><a href="#">انتشار</a></li></ul><h3>مرجع</h3><ul><li><a href="#">گزینه‌های پیکربندی</a></li><li><a href="#">فرانت‌متر</a></li><li><a href="#">قالب‌ها</a></li></ul></nav>
+    <div class="drawer-f"><span>EN</span><span>فارسی</span><span>GitHub</span></div>
+  </aside></div></figure><figure class="fr"><figcaption>Search</figcaption><div class="phone" data-theme="night" lang="fa" dir="rtl"><header class="hd">
+    <button class="ib" aria-label="منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="جستجو"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">راهنما <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>پیکربندی سایت</span></nav>
+    <h1>پیکربندی سایت</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>۴ از ۴ نمونه آزمایش شده</p>
+    <details class="otp">
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>در این صفحه<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">تعیین عنوان</a></li><li><a href="#">انتخاب قالب</a></li><li><a href="#">افزودن ناوبری</a></li><li><a href="#">روشن کردن جستجو</a></li><li><a href="#">گام بعدی</a></li></ol>
+    </details>
+    <p class="lead">همه گزینه‌ها در <code>_config.yml</code> هستند. با مقدارهای پیش‌فرض شروع کنید و هر بار یک چیز را عوض کنید.</p>
+    <h2>تعیین عنوان</h2>
+    <p><code>title</code> و <code>description</code> را تنظیم کنید. در هدر، عنوان صفحه و کارت‌های شبکه‌های اجتماعی دیده می‌شوند.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"مستندات برای سازندگان"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>نکته</b>تغییرها پس از ساخت بعدی دیده می‌شوند.</div>
+    <div class="pager"><a href="#"><small>قبلی</small>نصب</a><a href="#"><small>بعدی</small>ناوبری</a></div>
+  </main><div class="scrim"></div>
+  <div class="pal" role="dialog" aria-label="جستجو">
+    <div class="pal-in"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>جستجو در مستندات</span><button class="ib sm" aria-label="بستن"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <div class="pal-res"><h3>راهنما</h3><ul><li aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>پیکربندی سایت</span><small>راهنما</small></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>تعیین عنوان</span><small>پیکربندی سایت</small></li></ul><h3>API</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>title</span><small>گزینه‌های پیکربندی</small></li></ul><h3>اقدام‌ها</h3><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>کپی صفحه به‌صورت Markdown</span><kbd>m</kbd></li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span>تغییر پوسته</span><kbd>t</kbd></li></ul></div>
+  </div></div></figure><figure class="fr"><figcaption>On this page</figcaption><div class="phone" data-theme="night" lang="fa" dir="rtl"><header class="hd">
+    <button class="ib" aria-label="منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <a class="logo" href="#"><span class="mark">S</span>Evergreen</a>
+    <span class="end">
+      <button class="ib" aria-label="جستجو"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="ib" aria-label="Theme"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg></button>
+    </span>
+  </header><main class="art">
+    <nav class="crumb" aria-label="Breadcrumb">راهنما <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg> <span>پیکربندی سایت</span></nav>
+    <h1>پیکربندی سایت</h1>
+    <p class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>۴ از ۴ نمونه آزمایش شده</p>
+    <details class="otp" open>
+      <summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>در این صفحه<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary>
+      <ol><li><a href="#" aria-current="location">تعیین عنوان</a></li><li><a href="#">انتخاب قالب</a></li><li><a href="#">افزودن ناوبری</a></li><li><a href="#">روشن کردن جستجو</a></li><li><a href="#">گام بعدی</a></li></ol>
+    </details>
+    <p class="lead">همه گزینه‌ها در <code>_config.yml</code> هستند. با مقدارهای پیش‌فرض شروع کنید و هر بار یک چیز را عوض کنید.</p>
+    <h2>تعیین عنوان</h2>
+    <p><code>title</code> و <code>description</code> را تنظیم کنید. در هدر، عنوان صفحه و کارت‌های شبکه‌های اجتماعی دیده می‌شوند.</p>
+    <div class="code" dir="ltr"><div class="code-h"><span>_config.yml</span><button class="ib sm" aria-label="Copy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><pre><code><span class="c">title</span>: <span class="s">"Evergreen"</span>
+<span class="c">description</span>: <span class="s">"مستندات برای سازندگان"</span></code></pre></div>
+    <div class="callout"><b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>نکته</b>تغییرها پس از ساخت بعدی دیده می‌شوند.</div>
+    <div class="pager"><a href="#"><small>قبلی</small>نصب</a><a href="#"><small>بعدی</small>ناوبری</a></div>
+  </main></div></figure></div></section>
+<div class="notes">
+  <h2>What this proves</h2>
+  <ul>
+    <li>Header is 3.5 rem: menu, logo, search, theme. Tap targets are 44 px (2.75 rem) or larger.</li>
+    <li>The sidebar becomes a drawer from the inline-start edge, with the section tabs on top and the current page marked by an overlay fill and accent text.</li>
+    <li>Search opens as a full-width palette with API, Guides, and Actions groups. The <kbd>/</kbd> shortcut is shown only where a keyboard exists, so the header shows an icon.</li>
+    <li>On this page folds into a disclosure at the top of the article, as the brief says. Moving to the right-to-left frame mirrors the drawer, the arrows, and the active-item bar without any other change.</li>
+    <li>Code stays unwrapped and scrolls inside its block; the page itself never scrolls sideways.</li>
+  </ul>
+</div>
+</body>
+</html>
