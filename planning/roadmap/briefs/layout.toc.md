@@ -4,9 +4,9 @@ The right column lists `h2` and `h3` headings of the page; on narrow screens it 
 ## Files
 
 **Create**
-- `packages/theme/chrome/toc/index.tsx`
+- `packages/theme/chrome/toc/index.ts`
 - `packages/theme/chrome/toc/style.css`
-- `packages/theme/test/chrome-toc.test.tsx`
+- `packages/theme/test/chrome-toc.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
