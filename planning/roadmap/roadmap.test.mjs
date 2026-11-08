@@ -160,9 +160,9 @@ test("the real ROADMAP.md and briefs build without errors", () => {
 test("the preview counts issues per wave and lane and shows sample bodies", () => {
   const result = buildIssues(real, loadBriefs());
   const text = preview(result);
-  assert.match(text, /- Issues: \*\*216\*\* \(12 epics, 204 tasks\)/);
+  assert.match(text, /- Issues: \*\*228\*\* \(12 epics, 216 tasks\)/);
   assert.match(text, /Tasks per wave: wave 1: \d+/);
-  assert.match(text, /\| v0\.3\.0 \| 2026-11-09 → 2027-01-31 \| 12 \| 204 \|/);
+  assert.match(text, /\| v0\.3\.0 \| 2026-11-09 → 2027-01-31 \| 12 \| 216 \|/);
   assert.match(text, /### Epic: Foundations and frozen contracts/);
 });
 

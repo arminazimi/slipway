@@ -1,8 +1,8 @@
 {
-  "name": "@slipway/theme",
+  "name": "@velella/lateen",
   "version": "0.3.0-dev",
   "private": true,
-  "description": "Slipway's docs theme: layouts, chrome, components, design tokens, and styles.",
+  "description": "A docs theme for people and agents, built on Mizzen.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -14,6 +14,9 @@
   "scripts": {
     "test": "node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@velella/mizzen": "0.3.0-dev"
   },
   "peerDependencies": {
     "preact": "^10.0.0"

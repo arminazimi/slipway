@@ -26,7 +26,7 @@ const DEFAULT_DONT = [
   "Do not expand scope beyond this issue; open a follow-up instead.",
   "Do not edit files outside the Files list. If another file must change, stop and say why in this issue.",
   "Do not change a frozen contract (`packages/engine/src/contracts/`, report schema, check IDs, config schema) without an ADR.",
-  "Do not import Slipway names, colors, or layouts into `packages/engine/`: the engine knows nothing about the theme.",
+  "Do not import Lateen names, colors, or layouts into `packages/engine/`: the engine knows nothing about the theme.",
   "Do not add a runtime dependency without saying why in the pull request.",
 ];
 

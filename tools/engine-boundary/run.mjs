@@ -2,8 +2,8 @@
 //
 //   node tools/engine-boundary/run.mjs [dir]    scan dir (default packages/engine); exit 1 on any violation
 //
-// Fails when a source file imports from packages/theme (or @slipway/theme), or when a string or comment names
-// Slipway, a theme color, or a layout. "Slipway" is allowed only in package.json and README.md until the engine is renamed.
+// Fails when a source file imports from packages/theme (or @velella/lateen), or when any file names Lateen, a theme
+// color, or a layout (ADR 0025: the engine may contain its own name, Mizzen, never the theme's).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, basename, extname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 const root = join(fileURLToPath(import.meta.url), "../../..");
 const SOURCE = new Set([".ts", ".mts", ".cts", ".js", ".mjs", ".cjs", ".json"]);
 const SKIP_DIRS = new Set(["node_modules", "dist", ".git"]);
-const SLIPWAY_ALLOWED = new Set(["package.json", "README.md"]);
+const NAME_ALLOWED = new Set(["package.json", "README.md"]);
 
 /** Theme palette names; the engine has no reason to spell them. */
 export const themeColors = ["kanagawa", "nord"];
@@ -20,7 +20,7 @@ export const baseLayouts = ["landing", "doc-layout", "home-layout"];
 
 /** Specifiers: `from "x"`, `import "x"`, `import("x")`, `require("x")`, `export ... from "x"`. */
 const IMPORT = /(?:\b(?:from|import|require)\s*\(?\s*)(["'`])([^"'`\n]+)\1/g;
-const THEME_SPECIFIER = /(?:^|[\\/])packages[\\/]theme(?:[\\/]|$)|^@slipway\/theme(?:\/|$)|(?:^|[\\/])theme[\\/](?:src|layouts|components|chrome|styles|tokens)(?:[\\/]|$)/;
+const THEME_SPECIFIER = /(?:^|[\\/])packages[\\/]theme(?:[\\/]|$)|^@velella\/lateen(?:\/|$)|(?:^|[\\/])theme[\\/](?:src|layouts|components|chrome|styles|tokens)(?:[\\/]|$)/;
 
 function walk(dir, out = []) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
@@ -55,8 +55,8 @@ export function scan(dir = join(root, "packages/engine"), repo = root) {
         for (const m of line.matchAll(IMPORT)) if (THEME_SPECIFIER.test(m[2])) add("imports-theme");
         if (hex.test(line)) add("theme-color");
       }
-      if (/slipway/i.test(line) && !SLIPWAY_ALLOWED.has(basename(file))) add("slipway-name");
-      if (nameRe.test(line) && !SLIPWAY_ALLOWED.has(basename(file))) add("theme-name");
+      if (/lateen/i.test(line)) add("theme-product-name");
+      if (nameRe.test(line) && !NAME_ALLOWED.has(basename(file))) add("theme-name");
     });
   }
   return found;
