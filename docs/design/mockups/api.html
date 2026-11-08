@@ -1,0 +1,659 @@
+<!doctype html>
+<!--
+  Mockup for #1085: a reference page (endpoint, parameter table, code samples
+  in several languages). Follows docs/design/brief.md.
+
+  Deviations from the brief and the issue (mockup only):
+  - Content: the endpoint, fields, and samples are invented for the mockup.
+    No fixture site exists yet (issue #1033).
+  - Geist, Geist Mono and Vazirmatn are not bundled; the font stacks name them
+    first and fall back to system fonts. The real theme self-hosts WOFF2 files.
+  - The code is colored by hand with span classes. The real theme highlights
+    at build time.
+  - Inline JavaScript drives the mockup toggles, the language switch, the
+    palette, and the mobile drawer. The real page needs script only for the
+    language memory, the palette, and the theme switch.
+  - The Persian text covers the title, navigation, and parameter table only.
+-->
+<html lang="en" dir="ltr" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reference mockup · Slipway docs theme</title>
+<style>
+  /* ---------- tokens (brief: Color) ---------- */
+  :root, [data-theme="night"] {
+    --bg: #1f1f28; --surface: #2a2a37; --overlay: #363646; --highlight: #54546d;
+    --muted: #727169; --subtle: #c8c093; --text: #dcd7ba;
+    --accent: #7e9cd8; --accent-text: #7fb4ca; --on-accent: #1f1f28;
+    --keyword: #957fb8; --function: #7e9cd8; --string: #98bb6c;
+    --number: #ffa066; --type: #7aa89f; --variable: #e6c384;
+    color-scheme: dark;
+  }
+  [data-theme="day"] {
+    --bg: #eceff4; --surface: #e5e9f0; --overlay: #d8dee9; --highlight: #c5cddc;
+    --muted: #8892a6; --subtle: #4c566a; --text: #2e3440;
+    --accent: #5e81ac; --accent-text: #4c6f9a; --on-accent: #ffffff;
+    --keyword: #5e81ac; --function: #3f7f8c; --string: #6c8a52;
+    --number: #94638a; --type: #4f8a88; --variable: #b07d2b;
+    color-scheme: light;
+  }
+  :root {
+    --border: color-mix(in srgb, var(--highlight) 55%, var(--bg));
+    --font-body: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-code: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --font-fa: "Vazirmatn", "Geist", ui-sans-serif, system-ui, sans-serif;
+    --r-ctl: 6px; --r-card: 10px;
+    --header-h: 3.5rem; --page-max: 90rem; --side-w: 17rem; --art-w: 46rem; --toc-w: 14rem;
+  }
+
+  /* ---------- base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { font-size: 16px; scroll-padding-block-start: calc(var(--header-h) + 1rem); }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.65 var(--font-body); -webkit-font-smoothing: antialiased; }
+  [dir="rtl"] body { font-family: var(--font-fa); line-height: 1.9; }
+  a { color: var(--accent-text); text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-ctl); }
+  code, kbd, pre { font-family: var(--font-code); font-feature-settings: "liga" 0; }
+  h1, h2, h3 { margin: 0; letter-spacing: -0.02em; line-height: 1.25; }
+  p { margin: 0; }
+  svg { inline-size: 1em; block-size: 1em; flex: none; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  kbd { display: inline-block; min-inline-size: 1.4rem; padding: 0 .35rem; text-align: center; font-size: .75rem; line-height: 1.4rem; color: var(--subtle); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; }
+  [dir="rtl"] .arrow { transform: scaleX(-1); }
+
+  /* ---------- mockup controls ---------- */
+  .mock-bar { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; padding: .5rem 1rem; background: var(--surface); border-block-end: 1px solid var(--border); font-size: .8125rem; color: var(--subtle); }
+  .mock-bar strong { color: var(--text); font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-ctl); overflow: hidden; }
+  .seg button { all: unset; cursor: pointer; padding: .2rem .7rem; font-size: .8125rem; color: var(--subtle); }
+  .seg button + button { border-inline-start: 1px solid var(--border); }
+  .seg button[aria-pressed="true"] { background: var(--overlay); color: var(--accent-text); }
+  .seg button:focus-visible { outline-offset: -2px; }
+
+  /* ---------- header ---------- */
+  header.site { position: sticky; inset-block-start: 0; z-index: 10; block-size: var(--header-h); background: var(--bg); border-block-end: 1px solid var(--border); }
+  .header-in { max-inline-size: var(--page-max); margin-inline: auto; block-size: 100%; padding-inline: 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+  .logo { display: inline-flex; align-items: center; gap: .6rem; font-weight: 650; color: var(--text); letter-spacing: -0.01em; }
+  .logo:hover { text-decoration: none; }
+  .logo-mark { inline-size: 1.4rem; block-size: 1.4rem; border-radius: 5px; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font: 700 .8rem var(--font-code); }
+  nav.tabs { display: flex; gap: .25rem; block-size: 100%; }
+  nav.tabs a { display: flex; align-items: center; padding-inline: .75rem; color: var(--subtle); font-size: .9375rem; border-block-end: 2px solid transparent; margin-block-end: -1px; }
+  nav.tabs a:hover { color: var(--text); text-decoration: none; }
+  nav.tabs a[aria-current="page"] { color: var(--accent-text); border-block-end-color: var(--accent); }
+  .header-end { margin-inline-start: auto; display: flex; align-items: center; gap: .5rem; }
+  .search { all: unset; cursor: pointer; box-sizing: border-box; display: flex; align-items: center; gap: .6rem; inline-size: 17rem; block-size: 2.25rem; padding-inline: .75rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-ctl); color: var(--subtle); font-size: .875rem; }
+  .search:hover { border-color: var(--highlight); }
+  .search kbd { margin-inline-start: auto; }
+  .icon-btn, .select { all: unset; cursor: pointer; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: .4rem; block-size: 2.25rem; min-inline-size: 2.25rem; padding-inline: .5rem; border-radius: var(--r-ctl); color: var(--subtle); font-size: .875rem; }
+  .icon-btn:hover, .select:hover { background: var(--overlay); color: var(--text); }
+  .icon-btn svg { font-size: 1.1rem; }
+  .menu-btn { display: none; }
+
+  /* ---------- three columns (brief: Layout) ---------- */
+  .page { max-inline-size: var(--page-max); margin-inline: auto; display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr) var(--toc-w); gap: 0 3rem; padding-inline: 1.5rem; }
+  aside.side { position: sticky; inset-block-start: var(--header-h); align-self: start; block-size: calc(100vh - var(--header-h)); overflow-y: auto; padding-block: 1.75rem 2rem; padding-inline-end: .5rem; }
+  .side h2 { margin: 1.25rem 0 .35rem; padding-inline: .75rem; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--subtle); }
+  [dir="rtl"] .side h2 { letter-spacing: 0; }
+  .side h2:first-child { margin-block-start: 0; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side a { display: block; padding: .3rem .75rem; border-radius: var(--r-ctl); color: var(--subtle); font-size: .9375rem; }
+  .side a:hover { background: color-mix(in srgb, var(--overlay) 55%, transparent); color: var(--text); text-decoration: none; }
+  .side a[aria-current="page"] { background: var(--overlay); color: var(--accent-text); font-weight: 550; }
+
+  article { max-inline-size: var(--art-w); padding-block: 1.75rem 3rem; min-inline-size: 0; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; font-size: .875rem; color: var(--subtle); }
+  .crumbs a { color: var(--subtle); }
+  .crumbs svg { font-size: .75rem; }
+  [dir="rtl"] .crumbs svg { transform: scaleX(-1); }
+  .title-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-block-start: 1rem; }
+  h1 { font-size: 2rem; font-weight: 650; letter-spacing: -0.03em; }
+  .trust { display: inline-flex; align-items: center; gap: .35rem; padding: .1rem .6rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--subtle); font-size: .8125rem; cursor: pointer; }
+  .trust:hover { border-color: var(--highlight); color: var(--text); }
+  .trust svg { color: var(--string); }
+  .lede { margin-block-start: .75rem; font-size: 1.125rem; color: var(--subtle); }
+  .meta { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-block-start: 1rem; padding-block-end: 1.25rem; border-block-end: 1px solid var(--border); font-size: .8125rem; color: var(--subtle); }
+
+  .prose h2 { margin-block: 2.25rem .75rem; font-size: 1.5rem; font-weight: 620; }
+  .prose h3 { margin-block: 1.75rem .5rem; font-size: 1.25rem; font-weight: 600; }
+  .prose p { margin-block: .9rem; max-inline-size: 70ch; }
+  .prose ol, .prose ul { margin-block: .9rem; padding-inline-start: 1.4rem; max-inline-size: 70ch; }
+  .prose li { margin-block: .3rem; }
+  .prose li::marker { color: var(--muted); }
+  .prose :not(pre) > code { padding: .1rem .35rem; font-size: .875em; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text); }
+  .anchor { margin-inline-start: .4rem; color: var(--muted); opacity: 0; font-weight: 400; }
+  h2:hover .anchor, h3:hover .anchor, .anchor:focus-visible { opacity: 1; }
+
+  /* code block with tabs */
+  .code { margin-block: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); }
+  .code-head { display: flex; align-items: center; gap: .25rem; padding: .35rem .5rem; background: var(--overlay); border-block-end: 1px solid var(--border); border-start-start-radius: var(--r-card); border-start-end-radius: var(--r-card); }
+  .code-head .file { margin-inline-end: .5rem; padding-inline-end: .75rem; border-inline-end: 1px solid var(--border); font: .8125rem var(--font-code); color: var(--subtle); }
+  .tab { all: unset; cursor: pointer; padding: .2rem .65rem; border-radius: 4px; font: .8125rem var(--font-code); color: var(--subtle); }
+  .tab:hover { color: var(--text); }
+  .tab[aria-selected="true"] { background: var(--surface); color: var(--accent-text); }
+  .tab:focus-visible { outline-offset: 0; }
+  .code-head .copy { margin-inline-start: auto; }
+  .code-head .copy.done { color: var(--string); }
+  .code pre { margin: 0; padding: .9rem 0; font-size: .875em; line-height: 1.8; overflow-x: auto; direction: ltr; text-align: left; white-space: normal; }
+  .code [role="tabpanel"][hidden] { display: none; }
+  .code pre.pop-host { overflow: visible; } /* mockup: lets the popover escape; the real page positions popovers with JS */
+  .ln { display: block; padding-inline: 1rem 1.25rem; border-inline-start: 3px solid transparent; white-space: pre; }
+  .ln.mark { background: color-mix(in srgb, var(--accent) 12%, transparent); border-inline-start-color: var(--accent); }
+  .n { display: inline-block; inline-size: 1.25rem; margin-inline-end: 1rem; color: var(--muted); text-align: end; user-select: none; }
+  .k { color: var(--keyword); } .f { color: var(--function); } .s { color: var(--string); }
+  .num { color: var(--number); } .t { color: var(--type); } .v { color: var(--variable); } .c { color: var(--muted); font-style: italic; }
+  .code-foot { display: flex; align-items: center; gap: .75rem; padding: .45rem 1rem; border-block-start: 1px solid var(--border); font-size: .8125rem; color: var(--subtle); }
+  .chip { display: inline-flex; align-items: center; gap: .35rem; padding: .1rem .55rem; border: 1px solid var(--border); border-radius: 999px; background: var(--bg); }
+  .chip svg { color: var(--string); }
+
+  /* hover symbol */
+  .sym { position: relative; border-block-end: 1px dotted var(--subtle); cursor: help; }
+  .pop { position: absolute; inset-block-end: calc(100% + .5rem); inset-inline-start: -.5rem; z-index: 5; inline-size: 17.5rem; padding: .75rem .9rem; text-align: start; white-space: normal; background: var(--overlay); border: 1px solid var(--highlight); border-radius: var(--r-ctl); box-shadow: 0 8px 24px rgb(0 0 0 / .28); font: normal .8125rem/1.5 var(--font-body); color: var(--text); visibility: hidden; opacity: 0; transition: opacity .12s; }
+  [dir="rtl"] .pop { font-family: var(--font-fa); }
+  .sym:hover .pop, .sym:focus .pop { visibility: visible; opacity: 1; }
+  .pop code { display: block; margin-block-end: .35rem; color: var(--type); font-size: .8125rem; }
+  .pop a { display: inline-block; margin-block-start: .35rem; }
+
+  /* callouts: overlay fill, icon, label, 3px accent bar on the inline-start edge */
+  .callout { display: grid; grid-template-columns: auto 1fr; gap: .15rem .75rem; margin-block: 1.25rem; padding: .85rem 1rem; background: var(--overlay); border-radius: var(--r-ctl); border-inline-start: 3px solid var(--accent); max-inline-size: 70ch; }
+  .callout svg { grid-row: 1 / span 2; margin-block-start: .2rem; font-size: 1.1rem; color: var(--accent-text); }
+  .callout b { font-size: .875rem; font-weight: 650; }
+  .callout p { margin: 0; font-size: .9375rem; }
+  .callout.tip { border-inline-start-color: var(--string); } .callout.tip svg, .callout.tip b { color: var(--string); }
+  .callout.warn { border-inline-start-color: var(--variable); } .callout.warn svg, .callout.warn b { color: var(--variable); }
+  .callout.note b { color: var(--accent-text); }
+
+  /* pager and edit link */
+  .edit { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-block-start: 3rem; padding-block-start: 1rem; border-block-start: 1px solid var(--border); font-size: .875rem; color: var(--subtle); }
+  .edit a { display: inline-flex; align-items: center; gap: .4rem; }
+  .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-block-start: 1.5rem; }
+  .pager a { display: grid; gap: .1rem; padding: .85rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); color: var(--text); }
+  .pager a:hover { border-color: var(--highlight); text-decoration: none; }
+  .pager a:hover b { color: var(--accent-text); }
+  .pager small { color: var(--subtle); font-size: .8125rem; }
+  .pager b { font-weight: 600; }
+  .pager .next { text-align: end; grid-column: 2; }
+
+  /* on this page */
+  aside.toc { position: sticky; inset-block-start: var(--header-h); align-self: start; padding-block: 1.75rem 2rem; max-block-size: calc(100vh - var(--header-h)); overflow-y: auto; }
+  .toc h2 { margin-block-end: .5rem; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--subtle); }
+  [dir="rtl"] .toc h2 { letter-spacing: 0; }
+  .toc ul { list-style: none; margin: 0; padding: 0; border-inline-start: 1px solid var(--border); }
+  .toc a { display: block; padding: .2rem .75rem; margin-inline-start: -1px; border-inline-start: 2px solid transparent; color: var(--subtle); font-size: .875rem; }
+  .toc a:hover { color: var(--text); text-decoration: none; }
+  .toc a[aria-current="true"] { color: var(--accent-text); border-inline-start-color: var(--accent); }
+  .toc ul ul { border: 0; } .toc ul ul a { padding-inline-start: 1.5rem; }
+  .toc-tools { display: grid; gap: .25rem; margin-block-start: 1.5rem; padding-block-start: 1rem; border-block-start: 1px solid var(--border); }
+  .toc-tools a { display: flex; gap: .5rem; align-items: center; font-size: .875rem; color: var(--subtle); padding-block: .2rem; }
+  .toc-tools a:hover { color: var(--accent-text); text-decoration: none; }
+  .toc-fold { display: none; margin-block: 1rem; padding: .75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-ctl); }
+  .toc-fold summary { cursor: pointer; font-size: .875rem; font-weight: 600; color: var(--subtle); }
+  .toc-fold ul { margin: .5rem 0 0; padding: 0; list-style: none; }
+  .toc-fold a { display: block; padding: .2rem 0; font-size: .9375rem; }
+
+  /* trust detail panel */
+  .panel { margin-block-start: .75rem; padding: 1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); font-size: .875rem; display: none; }
+  .panel.open { display: block; }
+  .panel dl { display: grid; grid-template-columns: max-content 1fr; gap: .35rem 1.25rem; margin: 0; }
+  .panel dt { color: var(--subtle); } .panel dd { margin: 0; }
+  .panel .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .85rem; padding-block-start: .85rem; border-block-start: 1px solid var(--border); }
+  .btn-sm { all: unset; cursor: pointer; box-sizing: border-box; display: inline-flex; align-items: center; gap: .4rem; block-size: 2rem; padding-inline: .75rem; border: 1px solid var(--border); border-radius: var(--r-ctl); background: var(--bg); color: var(--text); font-size: .8125rem; }
+  .btn-sm:hover { border-color: var(--highlight); }
+
+  footer.site { border-block-start: 1px solid var(--border); }
+  .footer-in { max-inline-size: var(--page-max); margin-inline: auto; padding: 1.5rem; display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; font-size: .875rem; color: var(--subtle); }
+  .footer-in .spacer { margin-inline-start: auto; }
+
+  /* command palette */
+  .scrim { position: fixed; inset: 0; z-index: 30; background: rgb(0 0 0 / .5); display: none; align-items: flex-start; justify-content: center; padding: 12vh 1rem 1rem; }
+  .scrim.open { display: flex; }
+  .palette { inline-size: min(36rem, 100%); max-block-size: 70vh; display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--highlight); border-radius: var(--r-card); box-shadow: 0 16px 48px rgb(0 0 0 / .4); overflow: hidden; }
+  .palette-in { display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem; border-block-end: 1px solid var(--border); color: var(--subtle); }
+  .palette-in input { all: unset; flex: 1; color: var(--text); font-size: 1rem; }
+  .palette-list { overflow-y: auto; padding: .5rem; }
+  .group { padding: .6rem .6rem .25rem; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--subtle); }
+  [dir="rtl"] .group { letter-spacing: 0; }
+  .res { display: flex; align-items: center; gap: .75rem; padding: .5rem .6rem; border-radius: var(--r-ctl); color: var(--text); font-size: .9375rem; }
+  .res[aria-selected="true"] { background: var(--overlay); color: var(--accent-text); }
+  .res small { margin-inline-start: auto; color: var(--subtle); font-size: .8125rem; }
+  .palette-foot { display: flex; gap: 1rem; padding: .6rem 1rem; border-block-start: 1px solid var(--border); font-size: .8125rem; color: var(--subtle); }
+  .palette-foot span { display: inline-flex; gap: .35rem; align-items: center; }
+
+  /* ---------- responsive (brief: Layout) ---------- */
+  @media (max-width: 64rem) {
+    .page { grid-template-columns: var(--side-w) minmax(0, 1fr); }
+    aside.toc { display: none; }
+    .toc-fold { display: block; }
+    nav.tabs { display: none; }
+  }
+  @media (max-width: 48rem) {
+    .page { grid-template-columns: minmax(0, 1fr); padding-inline: 1rem; }
+    aside.side { position: fixed; inset-block: var(--header-h) 0; inset-inline-start: 0; z-index: 20; inline-size: min(20rem, 85vw); padding-inline: 1rem; background: var(--bg); border-inline-end: 1px solid var(--border); transform: translateX(-100%); transition: transform .18s; }
+    [dir="rtl"] aside.side { transform: translateX(100%); }
+    body.drawer aside.side { transform: none; }
+    .menu-btn { display: inline-flex; }
+    .search { inline-size: 2.25rem; padding-inline: 0; justify-content: center; }
+    .search span, .search kbd, .select span { display: none; }
+    h1 { font-size: 1.75rem; }
+    .pager { grid-template-columns: 1fr; }
+    .pager .next { grid-column: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ---------- reference page additions ---------- */
+  .endpoint { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; margin-block-start: 1.25rem; padding: .6rem .9rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); font: .9375rem var(--font-code); direction: ltr; }
+  .method { padding: .05rem .5rem; border-radius: 4px; background: var(--accent); color: var(--on-accent); font-weight: 650; font-size: .8125rem; letter-spacing: .02em; }
+  .endpoint .path { color: var(--text); word-break: break-all; }
+  .endpoint .path i { font-style: normal; color: var(--variable); }
+  .endpoint .auth { margin-inline-start: auto; font: .8125rem var(--font-body); color: var(--subtle); display: inline-flex; gap: .35rem; align-items: center; }
+  .sig pre { padding-block: .9rem; }
+  .ptable { inline-size: 100%; margin-block: 1rem; border-collapse: collapse; font-size: .9375rem; }
+  .ptable th { padding: .5rem .75rem; text-align: start; font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--subtle); border-block-end: 1px solid var(--highlight); }
+  [dir="rtl"] .ptable th { letter-spacing: 0; }
+  .ptable td { padding: .75rem; vertical-align: top; border-block-end: 1px solid var(--border); }
+  .ptable td:first-child, .ptable th:first-child { padding-inline-start: 0; }
+  .ptable .name { font: .875rem var(--font-code); color: var(--text); white-space: nowrap; }
+  .ptable .ty { font: .8125rem var(--font-code); color: var(--type); white-space: nowrap; direction: ltr; unicode-bidi: isolate; }
+  .ptable .def { font: .8125rem var(--font-code); color: var(--subtle); direction: ltr; unicode-bidi: isolate; }
+  .req { display: inline-block; margin-inline-start: .5rem; padding: 0 .4rem; border: 1px solid var(--variable); border-radius: 4px; color: var(--variable); font: 600 .6875rem var(--font-body); }
+  .opt { color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  .status { display: inline-flex; align-items: center; gap: .35rem; font: .8125rem var(--font-code); }
+  .status.ok { color: var(--string); } .status.err { color: var(--variable); }
+  .lang-note { display: flex; align-items: center; gap: .5rem; margin-block: .5rem 0; font-size: .8125rem; color: var(--subtle); }
+</style>
+</head>
+<body>
+
+<!-- Mockup controls: not part of the design -->
+<div class="mock-bar" role="group" aria-label="Mockup controls">
+  <strong>Reference mockup</strong>
+  <span class="seg" aria-label="Mode">
+    <button type="button" data-set="theme" data-val="night" aria-pressed="true">Night</button>
+    <button type="button" data-set="theme" data-val="day" aria-pressed="false">Day</button>
+  </span>
+  <span class="seg" aria-label="Direction">
+    <button type="button" data-set="dir" data-val="ltr" aria-pressed="true">LTR</button>
+    <button type="button" data-set="dir" data-val="rtl" aria-pressed="false">RTL</button>
+  </span>
+  <span class="seg"><button type="button" id="open-palette" aria-pressed="false">Show command palette</button></span>
+  <span>Pick a language on any sample: every block follows. Hover the underlined <code>BuildOptions</code>.</span>
+</div>
+
+<header class="site">
+  <div class="header-in">
+    <button class="icon-btn menu-btn" type="button" id="menu-btn" aria-label="Open navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="logo" href="#"><span class="logo-mark" aria-hidden="true">S</span> <span data-i18n="brand">Slipway</span></a>
+    <nav class="tabs" aria-label="Sections">
+      <a href="#" data-i18n="tab1">Guides</a>
+      <a href="#" aria-current="page" data-i18n="tab2">API reference</a>
+      <a href="#" data-i18n="tab3">Components</a>
+      <a href="#" data-i18n="tab4">Changelog</a>
+    </nav>
+    <div class="header-end">
+      <button class="search" type="button" id="search-btn" aria-label="Search the docs">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span data-i18n="search">Search the docs</span><kbd>/</kbd>
+      </button>
+      <button class="select" type="button" aria-label="Language">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
+        <span data-i18n="lang">English</span>
+      </button>
+      <button class="icon-btn" type="button" id="theme-btn" aria-label="Switch theme (t)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/></svg>
+      </button>
+      <a class="icon-btn" href="#" aria-label="Repository on GitHub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.2a2.8 2.8 0 0 0-.8-2.2c2.7-.3 5.5-1.3 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1-.3-3.3 1.3a11.4 11.4 0 0 0-6 0C6.7 2.9 5.7 3.2 5.7 3.2a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4.3 9.6c0 4.6 2.8 5.7 5.5 6a2.8 2.8 0 0 0-.8 2.2V21"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+  <aside class="side" aria-label="API reference navigation">
+    <h2 data-i18n="g1">Builds</h2>
+    <ul>
+      <li><a href="#" aria-current="page"><span data-i18n="n1">Create a build</span></a></li>
+      <li><a href="#"><span data-i18n="n2">Get a build</span></a></li>
+      <li><a href="#"><span data-i18n="n3">List builds</span></a></li>
+      <li><a href="#"><span data-i18n="n4">Cancel a build</span></a></li>
+    </ul>
+    <h2 data-i18n="g2">Sites</h2>
+    <ul>
+      <li><a href="#">Get a site</a></li>
+      <li><a href="#">Update settings</a></li>
+    </ul>
+    <h2 data-i18n="g3">Reports</h2>
+    <ul>
+      <li><a href="#">Get a report</a></li>
+      <li><a href="#">List findings</a></li>
+    </ul>
+  </aside>
+
+  <article>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href="#" data-i18n="b1">API reference</a>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      <a href="#" data-i18n="g1b">Builds</a>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      <span aria-current="page" data-i18n="n1b">Create a build</span>
+    </nav>
+
+    <div class="title-row">
+      <h1 data-i18n="h1">Create a build</h1>
+      <button class="trust" type="button" aria-label="4 of 4 examples tested">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
+        <span data-i18n="trust">4/4 examples tested</span>
+      </button>
+    </div>
+    <p class="lede" data-i18n="lede">Start a build of a site from a commit. The call returns at once with a build in the <code>queued</code> state.</p>
+
+    <div class="endpoint">
+      <span class="method">POST</span>
+      <span class="path">/v1/sites/<i>{site}</i>/builds</span>
+      <span class="auth"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> <span data-i18n="auth">Needs a token with <code dir="ltr">builds:write</code></span></span>
+    </div>
+
+    <div class="meta"><span data-i18n="meta1">Updated 2 days ago</span><span data-i18n="meta2">Stable since v0.2.0</span><span dir="ltr">packages/api/src/builds.ts:48</span></div>
+
+    <details class="toc-fold">
+      <summary data-i18n="toc">On this page</summary>
+      <ul><li><a href="#params">Parameters</a></li><li><a href="#request">Request</a></li><li><a href="#response">Response</a></li><li><a href="#errors">Errors</a></li></ul>
+    </details>
+
+    <div class="prose">
+      <h2 id="params"><span data-i18n="t1">Parameters</span><a class="anchor" href="#params" aria-label="Link to this section">#</a></h2>
+      <p data-i18n="p1">Send the options as a JSON body. The site goes in the path.</p>
+
+      <div class="table-wrap">
+      <table class="ptable">
+        <thead><tr><th data-i18n="th1">Name</th><th data-i18n="th2">Type</th><th data-i18n="th3">Default</th><th data-i18n="th4">Description</th></tr></thead>
+        <tbody>
+          <tr><td class="name">site<span class="req" data-i18n="req">required</span></td><td class="ty">string</td><td class="def">–</td><td data-i18n="d1">The site slug, in the path.</td></tr>
+          <tr><td class="name">ref<span class="req" data-i18n="req">required</span></td><td class="ty">string</td><td class="def">–</td><td data-i18n="d2">The branch, tag, or commit to build.</td></tr>
+          <tr><td class="name">options</td><td class="ty"><span class="sym" tabindex="0">BuildOptions<span class="pop" role="tooltip"><code>interface BuildOptions</code>Switches that change how one build runs. All fields are optional.<br><a href="#">Open the full page</a></span></span></td><td class="def">{}</td><td data-i18n="d3">Switches for this build.</td></tr>
+          <tr><td class="name">options.clean</td><td class="ty">boolean</td><td class="def">false</td><td data-i18n="d4">Drop the cache before building.</td></tr>
+          <tr><td class="name">options.strict</td><td class="ty">boolean</td><td class="def">true</td><td data-i18n="d5">Fail the build when a check reports an error.</td></tr>
+          <tr><td class="name">label</td><td class="ty">string | null</td><td class="def">null</td><td data-i18n="d6">A short note shown in the build list.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h2 id="request"><span data-i18n="t2">Request</span><a class="anchor" href="#request" aria-label="Link to this section">#</a></h2>
+      <p data-i18n="p2">Pick a language. Your choice is remembered, and every sample on the site follows it.</p>
+
+      <div class="code" role="group" aria-label="Request samples">
+        <div class="code-head">
+          <div role="tablist" aria-label="Language" style="display:flex;gap:.25rem">
+            <button class="tab" role="tab" id="rq-t-curl" aria-controls="rq-p-curl" aria-selected="true" data-tab="curl">curl</button>
+            <button class="tab" role="tab" id="rq-t-js" aria-controls="rq-p-js" aria-selected="false" tabindex="-1" data-tab="js">JavaScript</button>
+            <button class="tab" role="tab" id="rq-t-py" aria-controls="rq-p-py" aria-selected="false" tabindex="-1" data-tab="py">Python</button>
+            <button class="tab" role="tab" id="rq-t-go" aria-controls="rq-p-go" aria-selected="false" tabindex="-1" data-tab="go">Go</button>
+          </div>
+          <button class="icon-btn copy" type="button" aria-label="Copy code (c)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg></button>
+        </div>
+        <div role="tabpanel" id="rq-p-curl" aria-labelledby="rq-t-curl">
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="f">curl</span> -X POST https://api.slipway.dev/v1/sites/evergreen/builds \</span>
+<span class="ln"><span class="n">2</span>  -H <span class="s">"Authorization: Bearer $SLIPWAY_TOKEN"</span> \</span>
+<span class="ln"><span class="n">3</span>  -H <span class="s">"Content-Type: application/json"</span> \</span>
+<span class="ln mark"><span class="n">4</span>  -d <span class="s">'{"ref": "main", "options": {"clean": true}}'</span></span></code></pre>
+        </div>
+        <div role="tabpanel" id="rq-p-js" aria-labelledby="rq-t-js" hidden>
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="k">const</span> res = <span class="k">await</span> <span class="f">fetch</span>(<span class="s">"https://api.slipway.dev/v1/sites/evergreen/builds"</span>, {</span>
+<span class="ln"><span class="n">2</span>  method: <span class="s">"POST"</span>,</span>
+<span class="ln"><span class="n">3</span>  headers: { Authorization: <span class="s">`Bearer ${process.env.SLIPWAY_TOKEN}`</span>, <span class="s">"Content-Type"</span>: <span class="s">"application/json"</span> },</span>
+<span class="ln mark"><span class="n">4</span>  body: JSON.<span class="f">stringify</span>({ ref: <span class="s">"main"</span>, options: { clean: <span class="k">true</span> } }),</span>
+<span class="ln"><span class="n">5</span>});</span>
+<span class="ln"><span class="n">6</span><span class="k">const</span> build = <span class="k">await</span> res.<span class="f">json</span>();</span></code></pre>
+        </div>
+        <div role="tabpanel" id="rq-p-py" aria-labelledby="rq-t-py" hidden>
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="k">import</span> os, requests</span>
+<span class="ln"><span class="n">2</span></span>
+<span class="ln"><span class="n">3</span>res = requests.<span class="f">post</span>(</span>
+<span class="ln"><span class="n">4</span>    <span class="s">"https://api.slipway.dev/v1/sites/evergreen/builds"</span>,</span>
+<span class="ln"><span class="n">5</span>    headers={<span class="s">"Authorization"</span>: <span class="s">f"Bearer {os.environ['SLIPWAY_TOKEN']}"</span>},</span>
+<span class="ln mark"><span class="n">6</span>    json={<span class="s">"ref"</span>: <span class="s">"main"</span>, <span class="s">"options"</span>: {<span class="s">"clean"</span>: <span class="k">True</span>}},</span>
+<span class="ln"><span class="n">7</span>)</span>
+<span class="ln"><span class="n">8</span>build = res.<span class="f">json</span>()</span></code></pre>
+        </div>
+        <div role="tabpanel" id="rq-p-go" aria-labelledby="rq-t-go" hidden>
+          <pre tabindex="0"><code><span class="ln mark"><span class="n">1</span>body := strings.<span class="f">NewReader</span>(<span class="s">`{"ref":"main","options":{"clean":true}}`</span>)</span>
+<span class="ln"><span class="n">2</span>req, _ := http.<span class="f">NewRequest</span>(<span class="s">"POST"</span>, <span class="s">"https://api.slipway.dev/v1/sites/evergreen/builds"</span>, body)</span>
+<span class="ln"><span class="n">3</span>req.Header.<span class="f">Set</span>(<span class="s">"Authorization"</span>, <span class="s">"Bearer "</span>+os.<span class="f">Getenv</span>(<span class="s">"SLIPWAY_TOKEN"</span>))</span>
+<span class="ln"><span class="n">4</span>req.Header.<span class="f">Set</span>(<span class="s">"Content-Type"</span>, <span class="s">"application/json"</span>)</span>
+<span class="ln"><span class="n">5</span>res, err := http.DefaultClient.<span class="f">Do</span>(req)</span></code></pre>
+        </div>
+        <div class="code-foot"><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg> <span data-i18n="tested">Tested</span></span><span data-i18n="tested2">Passed on the latest build</span></div>
+      </div>
+
+      <div class="lang-note"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg><span data-i18n="ln">Language: <b id="lang-now">curl</b></span></div>
+
+      <h2 id="response"><span data-i18n="t3">Response</span><a class="anchor" href="#response" aria-label="Link to this section">#</a></h2>
+      <p data-i18n="p3">A new build starts in the <code>queued</code> state. Poll <a href="#">Get a build</a> to follow it.</p>
+      <div class="code" role="group" aria-label="Response">
+        <div class="code-head"><span class="file" dir="ltr">201 Created · application/json</span><button class="icon-btn copy" type="button" aria-label="Copy code (c)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg></button></div>
+        <pre tabindex="0"><code><span class="ln"><span class="n">1</span>{</span>
+<span class="ln"><span class="n">2</span>  <span class="v">"id"</span>: <span class="s">"bld_8f3k2"</span>,</span>
+<span class="ln mark"><span class="n">3</span>  <span class="v">"state"</span>: <span class="s">"queued"</span>,</span>
+<span class="ln"><span class="n">4</span>  <span class="v">"ref"</span>: <span class="s">"main"</span>,</span>
+<span class="ln"><span class="n">5</span>  <span class="v">"sha"</span>: <span class="s">"ccaf71c"</span>,</span>
+<span class="ln"><span class="n">6</span>  <span class="v">"label"</span>: <span class="k">null</span>,</span>
+<span class="ln"><span class="n">7</span>  <span class="v">"created_at"</span>: <span class="s">"2026-11-08T21:14:03Z"</span></span>
+<span class="ln"><span class="n">8</span>}</span></code></pre>
+      </div>
+
+      <h2 id="errors"><span data-i18n="t4">Errors</span><a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+      <div class="table-wrap">
+      <table class="ptable">
+        <thead><tr><th data-i18n="th5">Status</th><th data-i18n="th6">Code</th><th data-i18n="th4">Description</th></tr></thead>
+        <tbody>
+          <tr><td><span class="status ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>201</span></td><td class="def">–</td><td data-i18n="e0">The build was queued.</td></tr>
+          <tr><td><span class="status err"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3ZM12 10v4M12 17h.01"/></svg>401</span></td><td class="name">unauthorized</td><td data-i18n="e1">The token is missing or expired.</td></tr>
+          <tr><td><span class="status err"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3ZM12 10v4M12 17h.01"/></svg>422</span></td><td class="name">unknown_ref</td><td data-i18n="e2">The ref does not exist in the repository.</td></tr>
+          <tr><td><span class="status err"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 20h20L12 3ZM12 10v4M12 17h.01"/></svg>429</span></td><td class="name">rate_limited</td><td data-i18n="e3">Too many builds. Retry after the time in <code>Retry-After</code>.</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p data-i18n="p4">Read the error from the body when the status is 400 or higher.</p>
+      <div class="code" role="group" aria-label="Error handling samples">
+        <div class="code-head">
+          <div role="tablist" aria-label="Language" style="display:flex;gap:.25rem">
+            <button class="tab" role="tab" id="er-t-curl" aria-controls="er-p-curl" aria-selected="true" data-tab="curl">curl</button>
+            <button class="tab" role="tab" id="er-t-js" aria-controls="er-p-js" aria-selected="false" tabindex="-1" data-tab="js">JavaScript</button>
+            <button class="tab" role="tab" id="er-t-py" aria-controls="er-p-py" aria-selected="false" tabindex="-1" data-tab="py">Python</button>
+            <button class="tab" role="tab" id="er-t-go" aria-controls="er-p-go" aria-selected="false" tabindex="-1" data-tab="go">Go</button>
+          </div>
+          <button class="icon-btn copy" type="button" aria-label="Copy code (c)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg></button>
+        </div>
+        <div role="tabpanel" id="er-p-curl" aria-labelledby="er-t-curl">
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="f">curl</span> -i -X POST https://api.slipway.dev/v1/sites/evergreen/builds \</span>
+<span class="ln"><span class="n">2</span>  -H <span class="s">"Authorization: Bearer $SLIPWAY_TOKEN"</span> \</span>
+<span class="ln"><span class="n">3</span>  -d <span class="s">'{"ref": "missing"}'</span></span>
+<span class="ln"><span class="n">4</span><span class="c"># HTTP/2 422 with an "error.code" field</span></span></code></pre>
+        </div>
+        <div role="tabpanel" id="er-p-js" aria-labelledby="er-t-js" hidden>
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="k">if</span> (!res.ok) {</span>
+<span class="ln"><span class="n">2</span>  <span class="k">const</span> { error } = <span class="k">await</span> res.<span class="f">json</span>();</span>
+<span class="ln mark"><span class="n">3</span>  <span class="k">throw new</span> <span class="t">Error</span>(<span class="s">`${error.code}: ${error.message}`</span>);</span>
+<span class="ln"><span class="n">4</span>}</span></code></pre>
+        </div>
+        <div role="tabpanel" id="er-p-py" aria-labelledby="er-t-py" hidden>
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="k">if not</span> res.ok:</span>
+<span class="ln"><span class="n">2</span>    err = res.<span class="f">json</span>()[<span class="s">"error"</span>]</span>
+<span class="ln mark"><span class="n">3</span>    <span class="k">raise</span> <span class="t">RuntimeError</span>(<span class="s">f"{err['code']}: {err['message']}"</span>)</span></code></pre>
+        </div>
+        <div role="tabpanel" id="er-p-go" aria-labelledby="er-t-go" hidden>
+          <pre tabindex="0"><code><span class="ln"><span class="n">1</span><span class="k">if</span> res.StatusCode >= <span class="num">400</span> {</span>
+<span class="ln mark"><span class="n">2</span>    <span class="k">return</span> fmt.<span class="f">Errorf</span>(<span class="s">"slipway: %s"</span>, res.Status)</span>
+<span class="ln"><span class="n">3</span>}</span></code></pre>
+        </div>
+        <div class="code-foot"><span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg> <span data-i18n="tested">Tested</span></span><span data-i18n="tested2">Passed on the latest build</span></div>
+      </div>
+    </div>
+
+    <div class="edit">
+      <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4"/></svg> <span data-i18n="edit">Edit this page on GitHub</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg> <span data-i18n="md">Copy as Markdown</span> <kbd>m</kbd></a>
+    </div>
+    <nav class="pager" aria-label="Pager">
+      <a href="#"><small data-i18n="prev">Previous</small><b data-i18n="pv">Authentication</b></a>
+      <a class="next" href="#"><small data-i18n="next">Next</small><b data-i18n="nx">List builds</b></a>
+    </nav>
+  </article>
+
+  <aside class="toc" aria-label="On this page">
+    <h2 data-i18n="toc">On this page</h2>
+    <ul>
+      <li><a href="#params" aria-current="true" data-i18n="t1">Parameters</a></li>
+      <li><a href="#request" data-i18n="t2">Request</a></li>
+      <li><a href="#response" data-i18n="t3">Response</a></li>
+      <li><a href="#errors" data-i18n="t4">Errors</a></li>
+    </ul>
+    <div class="toc-tools">
+      <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg> <span data-i18n="md">Copy as Markdown</span></a>
+      <a href="#"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13 7l4 4"/></svg> <span data-i18n="edit">Edit this page on GitHub</span></a>
+    </div>
+  </aside>
+</div>
+
+<footer class="site">
+  <div class="footer-in">
+    <span data-i18n="foot1">Built with Slipway</span>
+    <a href="#" data-i18n="foot2">Edit this site on GitHub</a>
+    <span class="spacer" data-i18n="foot4">Slipway docs · v0.3.0</span>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim" aria-hidden="true">
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+
+<div class="scrim" id="scrim" aria-hidden="true">
+  <div class="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette-in">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="text" value="create build" placeholder="Search the docs" aria-label="Search">
+      <kbd>Esc</kbd>
+    </div>
+    <div class="palette-list" role="listbox">
+      <div class="group" data-i18n="gApi">API</div>
+      <div class="res" role="option" aria-selected="true"><span data-i18n="n1">Create a build</span><small dir="ltr">POST /v1/sites/{site}/builds</small></div>
+      <div class="res" role="option" aria-selected="false"><span>BuildOptions</span><small data-i18n="rt">Type</small></div>
+      <div class="group" data-i18n="gAct">Actions</div>
+      <div class="res" role="option" aria-selected="false"><span data-i18n="md">Copy as Markdown</span><small><kbd>m</kbd></small></div>
+      <div class="res" role="option" aria-selected="false"><span data-i18n="r4">Switch theme</span><small><kbd>t</kbd></small></div>
+    </div>
+    <div class="palette-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> <span data-i18n="f1">move</span></span>
+      <span><kbd>↵</kbd> <span data-i18n="f2">open</span></span>
+      <span><kbd>Esc</kbd> <span data-i18n="f3">close</span></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var fa = {
+    brand: "اسلیپ‌وی", tab1: "راهنماها", tab2: "مرجع API", tab3: "اجزا", tab4: "تغییرات",
+    search: "جستجو در مستندات", lang: "فارسی", g1: "ساخت‌ها", g1b: "ساخت‌ها", g2: "سایت‌ها", g3: "گزارش‌ها",
+    n1: "ایجاد ساخت", n1b: "ایجاد ساخت", n2: "دریافت ساخت", n3: "فهرست ساخت‌ها", n4: "لغو ساخت", b1: "مرجع API",
+    h1: "ایجاد ساخت", trust: "۴ از ۴ مثال آزموده", lede: "ساخت یک سایت را از یک کامیت آغاز کنید. فراخوانی بی‌درنگ برمی‌گردد و ساخت در حالت <code>queued</code> است.",
+    auth: "به توکن با <code dir=\"ltr\">builds:write</code> نیاز دارد",
+    meta1: "۲ روز پیش به‌روز شد", meta2: "پایدار از نسخهٔ ۰٫۲٫۰",
+    toc: "در این صفحه", t1: "پارامترها", t2: "درخواست", t3: "پاسخ", t4: "خطاها",
+    p1: "گزینه‌ها را به‌صورت بدنهٔ JSON بفرستید. سایت در مسیر می‌آید.",
+    p2: "یک زبان انتخاب کنید. انتخاب شما به یاد می‌ماند و همهٔ نمونه‌های سایت از آن پیروی می‌کنند.",
+    p3: "ساخت جدید در حالت <code>queued</code> آغاز می‌شود. برای پیگیری از «دریافت ساخت» استفاده کنید.",
+    p4: "وقتی وضعیت ۴۰۰ یا بیشتر است، خطا را از بدنه بخوانید.",
+    th1: "نام", th2: "نوع", th3: "پیش‌فرض", th4: "توضیح", th5: "وضعیت", th6: "کد", req: "الزامی",
+    d1: "نامک سایت، در مسیر.", d2: "شاخه، برچسب یا کامیتی که ساخته می‌شود.", d3: "گزینه‌های این ساخت.",
+    d4: "پیش از ساخت، حافظهٔ نهان را پاک کنید.", d5: "اگر بررسی‌ای خطا بدهد ساخت شکست بخورد.", d6: "یادداشت کوتاهی در فهرست ساخت‌ها.",
+    e0: "ساخت در صف قرار گرفت.", e1: "توکن موجود نیست یا منقضی شده است.", e2: "این ref در مخزن وجود ندارد.", e3: "ساخت‌های بیش از حد. پس از زمان <code>Retry-After</code> دوباره تلاش کنید.",
+    ln: "زبان: <b id=\"lang-now\">curl</b>", tested: "آزموده", tested2: "در آخرین ساخت موفق بود",
+    edit: "ویرایش این صفحه در GitHub", md: "کپی به‌صورت Markdown", prev: "قبلی", next: "بعدی", pv: "احراز هویت", nx: "فهرست ساخت‌ها",
+    foot1: "ساخته‌شده با Slipway", foot2: "ویرایش این سایت در GitHub", foot4: "مستندات Slipway · ۰٫۳٫۰",
+    gApi: "API", gAct: "کنش‌ها", rt: "نوع", r4: "تغییر پوسته", f1: "حرکت", f2: "باز کردن", f3: "بستن"
+  };
+  var en = {};
+  document.querySelectorAll("[data-i18n]").forEach(function (el) { var k = el.dataset.i18n; if (!(k in en)) en[k] = el.innerHTML; });
+
+  function press(group, val) {
+    document.querySelectorAll('[data-set="' + group + '"]').forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.val === val)); });
+  }
+  function setTheme(v) { root.dataset.theme = v; press("theme", v); }
+  function setDir(v) {
+    root.dir = v; root.lang = v === "rtl" ? "fa" : "en"; press("dir", v);
+    var src = v === "rtl" ? fa : en;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { var k = el.dataset.i18n; if (src[k] != null) el.innerHTML = src[k]; });
+    document.getElementById("q").placeholder = v === "rtl" ? "جستجو در مستندات" : "Search the docs";
+    syncLabel();
+  }
+
+  var scrim = document.getElementById("scrim"), q = document.getElementById("q"), openBtn = document.getElementById("open-palette");
+  function palette(open) {
+    scrim.classList.toggle("open", open); scrim.setAttribute("aria-hidden", String(!open));
+    openBtn.setAttribute("aria-pressed", String(open)); if (open) q.focus();
+  }
+
+  /* language switch: one choice drives every code block on the page (storage may be blocked on file://) */
+  var tabs = Array.prototype.slice.call(document.querySelectorAll("[data-tab]"));
+  var order = [], names = {};
+  tabs.forEach(function (t) { if (order.indexOf(t.dataset.tab) < 0) order.push(t.dataset.tab); names[t.dataset.tab] = t.textContent; });
+  var current = order[0];
+  function syncLabel() { var el = document.getElementById("lang-now"); if (el) el.textContent = names[current]; }
+  function selectTab(name, focusFrom) {
+    current = name;
+    tabs.forEach(function (t) {
+      var on = t.dataset.tab === name;
+      t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      if (on && t === focusFrom) t.focus();
+    });
+    syncLabel();
+    try { localStorage.setItem("slipway-lang", name); } catch (e) {}
+  }
+  function focusTab(list, name) {
+    var t = list.querySelector('[data-tab="' + name + '"]');
+    selectTab(name, t);
+  }
+  tabs.forEach(function (t) {
+    t.addEventListener("click", function () { selectTab(t.dataset.tab); });
+    t.addEventListener("keydown", function (e) {
+      var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (root.dir === "rtl") d = -d;
+      if (!d) return;
+      e.preventDefault();
+      var list = t.parentNode, own = Array.prototype.map.call(list.querySelectorAll("[data-tab]"), function (x) { return x.dataset.tab; });
+      focusTab(list, own[(own.indexOf(t.dataset.tab) + d + own.length) % own.length]);
+    });
+  });
+  try { var saved = localStorage.getItem("slipway-lang"); if (saved && order.indexOf(saved) >= 0) selectTab(saved); } catch (e) {}
+
+  /* copy (visual only) */
+  document.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () { b.classList.add("done"); setTimeout(function () { b.classList.remove("done"); }, 1200); });
+  });
+
+  var menu = document.getElementById("menu-btn");
+  menu.addEventListener("click", function () {
+    var on = document.body.classList.toggle("drawer"); menu.setAttribute("aria-expanded", String(on));
+  });
+  document.querySelectorAll("[data-set]").forEach(function (b) {
+    b.addEventListener("click", function () { (b.dataset.set === "theme" ? setTheme : setDir)(b.dataset.val); });
+  });
+  document.getElementById("theme-btn").addEventListener("click", function () { setTheme(root.dataset.theme === "night" ? "day" : "night"); });
+  document.getElementById("search-btn").addEventListener("click", function () { palette(true); });
+  openBtn.addEventListener("click", function () { palette(!scrim.classList.contains("open")); });
+  scrim.addEventListener("click", function (e) { if (e.target === scrim) palette(false); });
+  document.addEventListener("keydown", function (e) {
+    var typing = /^(INPUT|TEXTAREA)$/.test(e.target.tagName);
+    if (e.key === "Escape") palette(false);
+    else if ((e.key === "/" && !typing) || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) { e.preventDefault(); palette(true); }
+    else if (e.key === "t" && !typing) setTheme(root.dataset.theme === "night" ? "day" : "night");
+  });
+})();
+</script>
+</body>
+</html>
