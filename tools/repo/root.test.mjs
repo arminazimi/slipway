@@ -37,6 +37,7 @@ const allowed = new Set([
   "changelog.d",
   "docs",
   "examples",
+  "fixtures",
   "package-lock.json",
   "package.json",
   "packages",
