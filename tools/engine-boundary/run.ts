@@ -31,8 +31,8 @@ function walk(dir, out = []) {
   return out.sort();
 }
 
-/** Layout folder names that are ordinary words the engine uses itself (`base` is a config key), so they are not deny-listed. */
-const GENERIC_LAYOUTS = new Set(["base"]);
+/** Layout folder names that are ordinary words the engine uses itself (`base` is a config key, `home` names the home page), so they are not deny-listed. */
+const GENERIC_LAYOUTS = new Set(["base", "home"]);
 
 export function layoutNames(repo = root) {
   const dir = join(repo, "packages/theme/layouts");
