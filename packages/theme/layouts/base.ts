@@ -2,6 +2,7 @@ import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
 import announcement from "../chrome/announcement/index.ts";
+import shortcuts from "../chrome/shortcuts/index.ts";
 import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
 
 export { MAIN_ID, NAVIGATION_ID };
@@ -95,6 +96,7 @@ export default function base(props: BaseProps) {
         aside == null ? null : h("aside", { class: "aside", "aria-label": "On this page" }, aside),
       ),
       footer == null ? null : h("footer", null, footer),
+      shortcuts(props) as ComponentChildren,
       ...islands.map((island) => h("script", { type: "module", src: island.src })),
     ),
   );
