@@ -13,6 +13,28 @@ const URL_FORM = /^(\/|https:\/\/)[^\s"<>]*$/;
 /** A site-local path prefix, the `match` of a generated section. */
 const MATCH_FORM = /^\/[^\s"<>]*$/;
 
+/**
+ * The `tab` mark the theme's section tabs read. It is not part of the frozen `NavItem` contract, so it stays
+ * an extra key on the returned item, which the theme reads with `"tab" in item` (see `chrome/section-tabs`).
+ */
+interface Tabbed {
+  readonly tab?: boolean;
+}
+
+/** The `tab` mark of one entry, or undefined when it has none. Reports an error for a value that is not a boolean. */
+function tabOf(ctx: Context, map: YAMLMap): boolean | undefined {
+  const node = valueOf(map, "tab");
+  if (node === undefined) return undefined;
+  if (!isScalar(node) || typeof node.value !== "boolean") {
+    ctx.diagnostics.error("nav.invalid-tab", "`tab` is `true` or `false`.", {
+      pos: posOf(ctx, node),
+      help: "Mark a top-level section as a header tab with `tab: true`.",
+    });
+    return undefined;
+  }
+  return node.value === true ? true : undefined;
+}
+
 /** Options of {@link navFromYaml}. */
 export interface NavFromYamlOptions {
   /**
@@ -71,15 +93,15 @@ function valueOf(map: YAMLMap, key: string): Node | undefined {
   return undefined;
 }
 
-/** Reads one link (`title`, `url`, optional `match`). Returns undefined after reporting why it is not one. */
-function link(ctx: Context, map: YAMLMap): NavLink | undefined {
-  const allowed = new Set(["title", "url", "match"]);
+/** Reads one link (`title`, `url`, optional `match` and `tab`). Returns undefined after reporting why it is not one. */
+function link(ctx: Context, map: YAMLMap): (NavLink & Tabbed) | undefined {
+  const allowed = new Set(["title", "url", "match", "tab"]);
   for (const pair of map.items) {
     const key = textOf(pair.key) ?? "";
     if (!allowed.has(key)) {
       ctx.diagnostics.error("nav.unknown-key", `Unknown key \`${key}\` in a navigation link.`, {
         pos: posOf(ctx, pair.key as Node),
-        help: "A link has `title`, `url`, and an optional `match`; a group has `title` and `children`.",
+        help: "A link has `title`, `url`, an optional `match`, and an optional `tab`; a group has `title`, `children`, and an optional `tab`.",
       });
     }
   }
@@ -119,7 +141,13 @@ function link(ctx: Context, map: YAMLMap): NavLink | undefined {
     return undefined;
   }
 
-  return { title, url: href, ...(match === undefined ? {} : { match: withBase(ctx.base, match) }) };
+  const tab = tabOf(ctx, map);
+  return {
+    title,
+    url: href,
+    ...(match === undefined ? {} : { match: withBase(ctx.base, match) }),
+    ...(tab === undefined ? {} : { tab }),
+  };
 }
 
 /** Reads one entry of a list: a link, or a group of links. Returns undefined after reporting why it is neither. */
@@ -136,10 +164,10 @@ function entry(ctx: Context, node: Node): NavItem | undefined {
 
   for (const pair of node.items) {
     const key = textOf(pair.key) ?? "";
-    if (key !== "title" && key !== "children") {
+    if (key !== "title" && key !== "children" && key !== "tab") {
       ctx.diagnostics.error("nav.unknown-key", `Unknown key \`${key}\` in a navigation group.`, {
         pos: posOf(ctx, pair.key as Node),
-        help: "A group has `title` and `children`; a group holds links only.",
+        help: "A group has `title`, `children`, and an optional `tab`; a group holds links only.",
       });
     }
   }
@@ -168,14 +196,22 @@ function entry(ctx: Context, node: Node): NavItem | undefined {
     if (found !== undefined) children.push(found);
   }
   if (children.length === 0) return undefined;
-  const group: NavGroup = { title, children };
+  const tab = tabOf(ctx, node);
+  const group: NavGroup & Tabbed = {
+    title,
+    children,
+    ...(tab === undefined ? {} : { tab }),
+  };
   return group;
 }
 
 /**
  * Reads a navigation file (`_data/navigation.yml`, the 0.2 shape) into lists by name. `main` is the header menu and `docs`
  * the sidebar, in reading order; `main_<lang>` and `docs_<lang>` hold a language's own lists. A list entry is a link
- * (`title`, `url`, optional `match`) or a group (`title` and one level of `children`).
+ * (`title`, `url`, optional `match` and `tab`) or a group (`title`, one level of `children`, and optional `tab`).
+ *
+ * `tab: true` marks a top-level entry as a section tab in the header; it stays an extra key on the returned item because
+ * `NavItem` is frozen.
  *
  * Every problem carries the YAML line it is on. A malformed URL, an unknown key, an unknown list, or an invalid entry is an
  * error and that entry is left out; the rest of the file still loads. A site-local URL that is not in `options.pages` is a

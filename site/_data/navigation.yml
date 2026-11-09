@@ -1,20 +1,78 @@
 # yaml-language-server: $schema=../../schema/navigation.schema.json
-# The header menu. spec/docs-site/_data/navigation.yml carries the same items in the same order,
-# so the theme docs and the spec site at /spec/ show one navigation and link to each other.
+# Docs-only navigation. The six top-level groups are the sidebar; Write and Reference are marked
+# `tab: true` so they also appear as the header's section tabs. spec/docs-site/_data/navigation.yml
+# carries the same items in the same order, so the theme docs and the spec site at /spec/ show one
+# navigation and link to each other.
 main:
-  - title: Home
-    url: /
-  - title: Install
-    url: /install/
-  - title: Configuration
-    url: /config/
-  - title: Recipes
-    url: /recipes/
-  - title: Guides
-    url: /guides/
-  - title: Blocks
-    url: /blocks/
-  - title: The Spec
-    url: /spec/
-  - title: Compare
-    url: /compare/
+  - title: Start
+    children:
+      - title: Overview
+        url: /
+      - title: Install and quickstart
+        url: /install/
+  - title: Write
+    tab: true
+    children:
+      - title: Guides
+        url: /guides/
+      - title: Migrate from Jekyll
+        url: /guides/migration/
+      - title: Move from a GitHub Pages theme
+        url: /recipes/from-pages-themes/
+      - title: Documentation from a docs/ folder
+        url: /recipes/docs-folder/
+      - title: Versioned documentation
+        url: /recipes/versioned-docs/
+  - title: Components
+    children:
+      - title: Block reference
+        url: /blocks/
+  - title: Customize
+    children:
+      - title: Customization guide
+        url: /guides/customize/
+      - title: Languages
+        url: /languages/
+      - title: Social cards
+        url: /guides/social-cards/
+      - title: Analytics
+        url: /recipes/analytics/
+      - title: Comments
+        url: /recipes/comments/
+      - title: Contact forms
+        url: /recipes/forms/
+      - title: Pagefind search
+        url: /recipes/pagefind/
+      - title: Redirects
+        url: /recipes/redirects/
+      - title: rel="me" links
+        url: /recipes/rel-me/
+      - title: Content negotiation
+        url: /recipes/content-negotiation/
+  - title: Deploy
+    children:
+      - title: Recipes
+        url: /recipes/
+      - title: Deploy to Cloudflare Pages
+        url: /recipes/cloudflare-pages/
+      - title: Deploy to Codeberg Pages
+        url: /recipes/codeberg-pages/
+      - title: Deploy to GitLab Pages
+        url: /recipes/gitlab-pages/
+      - title: Deploy to Netlify
+        url: /recipes/netlify/
+      - title: Deploy to Vercel
+        url: /recipes/vercel/
+      - title: Custom domain
+        url: /recipes/custom-domain/
+      - title: Keep dependencies alive
+        url: /recipes/lifecycle/
+  - title: Reference
+    tab: true
+    children:
+      - title: Configuration
+        url: /config/
+      - title: Front matter
+        url: /front-matter/
+      - title: The Spec
+        url: /spec/

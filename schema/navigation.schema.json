@@ -38,6 +38,10 @@
           "pattern": "^/[^\\s\"<>]*$",
           "description": "A site-local path prefix for generated pages in this section; matching observes path segment boundaries."
         },
+        "tab": {
+          "type": "boolean",
+          "description": "Marks a top-level item as a section tab in the header."
+        },
         "title": {
           "type": "string",
           "minLength": 1
@@ -69,6 +73,10 @@
               "items": {
                 "$ref": "#/$defs/link"
               }
+            },
+            "tab": {
+              "type": "boolean",
+              "description": "Marks a top-level item as a section tab in the header."
             },
             "title": {
               "type": "string",
