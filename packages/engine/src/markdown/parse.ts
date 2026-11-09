@@ -68,7 +68,7 @@ function offsetPositions(node: Nodes, delta: number): void {
 
 type MarkdownProcessor = {
   parse(file: string): Root;
-  run(tree: Root): Promise<Root>;
+  run(tree: Root, file?: string): Promise<Root>;
 };
 
 let processorPromise: Promise<MarkdownProcessor> | undefined;
@@ -96,7 +96,7 @@ async function getProcessor(): Promise<MarkdownProcessor> {
  */
 export async function parseMarkdown(body: string, bodyLine = 1): Promise<Root> {
   const processor = await getProcessor();
-  const tree = await processor.run(processor.parse(body));
+  const tree = await processor.run(processor.parse(body), body);
   offsetPositions(tree, bodyLine - 1);
   return tree;
 }
