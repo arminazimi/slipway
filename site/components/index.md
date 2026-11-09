@@ -39,6 +39,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [File tree](./file-tree/) | A folder structure with a note per entry. |
 | [Heading anchor](./heading-anchor/) | A link icon on every h2 to h4, added automatically. |
 | [Kbd](./kbd/) | A keyboard key or key combination. |
+| [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
