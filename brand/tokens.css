@@ -1,13 +1,13 @@
 :root {
-  --slipway-color-canvas: #17130f;
-  --slipway-color-surface: #26201a;
-  --slipway-color-bronze: #b8975a;
-  --slipway-color-bronze-soft: #8c7648;
-  --slipway-color-ink-bronze: #5e4a26;
-  --slipway-color-tint: #d9c9a3;
-  --slipway-color-light: #f4efe4;
-  --slipway-color-text: #e6dfd0;
-  --slipway-color-mist: #a39880;
+  --slipway-color-canvas: #1f1f28;
+  --slipway-color-surface: #2a2a37;
+  --slipway-color-bronze: #7e9cd8;
+  --slipway-color-bronze-soft: #5e81ac;
+  --slipway-color-ink-bronze: #2e3440;
+  --slipway-color-tint: #dcd7ba;
+  --slipway-color-light: #eceff4;
+  --slipway-color-text: #dcd7ba;
+  --slipway-color-mist: #96938e;
 
   --slipway-font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --slipway-font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;

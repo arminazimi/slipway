@@ -7,33 +7,38 @@ date: 2024-03-20
 author: Slipway
 ---
 
-You can host a Slipway site alongside your code in the same repository by putting it in a `docs/` folder. This is a common setup for project documentation.
+You can host a Slipway site alongside your code by making `docs/` the site root. The Markdown lives next to the code it documents, and the site is built by the engine, not by GitHub Pages' Jekyll build.
 
-This recipe works in **Classic mode** using GitHub Pages.
+## Configure the site
 
-## Configure GitHub Pages {id="configure-github-pages"}
-
-1. Go to your repository's settings on GitHub.
-2. In the "Pages" section, set the source to "Deploy from a branch" (Classic mode).
-3. Select your default branch and choose the `/docs` folder instead of `/ (root)`.
-4. Save the settings.
-
-For more details, see the [official GitHub Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
-
-## Configure your Slipway site {id="configure-your-slipway-site"}
-
-In your `docs/_config.yml`, add the `source_dir` setting under the `slipway` key so that the "Edit with your agent" button knows the site lives in the `docs/` folder.
+Put `mizzen.yml` inside `docs/` and name the folder in the repository object:
 
 ```yaml
-slipway:
-  source_dir: docs
+title: My docs
+repository:
+  url: https://github.com/example/my-project
+  branch: main
+  dir: docs
 ```
 
-## Verify in CI {id="verify-in-ci"}
+`repository.dir` tells the engine that the site root is `docs/` inside the repository. Edit links, the "Use with an agent" prompt, `sourcemap.json`, and the doctor all name paths such as `docs/guide/install.md` from the repository root. `source` defaults to `.`, so the Markdown in `docs/` is the site.
 
-To ensure your documentation meets quality standards, you can run the `slipway doctor` on your `docs/` folder in your project's continuous integration.
+## Publish with GitHub Actions
 
-Create or update a GitHub Actions workflow file (e.g. `.github/workflows/docs.yml`):
+1. In the repository, open **Settings → Pages** and set the source to **GitHub Actions**. Classic branch deployment runs Jekyll and cannot build a Slipway site.
+2. Add a workflow that builds the `docs/` folder:
+
+```yaml
+- uses: arminazimi/slipway/action/deploy@main
+  with:
+    path: docs
+```
+
+The Action installs Node, builds the site, and publishes the output.
+
+## Verify in CI
+
+Run the doctor on the same folder, so a missing title or a broken link fails the pull request:
 
 ```yaml
 name: Docs
