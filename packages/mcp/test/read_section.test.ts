@@ -3,8 +3,8 @@ import assert from "node:assert/strict";
 import { cpSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readSection } from "../src/tools/read_section.mjs";
-import { tools } from "../src/server.mjs";
+import { readSection } from "../src/tools/read_section.ts";
+import { tools } from "../src/server.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const testDir = join(root, ".tmp/test-read-section");

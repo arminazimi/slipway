@@ -6,7 +6,7 @@ import test from "node:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const bin = new URL("../bin/slipway-mcp.mjs", import.meta.url).pathname;
+const bin = new URL("../bin/slipway-mcp.ts", import.meta.url).pathname;
 
 async function connect(site, t) {
   const client = new Client({ name: "slipway-test", version: "0.0.0" });

@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { join } from "node:path";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
-import { validatePage } from "../src/tools/validate_page.mjs";
+import { validatePage } from "../src/tools/validate_page.ts";
 
 describe("validate_page", () => {
   const tmpDir = join(".tmp", "validate_page_test");

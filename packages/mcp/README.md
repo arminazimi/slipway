@@ -15,7 +15,7 @@ The [`slipway-doctor` Agent Skill](../../skills/slipway-doctor/SKILL.md) tells a
 Claude Code, from the site directory:
 
 ```bash
-claude mcp add slipway -- node /path/to/slipway/packages/mcp/bin/slipway-mcp.mjs .
+claude mcp add slipway -- node /path/to/slipway/packages/mcp/bin/slipway-mcp.ts .
 ```
 
 Or in the site's `.mcp.json`:
@@ -25,7 +25,7 @@ Or in the site's `.mcp.json`:
   "mcpServers": {
     "slipway": {
       "command": "node",
-      "args": ["/path/to/slipway/packages/mcp/bin/slipway-mcp.mjs", "."]
+      "args": ["/path/to/slipway/packages/mcp/bin/slipway-mcp.ts", "."]
     }
   }
 }
@@ -36,7 +36,7 @@ Codex, in `~/.codex/config.toml`:
 ```toml
 [mcp_servers.slipway]
 command = "node"
-args = ["/path/to/slipway/packages/mcp/bin/slipway-mcp.mjs", "/path/to/your/site"]
+args = ["/path/to/slipway/packages/mcp/bin/slipway-mcp.ts", "/path/to/your/site"]
 ```
 
 ## Test

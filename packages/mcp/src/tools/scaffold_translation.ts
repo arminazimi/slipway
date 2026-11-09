@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import * as yaml from "yaml";
 import { Site } from "../../../doctor/src/site.ts";
 import { splitFrontMatter } from "../../../doctor/src/yaml.ts";
-import { insideSite } from "../tools.mjs";
+import { insideSite } from "../tools.ts";
 
 export const definition = {
   name: "scaffold_translation",

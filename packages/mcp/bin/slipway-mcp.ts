@@ -3,7 +3,7 @@
 import { existsSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { createServer, tools } from "../src/server.mjs";
+import { createServer, tools } from "../src/server.ts";
 
 if (process.argv[2] === "--list-tools") {
   for (const { name, description } of tools) console.log(`${name}\t${description}`);

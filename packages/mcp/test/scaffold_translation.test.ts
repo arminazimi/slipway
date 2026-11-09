@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
 import { join } from "node:path";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
-import { scaffoldTranslation } from "../src/tools/scaffold_translation.mjs";
+import { scaffoldTranslation } from "../src/tools/scaffold_translation.ts";
 
 describe("scaffold_translation", () => {
   const tmpDir = join(".tmp", "scaffold_translation_test");

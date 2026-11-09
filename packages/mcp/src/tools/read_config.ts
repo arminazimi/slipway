@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { validateConfig } from "../../../../tools/theme/config.ts";
-import { insideSite } from "../tools.mjs";
+import { insideSite } from "../tools.ts";
 
 export const definition = {
   name: "read_config",

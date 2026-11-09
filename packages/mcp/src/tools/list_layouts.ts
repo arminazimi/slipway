@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { parse } from "yaml";
-import { insideSite, themeRoot } from "../tools.mjs";
+import { insideSite, themeRoot } from "../tools.ts";
 
 const frontMatterDir = join(themeRoot, "schema/front-matter");
 // Layouts without a schema of their own use these (schema/front-matter/README.md); any other layout uses `base`.
