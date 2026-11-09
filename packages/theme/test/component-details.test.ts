@@ -102,7 +102,7 @@ test("a missing or blank summary falls back to the default label", () => {
 
 test("escapes the summary text", () => {
   const out = render({ summary: "<script>alert(1)</script>" });
-  assert.doesNotMatch(out, /<script>/);
+  assert.doesNotMatch(out, /<script\b[^>]*>/i);
   assert.match(out, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
 });
 
