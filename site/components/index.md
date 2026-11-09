@@ -30,6 +30,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Badge](./badge/) | A short status label, such as a version or a beta marker. |
 | [Callout](./callout/) | A note, tip, important point, warning, or caution. |
 | [Cards](./cards/) | A responsive grid of linked cards, used by the home layout. |
+| [Changelog entry](./changelog-entry/) | One release with a version, a date, and categories. |
 | [Code](./code/) | Code highlighted at build time, with a copy button when JavaScript runs. |
 | [Code tabs](./code-tabs/) | The same example in several languages or package managers, as tabs. |
 | [Details](./details/) | A native disclosure that the reader can open and close. |
