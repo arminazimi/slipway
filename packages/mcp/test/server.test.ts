@@ -9,6 +9,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 
 const bin = fileURLToPath(new URL("../bin/slipway-mcp.ts", import.meta.url));
 const docs = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples/docs", import.meta.url));
+const docsSite = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
 const conforming = fileURLToPath(new URL("../../doctor/test/fixtures/conforming", import.meta.url));
 
 async function connect(site, t) {
@@ -36,14 +37,14 @@ test("tools/list returns exactly the tools with JSON Schema inputs", async (t) =
   }
 });
 
-test("read_config returns the validated _config.yml of examples/docs", async (t) => {
-  const result = await (await connect(docs, t)).callTool({ name: "read_config", arguments: {} });
+test("read_config returns the validated slipway.yml of fixtures/docs-site", async (t) => {
+  const result = await (await connect(docsSite, t)).callTool({ name: "read_config", arguments: { file: "slipway.yml" } });
   assert.ok(!result.isError, result.content[0].text);
   const config = json(result);
-  assert.equal(config.file, "_config.yml");
+  assert.equal(config.file, "slipway.yml");
   assert.equal(config.valid, true);
-  assert.deepEqual(config.errors, []);
-  assert.equal(config.config.title, "Slipway docs");
+  assert.deepEqual(config.diagnostics, []);
+  assert.equal(config.config.title, "Beacon");
 });
 
 test("a site's own layout overrides the theme's, and an invalid config reports its errors", async (t) => {
@@ -52,7 +53,7 @@ test("a site's own layout overrides the theme's, and an invalid config reports i
   mkdirSync(join(site, "_layouts"));
   writeFileSync(join(site, "_layouts/page.html"), "---\nlayout: default\n---\n{{ content }}\n");
   writeFileSync(join(site, "_layouts/custom.html"), "{{ content }}\n");
-  writeFileSync(join(site, "_config.yml"), "title: 3\n");
+  writeFileSync(join(site, "mizzen.yml"), "title: 3\n");
   const client = await connect(site, t);
   const layouts = json(await client.callTool({ name: "list_layouts", arguments: {} })).layouts;
   const page = layouts.find((layout) => layout.name === "page");
@@ -61,7 +62,7 @@ test("a site's own layout overrides the theme's, and an invalid config reports i
   assert.equal(layouts.find((layout) => layout.name === "custom").source, "site");
   const config = json(await client.callTool({ name: "read_config", arguments: {} }));
   assert.equal(config.valid, false);
-  assert.ok(config.errors.some((error) => error.startsWith("/title")), config.errors.join("\n"));
+  assert.ok(config.diagnostics.some((diagnostic) => diagnostic.id === "config.invalid"), JSON.stringify(config.diagnostics));
 });
 
 test("paths outside the site are refused as tool errors, and the server keeps running", async (t) => {
@@ -83,7 +84,6 @@ test("paths outside the site are refused as tool errors, and the server keeps ru
   const cases: [any, RegExp][] = [
     [{ file: "package.json" }, /not a YAML config file/],
     [{ file: "missing.yml" }, /does not exist/],
-    [{ file: "broken.yml" }, /not valid YAML/],
     [{ file: 3 }, /must be a string/],
   ];
   for (const [args, message] of cases) {
@@ -91,6 +91,9 @@ test("paths outside the site are refused as tool errors, and the server keeps ru
     assert.equal(result.isError, true, JSON.stringify(args));
     assert.match(result.content[0].text, message);
   }
+  const broken = json(await client.callTool({ name: "read_config", arguments: { file: "broken.yml" } }));
+  assert.equal(broken.valid, false);
+  assert.equal(broken.diagnostics[0].id, "config.invalid-yaml");
   const unknown = await client.callTool({ name: "write_file", arguments: {} });
   assert.equal(unknown.isError, true);
   assert.equal((await client.callTool({ name: "list_layouts", arguments: {} })).isError, undefined);
@@ -145,7 +148,7 @@ test("create_page writes a Markdown file with front matter to the site", async (
   assert.match(fileContent, /---\ntitle: T\n---\nHello/);
 });
 
-test("set_token sets a token in _config.yml", async (t) => {
+test("set_token sets a theme.options.tokens override in mizzen.yml", async (t) => {
   const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
   t.after(() => rmSync(site, { recursive: true, force: true }));
   const client = await connect(site, t);
@@ -154,8 +157,8 @@ test("set_token sets a token in _config.yml", async (t) => {
     arguments: { token: "accent", value: "red" }
   });
   assert.ok(!result.isError, result.content[0].text);
-  const fileContent = fs.readFileSync(join(site, "_config.yml"), "utf8");
-  assert.match(fileContent, /slipway:\n  tokens:\n    accent: red/);
+  const fileContent = fs.readFileSync(join(site, "mizzen.yml"), "utf8");
+  assert.match(fileContent, /theme:\n  options:\n    tokens:\n      accent: red/);
 });
 
 test("add_navigation_item adds an item to _data/navigation.yml", async (t) => {
