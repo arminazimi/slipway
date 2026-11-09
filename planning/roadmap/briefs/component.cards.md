@@ -4,9 +4,9 @@ Link cards with icon, title, and description, in a responsive grid, for home pag
 ## Files
 
 **Create**
-- `packages/theme/components/cards/index.tsx`
+- `packages/theme/components/cards/index.ts`
 - `packages/theme/components/cards/style.css`
-- `packages/theme/test/component-cards.test.tsx`
+- `packages/theme/test/component-cards.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

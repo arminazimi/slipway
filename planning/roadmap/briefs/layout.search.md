@@ -4,10 +4,10 @@ A search dialog on Pagefind's JavaScript API: results grouped by section with hi
 ## Files
 
 **Create**
-- `packages/theme/chrome/search/index.tsx`
+- `packages/theme/chrome/search/index.ts`
 - `packages/theme/chrome/search/style.css`
 - `packages/theme/chrome/search/client.ts`
-- `packages/theme/test/chrome-search.test.tsx`
+- `packages/theme/test/chrome-search.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

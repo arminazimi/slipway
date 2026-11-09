@@ -4,9 +4,9 @@ A link icon after each `h2` to `h4` that links to the heading.
 ## Files
 
 **Create**
-- `packages/theme/components/heading-anchor/index.tsx`
+- `packages/theme/components/heading-anchor/index.ts`
 - `packages/theme/components/heading-anchor/style.css`
-- `packages/theme/test/component-heading-anchor.test.tsx`
+- `packages/theme/test/component-heading-anchor.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

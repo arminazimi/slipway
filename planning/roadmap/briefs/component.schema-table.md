@@ -4,9 +4,9 @@ Render a JSON Schema from `_data` or a file path as a table: name, type, require
 ## Files
 
 **Create**
-- `packages/theme/components/schema-table/index.tsx`
+- `packages/theme/components/schema-table/index.ts`
 - `packages/theme/components/schema-table/style.css`
-- `packages/theme/test/component-schema-table.test.tsx`
+- `packages/theme/test/component-schema-table.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

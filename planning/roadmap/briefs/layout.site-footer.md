@@ -4,9 +4,9 @@ A small footer with copyright, license, and optional links from config.
 ## Files
 
 **Create**
-- `packages/theme/chrome/site-footer/index.tsx`
+- `packages/theme/chrome/site-footer/index.ts`
 - `packages/theme/chrome/site-footer/style.css`
-- `packages/theme/test/chrome-site-footer.test.tsx`
+- `packages/theme/test/chrome-site-footer.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

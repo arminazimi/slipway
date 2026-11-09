@@ -4,8 +4,8 @@ Show `title="…"` above the code with a file icon.
 ## Files
 
 **Create**
-- `packages/theme/components/code/title.tsx`
-- `packages/theme/test/component-code-title.test.tsx`
+- `packages/theme/components/code/title.ts`
+- `packages/theme/test/component-code-title.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

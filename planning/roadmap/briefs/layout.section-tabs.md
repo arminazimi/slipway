@@ -4,9 +4,9 @@ Tabs under or in the header for top-level sections (for example Guides and Refer
 ## Files
 
 **Create**
-- `packages/theme/chrome/section-tabs/index.tsx`
+- `packages/theme/chrome/section-tabs/index.ts`
 - `packages/theme/chrome/section-tabs/style.css`
-- `packages/theme/test/chrome-section-tabs.test.tsx`
+- `packages/theme/test/chrome-section-tabs.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

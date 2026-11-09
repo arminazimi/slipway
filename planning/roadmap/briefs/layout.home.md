@@ -4,9 +4,9 @@ A docs home: title, one-line description, primary actions, and card grids for se
 ## Files
 
 **Create**
-- `packages/theme/layouts/home.tsx`
+- `packages/theme/layouts/home.ts`
 - `packages/theme/layouts/home.css`
-- `packages/theme/test/layout-home.test.tsx`
+- `packages/theme/test/layout-home.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

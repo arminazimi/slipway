@@ -4,9 +4,9 @@ Show an API endpoint: method badge, path with parameters highlighted, and a para
 ## Files
 
 **Create**
-- `packages/theme/components/endpoint/index.tsx`
+- `packages/theme/components/endpoint/index.ts`
 - `packages/theme/components/endpoint/style.css`
-- `packages/theme/test/component-endpoint.test.tsx`
+- `packages/theme/test/component-endpoint.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

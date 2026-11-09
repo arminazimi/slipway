@@ -4,9 +4,9 @@ Render code fences with Shiki at build time using the light and dark code themes
 ## Files
 
 **Create**
-- `packages/theme/components/code/index.tsx`
+- `packages/theme/components/code/index.ts`
 - `packages/theme/components/code/style.css`
-- `packages/theme/test/component-code.test.tsx`
+- `packages/theme/test/component-code.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

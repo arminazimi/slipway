@@ -7,6 +7,7 @@ test("check.mjs leaves out Jekyll-built tools, the generators, and Playwright te
   for (const name of ["a11y", "browser", "nojs", "screenshots"]) assert.ok(!tools.includes(`tools/${name}/run.mjs`), `${name} builds with Jekyll`);
   assert.ok(tools.includes("tools/engine-boundary/run.mjs"));
   for (const name of ["sourcemap", "twins", "html-validate"]) assert.ok(!tools.includes(`tools/${name}/run.mjs`), name);
+  assert.ok(tools.includes("tools/ts-only/run.ts"), "run.ts tools are found");
   const tests = testFiles();
   assert.ok(tests.includes("tools/release/prepare.test.mjs") && tests.includes("tools/plugins.test.mjs"));
   assert.ok(!tests.some((f) => /^tools\/(a11y|browser|nojs|screenshots)\//.test(f)));
