@@ -34,4 +34,4 @@ jobs:
       - name: Comment on overlaps
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/ops/overlap.mjs
+        run: node tools/ops/overlap.ts

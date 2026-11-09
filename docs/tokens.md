@@ -1,4 +1,4 @@
-<!-- Generated from tokens/theme.tokens.json by tools/theme/tokens-build.mjs. Do not edit. -->
+<!-- Generated from tokens/theme.tokens.json by tools/theme/tokens-build.ts. Do not edit. -->
 # Theme tokens
 
 Every visual decision in the theme is a CSS custom property, defined once in `tokens/theme.tokens.json` and generated into `assets/css/tokens.css`. After editing the JSON, run `npm run build:tokens`; `npm run check` fails when the CSS or this page is out of date.

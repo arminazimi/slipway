@@ -103,4 +103,4 @@ Sections and links need the Markdown parser's own positions, so they belong in t
 
 ### Check it
 
-`validateSourcemap` in `tools/theme/sourcemap.mjs` checks a map against the schema and that no `url` appears twice. `tools/theme/docs.test.mjs` runs both templates above on small sites and validates what they write, so this page cannot drift from the schema.
+`validateSourcemap` in `tools/theme/sourcemap.ts` checks a map against the schema and that no `url` appears twice. `tools/theme/docs.test.mjs` runs both templates above on small sites and validates what they write, so this page cannot drift from the schema.

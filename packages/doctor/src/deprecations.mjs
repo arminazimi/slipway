@@ -1,5 +1,5 @@
 // Deprecated config keys and front-matter fields a Jekyll site uses (ADR 0012, rule 4), with file and line.
-// Shared with tools/theme/deprecations.mjs, which validates the list and prints the warnings for the examples.
+// Shared with tools/theme/deprecations.ts, which validates the list and prints the warnings for the examples.
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";

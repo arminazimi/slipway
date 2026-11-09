@@ -4,8 +4,8 @@ With JavaScript off, check that the article, sidebar, table of contents, pager, 
 ## Files
 
 **Create**
-- `tools/nojs-engine/run.mjs`
-- `tools/nojs-engine/run.test.mjs`
+- `tools/nojs-engine/run.ts`
+- `tools/nojs-engine/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

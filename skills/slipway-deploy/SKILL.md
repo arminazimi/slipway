@@ -23,7 +23,7 @@ cd "$HOME/.slipway" && npm ci && cd -
 From the site folder, check the config and the front matter, build, and run the doctor. Keep the output: the deploy is done when it adds no finding and does not lower the level.
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
 node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
 ```

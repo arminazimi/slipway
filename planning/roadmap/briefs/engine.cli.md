@@ -5,7 +5,7 @@ A command line that builds a site or only checks it, with diagnostics in text, J
 
 **Create**
 - `packages/engine/src/cli/index.ts`
-- `packages/engine/bin/slipway.mjs`
+- `packages/engine/bin/slipway.ts`
 - `packages/engine/test/cli.test.ts`
 
 **Edit**

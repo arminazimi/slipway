@@ -16,7 +16,7 @@ In the Slipway repository the changelog entry is a fragment in `changelog.d/`; o
 From the root of the theme repository (the [Content skill](https://github.com/arminazimi/slipway/blob/main/skills/slipway-content/SKILL.md) shows the one-time clone), check the site's config, front matter, and output before you change anything, and keep the output:
 
 ```sh
-node tools/theme/validate.mjs <site>
+node tools/theme/validate.ts <site>
 node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/_site
 ```
 
@@ -89,7 +89,7 @@ When the site keeps `sourcemap.json` or Markdown twins in its repository, regene
 Then, from the root of the theme repository:
 
 ```sh
-node tools/theme/validate.mjs <site>
+node tools/theme/validate.ts <site>
 node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/_site
 ```
 

@@ -1,0 +1,72 @@
+// `npm run check`: finds its own work, so a new tool adds no script to package.json and no step to ci.yml.
+//
+//   node tools/check.ts           everything: roadmap, tests, the fixed checks, then every tools/*/run.mjs
+//   node tools/check.ts --tools   only the tools/*/run.mjs checks (the browser job in ci.yml)
+//   node tools/check.ts --test    only the tests (`npm test`)
+//
+// Tests: every `*.test.mjs` in tools/, tools/<name>/, planning/roadmap/, packages/*/test/ and adapters/*/test/, plus every
+// `*.test.ts` there (Node strips the types; packages/engine is TypeScript). A tool folder
+// with a playwright.config.js holds Playwright tests that its run.mjs starts, so node --test skips that folder.
+// Anything that builds a site with Jekyll is left out of both lists.
+// Tools: every tools/<name>/run.ts (or legacy run.mjs) except the generators below. A run.mjs prints SKIP and exits 0 when its optional
+// dependency is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
+// Type check: every workspace with a `typecheck` script (`tsc --noEmit`) runs it after the tests. The root tsconfig.json covers tools/ and planning/.
+import { spawnSync } from "node:child_process";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join, relative } from "node:path";
+import { root } from "./theme/tokens.ts";
+
+/** run.mjs files that write files or are libraries rather than checks (their tests cover them). */
+export const notChecks = new Set(["html-validate", "sourcemap", "twins"]);
+
+/** Checks without a run.mjs, in the order they run after the tests. */
+export const fixedChecks = ["brand", "tokens", "contrast", "logical", "js", "css", "schemas", "docs"];
+
+const dirs = (path) => (existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []);
+/** Jekyll is being removed (cleanup.jekyll-theme): nothing that builds a site with it belongs in `npm run check`. */
+const JEKYLL = /bundleAvailable|buildExample|jekyll build|bundle exec|SLIPWAY_REQUIRE_BUILD/;
+const usesJekyll = (file) => JEKYLL.test(readFileSync(file, "utf8"));
+const testsIn = (path) => (existsSync(path) ? readdirSync(path).filter((f) => /\.test\.(mjs|ts)$/.test(f)).sort().map((f) => join(path, f)).filter((f) => !usesJekyll(f)) : []);
+
+export function testFiles(dir = root) {
+  const folders = [
+    join(dir, "planning/roadmap"),
+    join(dir, "tools"),
+    ...dirs(join(dir, "tools")).map((n) => join(dir, "tools", n)).filter((p) => !existsSync(join(p, "playwright.config.js"))),
+    ...["packages", "adapters"].flatMap((group) => dirs(join(dir, group)).map((n) => join(dir, group, n, "test"))),
+  ];
+  return folders.flatMap(testsIn).map((f) => relative(dir, f));
+}
+
+const runFile = (dir, name) => ["run.ts", "run.mjs"].map((f) => `tools/${name}/${f}`).find((f) => existsSync(join(dir, f)));
+
+export function toolChecks(dir = root, skip = (process.env.SLIPWAY_SKIP_TOOLS ?? "").split(",")) {
+  return dirs(join(dir, "tools"))
+    .filter((n) => !notChecks.has(n) && !skip.includes(n))
+    .map((n) => runFile(dir, n))
+    .filter((f) => f && !usesJekyll(join(dir, f)));
+}
+
+function run(label, command, args, dir) {
+  console.log(`\n> ${label}`);
+  const { status } = spawnSync(command, args, { cwd: dir, stdio: "inherit" });
+  return status === 0;
+}
+
+export function main(args = process.argv.slice(2), dir = root) {
+  const [onlyTools, onlyTests] = [args.includes("--tools"), args.includes("--test")];
+  const steps = [];
+  if (onlyTests) steps.push(["tests", "node", ["--test", ...testFiles(dir)]]);
+  else if (!onlyTools) {
+    steps.push(["roadmap", "node", ["planning/roadmap/build.ts", "--check"]]);
+    steps.push(["tests", "node", ["--test", ...testFiles(dir)]]);
+    steps.push(["typecheck", "npm", ["run", "--silent", "--workspaces", "--if-present", "typecheck"]]);
+    steps.push(["typecheck:repo", "npx", ["--no-install", "tsc", "-p", "tsconfig.json"]]);
+    for (const name of fixedChecks) steps.push([`check:${name}`, "npm", ["run", "--silent", `check:${name}`]]);
+  }
+  if (!onlyTests) for (const file of toolChecks(dir)) steps.push([file, "node", [file]]);
+  for (const [label, command, commandArgs] of steps) if (!run(label, command, commandArgs, dir)) return 1;
+  return 0;
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) process.exitCode = main();

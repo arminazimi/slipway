@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { doctor } from "../../../packages/doctor/src/doctor.mjs";
-import { validateSourcemap } from "../../../tools/theme/sourcemap.mjs";
+import { validateSourcemap } from "../../../tools/theme/sourcemap.ts";
 import { contentPages, twinOf, twinUrl } from "../src/index.mjs";
 import { headingsIn, lineOffset, linksIn } from "../src/markdown.mjs";
 

@@ -4,8 +4,8 @@ Run html-validate on every built page with the repository's config.
 ## Files
 
 **Create**
-- `tools/html-validate-engine/run.mjs`
-- `tools/html-validate-engine/run.test.mjs`
+- `tools/html-validate-engine/run.ts`
+- `tools/html-validate-engine/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

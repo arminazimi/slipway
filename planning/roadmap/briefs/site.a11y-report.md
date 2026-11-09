@@ -4,8 +4,8 @@ A public WCAG 2.2 AA conformance page generated from the accessibility gate resu
 ## Files
 
 **Create**
-- `tools/a11y-report/run.mjs`
-- `tools/a11y-report/run.test.mjs`
+- `tools/a11y-report/run.ts`
+- `tools/a11y-report/run.test.ts`
 - `site/accessibility.md`
 
 Touch no other file. If one must change, stop and say why in the issue.

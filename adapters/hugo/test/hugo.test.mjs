@@ -8,7 +8,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { doctor } from "../../../packages/doctor/src/doctor.mjs";
-import { validateSourcemap } from "../../../tools/theme/sourcemap.mjs";
+import { validateSourcemap } from "../../../tools/theme/sourcemap.ts";
 
 const adapter = fileURLToPath(new URL("..", import.meta.url));
 const fixture = fileURLToPath(new URL("site", import.meta.url));

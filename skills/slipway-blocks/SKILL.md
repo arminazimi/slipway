@@ -99,7 +99,7 @@ A block's data is page content: translate it like the rest of the page, and keep
 Check the front matter, including the lists the blocks read:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 ```
 
 Fix every problem at the file and line it prints, then build the site:

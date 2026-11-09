@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
-import { validateConfig } from "../../../../tools/theme/config.mjs";
+import { validateConfig } from "../../../../tools/theme/config.ts";
 import { insideSite } from "../tools.mjs";
 
 export const definition = {

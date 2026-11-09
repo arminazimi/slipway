@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { cpSync, mkdirSync, mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { doctor } from '../../../packages/doctor/src/doctor.mjs';
-import { validateSourcemap } from '../../../tools/theme/sourcemap.mjs';
+import { validateSourcemap } from '../../../tools/theme/sourcemap.ts';
 
 const adapter = fileURLToPath(new URL('..', import.meta.url));
 const fixture = fileURLToPath(new URL('site', import.meta.url));

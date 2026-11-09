@@ -4,7 +4,7 @@
        Fill them with XML-escaped values and remove the title lines a page does not need.
        The three line positions are the maximum; a filler moves the remaining lines down so the last sits at y=468.
        RTL pages: direction="rtl" text-anchor="start" (the right edge) on the title, x=1120 on every tspan, and no letter-spacing on the title or the section.
-       Colors and the mark come from brand/tokens.json and tools/brand/mark.mjs; see docs/adr/0020-social-cards.md. -->
+       Colors and the mark come from brand/tokens.json and tools/brand/mark.ts; see docs/adr/0020-social-cards.md. -->
   <defs>
     <clipPath id="og-above"><polygon points="-112.6,-51.4 378.9,292.7 545.8,54.3 54.3,-289.8"/></clipPath>
     <clipPath id="og-below"><polygon points="-122.9,-36.7 368.6,307.4 201.7,545.8 -289.8,201.7"/></clipPath>

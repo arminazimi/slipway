@@ -23,7 +23,7 @@ The design is that you can start in classic mode and move to Actions mode later 
 | Layouts, includes, CSS, `remote_theme`, the gem, "Use this template" | yes | | yes | [foundation.layout](../ROADMAP.md) |
 | Plain Jekyll 4 outside GitHub Pages (Netlify, Cloudflare Pages, `jekyll build`); set `url` in `_config.yml` | | | yes | [standalone.jekyll4](../ROADMAP.md) |
 | Override slots (`head-custom.html`, `footer-custom.html`, `custom.css`) | yes | | yes | [docs/overrides.md](overrides.md) |
-| Renamed config keys and front-matter fields keep working | yes, in Liquid (`compat.html`) | Warnings from `node tools/theme/deprecations.mjs <site>` | yes | [ADR 0012](adr/0012-public-api.md) |
+| Renamed config keys and front-matter fields keep working | yes, in Liquid (`compat.html`) | Warnings from `node tools/theme/deprecations.ts <site>` | yes | [ADR 0012](adr/0012-public-api.md) |
 | Right-to-left and `direction` in front matter | yes | | yes | [ADR 0006](adr/0006-markdown-twins.md) |
 | Markdown twin of every page (the same address with `.md`), linked with `<link rel="alternate" type="text/markdown">`, see [Markdown twins](#markdown-twins) | | Stubs from `npm run twins` | A generator plugin, no stubs | [ADR 0006](adr/0006-markdown-twins.md) |
 | Page-to-file source map (level 0): a `sourcemap.json` stub on the `sourcemap` layout | yes, in Liquid | | yes | [ADR 0007](adr/0007-source-maps.md) |

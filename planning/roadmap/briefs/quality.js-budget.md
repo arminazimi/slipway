@@ -4,8 +4,8 @@ Sum compressed JavaScript each page loads and fail above 30 KB, listing the larg
 ## Files
 
 **Create**
-- `tools/js-budget-engine/run.mjs`
-- `tools/js-budget-engine/run.test.mjs`
+- `tools/js-budget-engine/run.ts`
+- `tools/js-budget-engine/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

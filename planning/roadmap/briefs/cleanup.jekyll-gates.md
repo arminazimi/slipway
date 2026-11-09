@@ -4,10 +4,10 @@ Delete old gate folders replaced by engine gates (`tools/nojs`, `tools/html-vali
 ## Files
 
 **Edit**
-- `tools/nojs/run.mjs`
-- `tools/html-validate/run.mjs`
-- `tools/page-weight/run.mjs`
-- `tools/a11y/run.mjs`
+- `tools/nojs/run.ts`
+- `tools/html-validate/run.ts`
+- `tools/page-weight/run.ts`
+- `tools/a11y/run.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

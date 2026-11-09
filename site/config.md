@@ -6,7 +6,7 @@ permalink: /config/
 date: 2026-10-26
 author: Slipway
 ---
-<!-- Generated from schema/slipway-config.schema.json by tools/theme/config-doc.mjs. Do not edit below this line. -->
+<!-- Generated from schema/slipway-config.schema.json by tools/theme/config-doc.ts. Do not edit below this line. -->
 
 The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to plugins and are allowed unchecked.
 
@@ -57,7 +57,7 @@ The _config.yml keys the Slipway theme reads. Other keys belong to Jekyll or to 
 | `slipway.social[].title` | string | required | Accessible name for the social icon. |
 | `slipway.social[].url` | string | required | The URL of the social profile. |
 | `slipway.source_dir` | string |  | Folder where the site lives in the repository, such as docs, to prefix source paths in the edit prompt. |
-| `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.mjs. An unset color keeps the theme's light and dark pair; a set one applies to both. |
+| `slipway.tokens` | object |  | Overrides for theme tokens. Each key maps to CSS variables in tools/theme/config-map.ts. An unset color keeps the theme's light and dark pair; a set one applies to both. |
 | `slipway.tokens.accent` | string: A hex color (#rrggbb) or an oklch() color. |  | Accent for links, marks, and filled buttons, in both light and dark. |
 | `slipway.tokens.canvas` | string: A hex color (#rrggbb) or an oklch() color. |  | Page background, in both light and dark. |
 | `slipway.tokens.font_body` | string: A CSS font-family list. | `"Source Serif 4", Georgia, serif` | Reading text (Latin). |

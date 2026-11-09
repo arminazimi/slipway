@@ -1,5 +1,5 @@
 // YAML and front matter with line numbers, and Ajv errors turned into allowed values.
-// Generator-neutral: tools/theme/validate.mjs re-exports these for Slipway's own schemas.
+// Generator-neutral: tools/theme/validate.ts re-exports these for Slipway's own schemas.
 import { LineCounter, isMap, isSeq, parseDocument } from "yaml";
 
 /** Parses YAML and returns its data with a function that finds the 1-based line of a key path. */

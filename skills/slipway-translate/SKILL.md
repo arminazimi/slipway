@@ -21,7 +21,7 @@ cd "$HOME/.slipway" && npm ci && cd -
 From the site folder, run the schema check and the doctor before you change anything, and keep the output:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
 ```
 
@@ -90,7 +90,7 @@ A site language stops here: `_includes/t.html` reads `_data/i18n/` before the bu
 ## 6. Check the edit
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
 node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
 ```

@@ -4,7 +4,7 @@
 
 **Goal:** Ship epic #3: a token-driven theme (light, Charcoal dark, desert rose) restyled from `_config.yml`, with a contrast test.
 
-**Architecture:** `tokens/theme.tokens.json` (DTCG) is the only source. `tools/theme/tokens.mjs` turns it into `assets/css/tokens.css` (committed, drift-checked). The head include writes `_config.yml` overrides as `:root` variables. Plain CSS, no Sass, no build step on Pages.
+**Architecture:** `tokens/theme.tokens.json` (DTCG) is the only source. `tools/theme/tokens.ts` turns it into `assets/css/tokens.css` (committed, drift-checked). The head include writes `_config.yml` overrides as `:root` variables. Plain CSS, no Sass, no build step on Pages.
 
 **Tech Stack:** Node 22 `node:test`, Jekyll (GitHub Pages gem), plain CSS (`@layer`, `oklch`, `light-dark`, `@property`), `ajv` (devDependency) for JSON Schema.
 
@@ -34,11 +34,11 @@
 ### Task 1: Token scale (#4)
 
 **Files:**
-- Create: `tokens/theme.tokens.json`, `tools/theme/tokens.mjs`, `tools/theme/tokens.test.mjs`, `tools/theme/tokens-build.mjs`, `assets/css/tokens.css` (generated), `docs/adr/0008-theme-palette.md`
+- Create: `tokens/theme.tokens.json`, `tools/theme/tokens.ts`, `tools/theme/tokens.test.mjs`, `tools/theme/tokens-build.ts`, `assets/css/tokens.css` (generated), `docs/adr/0008-theme-palette.md`
 - Modify: `package.json` (scripts `build:tokens`, `check:tokens`; add `check:tokens` to `check`; add `tools/theme/tokens.test.mjs` is already covered by the `tools/theme/*.test.mjs` glob), `assets/css/slipway.css` (consume variables), `_includes/head.html` (link `tokens.css` before `slipway.css`)
 
 **Interfaces:**
-- Produces: `loadTokens(path: string): TokenFile`; `resolveToken(tokens: TokenFile, name: string, mode: "light" | "dark"): string` (hex or css value, aliases followed); `listTokens(tokens: TokenFile): { name: string; type: string; light: string; dark: string }[]`; `buildCss(tokens: TokenFile): string`; CLI `node tools/theme/tokens-build.mjs [--check]` (exit 1 when `assets/css/tokens.css` differs).
+- Produces: `loadTokens(path: string): TokenFile`; `resolveToken(tokens: TokenFile, name: string, mode: "light" | "dark"): string` (hex or css value, aliases followed); `listTokens(tokens: TokenFile): { name: string; type: string; light: string; dark: string }[]`; `buildCss(tokens: TokenFile): string`; CLI `node tools/theme/tokens-build.ts [--check]` (exit 1 when `assets/css/tokens.css` differs).
 - CSS variable names: `--sl-color-{canvas,surface,text,heading,muted,line,rose,rose-fill,on-rose-fill}`, `--sl-font-{display,body,mono,persian}`, `--sl-step-{-1,0,1,2,3,4}` (fluid `clamp()`), `--sl-space-{1,2,3,4,6,8,12,16}` (4px grid in `rem`), `--sl-radius-{compact,card}`, `--sl-measure`.
 
 - [ ] **Step 1: Write failing tests** in `tools/theme/tokens.test.mjs`: `resolveToken(t,"color.text","light") === "#3b3330"`, `("color.text","dark") === "#b9b2b0"`, `("color.rose","light") === "#7a4f4f"`, `("color.canvas","dark") === "#262425"` (all spec values); `buildCss` output contains `color-scheme: light dark`, `--sl-color-text: light-dark(#3b3330, #b9b2b0)`, and starts inside `@layer tokens`; a `{color.rose}` alias in a component token resolves to the same value.
@@ -52,7 +52,7 @@
 ### Task 2: Config tokens to CSS variables with JSON Schema (#6)
 
 **Files:**
-- Create: `schemas/slipway-config.schema.json`, `tools/theme/config-map.mjs`, `tools/theme/config.test.mjs`, `_includes/theme-vars.html`
+- Create: `schemas/slipway-config.schema.json`, `tools/theme/config-map.ts`, `tools/theme/config.test.ts`, `_includes/theme-vars.html`
 - Modify: `_includes/head.html` (include `theme-vars.html` after `tokens.css`), `examples/minimal/_config.yml` (add a commented `slipway.tokens` sample), `package.json` (`ajv` devDependency)
 
 **Interfaces:**
@@ -100,7 +100,7 @@
 ### Task 5: WCAG AA test for every text token pair (#56)
 
 **Files:**
-- Create: `tools/theme/contrast.mjs`, `tools/theme/contrast.test.mjs`
+- Create: `tools/theme/contrast.ts`, `tools/theme/contrast.test.ts`
 - Modify: `tokens/theme.tokens.json` (declare `$extensions.slipway.pairs`: a list of `[foreground, background, kind]` with `kind` `"text" | "large" | "ui"`), `package.json` (`check:contrast`, included in `check`)
 
 **Interfaces:**
@@ -109,14 +109,14 @@
 
 - [ ] **Step 1: Failing tests:** `contrastRatio("#000000","#ffffff")` is 21 (`toFixed(2)`); `contrastRatio("#3b3330","#e9e1d6")` rounds to 9.52 range (between 9.4 and 9.6); `checkPairs` on the default tokens has no `ok: false` in either mode; a copy of the tokens with `color.rose` light set to `#d4a29c` yields at least one `ok: false` (proves the test can fail).
 - [ ] **Step 2: Run, expect FAIL; implement; run, expect PASS.**
-- [ ] **Step 3: Print a table** (pair, mode, ratio, APCA) from `node tools/theme/contrast.mjs`; exits 1 on any failure; APCA never fails the run.
+- [ ] **Step 3: Print a table** (pair, mode, ratio, APCA) from `node tools/theme/contrast.ts`; exits 1 on any failure; APCA never fails the run.
 - [ ] **Step 4: Verify and ship:** branch `theme/56-contrast-test`, `Closes #56`. Fix any real failure by adjusting the surface token, not by lowering the requirement.
 
 ### Task 6: Document every token (#8)
 
 **Files:**
 - Create: `docs/tokens.md` (generated), `tools/theme/tokens-docs.test.mjs`
-- Modify: `tools/theme/tokens-build.mjs` (also writes/checks `docs/tokens.md`), `tokens/theme.tokens.json` (`$description` on every token)
+- Modify: `tools/theme/tokens-build.ts` (also writes/checks `docs/tokens.md`), `tokens/theme.tokens.json` (`$description` on every token)
 
 **Interfaces:**
 - Consumes: `listTokens`.

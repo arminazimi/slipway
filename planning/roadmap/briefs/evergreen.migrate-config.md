@@ -4,8 +4,8 @@ Convert a Slipway 0.2 `_config.yml` into a valid `slipway.yml` using the mapping
 ## Files
 
 **Create**
-- `tools/migrate/config.mjs`
-- `tools/migrate/config.test.mjs`
+- `tools/migrate/config.ts`
+- `tools/migrate/config.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

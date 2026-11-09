@@ -1,7 +1,7 @@
 name: coverage
 
 # Runs the Node tests with Node's built-in coverage, writes the table to the job summary and fails
-# when line coverage drops below tools/coverage/floor.json. The logic lives in tools/coverage/coverage.mjs.
+# when line coverage drops below tools/coverage/floor.json. The logic lives in tools/coverage/coverage.ts.
 on:
   pull_request:
     paths:
@@ -33,4 +33,4 @@ jobs:
           node-version: 24
       - run: npm ci
       - name: Measure coverage and compare it with the floor
-        run: node tools/coverage/coverage.mjs
+        run: node tools/coverage/coverage.ts

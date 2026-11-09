@@ -4,8 +4,8 @@ Time a cold build of `fixtures/docs-site` and fail above 10 seconds in CI (local
 ## Files
 
 **Create**
-- `tools/build-time/run.mjs`
-- `tools/build-time/run.test.mjs`
+- `tools/build-time/run.ts`
+- `tools/build-time/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

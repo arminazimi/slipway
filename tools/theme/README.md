@@ -4,7 +4,7 @@ Node scripts that check the theme and the example sites. `npm run check` runs th
 
 ## Schema validation
 
-`npm run check:schemas` validates `_config.yml` and the front matter of every Markdown page in each example site against the schemas in [`schema/`](../../schema): [`slipway-config.schema.json`](../../schema/slipway-config.schema.json) and [`front-matter/`](../../schema/front-matter/README.md). `node tools/theme/validate.mjs <site folder ...>` checks other sites. It exits 1 when any problem is found.
+`npm run check:schemas` validates `_config.yml` and the front matter of every Markdown page in each example site against the schemas in [`schema/`](../../schema): [`slipway-config.schema.json`](../../schema/slipway-config.schema.json) and [`front-matter/`](../../schema/front-matter/README.md). `node tools/theme/validate.ts <site folder ...>` checks other sites. It exits 1 when any problem is found.
 
 Each problem is one line on standard error:
 

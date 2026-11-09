@@ -81,7 +81,7 @@ Right-to-left languages (`fa`, `ar`, `he`, `ur`) get a right-to-left layout from
 From the site folder, check the config and the front matter of every page against the schemas:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 ```
 
 Each problem is printed as `file:line key: message (allowed: ...)`. Fix it at that line, using the allowed values, and run it again. Then build the site, if it has a `Gemfile`:

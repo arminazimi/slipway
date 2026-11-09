@@ -1,4 +1,4 @@
-<!-- Generated from schema/front-matter/*.schema.json by tools/skills/front-matter-reference.mjs. Do not edit. -->
+<!-- Generated from schema/front-matter/*.schema.json by tools/skills/front-matter-reference.ts. Do not edit. -->
 # Front matter keys
 
 The keys every page may set (ADR 0003, decision 2). Unknown keys are kept and ignored, never rejected. The layout schemas build on this one.

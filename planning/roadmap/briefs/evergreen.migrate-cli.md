@@ -4,7 +4,7 @@
 ## Files
 
 **Create**
-- `tools/migrate/run.mjs`
+- `tools/migrate/run.ts`
 - `tools/migrate/README.md`
 
 Touch no other file. If one must change, stop and say why in the issue.

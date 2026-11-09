@@ -2,7 +2,7 @@ name: pr-hygiene
 
 # Every pull request says `Closes #<issue>`, and a change to files a site owner sees (`packages/theme/`
 # layouts, chrome, components, styles, and tokens, `schema/`, `skills/`) adds `changelog.d/<issue>.md`; the label
-# `no-changelog` skips the second rule. The check lives in tools/pr-hygiene/check.mjs.
+# `no-changelog` skips the second rule. The check lives in tools/pr-hygiene/check.ts.
 #
 # `pull_request_target` gives a fork's pull request a token that can comment. The job checks out the
 # default branch only and reads the pull request through the API, so no code from the pull request
@@ -37,4 +37,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: node tools/pr-hygiene/check.mjs
+        run: node tools/pr-hygiene/check.ts

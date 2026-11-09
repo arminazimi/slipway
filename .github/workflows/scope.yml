@@ -2,7 +2,7 @@ name: scope
 
 # A pull request edits only the files its issue's brief lists under `## Files`
 # (plus changelog.d/<issue>.md). The label `scope: wide` skips the check.
-# The check lives in tools/scope/scope.mjs.
+# The check lives in tools/scope/scope.ts.
 #
 # `pull_request_target` lets the job read issues of the base repository for a fork's pull
 # request. It checks out the default branch only and reads the pull request through the API,
@@ -37,4 +37,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: node tools/scope/scope.mjs
+        run: node tools/scope/scope.ts

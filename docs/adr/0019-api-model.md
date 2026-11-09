@@ -38,6 +38,6 @@ They agree on more than they differ: a tree of named things, callable details be
 ## Consequences
 
 - A converter writes one file per project; the theme walks modules, renders parameter and return tables from the structured fields, a deprecation banner from the object, an example block per example, and a source link per symbol.
-- `tools/api/fixtures/model.json` is the contract: it covers every kind and validates in `tools/api/model.test.mjs`. A converter is correct when its output validates and reads like the fixture.
+- `tools/api/fixtures/model.json` is the contract: it covers every kind and validates in `tools/api/model.test.ts`. A converter is correct when its output validates and reads like the fixture.
 - A language without a converter yet — Rust's nightly rustdoc JSON included — can be added without changing the schema as long as it can name a file, a line, and a commit.
 - The model is not an API reference generator: it has no layout, ordering, or navigation. Those stay in the site's content, as with every other Slipway page.

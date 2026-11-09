@@ -4,8 +4,8 @@
 >
 > A documentation theme on its own TypeScript engine: docs that people find easy to read and agents can edit safely, with proof.
 
-This file is the source of truth for planned work. `planning/roadmap/build.mjs` turns it and `planning/roadmap/briefs/` into GitHub issues;
-`planning/roadmap/apply.mjs` syncs them. Each task is one issue and one pull request.
+This file is the source of truth for planned work. `planning/roadmap/build.ts` turns it and `planning/roadmap/briefs/` into GitHub issues;
+`planning/roadmap/apply.ts` syncs them. Each task is one issue and one pull request.
 
 ## Direction
 
@@ -378,7 +378,7 @@ Authors have the components a docs site needs, written in Markdown: code blocks 
 CI proves the acceptable-level criteria on every pull request: Lighthouse at least 95 in all four categories, zero axe violations, keyboard flows, JavaScript and CSS budgets, a build-time budget, visual regression, pages usable without JavaScript, valid HTML, no broken links, byte-identical builds, and an engine that knows nothing about the theme.
 
 ### Scope
-- One folder per gate under `tools/<gate>/run.mjs`, discovered by `tools/check.mjs`
+- One folder per gate under `tools/<gate>/run.mjs`, discovered by `tools/check.ts`
 - Gates run on the engine's build of `fixtures/docs-site` and `fixtures/rtl-site`
 
 ### Non-goals

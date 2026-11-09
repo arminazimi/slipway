@@ -29,5 +29,5 @@ This recipe explains how to translate a page into another language while keeping
 7.  **Run checks.**
     Run the validation script to ensure the front matter is valid:
     ```sh
-    node "$HOME/.slipway/tools/theme/validate.mjs" .
+    node "$HOME/.slipway/tools/theme/validate.ts" .
     ```

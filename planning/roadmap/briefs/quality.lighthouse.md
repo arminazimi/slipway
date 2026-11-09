@@ -4,8 +4,8 @@ Run Lighthouse on four pages with mobile settings and fail below 95 in any categ
 ## Files
 
 **Create**
-- `tools/lighthouse/run.mjs`
-- `tools/lighthouse/run.test.mjs`
+- `tools/lighthouse/run.ts`
+- `tools/lighthouse/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
