@@ -1,82 +1,178 @@
 ---
-title: Customization Guide
-description: Learn how to customize your Slipway site using tokens, presets, override slots, and custom CSS.
+title: Customize a site
+description: Change the site's name, logo, footer, navigation, search, and page-agent menu from mizzen.yml without forking the theme.
 layout: doc
 permalink: /guides/customize/
-date: 2026-10-26
-author: Slipway
 ---
 
-This guide details how to change the look and behavior of a Slipway site without forking the theme.
+A Slipway site is Markdown, `mizzen.yml`, and optionally `_data/navigation.yml`. The engine and theme are packages, so most changes are configuration, not edits to theme code.
 
-## Tokens
+## Site settings
 
-Tokens are CSS custom properties that control the visual design of the theme. You can override them in your `_config.yml` file under the `slipway.tokens` key.
+`mizzen.yml` sits at the site root; every path in it is relative to that folder. These keys change the site as a whole:
 
 ```yaml
-slipway:
-  tokens:
-    accent: "#0b6e4f"
-    canvas: "#ffffff"
-    text: "#222222"
-    font_body: "Georgia, serif"
-    font_display: '"Instrument Serif", Georgia, serif'
-    radius: "0.5rem"
+title: My docs
+description: One sentence about the site.
+lang: en
+url: https://example.github.io
+base: /my-docs
+source: docs
+repository:
+  url: https://github.com/example/my-docs
+  branch: main
 ```
 
-These overrides apply to both light and dark modes. Ensure your chosen colors maintain sufficient contrast in both. For a full list of available tokens, see the [Tokens reference]({{ "/config/" | relative_url }}).
+`url` and `base` are what make canonical links, the sitemap, social images, and the deploy workflow's links point at the published site. Without `url`, those tags stay relative or are left out with a warning. The [configuration reference](../../config/) lists every key.
 
-## Presets
+## Logo and footer
 
-While Slipway doesn't offer one-click presets, you can easily copy and paste complete token sets from our examples into your `_config.yml` to change your site's aesthetic.
+The theme reads a few blocks from `theme.options`. The engine carries each block to the theme unread, so a key the theme does not know is ignored rather than failing the build.
 
-## Override slots
-
-You can inject custom HTML or CSS into specific areas of your site without modifying the theme files directly. These are called override slots.
-
-Create these files at the root of your site (or in your `source_dir`):
-
-*   `_includes/head-custom.html`: Appended to the `<head>` of every page. Use it for meta tags, analytics scripts, or custom fonts.
-*   `_includes/footer-custom.html`: Appended to the `<footer>` of every page, after the site title. Use it for an extra line of text or deferred scripts.
-*   `assets/css/custom.css`: Appended after the theme's CSS and generated `tokens.css` on every page. Use it to override tokens or style your own content.
-*   `assets/images/social.png`: The default Open Graph image (`og:image`) for your site.
-
-### Examples
-
-`_includes/head-custom.html`:
-
-```html
-<meta name="author" content="Ada Lovelace">
-<script src="https://analytics.example.com/script.js" defer></script>
+```yaml
+theme:
+  options:
+    logo:
+      light: /assets/logo.svg
+      dark: /assets/logo-dark.svg
+    footer:
+      copyright: © 2026 Example
+      license: MIT
+      links:
+        - title: Source
+          url: https://github.com/example/my-docs
+        - title: Guides
+          url: /guides/
 ```
 
-`_includes/footer-custom.html`:
+- `logo.light` and `logo.dark` are shown in the respective color scheme. Both are site paths; `base` is added for you. Without a logo, the header shows the site title.
+- `footer.copyright` and `footer.license` are plain text. `footer.links` accepts a `title` and a `url`; site paths start with `/`, and `https`, `http`, and `mailto` links work. Other schemes are dropped, so a config value cannot inject a script.
 
-```html
-<p>Code under <a href="https://opensource.org/license/mit">MIT</a>.</p>
-<p><a href="https://github.com/you/your-site">Source on GitHub</a></p>
+## Page-agent menu
+
+On a doc page, the "Use with an agent" menu copies the page's Markdown and offers links that open it in an agent. The defaults are Claude, ChatGPT, and Cursor. Replace them with `theme.options.pageAgent.providers`:
+
+```yaml
+theme:
+  options:
+    pageAgent:
+      providers:
+        - title: Claude
+          url: https://claude.ai/new?q=Read+{markdown}
+        - title: My agent
+          url: https://agent.example.com/open?url={url}&title={title}
 ```
 
-## Custom CSS
+Each URL may use `{markdown}` (the page's Markdown twin), `{url}` (the page's absolute URL), and `{title}`. The values are URL-encoded. A template that needs `{markdown}` or `{url}` is skipped when `url` is unset, because a relative path would give the agent a link it cannot open.
 
-For styling changes beyond what `_config.yml` tokens allow, use the `assets/css/custom.css` override slot.
+## Navigation
 
-```css
-/* assets/css/custom.css */
+The header menu and the doc sidebar come from `_data/navigation.yml`. The shape is the one 0.2 used: `main` is the header, `docs` is the sidebar, and a group holds links under a heading.
 
-/* Override a public token using the CSS custom property */
-:root {
-  --sl-color-rose: #0b6e4f;
-}
+```yaml
+main:
+  - title: Home
+    url: /
+  - title: Guides
+    url: /guides/
+  - title: Reference
+    url: /config/
 
-/* Style your own specific classes */
-.my-custom-note {
-  margin-inline-start: var(--sl-space-4);
-  padding: var(--sl-space-4);
-  background: var(--sl-color-surface);
-}
+docs:
+  - title: Start
+    children:
+      - title: Install
+        url: /install/
+      - title: Customize
+        url: /guides/customize/
 ```
 
-*   **No custom CSS, no request**: The file is only linked if it exists in your site, avoiding unnecessary 404 requests.
-*   **Logical properties**: Use logical properties (`margin-inline-start`, not `margin-left`) so your styles work in right-to-left languages.
-*   **Precedence**: `custom.css` loads last. A token set in `_config.yml` overrides the theme's default, but `custom.css` has the final say. Prefer `_config.yml` for tokens when possible.
+URLs are written without `base`; the engine adds it. A language adds its own list with a suffix, such as `main_fa`; a language without one uses the plain list. Set `navigation` in `mizzen.yml` to use a file at another path. When the file does not exist, navigation is built from folders and each page's `order` front matter.
+
+## Default front matter
+
+Apply a layout and other values to a folder instead of repeating them in every page:
+
+```yaml
+source: docs
+defaults:
+  - path: ""
+    values:
+      layout: doc
+```
+
+`path` is a folder relative to `source`, and `""` covers every page. Later entries win over earlier ones, and a page's own front matter always wins.
+
+## Search
+
+The engine writes the search index and the theme loads it on first use. Keep less text per page, or turn search off for the whole site:
+
+```yaml
+search:
+  text: 200
+```
+
+`search: false` builds no index. A single page leaves the index with `search: false` in its front matter.
+
+## Redirects and generated files
+
+Old addresses are redirect pages, so a renamed page keeps its URL:
+
+```yaml
+redirects:
+  /old-guide/: /guides/
+  /install: https://example.com/docs/install/
+```
+
+An output is switched off by its name:
+
+```yaml
+outputs:
+  twins: false
+  llms: false
+```
+
+The names are the files in the engine's outputs folder, such as `twins`, `llms`, `llms-full`, `sitemap`, `search`, `sourcemap`, `robots`, and `agents-md`. HTML pages and assets cannot be turned off.
+
+## Language and direction
+
+`lang` sets the interface strings and the default `dir`, so `lang: fa` or `lang: ar` gives a right-to-left page without another key. A page overrides either one with `lang` or `dir` in its front matter. To offer more than one language, list them in switcher order:
+
+```yaml
+languages:
+  - code: en
+    name: English
+    prefix: ""
+  - code: fa
+    name: فارسی
+    prefix: /fa
+```
+
+Pages join a language by `lang` and the translations of one page by `translation_key`.
+
+## Per-page settings
+
+The theme ships `doc`, `home`, `not-found`, and `base` layouts. A page can also set:
+
+- `permalink` for a URL other than the one its file path gives.
+- `order` to sort it among siblings when navigation comes from folders.
+- `status` (`experimental`, `beta`, `deprecated`, `proposed`, `accepted`, `rejected`, or `superseded`) for the label the theme shows.
+- `width` (`narrow`, `wide`, or `full`) for a page wider or narrower than the reading column.
+- `image` for the page's own social card.
+- `agent` for instructions to an agent editing the page, such as `edit: false` and the `source` file to change instead.
+
+## Changing the theme itself
+
+The colors, type, spacing, and component styles are design tokens in the theme, not config keys. In 0.3.0 there is no token override in `mizzen.yml` and no `assets/css/custom.css` slot: a color or font change belongs to a theme.
+
+For deeper changes, keep a copy of the theme, edit its tokens in `tokens/*.json` and its styles in `styles/`, and point the site at it:
+
+```yaml
+theme:
+  name: ./theme
+  options:
+    logo:
+      light: /assets/logo.svg
+```
+
+A relative `theme.name` is resolved from the site root. After editing the JSON, rebuild the token stylesheet with `npm run tokens --workspace @velella/lateen` for the theme in this repository, or `node scripts/tokens.mjs` inside a copy. Use logical CSS properties (`margin-inline-start`, not `margin-left`) so the copy still works in right-to-left languages.

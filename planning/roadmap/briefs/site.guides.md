@@ -8,7 +8,6 @@ Install, customize, and migrate guides that describe the engine and `npm create 
 - `site/guides/index.md`
 - `site/guides/customize.md`
 - `site/guides/migration.md`
-- `site/guides/social-cards.md`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
