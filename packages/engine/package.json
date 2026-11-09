@@ -8,6 +8,9 @@
   "engines": {
     "node": ">=24"
   },
+  "bin": {
+    "mizzen": "./bin/slipway.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./contracts": "./src/contracts/index.ts"
