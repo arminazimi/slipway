@@ -1,7 +1,7 @@
 ---
 title: Figure block
 description: A responsive image with alt text, an optional caption, and an optional linked credit.
-layout: page
+layout: doc
 figure:
   src: /assets/images/social.png
   alt: The Slipway social card

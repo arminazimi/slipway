@@ -1,7 +1,7 @@
 ---
 title: People block
 description: A responsive grid of people with avatars, roles, and links, from a list or from `_data/authors.yml`.
-layout: page
+layout: doc
 people:
   - name: Ada Rahimi
     role: Typographer

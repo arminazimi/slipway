@@ -1,0 +1,36 @@
+name: deploy-site
+
+# Builds `site/` with the engine and deploys it to this repository's Pages site, the docs at
+# https://arminazimi.github.io/slipway/. Actions is the Pages source, so the build runs here rather
+# than on a Jekyll branch (UPGRADING.md, "Build and deploy").
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: deploy
+        uses: ./action/deploy
+        with:
+          path: site

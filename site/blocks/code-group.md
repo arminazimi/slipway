@@ -1,7 +1,7 @@
 ---
 title: Code group block
 description: The same example in several languages or package managers, as tabs that stack without JavaScript.
-layout: page
+layout: doc
 group:
   - label: npm
     language: bash

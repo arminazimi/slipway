@@ -201,7 +201,7 @@ export async function buildModel(root: string): Promise<ModelResult> {
 
   const navFile = resolve(siteRoot, config.navigation);
   const navRel = relative(siteRoot, navFile).split("\\").join("/");
-  const navResult = loadNavigation(navFile, navRel, { pages: new Set(pages.map((p) => p.url)) });
+  const navResult = loadNavigation(navFile, navRel, { pages: new Set(pages.map((p) => p.url)), base: config.base });
   for (const d of navResult.diagnostics) diagnostics.report(d);
   const nav: NavTree =
     Object.keys(navResult.nav).length > 0 ? navResult.nav : { docs: navFromFolders(folderPages) };

@@ -1,7 +1,7 @@
 ---
 title: Steps block
 description: A numbered sequence of steps, such as a tutorial or guide.
-layout: page
+layout: doc
 steps:
   - title: Prerequisites
     description: Make sure you have installed the required tools.

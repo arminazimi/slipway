@@ -1,7 +1,7 @@
 ---
 title: Citation block
 description: A numbered reference list with in-text cites that link to it.
-layout: page
+layout: doc
 references:
   - id: 1
     text: Knuth, Donald E. The TeXbook. Addison-Wesley, 1984.
