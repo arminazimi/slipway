@@ -1,23 +1,24 @@
 # unknown-config
 
 ## Why it matters
-Slipway themes read specific configuration keys under the `slipway:` section in `_config.yml` (and `_config.yaml`). If an agent or human adds a key with a typo (for example, `headr:` instead of `header:`), the site will silently ignore it and fail to apply the desired configuration. This check detects unknown configuration keys under the `slipway:` object, warns about them, and suggests the closest valid key based on the JSON schema, saving debugging time.
+The engine reads every key of `slipway.yml` (`mizzen.yml` on a renamed site), and the schema closes the set: an unknown key is ignored without an error, so a typo such as `headr:` or `repository.brnch:` silently does nothing. This check reports each unknown key at its line and suggests the closest valid one from the engine's config schema. On a 0.2 Jekyll site it checks the `slipway:` block of `_config.yml` against the theme's schema instead.
 
 ## How to fix
-Rename the unknown key to the suggested valid key, or remove it if it is truly unsupported by Slipway.
+Rename the unknown key to the suggested valid key, or remove it if the engine does not support it.
 
 ### Bad
 ```yaml
-slipway:
-  headr: minimal
-  tokens:
-    acent: "#ff0000"
+title: Beacon
+headr: minimal
+repository:
+  url: https://github.com/example/beacon-docs
+  brnch: main
 ```
 
 ### Good
 ```yaml
-slipway:
-  header: minimal
-  tokens:
-    accent: "#ff0000"
+title: Beacon
+repository:
+  url: https://github.com/example/beacon-docs
+  branch: main
 ```
