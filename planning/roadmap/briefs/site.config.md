@@ -7,7 +7,6 @@ Add `site/slipway.yml` and deploy the site with `action/deploy`.
 - `site/slipway.yml`
 
 **Edit**
-- `.github/workflows/deploy-site.yml`
 - `site/_config.yml`
 - `site/_config.remote.yml`
 

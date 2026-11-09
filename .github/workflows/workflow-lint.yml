@@ -4,7 +4,7 @@ name: workflow-lint
 # and the shell in `run:`, and zizmor for the security audits (unpinned actions, overly broad
 # permissions, cache poisoning). Both lint the whole repository, not only the changed files, so a
 # fix in one workflow cannot hide a problem in another. zizmor's findings go to code scanning as
-# SARIF, next to Evergreen's (lifecycle.yml).
+# SARIF.
 on:
   push:
     branches: [main]

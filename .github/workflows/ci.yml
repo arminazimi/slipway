@@ -1,5 +1,8 @@
 name: ci
 
+# Mizzen and Lateen are TypeScript on Node's built-in type stripping, so CI needs Node and nothing else:
+# no gem toolchain and no browser. `npm run check` runs the roadmap check, every test, the type check of
+# each workspace, and the fixed checks; steps that need a missing optional tool print SKIP when they are missing.
 on:
   push:
     branches: [main]
@@ -17,146 +20,35 @@ concurrency:
 
 jobs:
   check:
-    name: check (${{ matrix.jekyll }})
+    name: check
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        # pages: the github-pages gem (Jekyll 3.10). jekyll4: plain Jekyll 4, as on Netlify or Cloudflare Pages.
-        jekyll: [pages, jekyll4]
     env:
-      BUNDLE_GEMFILE: ${{ matrix.jekyll == 'jekyll4' && 'tools/theme/gemfiles/jekyll4.gemfile' || 'Gemfile' }}
-      # Ruby and the Pages gem are part of this job, so a skipped site build is a failure.
-      SLIPWAY_REQUIRE_BUILD: "1"
       SLIPWAY_REQUIRE_SEAWORTHY: "1"
-      LANG: C.UTF-8
     steps:
-      - name: Start the check timer
-        run: echo "CI_STARTED=$(date +%s)" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 22
-      # The GitHub Pages environment: the Ruby in .ruby-version and the github-pages gem
-      # (Jekyll and the whitelisted plugins), installed from Gemfile.lock.
-      - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+          node-version: 24
+          cache: npm
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .seaworthy
           key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
-      # Docusaurus, for the Docusaurus adapter's tests (adapters/docusaurus), which skip without it.
-      - name: Install Docusaurus
-        run: |
-          npm install --prefix "$RUNNER_TEMP/docusaurus" --no-save --no-audit --no-fund @docusaurus/core@3.10.2 @docusaurus/preset-classic@3.10.2 react@19.2.0 react-dom@19.2.0
-          echo "DOCUSAURUS_MODULES=$RUNNER_TEMP/docusaurus/node_modules" >> "$GITHUB_ENV"
-      # Eleventy, for the Eleventy adapter's tests (adapters/eleventy), which skip without it.
-      - name: Install Eleventy
-        run: |
-          npm install --prefix "$RUNNER_TEMP/eleventy" --no-save --no-audit --no-fund @11ty/eleventy@3.0.0 markdown-it@14.1.0 markdown-it-anchor@9.2.0
-          echo "ELEVENTY_MODULES=$RUNNER_TEMP/eleventy/node_modules" >> "$GITHUB_ENV"
-      # Hugo, for the Hugo adapter's tests (adapters/hugo), which skip without it.
-      - name: Install Hugo
-        run: |
-          curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_0.152.2_linux-amd64.tar.gz | tar -xz -C "$RUNNER_TEMP" hugo
-          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
-      # MkDocs, for the MkDocs adapter's tests, which skip without it.
-      - name: Install MkDocs
-        run: pip install mkdocs beautifulsoup4 --break-system-packages || pip3 install mkdocs beautifulsoup4 --break-system-packages || true
       - run: npm ci
-      - if: matrix.jekyll == 'pages'
-        run: bundle exec github-pages versions
-      - if: matrix.jekyll == 'pages'
-        run: npm run check
-      - if: matrix.jekyll == 'pages'
-        name: Upgrade test
-        run: node tools/release/upgrade-test.mjs
-      # The Jekyll 4 job builds and verifies every example, then compares the minimal one with the
-      # Pages build, so it installs the Pages gem too.
-      - if: matrix.jekyll == 'jekyll4'
-        run: bundle exec jekyll --version && npm run check:site
-      - if: matrix.jekyll == 'jekyll4'
-        run: BUNDLE_GEMFILE=Gemfile bundle install --jobs 4
-      - if: matrix.jekyll == 'jekyll4'
-        run: node --test tools/theme/jekyll4.test.mjs
-        env:
-          SLIPWAY_REQUIRE_JEKYLL4: "1"
-      # The doctor Action (action/doctor) on a site that must reach L3, and as a report on examples/docs,
-      # which does not reach L0 yet.
-      - if: matrix.jekyll == 'pages'
-        uses: ./action/doctor
-        with:
-          path: packages/doctor/test/fixtures/conforming
-          build: packages/doctor/test/fixtures/conforming/build
-          level: L3
-          sarif: "true"
-          setup-node: "false"
-      - if: matrix.jekyll == 'pages'
-        uses: ./action/doctor
-        with:
-          path: examples/docs
-          level: none
-          setup-node: "false"
-      - name: Print the check time
-        if: always()
-        env:
-          JOB: check (${{ matrix.jekyll }})
-        run: |
-          elapsed=$(( $(date +%s) - CI_STARTED ))
-          echo "$JOB: $(( elapsed / 60 )) min $(( elapsed % 60 )) s" >> "$GITHUB_STEP_SUMMARY"
-
-  browser:
-    name: browser tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-    steps:
-      - name: Start the check timer
-        run: echo "CI_STARTED=$(date +%s)" >> "$GITHUB_ENV"
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-      - uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-      - run: npm ci
-      # The browser folder is keyed on the installed Playwright version, so a new release downloads once.
-      - id: playwright
-        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - run: npx playwright install --with-deps
-      # Every tools/*/run.mjs (cross-browser, no-JS, screenshots, axe, and any added later).
-      # The screenshot baselines are not stable on the runner yet, and this job never ran them.
-      - run: npm run check:tools
-        env:
-          SLIPWAY_SKIP_TOOLS: screenshots
-      - name: Print the check time
-        if: always()
-        env:
-          JOB: browser tests
-        run: |
-          elapsed=$(( $(date +%s) - CI_STARTED ))
-          echo "$JOB: $(( elapsed / 60 )) min $(( elapsed % 60 )) s" >> "$GITHUB_STEP_SUMMARY"
+      - run: npm run check
 
   # The one check branch protection and the merge queue require. It runs even when a job it
   # needs failed or was cancelled, and fails unless every one of them succeeded.
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [check, browser]
+    needs: [check]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
