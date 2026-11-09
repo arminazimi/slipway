@@ -16,7 +16,7 @@
     "check": "node tools/check.ts",
     "check:tools": "node tools/check.ts --tools",
     "check:schemas": "node tools/theme/validate.ts",
-    "check:docs": "node tools/theme/config-doc.ts --check && node tools/theme/front-matter-doc.ts --check",
+    "check:docs": "node tools/theme/front-matter-doc.ts --check",
     "roadmap:build": "node planning/roadmap/build.ts",
     "roadmap:apply": "node planning/roadmap/apply.ts",
     "build:brand": "node tools/brand/build.ts",
@@ -29,7 +29,7 @@
     "check:js": "node tools/theme/js-budget.ts",
     "check:css": "node tools/theme/css-budget.ts",
     "build:skills": "node tools/skills/config-reference.ts",
-    "build:docs": "node tools/theme/config-doc.ts && node tools/theme/front-matter-doc.ts"
+    "build:docs": "node tools/config-ref/run.ts --write && node tools/theme/front-matter-doc.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
