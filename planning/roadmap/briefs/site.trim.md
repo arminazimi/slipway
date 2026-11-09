@@ -15,7 +15,6 @@ Delete `site/audio/`, `site/compare/`, `site/languages.md`, and `site/roadmap.md
 - `site/mizzen.yml`
 - `site/_data/navigation.yml`
 - `site/index.md`
-- `site/blocks/audio.md`
 - `spec/docs-site/_data/navigation.yml`
 
 Touch no other file. If one must change, stop and say why in the issue.
