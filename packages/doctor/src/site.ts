@@ -14,6 +14,12 @@ export const validateSourcemap = metaAjv.compile<any>(packaged("sourcemap.schema
 /** Folders never walked: version control and dependencies. Other dot-folders are skipped too, except `.well-known`. */
 const skipped = new Set([".git", "node_modules"]);
 
+/** The engine's site config, canonical name first (ADR 0025), then the pre-renaming name the fixtures use. */
+const configFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml"];
+
+/** Where the engine writes its build manifest, relative to the output folder (`output.manifest`). */
+const manifestFile = ".slipway/manifest.json";
+
 const once = (target, key, load) => {
   const cache = (target.cache ??= new Map());
   if (!cache.has(key)) cache.set(key, load());
@@ -110,6 +116,20 @@ export class Site {
         }
       }
       return { unsupported: `${path.split(".").pop().toUpperCase()} files` };
+    });
+  }
+
+  /**
+   * The engine site's config: `{ file, data, lineOf, offset }` as parsed YAML, `{ file, error, line }` when it
+   * does not parse, or null when the folder holds no engine config. ADR 0025 names the file `mizzen.yml`; the
+   * pre-renaming `slipway.yml` is read too, because the shared fixtures still carry it.
+   */
+  config() {
+    return once(this, "config", () => {
+      for (const file of configFiles) {
+        if (this.isFile(this.source, file)) return { file, ...this.dataOf(file) };
+      }
+      return null;
     });
   }
 
@@ -229,6 +249,41 @@ export class Site {
         : validateSourcemap.errors.map((error) => ({ key: error.instancePath || "/", message: error.message }));
       return errors.length ? { data, errors } : { data };
     });
+  }
+
+  /**
+   * The engine's build manifest, `.slipway/manifest.json` from the output folder (`output.manifest`): `{ data }`
+   * with `{ version, pages }`, `{ errors }` when the file does not parse or has no page list, or null when there
+   * is no output folder or no manifest in it.
+   */
+  manifest() {
+    return once(this, "manifest", () => {
+      if (!this.build || !this.isFile(this.build, manifestFile)) return null;
+      let data;
+      try {
+        data = JSON.parse(readFileSync(join(this.build, ...manifestFile.split("/")), "utf8"));
+      } catch (error) {
+        return { errors: [{ key: "/", message: `JSON does not parse: ${error.message}` }] };
+      }
+      if (!data || typeof data !== "object" || !Array.isArray(data.pages)) {
+        return { errors: [{ key: "/pages", message: "must be an array" }] };
+      }
+      return { data };
+    });
+  }
+
+  /**
+   * The manifest's pages: each page's `url`, `source`, `title`, `layout`, `outputs`, and `hashes`, in URL order.
+   * Empty without a manifest, so a check on the source alone keeps working.
+   */
+  pages() {
+    return this.manifest()?.data?.pages ?? [];
+  }
+
+  /** The source files the manifest lists, in page order and without duplicates: the pages a check may read. */
+  sources() {
+    const sources = this.pages().map((page) => page?.source).filter((source) => typeof source === "string");
+    return [...new Set(sources)];
   }
 
   /** The output file for a site URL path: `/a/` is `/a/index.html`. Null when it is not a file in the output folder. */
