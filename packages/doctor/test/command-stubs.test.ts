@@ -1,10 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync, mkdirSync, cpSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { main, parseArgs } from "../src/commands/stubs.ts";
 import { stubs, siteFiles } from "../src/checks/jekyll.ts";
+
+const docsSite = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
 
 function getContext() {
   let stdout = "";
@@ -91,4 +94,35 @@ test("stubs --check --json returns JSON with missing and stale arrays", async (t
   assert.ok(out.stale);
   assert.ok(out.stale.includes(staleStub));
   assert.ok(out.missing.includes(requiredStubs[1]));
+});
+
+test("stubs leaves the engine's own outputs alone on an engine site", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-stubs-engine-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(docsSite, dir, { recursive: true });
+
+  const ctx = getContext();
+  const code = await main(["stubs", dir], ctx);
+  assert.equal(code, 0);
+
+  assert.ok(!existsSync(join(dir, "AGENTS.md")), "AGENTS.md is the engine's to write");
+  assert.ok(!existsSync(join(dir, "search.json")), "the search index is the engine's to write");
+  assert.ok(existsSync(join(dir, ".vscode", "settings.json")));
+  assert.match(ctx.stdout, /not needed: AGENTS\.md \(the engine generates it\)/);
+  assert.match(ctx.stdout, /not needed: search\.json \(the engine generates it\)/);
+});
+
+test("stubs --check --json on an engine site reports the generated files as not needed", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-stubs-engine-check-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(docsSite, dir, { recursive: true });
+
+  const ctx = getContext();
+  const code = await main(["stubs", dir, "--check", "--json"], ctx);
+  const out = JSON.parse(ctx.stdout);
+  assert.deepEqual(out.notNeeded, ["AGENTS.md", "search.json"]);
+  assert.ok(out.missing.includes(".vscode/settings.json"));
+  assert.ok(!out.missing.includes("AGENTS.md"));
+  assert.ok(!out.missing.includes("search.json"));
+  assert.equal(code, 1);
 });
