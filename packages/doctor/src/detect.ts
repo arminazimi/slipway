@@ -15,6 +15,14 @@ const stemFile = (entries, stem) => entries.some((name) => name.startsWith(`${st
  */
 const generators = [
   {
+    // The engine's site (ADR 0025). Its config wins every tie: detection order puts it first.
+    // `slipway.yml` is the pre-renaming name, still read because the shared fixtures carry it.
+    generator: "mizzen",
+    sourceDir: ".",
+    outputDir: "dist",
+    match: (dir) => (anyFile(dir, ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml"]) ? 2 : 0),
+  },
+  {
     generator: "hugo",
     sourceDir: "content",
     outputDir: "public",
