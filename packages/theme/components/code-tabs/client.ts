@@ -1,5 +1,10 @@
 /* Code tabs island: turns a group's titles into a WAI-ARIA tab list. Without this script the blocks stay stacked. */
 
+// The sync part (`sync.ts`) rides along through this import: the engine loads exactly this one file
+// as the component's island (ADR 0022, rule 3), so the import is the only way the sync module
+// reaches the browser. It waits a microtask before it starts, so every group is already enhanced.
+import "./sync.ts";
+
 /** Attribute on each group root (`data-code-tabs`); the island finds groups by it. */
 export const GROUP_SELECTOR = "[data-code-tabs]";
 export const TABLIST_SELECTOR = ".code-tabs-list";
