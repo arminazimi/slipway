@@ -1,7 +1,0 @@
-# yaml-language-server: $schema=../../schema/slipway-config.schema.json
-title: Lina Farhadi
-description: Computational linguist working on multilingual text and right-to-left scripts.
-lang: en
-theme: slipway-theme
-plugins:
-  - jekyll-remote-theme

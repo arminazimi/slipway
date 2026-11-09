@@ -178,7 +178,7 @@ test("main prints FAIL and exits 1, names the file and URL, and prints OK or SKI
 test("every lock file in this repository resolves only from the official registries", () => {
   const { files, findings } = checkLockfiles(root);
   assert.deepEqual(findings, []);
-  for (const file of ["Gemfile.lock", "package-lock.json", "adapters/zola/package-lock.json"]) {
+  for (const file of ["package-lock.json", "adapters/zola/package-lock.json"]) {
     assert.ok(files.some((report) => report.file === file), file);
   }
 });

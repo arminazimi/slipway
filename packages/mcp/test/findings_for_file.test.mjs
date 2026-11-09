@@ -21,7 +21,7 @@ test("findings_for_file returns findings for a specific file", async (t) => {
   const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
   t.after(() => rmSync(site, { recursive: true, force: true }));
   // Copy examples/docs to a temp dir so we don't write to examples/
-  cpSync(new URL("../../../examples/docs", import.meta.url).pathname, site, { recursive: true });
+  cpSync(new URL("../../../packages/doctor/test/fixtures/examples/docs", import.meta.url).pathname, site, { recursive: true });
 
   const client = await connect(site, t);
   const result = await client.callTool({ name: "findings_for_file", arguments: { file: "AGENTS.md" } });

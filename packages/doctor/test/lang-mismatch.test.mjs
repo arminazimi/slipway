@@ -28,7 +28,7 @@ test("lang-mismatch warns when page text script differs from its lang", async ()
 
 test("lang-mismatch is silent on examples", async () => {
   for (const name of ["bare", "minimal", "docs", "blog", "persian"]) {
-    const siteDir = join(repo, "examples", name);
+    const siteDir = join(repo, "packages/doctor/test/fixtures/examples", name);
     const site = new Site(siteDir);
     const { status, findings } = await run(site);
     assert.equal(status, "pass");

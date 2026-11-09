@@ -34,7 +34,7 @@ test("i18n.spacing is silent on clean text, code, and French marks", async () =>
 
 test("i18n.spacing is silent on examples", async () => {
   for (const name of ["bare", "minimal", "docs", "blog", "persian"]) {
-    const { status, findings } = await run(new Site(join(repo, "examples", name)));
+    const { status, findings } = await run(new Site(join(repo, "packages/doctor/test/fixtures/examples", name)));
     assert.equal(status, "pass", `${name} failed with findings: ${JSON.stringify(findings)}`);
   }
 });

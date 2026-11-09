@@ -28,12 +28,3 @@ updates:
       npm:
         patterns:
           - "*"
-
-  - package-ecosystem: "bundler"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    groups:
-      bundler:
-        patterns:
-          - "*"

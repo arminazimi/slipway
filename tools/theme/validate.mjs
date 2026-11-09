@@ -88,11 +88,11 @@ export function validateSite(dir, base = process.cwd()) {
 }
 
 
-/** Every examples/<name> folder. */
-export function exampleSites(dir = join(root, "examples")) {
-  return readdirSync(dir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => join(dir, entry.name))
+/** Every site folder under examples/ and the legacy Jekyll sites doctor tests against. */
+export function exampleSites(dirs = [join(root, "examples"), join(root, "packages/doctor/test/fixtures/examples")]) {
+  return [dirs].flat().flatMap((dir) => readdirSync(dir, { withFileTypes: true }).map((entry) => ({ entry, dir })))
+    .filter(({ entry }) => entry.isDirectory())
+    .map(({ entry, dir }) => join(dir, entry.name))
     .sort();
 }
 

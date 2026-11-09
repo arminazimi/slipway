@@ -1,5 +1,0 @@
-{
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json": ["_config.yml", "_config.*.yml"]
-  }
-}

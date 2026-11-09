@@ -9,7 +9,7 @@
 // with a playwright.config.js holds Playwright tests that its run.mjs starts, so node --test skips that folder.
 // Anything that builds a site with Jekyll is left out of both lists.
 // Tools: every tools/<name>/run.ts (or legacy run.mjs) except the generators below. A run.mjs prints SKIP and exits 0 when its optional
-// dependency (Playwright, Ruby, Seaworthy) is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
+// dependency is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
 // Type check: every workspace with a `typecheck` script (`tsc --noEmit`) runs it after the tests.
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";

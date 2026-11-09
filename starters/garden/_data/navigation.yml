@@ -1,6 +1,0 @@
-# yaml-language-server: $schema=../../../schema/navigation.schema.json
-main:
-  - title: Home
-    url: /
-  - title: Garden
-    url: /garden.html

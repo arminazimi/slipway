@@ -1,7 +1,7 @@
 name: ci
 
 # Mizzen and Lateen are TypeScript on Node's built-in type stripping, so CI needs Node and nothing else:
-# no gem toolchain and no browser. `npm run check` runs the roadmap check, every test, the type check of
+# no Ruby, no browser, and no Seaworthy checkout. `npm run check` runs the roadmap check, every test, the type check of
 # each workspace, and the fixed checks; steps that need a missing optional tool print SKIP when they are missing.
 on:
   push:
@@ -25,8 +25,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-    env:
-      SLIPWAY_REQUIRE_SEAWORTHY: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -36,10 +34,6 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .seaworthy
-          key: seaworthy-${{ hashFiles('tools/seaworthy/pin.json') }}
       - run: npm ci
       - run: npm run check
 

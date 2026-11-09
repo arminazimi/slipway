@@ -7,7 +7,7 @@ import { run } from "../src/checks/unknown-front-matter.mjs";
 import { Site } from "../src/site.mjs";
 
 const fixture = (name) => fileURLToPath(new URL(`fixtures/${name}`, import.meta.url));
-const examplesPath = fileURLToPath(new URL("../../../examples", import.meta.url));
+const examplesPath = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples", import.meta.url));
 
 test("unknown-front-matter warns on unknown fields and suggests valid keys", async () => {
   const site = new Site(fixture("unknown-front-matter"));

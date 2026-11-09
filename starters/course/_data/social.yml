@@ -1,6 +1,0 @@
-- network: github
-  url: https://github.com/arminazimi/slipway
-- network: mastodon
-  url: https://mastodon.social/@example
-- network: x
-  url: https://x.com/example

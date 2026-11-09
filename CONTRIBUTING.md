@@ -42,13 +42,7 @@ To avoid merge conflicts when working on tasks in parallel:
 
 ## Releasing
 
-Maintainers only. Sites pin a release with `remote_theme: arminazimi/slipway@vX.Y.Z`.
-
-1. On an up-to-date `main`, run `node tools/release/prepare.mjs X.Y.Z`. It bumps `slipway-theme.gemspec`, moves `Unreleased` and the `changelog.d/` fragments in `CHANGELOG.md` under `X.Y.Z` with today's date (and deletes the fragments), and prints the git commands.
-2. Commit on a `release/vX.Y.Z` branch, open a pull request, and merge it once CI is green.
-3. On `main`, tag the merge commit and push the tag: `git tag -a vX.Y.Z -m vX.Y.Z && git push origin vX.Y.Z`.
-4. The [release workflow](.github/workflows/release.yml) fails if the tag does not match the gemspec version, runs `npm run check`, and creates the GitHub release with that `CHANGELOG.md` section as its notes.
-5. Once the GitHub release exists, the workflow's `publish-gem` job builds `slipway-theme.gemspec` and pushes the gem to RubyGems with trusted publishing (the `rubygems` environment, no stored API key). Setting up that trusted publisher on rubygems.org is a one-time maintainer step.
+Maintainers only. The Jekyll gem and its release steps were removed with Ruby on 2026-11-09; the last Jekyll release stays reachable through its tag. Until `tooling.release-tool` adds `tools/release/prepare.ts`, nothing is released from this repository.
 
 ### Mizzen and Lateen
 
@@ -66,4 +60,4 @@ Open an issue that names who the starter or block is for, links two or three rea
 
 Agents are welcome contributors. The same rules apply: one issue per PR, `npm run check` passes, and a human or agent reviewer can follow what changed. Say in the PR which agent you used, if any.
 
-On a bare cloud VM, run `bash tools/agents/setup.sh` first: it installs Node, Ruby, the Pages gem, and Playwright so `npm run check` runs in full (see `tools/agents/README.md`).
+On a bare cloud VM, run `bash tools/agents/setup.sh` first: it installs Node 24 and the npm packages so `npm run check` runs (see `tools/agents/README.md`).

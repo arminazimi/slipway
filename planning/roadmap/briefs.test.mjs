@@ -188,6 +188,8 @@ test("every Edit path exists or is created by a dependency", (t) => {
     const task = taskByKey.get(key);
     assert.ok(task, `${key} has a brief but no task in ROADMAP.md`);
     if (task.lane === "maintainer") continue;
+    // A finished task may have deleted the files it edited.
+    if (Object.hasOwn(DONE, key)) continue;
     const markdown = briefText.get(key);
     if (OTHER_REPOSITORY.test(markdown)) {
       t.diagnostic(`${key}: paths are in another repository; skipped`);

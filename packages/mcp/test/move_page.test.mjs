@@ -10,7 +10,7 @@ const testDir = join(root, ".tmp/test-move-page");
 
 before(() => {
   rmSync(testDir, { recursive: true, force: true });
-  cpSync(join(root, "examples/docs"), testDir, { recursive: true });
+  cpSync(join(root, "packages/doctor/test/fixtures/examples/docs"), testDir, { recursive: true });
 
   mkdirSync(join(testDir, "notes"), { recursive: true });
   writeFileSync(join(testDir, "notes/a.md"), "---\ntitle: A note\n---\n\n# A note\n");

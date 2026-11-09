@@ -33,7 +33,7 @@ test("i18n.kashida ignores inline code and fenced code", async () => {
 
 test("i18n.kashida is silent on examples", async () => {
   for (const name of ["bare", "minimal", "docs", "blog", "persian"]) {
-    const site = new Site(join(repo, "examples", name));
+    const site = new Site(join(repo, "packages/doctor/test/fixtures/examples", name));
     const { status, findings } = await run(site);
     assert.equal(status, "pass", `${name} failed with findings: ${JSON.stringify(findings)}`);
     assert.deepEqual(findings, []);

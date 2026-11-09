@@ -12,7 +12,7 @@ const outside = join(root, ".tmp/test-read-section-outside.md");
 
 before(() => {
   rmSync(testDir, { recursive: true, force: true });
-  cpSync(join(root, "examples/docs"), testDir, { recursive: true });
+  cpSync(join(root, "packages/doctor/test/fixtures/examples/docs"), testDir, { recursive: true });
 
   writeFileSync(outside, "# Outside\n\nNot part of the site.\n");
   symlinkSync(outside, join(testDir, "linked.md"));

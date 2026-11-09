@@ -1,7 +1,7 @@
 {
   "name": "slipway-repo",
   "private": true,
-  "description": "Slipway: an editorial, RTL-ready, agent-native site template, verified by Seaworthy.",
+  "description": "Slipway: an editorial, RTL-ready, agent-native docs engine and theme.",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -15,11 +15,8 @@
     "test": "node tools/check.mjs --test",
     "check": "node tools/check.mjs",
     "check:tools": "node tools/check.mjs --tools",
-    "seaworthy:setup": "node tools/seaworthy/setup.mjs",
     "check:schemas": "node tools/theme/validate.mjs",
     "check:docs": "node tools/theme/config-doc.mjs --check && node tools/theme/front-matter-doc.mjs --check",
-    "sourcemap": "node tools/sourcemap/run.mjs",
-    "twins": "node tools/twins/run.mjs",
     "roadmap:build": "node planning/roadmap/build.mjs",
     "roadmap:apply": "node planning/roadmap/apply.mjs",
     "build:brand": "node tools/brand/build.mjs",
@@ -35,14 +32,8 @@
     "build:docs": "node tools/theme/config-doc.mjs && node tools/theme/front-matter-doc.mjs"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.14.0",
-    "@playwright/test": "^1.64.1",
     "ajv": "^8.20.0",
-    "html-validate": "^11.17.0",
     "typescript": "^7.0.2",
     "yaml": "^2.9.1"
-  },
-  "dependencies": {
-    "playwright": "^1.64.1"
   }
 }

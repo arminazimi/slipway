@@ -30,8 +30,8 @@ test("agents-commands fires on the broken fixture", async () => {
 });
 
 test("agents-commands is silent on every example", async () => {
-  for (const name of readdirSync(join(repo, "examples"))) {
-    const siteDir = join(repo, "examples", name);
+  for (const name of readdirSync(join(repo, "packages/doctor/test/fixtures/examples"))) {
+    const siteDir = join(repo, "packages/doctor/test/fixtures/examples", name);
     const site = new Site(siteDir);
     const { status, findings } = await run(site);
     assert.equal(status, "pass", `${name} failed with findings: ${JSON.stringify(findings)}`);

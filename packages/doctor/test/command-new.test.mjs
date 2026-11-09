@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { main, parseArgs } from "../src/commands/new.mjs";
 
 const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
-const example = join(repoRoot, "examples", "minimal");
+const example = join(repoRoot, "packages/doctor/test/fixtures/examples", "minimal");
 
 function context() {
   let stdout = "";
