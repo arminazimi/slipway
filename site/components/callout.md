@@ -19,6 +19,18 @@ Run the migration on a copy of the database.
 :::
 ```
 
+A shortened directive, where the name is the type and the label is the title:
+
+```markdown
+:::tip[Check the version first]
+The engine needs Node 24 or later.
+:::
+```
+
+`:::note`, `:::tip`, `:::warning`, and `:::danger` (read as `caution`) all work this way. Text in
+square brackets after the name is the title; without it the kind's default title is used. Every
+other directive name is left alone.
+
 A GitHub alert:
 
 ```markdown

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { PassThrough } from "node:stream";
@@ -34,6 +34,17 @@ function sink() {
   let text = "";
   stream.on("data", (chunk) => (text += chunk));
   return { stream, text: () => text };
+}
+
+/** Copies the fixture without a build cache another test may be writing into it. */
+function copyFixture() {
+  const site = join(work, "fixture-site");
+  const transient = new Set([".slipway", ".tmp", "node_modules", ".git"]);
+  cpSync(fixture, site, {
+    recursive: true,
+    filter: (source) => !source.split(/[\\/]/).some((part) => transient.has(part)),
+  });
+  return site;
 }
 
 /** Builds `site` with the engine's real CLI. */
@@ -198,7 +209,7 @@ test("the generated site builds with the engine", () => {
 
 test("fixtures/docs-site builds with the same engine", () => {
   const out = join(work, "fixture-out");
-  const result = build(fixture, out);
+  const result = build(copyFixture(), out);
   assert.equal(result.status, 0, result.stderr || result.stdout);
   assert.ok(existsSync(join(out, "quickstart/index.html")));
 });
