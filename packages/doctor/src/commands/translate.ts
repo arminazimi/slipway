@@ -1,12 +1,19 @@
-import { resolve, dirname, join, relative } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { Site } from "../site.ts";
 import { splitFrontMatter } from "../yaml.ts";
 import * as yaml from "yaml";
 
+/** Files that mark a site root: the engine's config first (ADR 0025), then Jekyll's. */
+const configFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml", "_config.yml"];
+
 export const usage = `Usage: slipway translate <source-page> --to <lang> [options]
 
 Creates a translated copy of a page in the target language's folder.
+
+On an engine site the language comes from the page's lang front matter, the
+language prefix its path sits under, or the site's lang. The copy goes under
+the target language's configured prefix, and a permalink moves with it.
 
 Options:
   --to <lang>          the target language code (required)
@@ -46,7 +53,7 @@ export function parseArgs(args) {
   return { options };
 }
 
-/** Finds the site root by looking for _config.yml or similar files upwards. */
+/** Finds the site root by looking for an engine config, Jekyll's config, or a theme folder upwards. */
 function findSiteRoot(startPath) {
   let current = resolve(startPath);
   if (!existsSync(current) || !existsSync(dirname(current))) {
@@ -55,7 +62,7 @@ function findSiteRoot(startPath) {
 
   let depth = 0;
   while (current && current !== '/' && depth < 20) {
-    if (existsSync(join(current, "_config.yml")) ||
+    if (configFiles.some((file) => existsSync(join(current, file))) ||
         existsSync(join(current, "slipway-theme.gemspec")) ||
         existsSync(join(current, "_layouts", "base.html"))) {
       return current;
@@ -66,32 +73,147 @@ function findSiteRoot(startPath) {
   return null;
 }
 
-export async function main(args, { log = console.log, error = console.error } = {}) {
-  const parsed = parseArgs(args);
-  if (parsed.help) {
-    log(usage);
-    return 0;
-  }
-  if (parsed.error) {
-    error(`slipway translate: ${parsed.error}\n\n${usage}`);
-    return 2;
-  }
+/** A path as forward-slash segments: `./fa/about.md` → `["fa", "about.md"]`. */
+function pathSegments(path) {
+  return path
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .replace(/^\/+/, "")
+    .split("/")
+    .filter((segment) => segment.length > 0);
+}
 
-  const { source, to, format } = parsed.options;
-  const sourcePath = resolve(source);
+/** The URL folder of a language prefix, such as `/fa` → `fa`; `""` (the default language) → `""`. */
+function prefixFolder(prefix) {
+  return pathSegments(typeof prefix === "string" ? prefix : "").join("/");
+}
 
-  if (!existsSync(sourcePath)) {
-    error(`slipway translate: source file does not exist: ${source}`);
+/** The language whose URL prefix the path sits under, or undefined when none matches. */
+function languageFromPrefix(path, languages) {
+  const segments = pathSegments(path);
+  for (const language of languages) {
+    const prefix = pathSegments(prefixFolder(language.prefix));
+    if (prefix.length > 0 && prefix.every((part, index) => segments[index] === part)) return language;
+  }
+  return undefined;
+}
+
+/** The body of a page, after its front matter block. */
+function bodyAfterFrontMatter(sourceContent) {
+  const block = splitFrontMatter(sourceContent);
+  if (!block) return sourceContent;
+  const lines = sourceContent.split(/\r?\n/);
+  return lines.slice(block.offset + block.text.split(/\r?\n/).length + 1).join("\n");
+}
+
+/** The page path with a language prefix removed from its front. */
+function withoutPrefix(path, prefix) {
+  const folder = prefixFolder(prefix);
+  if (!folder) return path;
+  const segments = pathSegments(path);
+  const parts = pathSegments(folder);
+  if (parts.every((part, index) => segments[index] === part)) return segments.slice(parts.length).join("/");
+  return path;
+}
+
+/** The page path under a language prefix. */
+function withPrefix(path, prefix) {
+  const folder = prefixFolder(prefix);
+  return folder ? `${folder}/${path}`.replace(/^\/+/, "") : path;
+}
+
+/** A permalink moved from one language prefix to another, keeping its shape. */
+function translatedPermalink(permalink, fromPrefix, toPrefix) {
+  if (typeof permalink !== "string" || !permalink.startsWith("/")) return permalink;
+  const trailing = permalink.endsWith("/") ? "/" : "";
+  const moved = withPrefix(withoutPrefix(permalink.slice(1), fromPrefix), toPrefix);
+  return `/${moved}${trailing && !moved.endsWith("/") ? trailing : ""}`;
+}
+
+/** Translates a page on an engine site by the engine's language rules. Returns the exit code. */
+function translateEngineSite(siteRoot, sourcePath, to, format, { log, error }, site, config) {
+  if (config.error) {
+    error(`slipway translate: ${config.file} does not parse: ${config.error}`);
     return 1;
   }
 
-  const siteRoot = findSiteRoot(sourcePath);
-  if (!siteRoot) {
-    error(`slipway translate: could not find site root for ${source}`);
+  const sourceFolder = typeof config.data?.source === "string" && config.data.source.trim() !== "" ? config.data.source.trim() : ".";
+  const contentRoot = resolve(siteRoot, sourceFolder);
+  const relativeSourcePath = relative(contentRoot, sourcePath);
+  if (relativeSourcePath.startsWith("..") || isAbsolute(relativeSourcePath)) {
+    error(`slipway translate: source page is outside the site's source folder: ${sourceFolder}`);
     return 1;
   }
 
-  const site = new Site(siteRoot);
+  const siteRelativeSource = relative(siteRoot, sourcePath).split("\\").join("/");
+  const pagePath = relativeSourcePath.split("\\").join("/");
+  const fm = site.frontMatterOf(siteRelativeSource);
+
+  if (!fm || !fm.data) {
+    error(`slipway translate: source page must have front matter`);
+    return 1;
+  }
+  if (fm.error) {
+    error(`slipway translate: ${fm.error}`);
+    return 1;
+  }
+
+  const translationKey = fm.data.translation_key;
+  if (!translationKey) {
+    error(`slipway translate: source page is missing translation_key in front matter`);
+    return 1;
+  }
+
+  const languages = Array.isArray(config.data?.languages) ? config.data.languages : [];
+  const targetLanguage = languages.find((language) => language?.code === to);
+  if (!targetLanguage) {
+    error(`slipway translate: ${to} is not in languages in ${config.file}`);
+    return 1;
+  }
+
+  const frontMatterLang = typeof fm.data.lang === "string" ? fm.data.lang.trim() : "";
+  const sourceLanguage = frontMatterLang
+    ? languages.find((language) => language?.code === frontMatterLang)
+    : languageFromPrefix(pagePath, languages);
+  const sourcePrefix = sourceLanguage?.prefix ?? "";
+  const targetRelative = withPrefix(withoutPrefix(pagePath, sourcePrefix), targetLanguage.prefix);
+  const targetPath = join(contentRoot, ...targetRelative.split("/"));
+  const targetSiteRelative = relative(siteRoot, targetPath).split("\\").join("/");
+
+  if (existsSync(targetPath)) {
+    error(`slipway translate: target file already exists: ${targetSiteRelative}`);
+    return 1;
+  }
+
+  const newFmData = { ...fm.data, lang: to };
+  // The engine derives the direction from lang; a copied dir would stop that.
+  delete newFmData.dir;
+  if (newFmData.permalink !== undefined) {
+    newFmData.permalink = translatedPermalink(newFmData.permalink, sourcePrefix, targetLanguage.prefix);
+  }
+
+  const yamlString = Object.keys(newFmData).length > 0 ? `---\n${yaml.stringify(newFmData)}---\n` : "";
+  const newContent = `${yamlString}${bodyAfterFrontMatter(readFileSync(sourcePath, "utf8"))}`;
+
+  mkdirSync(dirname(targetPath), { recursive: true });
+  writeFileSync(targetPath, newContent, "utf8");
+
+  if (format === "json") {
+    log(JSON.stringify({
+      source: siteRelativeSource,
+      target: targetSiteRelative,
+      lang: to,
+      translation_key: translationKey
+    }, null, 2));
+  } else {
+    log(`Translated ${siteRelativeSource} to ${targetSiteRelative} for language ${to}`);
+  }
+
+  return 0;
+}
+
+/** Translates a page on a Jekyll site by `slipway.languages` in `_config.yml`. Returns the exit code. */
+function translateJekyllSite(siteRoot, sourcePath, to, format, { log, error }, site) {
   const relativeSourcePath = relative(siteRoot, sourcePath).split("\\").join("/");
 
   const fm = site.frontMatterOf(relativeSourcePath);
@@ -144,18 +266,10 @@ export async function main(args, { log = console.log, error = console.error } = 
     return 1;
   }
 
-  const sourceContent = readFileSync(sourcePath, "utf8");
-  const block = splitFrontMatter(sourceContent);
-  let body = sourceContent;
-  if (block) {
-    const lines = sourceContent.split(/\r?\n/);
-    body = lines.slice(block.offset + block.text.split(/\r?\n/).length + 1).join("\n");
-  }
-
   const newFmData = { ...fm.data, lang: to };
 
   const yamlString = Object.keys(newFmData).length > 0 ? `---\n${yaml.stringify(newFmData)}---\n` : "";
-  const newContent = `${yamlString}${body}`;
+  const newContent = `${yamlString}${bodyAfterFrontMatter(readFileSync(sourcePath, "utf8"))}`;
 
   mkdirSync(dirname(targetPath), { recursive: true });
   writeFileSync(targetPath, newContent, "utf8");
@@ -172,4 +286,35 @@ export async function main(args, { log = console.log, error = console.error } = 
   }
 
   return 0;
+}
+
+export async function main(args, { log = console.log, error = console.error } = {}) {
+  const parsed = parseArgs(args);
+  if (parsed.help) {
+    log(usage);
+    return 0;
+  }
+  if (parsed.error) {
+    error(`slipway translate: ${parsed.error}\n\n${usage}`);
+    return 2;
+  }
+
+  const { source, to, format } = parsed.options;
+  const sourcePath = resolve(source);
+
+  if (!existsSync(sourcePath)) {
+    error(`slipway translate: source file does not exist: ${source}`);
+    return 1;
+  }
+
+  const siteRoot = findSiteRoot(sourcePath);
+  if (!siteRoot) {
+    error(`slipway translate: could not find site root for ${source}`);
+    return 1;
+  }
+
+  const site = new Site(siteRoot);
+  const config = site.config();
+  if (config) return translateEngineSite(siteRoot, sourcePath, to, format, { log, error }, site, config);
+  return translateJekyllSite(siteRoot, sourcePath, to, format, { log, error }, site);
 }
