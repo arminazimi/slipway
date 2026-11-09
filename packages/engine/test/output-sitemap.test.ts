@@ -207,7 +207,7 @@ test("every doc page of fixtures/docs-site gets an absolute URL, and sitemap: fa
     .filter((p) => p.kind === "doc" && p.frontMatter.sitemap !== false)
     .map((p) => `https://example.com${p.url}`)
     .sort();
-  assert.ok(expected.includes("https://example.com/quickstart/"), "the fixture has a doc at /quickstart/");
+  assert.ok(model.pages.some((p) => p.url === "/quickstart/" && p.kind === "doc"), "the fixture has a doc at /quickstart/");
   assert.ok(model.pages.some((p) => p.kind === "app"), "the fixture has an app page");
   assert.deepEqual(locs(xml).slice().sort(), expected);
   assert.ok(!locs(xml).some((u) => u.includes("/dashboard/")), "the app page is not in the sitemap");
