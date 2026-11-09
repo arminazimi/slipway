@@ -40,6 +40,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Heading anchor](./heading-anchor/) | A link icon on every h2 to h4, added automatically. |
 | [Kbd](./kbd/) | A keyboard key or key combination. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
+| [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
