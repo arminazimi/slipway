@@ -11,7 +11,19 @@ Every planned task is an issue generated from [ROADMAP.md](ROADMAP.md) and linke
   - `lane: strong-agent`: needs design judgment. Good for experienced contributors and strong coding agents.
   - `lane: maintainer`: needs accounts, credentials, or decisions. Maintainers only.
 - **Size** says how big it is: `size: XS` (under an hour), `size: S` (a few hours), `size: M` (about a day).
+- **Priority** says how much the release needs the task: `priority: P0` (critical path, other work waits for it), `priority: P1` (required for the release), `priority: P2` (required, can land late), `priority: P3` (nice to have).
+- **Wave** is 1 + the deepest wave among the task's dependencies. Wave 1 tasks can start on day one.
+- **Order** is the task's place in one global execution order: dependencies first, then priority, then position in [ROADMAP.md](ROADMAP.md). Take the ready task with the lowest Order number first.
+- Each task issue shows these numbers in its header, for example `**Wave:** 5 · **Order:** 150 of 216`.
 - Pick a task whose dependencies (listed under **Depends on**) are closed. Tasks labeled `needs: seaworthy` also wait on a Seaworthy release.
+
+### Ready tasks
+
+`status: ready` marks a task whose dependencies are all closed, so an agent can start it now. A script keeps the label true: it is added when the last dependency closes and removed if a dependency is still open. If a task's dependencies are not all closed, do not start it; wait for them.
+
+### Limits on parallel work
+
+Up to 20 tasks run at once across the roadmap, and at most 4 per epic ([ROADMAP.md](ROADMAP.md), "Order, waves, and working twenty at a time"). Before you claim a task, check that its epic has room; if it does not, pick a ready task from another epic.
 
 ## Claim it
 
