@@ -22,3 +22,4 @@
 | [0021](0021-docs-first.md) | Slipway is a docs-first theme on its own TypeScript engine; Jekyll and everything that is not docs leave in 0.3.0 | Accepted |
 | [0025](0025-mizzen-and-lateen.md) | The engine is Mizzen (`@velella/mizzen`) and the theme is Lateen (`@velella/lateen`); they leave this repository after 0.3.0 | Accepted |
 | [0026](0026-source-spans.md) | Source spans: every block carries a start and end line and column, and the span's start is the block's ID | Accepted |
+| [0027](0027-diagnostic-fix.md) | Diagnostic fixes: an optional `fix` on a diagnostic, a replacement on a source span, printed in JSON and SARIF `fixes` | Accepted |

@@ -1,4 +1,4 @@
-import type { Diagnostic, Severity } from "../contracts/diagnostic.ts";
+import type { Diagnostic, DiagnosticFix, Severity } from "../contracts/diagnostic.ts";
 import type { SourcePos } from "../contracts/source.ts";
 
 /** What a caller may add to a finding beyond its id and message. */
@@ -7,6 +7,8 @@ export interface DiagnosticOptions {
   readonly pos?: SourcePos;
   /** How to fix it. */
   readonly help?: string;
+  /** A safe, mechanical repair on a source span. */
+  readonly fix?: DiagnosticFix;
 }
 
 /** Collects the findings of one build, in the order they were reported. */
@@ -36,6 +38,7 @@ export function createDiagnostics(): Diagnostics {
       message,
       ...(options.pos === undefined ? {} : { pos: options.pos }),
       ...(options.help === undefined ? {} : { help: options.help }),
+      ...(options.fix === undefined ? {} : { fix: options.fix }),
     };
     all.push(diagnostic);
     if (severity === "error") hasErrors = true;
@@ -113,6 +116,7 @@ export function formatText(diagnostics: readonly Diagnostic[], options: TextOpti
     const text = d.pos ? options.source?.(d.pos.file) : undefined;
     if (d.pos && text !== undefined) out.push(...codeFrame(text, d.pos));
     if (d.help) out.push(`  help: ${d.help}`);
+    if (d.fix?.description) out.push(`  fix: ${d.fix.description}`);
   }
   const count = (severity: Severity) => diagnostics.filter((d) => d.severity === severity).length;
   const parts = [plural(count("error"), "error"), plural(count("warning"), "warning")];
@@ -137,7 +141,25 @@ const SARIF_LEVEL: Record<Severity, "error" | "warning" | "note"> = { error: "er
 /** Percent-encodes a repository-relative path for a SARIF URI, keeping the `/` separators. */
 const sarifUri = (file: string): string => file.split("/").map(encodeURIComponent).join("/");
 
-/** Prints SARIF 2.1.0, one run, one rule per id, `help` kept in each result's `properties`. */
+/** A SARIF `fix`: one replacement. SARIF's `endColumn` is exclusive, ours is inclusive. */
+function sarifFix(fix: DiagnosticFix) {
+  return {
+    ...(fix.description === undefined ? {} : { description: { text: fix.description } }),
+    artifactChanges: [
+      {
+        artifactLocation: { uri: sarifUri(fix.file), uriBaseId: "%SRCROOT%" },
+        replacements: [
+          {
+            deletedRegion: { startLine: fix.line, startColumn: fix.column, endLine: fix.endLine, endColumn: fix.endColumn + 1 },
+            insertedContent: { text: fix.text },
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/** Prints SARIF 2.1.0, one run, one rule per id, `help` kept in each result's `properties`, a `fix` as SARIF `fixes`. */
 export function formatSarif(diagnostics: readonly Diagnostic[], options: SarifOptions = {}): string {
   const sorted = sortDiagnostics(diagnostics);
   const ids = [...new Set(sorted.map((d) => d.id))].sort();
@@ -165,11 +187,12 @@ export function formatSarif(diagnostics: readonly Diagnostic[], options: SarifOp
         }
       : {}),
     ...(d.help ? { properties: { help: d.help } } : {}),
+    ...(d.fix ? { fixes: [sarifFix(d.fix)] } : {}),
   }));
   const log = {
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
     version: "2.1.0",
-    runs: [{ tool: { driver }, results }],
+    runs: [{ tool: { driver }, ...(sorted.some((d) => d.fix) ? { columnKind: "unicodeCodePoints" } : {}), results }],
   };
   return `${JSON.stringify(log, null, 2)}\n`;
 }
