@@ -1,6 +1,7 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
+import shortcuts from "../chrome/shortcuts/index.ts";
 
 /** localStorage key that holds the visitor's choice: `light`, `dark`, or `system`. */
 export const THEME_KEY = "slipway-theme";
@@ -90,6 +91,7 @@ export default function base(props: BaseProps) {
         aside == null ? null : h("aside", { class: "aside", "aria-label": "On this page" }, aside),
       ),
       footer == null ? null : h("footer", null, footer),
+      shortcuts(props) as ComponentChildren,
       ...islands.map((island) => h("script", { type: "module", src: island.src })),
     ),
   );
