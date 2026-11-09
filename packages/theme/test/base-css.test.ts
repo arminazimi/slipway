@@ -121,6 +121,15 @@ test("base.css uses logical properties only", () => {
   assert.ok(physicalLines("a { margin-left: 1rem; }").length > 0);
 });
 
+test("the focus ring uses the shared state token and survives forced colors", () => {
+  assert.match(css, /:focus-visible\s*\{[^}]*outline:\s*thin solid var\(--state-focus-ring\)/);
+  assert.match(css, /@media \(forced-colors: active\)\s*\{[^}]*:focus-visible[^}]*outline-color:\s*(?:Highlight|CanvasText)\b/);
+});
+
+test("the disabled state uses the shared token", () => {
+  assert.match(css, /:where\(:disabled, \[aria-disabled="true"\]\)\s*\{[^}]*color:\s*var\(--state-disabled-fg\)/);
+});
+
 test("headings leave room for the sticky header", () => {
   const rule = blocks(css).find((block) => block.body.includes("scroll-margin-block-start"));
   assert.ok(rule, "no heading rule sets scroll-margin-block-start");

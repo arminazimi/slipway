@@ -30,8 +30,15 @@ body {
 }
 
 :focus-visible {
-  outline: thin solid var(--color-focus);
+  outline: thin solid var(--state-focus-ring);
   outline-offset: var(--space-1);
+}
+
+/* Forced colors mode replaces token colors with system colors; name the ring so it stays visible. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
 }
 
 /* Article typography */
@@ -136,4 +143,9 @@ body {
 
 :where(button, input, select, textarea) {
   font: inherit;
+}
+
+:where(:disabled, [aria-disabled="true"]) {
+  color: var(--state-disabled-fg);
+  cursor: not-allowed;
 }

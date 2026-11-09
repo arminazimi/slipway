@@ -244,6 +244,14 @@
         }
       }
     },
+    "selected-fg": {
+      "$value": "#0057b8",
+      "$extensions": {
+        "lateen": {
+          "dark": "#6aa9ff"
+        }
+      }
+    },
     "disabled-fg": {
       "$value": "#a3a3a3",
       "$extensions": {

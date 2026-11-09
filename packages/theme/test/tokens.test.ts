@@ -22,6 +22,41 @@ test("the committed tokens.css is current and every semantic group is frozen in 
   for (const group of ["color", "type", "space", "radius", "shadow", "motion", "state", "code"]) assert.ok(groups.has(group), group);
 });
 
+/** WCAG 2.2 relative luminance of a six-digit hex color. */
+const luminance = (hex: string): number => {
+  const [r = 0, g = 0, b = 0] = [1, 3, 5].map((index) => {
+    const channel = parseInt(hex.slice(index, index + 2), 16) / 255;
+    return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+/** WCAG 2.2 contrast ratio of two opaque colors. */
+const contrast = (a: string, b: string): number => {
+  const [high = 0, low = 0] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (high + 0.05) / (low + 0.05);
+};
+
+test("the state tokens cover every interaction state and the focus ring reads in both themes (#1094)", () => {
+  const tokens = loadTokens();
+  for (const name of ["hover-bg", "active-bg", "selected-bg", "selected-fg", "disabled-fg", "focus-ring", "overlay"]) {
+    assert.ok(tokens.has(`state-${name}`), `state-${name} is missing`);
+  }
+  const value = (name: string, mode: "light" | "dark"): string => {
+    const token = tokens.get(name);
+    const found = mode === "light" ? token?.light : token?.dark ?? token?.light;
+    assert.ok(found, `${name} has no ${mode} value`);
+    return found;
+  };
+  for (const mode of ["light", "dark"] as const) {
+    const ring = value("state-focus-ring", mode);
+    for (const background of ["color-canvas", "color-surface"]) {
+      const ratio = contrast(ring, value(background, mode));
+      assert.ok(ratio >= 3, `the ${mode} focus ring is ${ratio.toFixed(2)}:1 on ${background}; it needs 3:1`);
+    }
+  }
+});
+
 test("light and dark go through light-dark() and data-theme overrides", () => {
   const css = buildCss(loadTokens(folder()));
   assert.match(css, /--color-canvas: light-dark\(#fff, #000\);/);
