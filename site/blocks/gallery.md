@@ -1,7 +1,7 @@
 ---
 title: Gallery block
 description: A responsive grid of images with captions and credits.
-layout: page
+layout: doc
 demo_images:
   - src: https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&h=600&fit=crop
     alt: Mountains

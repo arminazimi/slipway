@@ -153,6 +153,34 @@ test("an empty file is an empty navigation, and a file that is not a mapping is 
   assert.deepEqual(diagnostics.map((d) => d.id), ["nav.not-a-mapping"]);
 });
 
+test("site-local URLs and match prefixes carry the site base, and the page check uses the prefixed URL", () => {
+  const text = [
+    "main:",
+    "  - title: Home",
+    "    url: /",
+    "  - title: Config",
+    "    url: /config/",
+    "  - title: Source",
+    "    url: https://example.com/source",
+    "docs:",
+    "  - title: Rules",
+    "    url: /rules/",
+    "    match: /rules/",
+    "",
+  ].join("\n");
+  const { nav, diagnostics } = navFromYaml(text, "_data/navigation.yml", {
+    base: "/docs",
+    pages: new Set(["/docs/", "/docs/config/", "/docs/rules/"]),
+  });
+  assert.deepEqual(diagnostics, []);
+  assert.deepEqual(nav.main, [
+    { title: "Home", url: "/docs/" },
+    { title: "Config", url: "/docs/config/" },
+    { title: "Source", url: "https://example.com/source" },
+  ]);
+  assert.deepEqual(nav.docs, [{ title: "Rules", url: "/docs/rules/", match: "/docs/rules/" }]);
+});
+
 test("a missing navigation file is an empty navigation with no diagnostics", () => {
   const root = mkdtempSync(join(tmpdir(), "nav-yaml-"));
   try {

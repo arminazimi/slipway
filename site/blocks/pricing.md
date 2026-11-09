@@ -1,7 +1,7 @@
 ---
 title: Pricing block
 description: A row of plans with prices, features, and one highlighted plan.
-layout: page
+layout: doc
 pricing:
   - name: Starter
     price: $0

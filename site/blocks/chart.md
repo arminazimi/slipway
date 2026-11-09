@@ -1,7 +1,7 @@
 ---
 title: Chart block
 description: A bar chart drawn in CSS from labelled numbers, with the data table as the fallback.
-layout: page
+layout: doc
 chart:
   - label: Slipway
     value: 48

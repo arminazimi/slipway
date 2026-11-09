@@ -1,7 +1,7 @@
 ---
 title: Stat tiles block
 description: A row of key numbers with labels and optional trend.
-layout: page
+layout: doc
 demo_stats_1:
   - label: Rules
     value: 516
