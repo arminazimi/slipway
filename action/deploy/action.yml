@@ -1,0 +1,89 @@
+name: slipway deploy
+description: Builds a Slipway site with the engine, checks it, and deploys it to GitHub Pages.
+author: Slipway
+branding:
+  icon: upload-cloud
+  color: blue
+
+inputs:
+  path:
+    description: The site's source folder, relative to the repository root.
+    default: "."
+  node-version:
+    description: The Node version actions/setup-node installs. The engine needs 24 or later.
+    default: "24"
+  doctor:
+    description: Run `slipway doctor` on the built site before deploying. Set to false to skip the check.
+    default: "false"
+
+outputs:
+  page_url:
+    description: The URL of the deployed site.
+    value: ${{ steps.deploy.outputs.page_url }}
+
+runs:
+  using: composite
+  steps:
+    # Resolve the checkout once. setup-node's cache hashing rejects paths with '..' segments,
+    # the engine's paths need a native absolute path on Windows, and the CLI runs from here.
+    - name: Find the Slipway checkout
+      id: checkout
+      shell: bash
+      run: |
+        set -euo pipefail
+        repo_root="$(cd "$GITHUB_ACTION_PATH/../.." && pwd -P)"
+        # Git Bash prints POSIX paths; cmd.exe and PowerShell need the native C:/ form.
+        if native="$(cd "$repo_root" && pwd -W 2>/dev/null)"; then
+          repo_root="$native"
+        fi
+        printf 'SLIPWAY_REPO_ROOT=%s\n' "$repo_root" >> "$GITHUB_ENV"
+        printf 'lockfile=%s/package-lock.json\n' "$repo_root" >> "$GITHUB_OUTPUT"
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ steps.checkout.outputs.lockfile }}
+    # Install once, in the Slipway checkout that holds the engine, never in the caller's site.
+    - name: Install the engine's dependencies
+      shell: bash
+      run: |
+        set -euo pipefail
+        cd "$SLIPWAY_REPO_ROOT"
+        if [ ! -d node_modules/preact ] || [ ! -d node_modules/remark-parse ]; then
+          npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+        fi
+    - name: Build the site
+      id: build
+      shell: bash
+      env:
+        SLIPWAY_SITE: ${{ inputs.path }}
+      run: |
+        set -euo pipefail
+        out="$RUNNER_TEMP/slipway-site"
+        rm -rf "$out"
+        node "$SLIPWAY_REPO_ROOT/packages/engine/bin/slipway.ts" build "$SLIPWAY_SITE" --out "$out"
+        printf 'out=%s\n' "$out" >> "$GITHUB_OUTPUT"
+    - name: Check the site
+      shell: bash
+      env:
+        SLIPWAY_SITE: ${{ inputs.path }}
+      run: |
+        set -euo pipefail
+        node "$SLIPWAY_REPO_ROOT/packages/engine/bin/slipway.ts" check "$SLIPWAY_SITE"
+    - if: inputs.doctor == 'true'
+      name: Run slipway doctor
+      shell: bash
+      env:
+        SLIPWAY_SITE: ${{ inputs.path }}
+        SLIPWAY_OUT: ${{ steps.build.outputs.out }}
+      run: |
+        set -euo pipefail
+        node "$SLIPWAY_REPO_ROOT/packages/doctor/bin/slipway.ts" doctor "$SLIPWAY_SITE" --build "$SLIPWAY_OUT"
+    - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+    - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      with:
+        path: ${{ steps.build.outputs.out }}
+        # The engine writes `.slipway/` and, once `output.pages-files` lands, `.nojekyll`.
+        include-hidden-files: true
+    - id: deploy
+      uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
