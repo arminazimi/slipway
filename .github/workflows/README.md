@@ -4,9 +4,8 @@ GitHub Actions for this repository. [AGENTS.md](../../AGENTS.md) lists the comma
 
 | Workflow | Runs on | What it does | Required |
 |---|---|---|---|
-| [`ci.yml`](ci.yml) | push to `main`, every pull request, every merge queue batch | `check (pages)` runs `npm run check` and the upgrade test on the GitHub Pages gem; `check (jekyll4)` builds and checks every example on plain Jekyll 4; `browser tests` runs the Playwright tools; `ci-ok` passes only when all of them did | yes |
+| [`ci.yml`](ci.yml) | push to `main`, every pull request, every merge queue batch | `check` runs `npm run check` and the upgrade test on the GitHub Pages gem; `browser tests` runs the Playwright tools; `ci-ok` passes only when all of them did | yes |
 | [`deploy-site.yml`](deploy-site.yml) | push to `main` | builds the Slipway site and the spec site, then deploys them to GitHub Pages | no |
-| [`lifecycle.yml`](lifecycle.yml) | every pull request, Mondays 04:17 UTC | Evergreen scan of runtimes, gems, npm packages, and actions; report-only, so findings never fail the build | no |
 | [`release.yml`](release.yml) | a `v*` tag | checks the tag against the gemspec, runs `npm run check`, creates the GitHub release, then publishes the gem to RubyGems | no |
 | [`actions-os.yml`](actions-os.yml) | pull requests touching `action/` | runs the doctor Action on Linux, macOS, and Windows | no |
 | [`codeql.yml`](codeql.yml) | push, pull request, weekly | CodeQL scan of the JavaScript and TypeScript | no |
@@ -30,8 +29,7 @@ The merge queue waits for the checks that `main` requires of a pull request, and
 
 `ci.yml`'s jobs are the only ones that gate a merge, and `ci-ok` needs all of them:
 
-- `check (pages)`
-- `check (jekyll4)`
+- `check`
 - `browser tests`
 
 `ci-ok` folds those jobs behind a single check: it runs even when a job it needs failed, and fails unless all succeeded. `ci.merge-queue-on` requires `ci-ok` and turns the queue on. `main` has no required status checks yet, so until that maintainer step lands the queue waits for nothing; the required list is a repository setting, not a workflow change.
