@@ -16,7 +16,8 @@ A file that exports no `Output` is a helper and is not run. `app-pages.ts` is on
 ## Rules
 
 - Every output runs before anything is written. A path outside the output folder is an error and is not written. When two outputs write the same path, the first one (in file-name order) wins and the other is an error.
-- A site's own file wins over an output's file at the same path: the output's file is skipped, with no diagnostic. A site's `llms.txt` replaces the generated one this way.
+- A site's own file wins over an output's file at the same path: the site's file is copied byte for byte, the output's file is skipped, and no diagnostic is reported. A site's `llms.txt` replaces the generated one this way.
+- The four root files a site may own are `sitemap.xml`, `llms.txt`, `llms-full.txt`, and `robots.txt`, listed as `SITE_FILE_PATHS` in `site-files.ts`. That unit writes no file of its own: the site's copy comes from the assets unit and the precedence above is what skips the generated one. Switching the matching output off in `outputs` removes the generated fallback, never the site's file.
 - The site is written to a staging folder beside the output folder and swapped in only when complete.
 - Output must be deterministic: the same site gives the same bytes, in the same order.
 

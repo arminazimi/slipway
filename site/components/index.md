@@ -5,7 +5,6 @@ layout: doc
 permalink: /components/
 redirect_from:
   - /blocks/
-  - /blocks/annotations/
   - /blocks/audio/
   - /blocks/chart/
   - /blocks/citation/
