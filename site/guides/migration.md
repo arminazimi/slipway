@@ -122,7 +122,7 @@ sections:
 
 ### Config and theme options
 
-A `slipway:` group dissolves. `languages` and `search` move to the top level; `header`, `fonts`, `logo`, `tokens`, `analytics`, `persian`, and `arabic` move under `theme.options`; `comments`, `social`, `tokens.font_display`, `persian.jalali`, and `arabic.hijri` are dropped. The 0.3 theme reads `announcement`, `logo`, `footer`, and `pageAgent`; an option it does not read has no effect.
+A `slipway:` group dissolves. `languages` and `search` move to the top level; `header`, `fonts`, `logo`, `tokens`, `analytics`, `persian`, and `arabic` move under `theme.options`; `comments`, `social`, `tokens.font_display`, `persian.jalali`, and `arabic.hijri` are dropped. The 0.3 theme reads `announcement`, `logo`, `footer`, `pageAgent`, and `feedback`; an option it does not read has no effect.
 
 Other renames:
 
