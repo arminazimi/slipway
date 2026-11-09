@@ -1,7 +1,7 @@
 ---
 title: Embed block
 description: A privacy-first video card for YouTube, Vimeo, and Aparat that requests nothing until the reader clicks.
-layout: page
+layout: doc
 youtube:
   id: aqz-KE-bpKQ
   title: Big Buck Bunny

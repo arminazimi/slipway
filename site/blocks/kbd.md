@@ -1,7 +1,7 @@
 ---
 title: KBD block
 description: Keyboard shortcut block with platform variants.
-layout: page
+layout: doc
 ---
 
 {::nomarkdown}{% include component-css.html name="kbd" %}{:/nomarkdown}

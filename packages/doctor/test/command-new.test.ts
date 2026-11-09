@@ -8,6 +8,7 @@ import { main, parseArgs } from "../src/commands/new.ts";
 
 const repoRoot = fileURLToPath(new URL("../../..", import.meta.url));
 const example = join(repoRoot, "packages/doctor/test/fixtures/examples", "minimal");
+const docsSite = join(repoRoot, "fixtures/docs-site");
 
 function context() {
   let stdout = "";
@@ -77,6 +78,21 @@ test("new --json reports the file", async (t) => {
   const out = JSON.parse(ctx.stdout);
   assert.deepEqual(out, { path: "docs/guide.md", layout: "doc", title: "Guide", lang: "en" });
   assert.ok(existsSync(join(dir, "docs", "guide.md")));
+});
+
+test("new finds an engine site through its config and reads its lang", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-new-engine-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(docsSite, dir, { recursive: true });
+
+  const ctx = context();
+  assert.equal(await main(["new", "doc", join(dir, "guide.md"), "--title", "Guide"], ctx), 0);
+
+  const content = readFileSync(join(dir, "guide.md"), "utf8");
+  assert.match(content, /title: Guide\n/);
+  assert.match(content, /layout: doc\n/);
+  assert.match(content, /lang: en\n/);
+  assert.match(ctx.stdout, /created guide\.md/);
 });
 
 test("new refuses to overwrite and needs a site root", async (t) => {

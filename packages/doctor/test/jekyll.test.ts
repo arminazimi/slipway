@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { doctor } from "../src/doctor.ts";
@@ -9,7 +10,7 @@ import { builtinKeys, checks, stubs } from "../src/checks/jekyll.ts";
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
 const repo = here("../../../");
 const fixture = (name) => here(`fixtures/${name}`);
-const jekyllFindings = (report) => report.findings.filter((f) => f.scope === "jekyll" || f.id.startsWith("jekyll."));
+const jekyllFindings = (report) => report.findings.filter((f) => f.scope === "jekyll" || f.id.startsWith("jekyll.") || f.id === "config.deprecated");
 const ids = Object.keys(checks);
 
 /** Every file under `dir`, dot-folders included, as forward-slash paths. */
@@ -32,7 +33,7 @@ test("each failing fixture gives exactly one warning with file, line, and fix", 
   const deprecations = JSON.parse(readFileSync(join(fixture("jekyll-deprecated"), "deprecations.json"), "utf8")).deprecations;
   const expected = {
     "jekyll-stubs": { id: "jekyll.stubs", file: "AGENTS.md", line: undefined },
-    "jekyll-deprecated": { id: "jekyll.deprecated", file: "fa/index.md", line: 5 },
+    "jekyll-deprecated": { id: "config.deprecated", file: "fa/index.md", line: 5 },
     "jekyll-liquid": { id: "jekyll.liquid-in-content", file: "index.md", line: 9 },
     "jekyll-translation": { id: "jekyll.translation-pair", file: "index.md", line: 4 },
     "jekyll-ui-strings": { id: "jekyll.ui-strings", file: "_data/i18n/fa.yml", line: 2 },
@@ -61,6 +62,24 @@ test("Jekyll checks are warnings: the level and the exit code do not change", as
 test("a site without _config.yml gets no Jekyll checks", async () => {
   const report = await doctor(fixture("conforming"), { build: join(fixture("conforming"), "build") });
   assert.deepEqual(report.tests.filter((t) => t.scope === "jekyll"), []);
+});
+
+test("the config check reads slipway.yml with its line, and the old id still resolves", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-jekyll-config-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  writeFileSync(join(dir, "slipway.yml"), 'title: Beacon\nbase: ""\n');
+
+  const deprecations = [{ kind: "config", old: "base", new: "baseurl", since: "0.3.0", removed_in: "0.4.0" }];
+  const report = await doctor(dir, { deprecations });
+  assert.deepEqual(
+    report.findings
+      .filter((finding) => finding.id === "config.deprecated")
+      .map(({ file, line, key, old, new: replacement }) => ({ file, line, key, old, new: replacement })),
+    [{ file: "slipway.yml", line: 2, key: "base", old: "base", new: "baseurl" }],
+  );
+
+  assert.equal(checks["jekyll.deprecated"], checks["config.deprecated"]);
+  assert.ok(!Object.keys(checks).includes("jekyll.deprecated"));
 });
 
 test("the stubs are the files of starter-files/ except its READMEs and optional files", () => {

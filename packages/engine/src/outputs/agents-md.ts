@@ -10,20 +10,27 @@ function byCodePoint(a: string, b: string): number {
 /** The file this output writes at the output root. */
 const FILE = "AGENTS.md";
 
+/** A configured folder as a `/`-separated path with no leading `./` or trailing `/`; `""` for the root. */
+function folderOf(folder: string | undefined): string {
+  const path = (folder ?? "").replace(/\\/g, "/").replace(/^(\.\/)+/, "").replace(/\/+$/, "");
+  return path === "." ? "" : path;
+}
+
 /** The `source` config key as a folder under the site root, `/`-separated with no leading `./` or trailing `/`; `""` for the root. */
 function sourceFolder(source: string): string {
-  const folder = source.replace(/\\/g, "/").replace(/^(\.\/)+/, "").replace(/\/+$/, "");
-  return folder === "." ? "" : folder;
+  return folderOf(source);
 }
 
 /**
  * True when the site owns an `AGENTS.md` of its own. The site's file is a page of the model: a Markdown file at the
- * root of `source` (its `source.file` names the file relative to the site root), or any page whose URL is the
- * `AGENTS.md` at the site root (set with `permalink`). The model keeps unpublished pages out, so such a file is not
- * seen here; the generated file then stands in for it.
+ * root of `source`, under the repository folder (its `source.file` names the file relative to the repository root),
+ * or any page whose URL is the `AGENTS.md` at the site root (set with `permalink`). The model keeps unpublished pages
+ * out, so such a file is not seen here; the generated file then stands in for it.
  */
 function ownsAgentsMd(site: Site): boolean {
-  const folder = sourceFolder(site.config.source);
+  const folder = [folderOf(site.config.repository?.dir), sourceFolder(site.config.source)]
+    .filter((part) => part !== "")
+    .join("/");
   const file = folder === "" ? FILE : `${folder}/${FILE}`;
   const url = `${site.config.base}/${FILE}`;
   return site.pages.some((page) => page.source.file === file || page.url === url);

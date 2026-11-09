@@ -1,7 +1,7 @@
 // Tests for the `_config.yml` -> `slipway.yml` mapping (ADR 0024 rule 5): every surviving key lands
 // in its new place with its comments, every dropped key is reported with a reason, and the result
-// passes the engine's config schema. The last test converts every `_config.yml` under examples/ and
-// starters/, which is the issue's "done when".
+// passes the engine's config schema. The last tests convert every `_config.yml` the repository still
+// ships, including the legacy doctor fixtures, which is the issue's "done when".
 import assert from "node:assert/strict";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -121,7 +121,7 @@ test("a parse failure or a non-mapping file reports an error, not a broken file"
   assert.match(list.errors[0].note, /not a mapping/);
 });
 
-test("every _config.yml under examples/ and starters/ converts to a schema-valid file", () => {
+test("every _config.yml under examples/, starters/, and the legacy fixtures converts to a schema-valid file", () => {
   const configFiles = (dir) => {
     if (!existsSync(dir)) return [];
     return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -130,7 +130,11 @@ test("every _config.yml under examples/ and starters/ converts to a schema-valid
       return entry.name === "_config.yml" ? [path] : [];
     });
   };
-  const sites = [...configFiles(join(root, "examples")), ...configFiles(join(root, "starters"))];
+  const sites = [
+    ...configFiles(join(root, "examples")),
+    ...configFiles(join(root, "starters")),
+    ...configFiles(join(root, "packages/doctor/test/fixtures/examples")),
+  ];
   assert.ok(sites.length >= 1, "the examples this issue promises to migrate exist");
   for (const file of sites) {
     const result = migrateConfigFile(file);
@@ -140,17 +144,11 @@ test("every _config.yml under examples/ and starters/ converts to a schema-valid
   }
 });
 
-test("the product-docs example keeps its working keys and reports its Jekyll keys", () => {
-  const result = migrateConfigFile(join(root, "examples/product-docs/_config.yml"));
+test("a legacy example keeps its working keys and reports its Jekyll keys", () => {
+  const result = migrateConfigFile(join(root, "packages/doctor/test/fixtures/examples/docs/_config.yml"));
   assert.deepEqual(result.errors, []);
   const config = parseDocument(result.yaml).toJS();
-  assert.deepEqual(config, {
-    title: "Beacon",
-    description: "Documentation for the Beacon deploy CLI, in the shape of a real product's site.",
-    lang: "en",
-    url: "https://example.com",
-    defaults: [{ path: "", values: { layout: "doc" } }],
-  });
-  assert.deepEqual(droppedKeys(result), ["remote_theme", "plugins"]);
+  assert.deepEqual(config, { title: "Slipway docs", lang: "en" });
+  assert.deepEqual(droppedKeys(result), ["theme", "plugins"]);
   assert.match(result.yaml, /# yaml-language-server: \$schema=/); // the comment above a surviving key survives
 });

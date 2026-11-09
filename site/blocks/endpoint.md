@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: doc
 title: Endpoint
 method: POST
 path: /api/v1/users/{id}

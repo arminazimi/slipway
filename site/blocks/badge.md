@@ -1,7 +1,7 @@
 ---
 title: Badge block
 description: Small inline labels such as stable, beta, deprecated, and new.
-layout: page
+layout: doc
 ---
 
 {::nomarkdown}{% include component-css.html name="badge" %}{:/nomarkdown}

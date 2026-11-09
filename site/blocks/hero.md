@@ -1,7 +1,7 @@
 ---
 title: Hero block
 description: A headline, a lead, two actions, and an optional image.
-layout: page
+layout: doc
 hero:
   id: hero-demo
   title: A site that people and agents can edit
