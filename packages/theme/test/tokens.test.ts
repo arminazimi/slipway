@@ -45,6 +45,19 @@ test("a reduced value goes in a prefers-reduced-motion block", () => {
   assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\n {2}:root \{\n {4}--motion-fast: 0ms;\n {2}\}\n\}\n/);
 });
 
+test("a light group file sets only the light values and keeps the dark ones", () => {
+  const dir = folder({ "color.light": { canvas: "#eee" } });
+  const css = buildCss(loadTokens(dir));
+  assert.match(css, /--color-canvas: light-dark\(#eee, #000\);/);
+  assert.match(css, /--color-text: #222;/);
+});
+
+test("a light group file rejects dark values, unknown names, and other variants", () => {
+  assert.throws(() => loadTokens(folder({ "color.light": { canvas: { $value: "#eee", $extensions: { lateen: { dark: "#111" } } } } })), /sets only the light value/);
+  assert.throws(() => loadTokens(folder({ "color.light": { nope: "#eee" } })), /"color\.nope" is not in names\.json/);
+  assert.throws(() => loadTokens(folder({ "color.dark": { canvas: "#111" } })), /a group file is <group>\.json or <group>\.light\.json/);
+});
+
 test("a name missing from names.json is an error", () => {
   assert.throws(() => loadTokens(folder({ space: { "99": "1px" } })), /"space\.99" is not in names\.json/);
   assert.throws(() => loadTokens(folder({ elevation: { a: "1" } })), /"elevation" is not a group/);
