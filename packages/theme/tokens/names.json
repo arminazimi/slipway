@@ -194,7 +194,8 @@
     "fast": "100ms",
     "base": "200ms",
     "slow": "400ms",
-    "ease": "cubic-bezier(0.2, 0, 0, 1)"
+    "ease": "cubic-bezier(0.2, 0, 0, 1)",
+    "ease-in-out": "cubic-bezier(0.4, 0, 0.2, 1)"
   },
   "state": {
     "hover-bg": {
