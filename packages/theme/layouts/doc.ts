@@ -2,6 +2,7 @@ import { Fragment, h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Layout, LayoutProps } from "@velella/mizzen/contracts";
 import base from "./base.ts";
+import blockActions from "../chrome/block-actions/index.ts";
 import breadcrumb from "../chrome/breadcrumb/index.ts";
 import drawer from "../chrome/drawer/index.ts";
 import header from "../chrome/header/index.ts";
@@ -60,7 +61,7 @@ const doc: Layout = (props) =>
       drawer(props) as ComponentChildren,
     ),
     sidebar: sidebar(props) as ComponentChildren,
-    main: article(props),
+    main: h(Fragment, null, article(props), blockActions(props) as ComponentChildren),
     aside: toc(props) as ComponentChildren,
   });
 
