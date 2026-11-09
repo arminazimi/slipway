@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "lightningcss": "^1.33.0",
+    "pagefind": "^1.6.0",
     "preact": "^10.29.8",
     "preact-render-to-string": "^6.8.2",
     "rehype-stringify": "^10.0.1",
