@@ -58,6 +58,15 @@ test("a light group file rejects dark values, unknown names, and other variants"
   assert.throws(() => loadTokens(folder({ "color.dark": { canvas: "#111" } })), /a group file is <group>\.json or <group>\.light\.json/);
 });
 
+test("the code component's Shiki theme files are not token groups (#1096)", () => {
+  const dir = folder();
+  writeFileSync(join(dir, "code.dark.json"), JSON.stringify({ name: "lateen-dark", type: "dark", colors: {}, settings: [{ settings: {} }] }));
+  writeFileSync(join(dir, "code.light.json"), JSON.stringify({ name: "lateen-light", type: "light", colors: {}, settings: [{ settings: {} }] }));
+  const css = buildCss(loadTokens(dir));
+  assert.doesNotMatch(css, /--code-/);
+  rmSync(dir, { recursive: true });
+});
+
 test("a name missing from names.json is an error", () => {
   assert.throws(() => loadTokens(folder({ space: { "99": "1px" } })), /"space\.99" is not in names\.json/);
   assert.throws(() => loadTokens(folder({ elevation: { a: "1" } })), /"elevation" is not a group/);

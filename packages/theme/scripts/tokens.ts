@@ -55,10 +55,11 @@ export function flatten(group: string, node: unknown, file: string, prefix: stri
  * Group files by file name, sorted; `names.json` is the registry, not a group.
  * `<group>.json` sets the values of a group. `<group>.light.json` sets only the light values of a group whose
  * dark values come from elsewhere; it is applied after the plain group file.
+ * `code.light.json` / `code.dark.json` are whole Shiki themes read by `components/code`, not token groups.
  */
 export function groupFiles(dir = paths.tokens) {
   return readdirSync(dir)
-    .filter((f) => f.endsWith(".json") && f !== "names.json")
+    .filter((f) => f.endsWith(".json") && f !== "names.json" && !/^code\.(light|dark)\.json$/.test(f))
     .sort()
     .map((f) => {
       const match = /^([a-z0-9]+(?:-[a-z0-9]+)*)(\.light)?\.json$/.exec(f);
