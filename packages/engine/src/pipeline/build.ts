@@ -1,6 +1,7 @@
 import { access, mkdir, mkdtemp, readdir, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { loadConfig } from "../config/load.ts";
 import { discover } from "../content/discover.ts";
 import type { Diagnostic, Head, Output, OutputContext, OutputFile, Page, Pager, Site, Trail } from "../contracts/index.ts";
 import { buildModel } from "../model/build.ts";
@@ -9,6 +10,7 @@ import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
 import { loadRegistry, type ThemeRegistry } from "../render/registry.ts";
 import { renderPage, type ThemeComponent } from "../render/render.ts";
 import { copyAssets } from "./assets.ts";
+import { cacheKey, cacheRootOf, restoreCache, writeCache } from "./cache.ts";
 import { createDiagnostics, sortDiagnostics, type Diagnostics } from "./diagnostics.ts";
 
 /** Options of {@link build}. */
@@ -25,6 +27,10 @@ export interface BuildOptions {
   readonly defaultLayout?: string;
   /** Folder the outputs are read from. Default: `src/outputs/` beside this file. */
   readonly outputsDir?: string;
+  /** Reuse the output of an unchanged build from the cache. Off by default; `mizzen build` turns it on. */
+  readonly cache?: boolean;
+  /** Folder the cache lives in. Default: `<root>/.slipway/cache`. Only used when `cache` is true. */
+  readonly cacheDir?: string;
 }
 
 /** What {@link build} wrote and found. */
@@ -174,6 +180,17 @@ async function commit(staging: string, out: string): Promise<void> {
   if (hadOld) await rm(replaced, { recursive: true, force: true });
 }
 
+/** Fails when `out` is the source folder or sits inside it under a name discovery would not skip. */
+function assertOutOutsideSource(sourceDir: string, out: string): void {
+  const rel = relative(sourceDir, out);
+  const inside = rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+  if (inside && (rel === "" || !/^[_.]/.test(rel.split(sep)[0] ?? ""))) {
+    throw new TypeError(
+      `build: the output folder "${out}" is inside the source folder "${sourceDir}"; name it with a leading "_" (such as _site) or put it outside.`,
+    );
+  }
+}
+
 /**
  * Builds the site: model, theme, outputs, and write.
  *
@@ -182,6 +199,10 @@ async function commit(staging: string, out: string): Promise<void> {
  * output files written, all into a staging folder beside `out`. A site file wins over an output file at the same path:
  * the output's file is skipped, with no diagnostic. Only when the staging folder is complete is it swapped in, so `out`
  * is never half-written. Outputs switched off by `outputs` in the config do not run.
+ *
+ * With `cache`, a build whose config, source, navigation, theme, outputs, layout options, and engine version are
+ * unchanged restores the previous output instead of building again. Config and navigation are in the same key as the
+ * pages, so changing either invalidates every page. The cache is whole-build, not per-page.
  *
  * Problems in the content and the theme come back as diagnostics; a throw means a bug, such as an output or layout
  * that threw, and leaves `out` as it was. `out` must not be the source folder nor sit inside it, unless its name
@@ -192,19 +213,43 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   const root = resolve(options.root);
   const out = resolve(options.out);
   const themeRoot = resolve(options.themeRoot);
+  const outputsDir = resolve(options.outputsDir ?? OUTPUTS_DIR);
+
+  // The config is read before the cache so the source folder is known without building the model.
+  const loaded = loadConfig(root);
+  const sourceDir = resolve(root, loaded.config.source);
+  assertOutOutsideSource(sourceDir, out);
+
+  const cacheRoot = options.cache === true ? resolve(options.cacheDir ?? cacheRootOf(root)) : undefined;
+  let key: string | undefined;
+  if (cacheRoot !== undefined) {
+    key = await cacheKey({
+      root,
+      sourceDir,
+      config: loaded.config,
+      themeRoot,
+      outputsDir,
+      ...(options.defaultLayout === undefined ? {} : { defaultLayout: options.defaultLayout }),
+      ...(options.themeFiles === undefined ? {} : { themeFiles: options.themeFiles }),
+    }).catch(() => undefined);
+    if (key !== undefined) {
+      const hit = await restoreCache(cacheRoot, key, out).catch(() => undefined);
+      if (hit !== undefined) {
+        try {
+          await commit(hit.staging, out);
+          return { out, files: hit.files, diagnostics: [...hit.diagnostics] };
+        } catch {
+          // A cache entry that cannot be put in place is no better than no entry: build cold below.
+        } finally {
+          await rm(hit.staging, { recursive: true, force: true });
+        }
+      }
+    }
+  }
 
   const model = await buildModel(root);
   for (const d of model.diagnostics) diagnostics.report(d);
   const { site } = model;
-
-  const sourceDir = resolve(root, site.config.source);
-  const rel = relative(sourceDir, out);
-  const inside = rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
-  if (inside && (rel === "" || !/^[_.]/.test(rel.split(sep)[0] ?? ""))) {
-    throw new TypeError(
-      `build: the output folder "${out}" is inside the source folder "${sourceDir}"; name it with a leading "_" (such as _site) or put it outside.`,
-    );
-  }
 
   const registry = await loadRegistry(themeRoot);
   for (const d of registry.diagnostics) diagnostics.report(d);
@@ -250,7 +295,7 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   // Outputs run in memory, so every path is checked before anything is written.
   const claimed = new Map<string, string>();
   const pending: { readonly output: string; readonly file: OutputFile }[] = [];
-  for (const output of await loadOutputs(options.outputsDir ?? OUTPUTS_DIR, diagnostics)) {
+  for (const output of await loadOutputs(outputsDir, diagnostics)) {
     if (site.config.outputs[output.name] === false) continue;
     for (const file of await output.run(site, ctx)) {
       if (!isInside(file.path)) {
@@ -298,12 +343,12 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     // records the hash is left out of it, and a site file that replaced the generated manifest is left alone.
     if (claimed.get(MANIFEST_PATH) === "manifest" && !assetPaths.has(MANIFEST_PATH)) await recordBuildHash(staging);
 
+    const fileList = [...written].sort(byCodePoint);
+    const findings = sortDiagnostics(diagnostics.all);
+    if (cacheRoot !== undefined && key !== undefined) await writeCache(cacheRoot, key, staging, fileList, findings);
+
     await commit(staging, out);
-    return {
-      out,
-      files: [...written].sort(byCodePoint),
-      diagnostics: sortDiagnostics(diagnostics.all),
-    };
+    return { out, files: fileList, diagnostics: findings };
   } finally {
     await rm(staging, { recursive: true, force: true });
   }

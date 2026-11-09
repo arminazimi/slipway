@@ -272,6 +272,7 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
         out,
         themeRoot,
         defaultLayout: DEFAULT_LAYOUT,
+        cache: true,
       });
       if (result.diagnostics.length > 0) printDiagnostics(result.diagnostics, "text", log);
       return result.diagnostics.some((d) => d.severity === "error") ? 1 : 0;
