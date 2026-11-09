@@ -1,6 +1,7 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
+import announcement from "../chrome/announcement/index.ts";
 
 /** localStorage key that holds the visitor's choice: `light`, `dark`, or `system`. */
 export const THEME_KEY = "slipway-theme";
@@ -77,6 +78,7 @@ export default function base(props: BaseProps) {
       "body",
       null,
       h("a", { class: "skip-link", href: `#${MAIN_ID}` }, "Skip to content"),
+      announcement(props) as ComponentChildren,
       header == null ? null : h("header", null, header),
       h(
         "div",
