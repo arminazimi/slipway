@@ -194,6 +194,9 @@ test("arguments: usage errors are reported, and --level picks the exit code", ()
   assert.equal(parseArgs(["doctor", "x", "--format", "xml"]).error, "--format must be text, json, or sarif, not xml");
   assert.equal(parseArgs(["doctor", "x", "--level", "L9"]).error, "--level must be one of L0, L1, L2, L3");
   assert.equal(parseArgs(["doctor", "x", "--build"]).error, "--build needs a value");
+  assert.equal(parseArgs(["doctor", "x", "--json"]).options.format, "json");
+  assert.equal(parseArgs(["doctor", "x", "--json", "--format", "json"]).options.format, "json");
+  assert.equal(parseArgs(["doctor", "x", "--json", "--format", "text"]).error, "--json cannot be combined with --format text");
   const report = { level: "L1", tests: [{ keyword: "MUST", status: "fail" }] };
   assert.equal(exitCode(report, "L1"), 0);
   assert.equal(exitCode(report, "L2"), 1);
@@ -282,6 +285,16 @@ test("cli: json output has the spec, version, level, and the tests not run", () 
   assert.equal(report.version, "0.1");
   assert.equal(report.level, "L3");
   assert.ok(report.notRun.includes("ae.edit-prompt.no-send"));
+});
+
+test("cli: --json prints the same single JSON document as --format json", () => {
+  const dir = "packages/doctor/test/fixtures/conforming";
+  const result = cli("doctor", dir, "--build", `${dir}/build`, "--json");
+  assert.equal(result.status, 0, result.stderr);
+  const report = JSON.parse(result.stdout);
+  assert.equal(report.spec, "agent-editable");
+  assert.equal(report.version, "0.1");
+  assert.equal(report.level, "L3");
 });
 
 test("cli: --level, usage errors, and a missing folder give exit codes 0, 1, and 2", () => {
