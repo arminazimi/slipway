@@ -14,12 +14,13 @@ import { parseMarkdown } from "../markdown/parse.ts";
 import { navFromFolders, type FolderPage } from "../nav/from-folders.ts";
 import { loadNavigation } from "../nav/from-yaml.ts";
 import { createDiagnostics, sortDiagnostics } from "../pipeline/diagnostics.ts";
+import { applyFacts } from "./facts.ts";
 
 /** What {@link buildModel} returns: the site and every finding made while assembling it. */
 export interface ModelResult {
   /** The site model; always complete, even when `diagnostics` holds errors. */
   readonly site: Site;
-  /** Findings from the config, discovery, front matter, Markdown, navigation, data, and duplicate URLs, sorted. */
+  /** Findings from the config, discovery, front matter, Markdown, navigation, data, facts, and duplicate URLs, sorted. */
   readonly diagnostics: readonly Diagnostic[];
 }
 
@@ -214,8 +215,16 @@ export async function buildModel(root: string): Promise<ModelResult> {
   const data = await loadData(sourceDir, files);
   for (const d of data.diagnostics) diagnostics.report(d);
 
-  return {
+  // Derived facts run last, once the pages and `_data` are final, and land at `data[fact.name]`; `_data` wins.
+  const applied = await applyFacts({
     site: { config, pages, nav, data: data.data },
+    root: siteRoot,
+    sourceDir,
+  });
+  for (const d of applied.diagnostics) diagnostics.report(d);
+
+  return {
+    site: applied.site,
     diagnostics: sortDiagnostics(diagnostics.all),
   };
 }

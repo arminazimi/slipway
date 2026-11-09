@@ -23,3 +23,4 @@
 | [0025](0025-mizzen-and-lateen.md) | The engine is Mizzen (`@velella/mizzen`) and the theme is Lateen (`@velella/lateen`); they leave this repository after 0.3.0 | Accepted |
 | [0026](0026-source-spans.md) | Source spans: every block carries a start and end line and column, and the span's start is the block's ID | Accepted |
 | [0027](0027-diagnostic-fix.md) | Diagnostic fixes: an optional `fix` on a diagnostic, a replacement on a source span, printed in JSON and SARIF `fixes` | Accepted |
+| [0028](0028-derived-facts.md) | Derived site facts: one file per fact, computed at the model stage and merged into `Site.data`, where the site's `_data` wins | Accepted |
