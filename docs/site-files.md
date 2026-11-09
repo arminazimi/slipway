@@ -2,8 +2,7 @@
 
 Slipway publishes a fixed set of generated files at the site root. A generator-written site can replace any of
 them with its own copy at the same URL: `slipway doctor` then asks for nothing, because the site ships the file.
-This page is the contract behind the `jekyll.stubs` check; [docs/modes.md](modes.md) covers classic Pages versus
-Actions mode and [starter-files/](../starter-files/README.md) is the folder a new site copies.
+This page is the contract behind the `jekyll.stubs` check; [starter-files/](../starter-files/README.md) is the folder a new site copies.
 
 ## The files
 
