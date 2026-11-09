@@ -19,8 +19,23 @@ export interface CodeMeta {
   readonly ins: readonly LineRange[];
   /** Lines in `del={...}`: deleted in a diff. */
   readonly del: readonly LineRange[];
+  /** A bare `diff` flag: the fence is a diff. */
+  readonly diff: boolean;
   /** `showLineNumbers` turns numbering on; `showLineNumbers=false` turns it off. */
   readonly showLineNumbers: boolean;
+}
+
+/** Why one part of a line list is not a usable range. */
+export type InvalidLineReason = "value" | "start" | "range" | "file";
+
+/** One part of a fence's line list that {@link parseCodeMeta} drops, or that runs past the fence's last line. */
+export interface InvalidCodeMeta {
+  /** The list the part belongs to: a bare `{...}` list, `ins={...}`, or `del={...}`. */
+  readonly where: "highlight" | "ins" | "del";
+  /** The part as written, trimmed. */
+  readonly value: string;
+  /** `value` is not a line or range, `start` is below 1, `range` descends, `file` is past the last line. */
+  readonly reason: InvalidLineReason;
 }
 
 /** A run of fences inside `:::code-group`, rendered as one set of tabs. */
@@ -83,12 +98,51 @@ function lineRanges(list: string): LineRange[] {
   return ranges;
 }
 
+/** Every part of a list that {@link lineRanges} drops, plus ranges past `lines` (the fence's last line). */
+function invalidLineParts(list: string, lines: number): Omit<InvalidCodeMeta, "where">[] {
+  if (list.trim() === "") return [];
+  const invalid: Omit<InvalidCodeMeta, "where">[] = [];
+  for (const part of list.split(",")) {
+    const value = part.trim();
+    const match = LINE_PART.exec(part);
+    if (!match) {
+      invalid.push({ value, reason: "value" });
+      continue;
+    }
+    const from = Number(match[1]);
+    const to = match[2] === undefined ? from : Number(match[2]);
+    if (from < 1) invalid.push({ value, reason: "start" });
+    else if (to < from) invalid.push({ value, reason: "range" });
+    else if (to > lines) invalid.push({ value, reason: "file" });
+  }
+  return invalid;
+}
+
+/**
+ * Every part of a fence meta's line lists that is not usable for a block of `lines` lines: a bare
+ * `{...}` list, `ins={...}`, or `del={...}`. Parts come in the order they are written, so a diagnostic
+ * list built from it is deterministic. `parseCodeMeta` still parses the rest of the meta.
+ */
+export function invalidMetaParts(raw: string, lines: number): InvalidCodeMeta[] {
+  const invalid: InvalidCodeMeta[] = [];
+  for (const match of raw.matchAll(TOKEN)) {
+    const [, key, value, bare] = match;
+    if (key === "ins" || key === "del") {
+      for (const part of invalidLineParts(unwrap(value ?? ""), lines)) invalid.push({ where: key, ...part });
+    } else if (bare !== undefined) {
+      for (const part of invalidLineParts(bare, lines)) invalid.push({ where: "highlight", ...part });
+    }
+  }
+  return invalid;
+}
+
 /** Reads a fence's meta string into {@link CodeMeta}. An empty or unknown meta gives empty fields. */
 export function parseCodeMeta(raw: string): CodeMeta {
   let title: string | null = null;
   const highlight: LineRange[] = [];
   const ins: LineRange[] = [];
   const del: LineRange[] = [];
+  let diff = false;
   let showLineNumbers = false;
 
   for (const match of raw.matchAll(TOKEN)) {
@@ -101,12 +155,14 @@ export function parseCodeMeta(raw: string): CodeMeta {
       else if (key === "showLineNumbers") showLineNumbers = text !== "false";
     } else if (bare !== undefined) {
       highlight.push(...lineRanges(bare));
+    } else if (flag === "diff") {
+      diff = true;
     } else if (flag === "showLineNumbers") {
       showLineNumbers = true;
     }
   }
 
-  return { raw, title, highlight, ins, del, showLineNumbers };
+  return { raw, title, highlight, ins, del, diff, showLineNumbers };
 }
 
 /** The meta a code node carries after this plugin ran, or `undefined` for any other node. */

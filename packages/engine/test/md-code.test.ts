@@ -111,8 +111,30 @@ test("title, bare line marks, ins, del, and showLineNumbers parse from one fence
     highlight: [range(1), range(3, 5)],
     ins: [range(2)],
     del: [range(4)],
+    diff: false,
     showLineNumbers: true,
   });
+});
+
+test("a bare diff token turns diff mode on and leaves the other fields empty", async () => {
+  const tree = await parseMarkdown('```diff title="config.yml" {2,4-6} diff\n-a\n+b\n```\n');
+  const [node] = codesIn(tree);
+  assert.ok(node);
+  assert.deepEqual(codeMetaOf(node), {
+    raw: 'title="config.yml" {2,4-6} diff',
+    title: "config.yml",
+    highlight: [range(2), range(4, 6)],
+    ins: [],
+    del: [],
+    diff: true,
+    showLineNumbers: false,
+  });
+});
+
+test("diff is only the bare token: a title or a key named diff does not turn it on", () => {
+  assert.equal(parseCodeMeta("diff").diff, true);
+  assert.equal(parseCodeMeta('title="diff"').diff, false);
+  assert.equal(parseCodeMeta("diff=false").diff, false);
 });
 
 test("a fence with no meta gets empty fields, not missing ones", async () => {
@@ -124,6 +146,7 @@ test("a fence with no meta gets empty fields, not missing ones", async () => {
     highlight: [],
     ins: [],
     del: [],
+    diff: false,
     showLineNumbers: false,
   });
 });
