@@ -27,15 +27,6 @@ test("unknown token keys are rejected with a message", () => {
   assert.match(errors.join("\n"), /additional properties/);
 });
 
-test("configMap, the schema, and the Liquid include list the same keys", () => {
-  const schema = JSON.parse(readFileSync(join(root, "schema/slipway-config.schema.json"), "utf8"));
-  const schemaKeys = Object.keys(schema.properties.slipway.properties.tokens.properties).sort();
-  const include = readFileSync(join(root, "_includes/theme-vars.html"), "utf8");
-  const includeKeys = [...new Set([...include.matchAll(/value=t\.([a-z_]+)/g)].map((m) => m[1]))].sort();
-  assert.deepEqual(Object.keys(configMap).sort(), schemaKeys);
-  assert.deepEqual(includeKeys, schemaKeys);
-});
-
 test("three overrides restyle the site through three keys (epic exit criterion)", () => {
   const css = renderOverrides({ accent: "#2f6b45", canvas: "#f6f4ec", font_display: "Georgia" });
   assert.deepEqual(css, [
@@ -57,13 +48,6 @@ test("validateExampleConfigs reports a bad example config and passes the real on
   assert.match(problems[0], /^examples\/bad\/_config\.yml:/);
 });
 
-test("the include keeps quotes in font stacks and strips what could end the style block", () => {
-  const helper = readFileSync(join(root, "_includes/theme-var.html"), "utf8");
-  assert.doesNotMatch(helper, /\|\s*escape/, "escape would turn quotes into &quot; inside <style>");
-  assert.doesNotMatch(helper, /\{\{[^}]*"[{}]"/, "a brace inside quotes in {{ }} breaks the Liquid parser");
-  for (const char of ["<", ">", "{", "}", ";"]) assert.ok(helper.includes(`remove: "${char}"`), char);
-});
-
 test("the top-level keys the theme reads are checked, and other keys pass", () => {
   assert.equal(validateConfig({ title: "x", lang: "fa", direction: "rtl", author: { name: "A" }, url: "https://example.org", baseurl: "/site", plugins: ["x"] }).ok, true);
   assert.equal(validateConfig({ author: "A" }).ok, true);
@@ -73,12 +57,6 @@ test("the top-level keys the theme reads are checked, and other keys pass", () =
   assert.equal(validateConfig({ slipway: { colour: "red" } }).ok, false);
 });
 
-test("every site key read in a layout or include is in the schema", () => {
-  assert.deepEqual(undocumentedSiteKeys(), []);
-  const dir = mkdtempSync(join(tmpdir(), "slipway-layout-"));
-  writeFileSync(join(dir, "x.html"), "{{ site.title }} {{ site.posts.size }} {{ site.slipway.languages.size }} {{ site.slipway.sidebar }} {{ site.footer_text }} {{ site.slipway.fonts }}");
-  assert.deepEqual(undocumentedSiteKeys([dir]), ["footer_text", "slipway.sidebar"]);
-});
 
 test("every schema property has a description", () => {
   assert.deepEqual(propertiesWithoutDescription(), []);

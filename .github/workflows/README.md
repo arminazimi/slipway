@@ -4,7 +4,7 @@ GitHub Actions for this repository. [AGENTS.md](../../AGENTS.md) lists the comma
 
 | Workflow | Runs on | What it does | Required |
 |---|---|---|---|
-| [`ci.yml`](ci.yml) | push to `main`, every pull request, every merge queue batch | `check` runs `npm run check` on Node 24 (tests, type checks, fixed checks; no gem toolchain or browser); `ci-ok` passes only when it did | yes |
+| [`ci.yml`](ci.yml) | push to `main`, every pull request, every merge queue batch | `check` runs `npm run check` on Node 24 (tests, type checks, fixed checks; no Ruby, browser, or Seaworthy); `ci-ok` passes only when it did | yes |
 | [`codeql.yml`](codeql.yml) | push, pull request, weekly | CodeQL scan of the JavaScript and TypeScript | no |
 | [`dependency-review.yml`](dependency-review.yml) | pull requests changing a manifest or lock file | fails on a vulnerable or unlicensed new dependency | no |
 | [`ops-ci-feedback.yml`](ops-ci-feedback.yml) | a failed `ci` run | comments the failing step's log on an agent's pull request | no |
@@ -12,7 +12,6 @@ GitHub Actions for this repository. [AGENTS.md](../../AGENTS.md) lists the comma
 | [`ops-progress.yml`](ops-progress.yml) | a task closes | keeps its epic's progress line current | no |
 | [`ops-ready.yml`](ops-ready.yml) | an issue closes, hourly | keeps the `status: ready` label true | no |
 | [`ops-update.yml`](ops-update.yml) | `main` moves | updates behind, conflict-free agent pull requests | no |
-| [`ops-weekly.yml`](ops-weekly.yml) | Mondays | opens the weekly pipeline report issue | no |
 | [`scorecard.yml`](scorecard.yml) | push to `main`, weekly | OpenSSF Scorecard | no |
 | [`secrets.yml`](secrets.yml) | pull requests, push, weekly | gitleaks secret scan | no |
 | [`workflow-lint.yml`](workflow-lint.yml) | workflow or action changes | actionlint and zizmor | no |

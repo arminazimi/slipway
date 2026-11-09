@@ -9,15 +9,12 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - Gemfile
-      - Gemfile.lock
       - adapters/**/package-lock.json
       - adapters/**/package.json
       - package-lock.json
       - package.json
       - packages/**/package.json
       - plugins/**/package.json
-      - slipway-theme.gemspec
 
 permissions: {}
 

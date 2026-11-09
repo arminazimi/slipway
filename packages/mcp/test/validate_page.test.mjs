@@ -9,14 +9,14 @@ describe("validate_page", () => {
 
   it("fails when file is missing", async () => {
     await assert.rejects(
-      validatePage("examples/docs", { file: "missing.md" }),
+      validatePage("packages/doctor/test/fixtures/examples/docs", { file: "missing.md" }),
       /missing\.md does not exist in the site/
     );
   });
 
   it("fails when file is outside the site", async () => {
     await assert.rejects(
-      validatePage("examples/docs", { file: "../../../package.json" }),
+      validatePage("packages/doctor/test/fixtures/examples/docs", { file: "../../../package.json" }),
       /is outside the site directory/
     );
   });

@@ -205,7 +205,7 @@ function cli(...args) {
 }
 
 test("cli: examples/docs prints a level and findings", () => {
-  const result = cli("doctor", "examples/docs");
+  const result = cli("doctor", "packages/doctor/test/fixtures/examples/docs");
   assert.equal(result.status, 1);
   assert.match(result.stdout, /^level: (none|L[0-3]) /m);
   assert.match(result.stdout, /examples\/docs\/AGENTS\.md is missing/);
@@ -336,7 +336,7 @@ test("report: json validates against the report schema, passing or failing", asy
     assert.equal(report.generator, "unknown");
   }
   // examples/docs runs the Jekyll checks (level null, scope "jekyll"); the detect fixture is a detected Jekyll site.
-  const withChecks = await doctor(join(repo, "examples/docs"));
+  const withChecks = await doctor(join(repo, "packages/doctor/test/fixtures/examples/docs"));
   assert.ok(validateReport(withChecks), JSON.stringify(validateReport.errors));
   assert.ok(withChecks.tests.some((t) => t.scope === "jekyll"));
   assert.equal((await doctor(fixture("detect/jekyll"))).generator, "jekyll");

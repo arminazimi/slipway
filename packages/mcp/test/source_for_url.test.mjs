@@ -10,7 +10,7 @@ const testDir = join(root, ".tmp/test-source-for-url");
 
 before(() => {
   rmSync(testDir, { recursive: true, force: true });
-  cpSync(join(root, "examples/docs"), testDir, { recursive: true });
+  cpSync(join(root, "packages/doctor/test/fixtures/examples/docs"), testDir, { recursive: true });
 
   const mockSourcemap = {
     version: 0,

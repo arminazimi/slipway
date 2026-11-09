@@ -7,7 +7,7 @@ import { run } from "../src/checks/schema-coverage.mjs";
 import { Site } from "../src/site.mjs";
 
 const fixture = (name) => fileURLToPath(new URL(`fixtures/${name}`, import.meta.url));
-const examplesPath = fileURLToPath(new URL("../../../examples", import.meta.url));
+const examplesPath = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples", import.meta.url));
 
 test("schema-coverage reports layouts with no schema", async () => {
   const site = new Site(fixture("schema-coverage"));

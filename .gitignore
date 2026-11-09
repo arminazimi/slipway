@@ -1,11 +1,6 @@
 node_modules/
 _site/
-.jekyll-cache/
-.sass-cache/
-vendor/
-.bundle/
 planning/roadmap/out/
-.seaworthy/
 .DS_Store
 spec/docs-site/
 __pycache__/

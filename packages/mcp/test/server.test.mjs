@@ -8,7 +8,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
-const docs = fileURLToPath(new URL("../../../examples/docs", import.meta.url));
+const docs = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples/docs", import.meta.url));
 const conforming = fileURLToPath(new URL("../../doctor/test/fixtures/conforming", import.meta.url));
 
 async function connect(site, t) {
@@ -33,21 +33,6 @@ test("tools/list returns exactly the tools with JSON Schema inputs", async (t) =
     assert.equal(tool.inputSchema.type, "object");
     assert.equal(tool.inputSchema.additionalProperties, false);
     if (["doctor", "find_text", "findings_for_file", "list_blocks", "list_layouts", "list_pages", "read_config", "read_section", "source_for_url", "validate_page"].includes(tool.name)) assert.equal(tool.annotations.readOnlyHint, true);
-  }
-});
-
-test("list_layouts lists the theme's layouts for examples/docs", async (t) => {
-  const result = await (await connect(docs, t)).callTool({ name: "list_layouts", arguments: {} });
-  assert.ok(!result.isError, result.content[0].text);
-  const layouts = json(result).layouts;
-  const names = layouts.map((layout) => layout.name);
-  for (const name of ["base", "doc", "home", "page", "post"]) assert.ok(names.includes(name), name);
-  const doc = layouts.find((layout) => layout.name === "doc");
-  assert.equal(doc.source, "theme");
-  assert.equal(doc.extends, "base");
-  for (const layout of layouts) {
-    assert.ok(layout.schema === null || typeof layout.schema === "object", layout.name);
-    assert.equal(layout.schema === null, layout.schemaFile === null, layout.name);
   }
 });
 

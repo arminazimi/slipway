@@ -30,7 +30,7 @@ import { readdirSync } from "node:fs";
 import { join } from "node:path";
 
 test("unknown-config does not fire on examples", async () => {
-  const examplesPath = fileURLToPath(new URL("../../../examples", import.meta.url));
+  const examplesPath = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples", import.meta.url));
   const examples = readdirSync(examplesPath);
 
   for (const example of examples) {

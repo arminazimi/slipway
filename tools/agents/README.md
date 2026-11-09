@@ -1,10 +1,10 @@
 # Agent environment setup
 
-`setup.sh` installs everything `npm run check` needs on a bare VM: Node 22, the Ruby in `.ruby-version`, the GitHub Pages gem (`bundle install`), npm packages, and Playwright browsers. Each step is skipped when its tool is already installed, so running it twice changes nothing.
+`setup.sh` installs everything `npm run check` needs on a bare VM: Node 24 and the npm packages. Each step is skipped when its tool is already installed, so running it twice changes nothing.
 
 ```bash
 bash tools/agents/setup.sh
-SLIPWAY_REQUIRE_BUILD=1 npm run check
+npm run check
 ```
 
 ## Jules

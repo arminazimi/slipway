@@ -20,7 +20,7 @@ const walk = (dir, base = "") =>
   });
 
 test("the passing fixture and examples/minimal run every Jekyll check with no findings", async () => {
-  for (const dir of [fixture("jekyll-pass"), join(repo, "examples/minimal")]) {
+  for (const dir of [fixture("jekyll-pass"), join(repo, "packages/doctor/test/fixtures/examples/minimal")]) {
     const report = await doctor(dir);
     const results = report.tests.filter((t) => t.scope === "jekyll");
     assert.deepEqual(results.map((t) => t.id), ids, dir);
@@ -66,12 +66,6 @@ test("a site without _config.yml gets no Jekyll checks", async () => {
 test("the stubs are the files of starter-files/ except its READMEs and optional files", () => {
   const isOptional = (path) => path === "README.md" || path.startsWith("optional/");
   assert.deepEqual(walk(join(repo, "starter-files")).filter((path) => !isOptional(path)).sort(), [...stubs].sort());
-});
-
-test("the built-in UI string keys are the ones in _includes/i18n/en.html", () => {
-  const html = readFileSync(join(repo, "_includes/i18n/en.html"), "utf8");
-  const keys = [...new Set([...html.matchAll(/when '([a-z_]+)'/g)].map((m) => m[1]))];
-  assert.deepEqual([...builtinKeys].sort(), keys.sort());
 });
 
 test("the packaged deprecations list matches the repository's", () => {
