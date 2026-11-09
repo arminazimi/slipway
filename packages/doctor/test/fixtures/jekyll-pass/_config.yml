@@ -1,6 +1,6 @@
 title: Jekyll fixture
 lang: en
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: فارسی, prefix: /fa }
+# The engine's language list. A 0.2 site wrote it under `slipway.languages`, which is now a deprecation.
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: فارسی, prefix: /fa }

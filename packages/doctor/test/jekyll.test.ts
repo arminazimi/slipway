@@ -20,13 +20,28 @@ const walk = (dir, base = "") =>
     return entry.isDirectory() ? walk(dir, path) : [path];
   });
 
-test("the passing fixture and examples/minimal run every Jekyll check with no findings", async () => {
-  for (const dir of [fixture("jekyll-pass"), join(repo, "packages/doctor/test/fixtures/examples/minimal")]) {
-    const report = await doctor(dir);
-    const results = report.tests.filter((t) => t.scope === "jekyll");
-    assert.deepEqual(results.map((t) => t.id), ids, dir);
-    assert.deepEqual(jekyllFindings(report), [], dir);
-  }
+test("the passing fixture runs every Jekyll check with no findings", async () => {
+  const dir = fixture("jekyll-pass");
+  const report = await doctor(dir);
+  const results = report.tests.filter((t) => t.scope === "jekyll");
+  assert.deepEqual(results.map((t) => t.id), ids, dir);
+  assert.deepEqual(jekyllFindings(report), [], dir);
+});
+
+test("examples/minimal runs every Jekyll check; its 0.2 config keys are migration hints", async () => {
+  const dir = join(repo, "packages/doctor/test/fixtures/examples/minimal");
+  const report = await doctor(dir);
+  const results = report.tests.filter((t) => t.scope === "jekyll");
+  assert.deepEqual(results.map((t) => t.id), ids, dir);
+  assert.deepEqual(
+    jekyllFindings(report).filter((finding) => finding.id !== "config.deprecated"),
+    [],
+    dir,
+  );
+  assert.ok(
+    jekyllFindings(report).some((finding) => finding.id === "config.deprecated"),
+    "a 0.2 site gets a hint per old config key",
+  );
 });
 
 test("each failing fixture gives exactly one warning with file, line, and fix", async () => {

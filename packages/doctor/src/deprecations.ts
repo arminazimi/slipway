@@ -60,9 +60,16 @@ export function findDeprecations(dir, deprecations = packagedDeprecations()) {
   const configPath = join(dir, "_config.yml");
   if (existsSync(configPath)) {
     const { doc, lines } = parseYaml(readFileSync(configPath, "utf8"));
+    const matched = [];
     for (const entry of config) {
       const line = keyLine(doc.contents, entry.old.split("."), lines);
-      if (line) add("_config.yml", line, entry);
+      if (line) matched.push({ line, entry });
+    }
+    // A parent key (`slipway.tokens`) and one of its children (`slipway.tokens.radius`) both match
+    // when the child is set. Report the deepest match, so one setting gives one hint.
+    for (const { line, entry } of matched) {
+      if (matched.some((other) => other.entry.old.startsWith(`${entry.old}.`))) continue;
+      add("_config.yml", line, entry);
     }
     // Front-matter defaults: `defaults: [{ scope, values }]`.
     const defaults: any = doc.get("defaults");
