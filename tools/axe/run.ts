@@ -119,6 +119,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   kbd: "<kbd",
   "key-value": 'class="key-value',
   mermaid: 'class="mermaid',
+  "os-tabs": 'class="os-tabs',
   "output-block": 'class="output-block',
   "page-status": 'class="page-status',
   "schema-table": 'class="schema-table',
