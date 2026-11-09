@@ -45,6 +45,9 @@ jobs:
       - name: Build Evergreen's docs with the engine
         id: canary
         continue-on-error: true
+        # Actions' `bash` shell runs with `pipefail`; the Linux default (`bash -e`) does
+        # not, and without it `tee` would hide the tool's exit code.
+        shell: bash
         env:
           EVERGREEN_DOCS: ${{ runner.temp }}/evergreen/docs
           CANARY_LOG: ${{ runner.temp }}/canary.log
