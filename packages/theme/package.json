@@ -22,9 +22,9 @@
     "shiki": "^4.6.0"
   },
   "peerDependencies": {
-    "preact": "^10.0.0"
+    "preact": "^11.2.0"
   },
   "devDependencies": {
-    "@types/node": "^24.19.2"
+    "@types/node": "^26.6.6"
   }
 }
