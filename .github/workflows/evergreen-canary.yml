@@ -1,0 +1,117 @@
+name: evergreen-canary
+
+# Builds arminazimi/evergreen's `docs/` with this repository's engine and theme every night,
+# so an engine change that breaks Evergreen shows up here before it shows up there. Before
+# Evergreen switches to the engine the canary runs the migration tool as a dry run; after the
+# switch (the site has a `mizzen.yml`) it builds the site. A failure opens one issue, updates
+# it on every later failure, and closes it when a run passes, like the flaky-test report.
+on:
+  schedule:
+    # Nightly at 02:23 UTC, off the hour when GitHub is busiest (scheduled runs use this
+    # file on main).
+    - cron: "23 2 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: evergreen-canary
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    name: build Evergreen's docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      # Open, update, and close the one canary issue.
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Clone Evergreen read-only
+        env:
+          EVERGREEN_REPOSITORY: https://github.com/arminazimi/evergreen.git
+        # A plain clone rather than a checkout step: the default token reads only this
+        # repository, and the canary needs Evergreen's latest default branch, not a pin.
+        run: git clone --depth 1 --single-branch "$EVERGREEN_REPOSITORY" "$RUNNER_TEMP/evergreen"
+      - name: Build Evergreen's docs with the engine
+        id: canary
+        continue-on-error: true
+        env:
+          EVERGREEN_DOCS: ${{ runner.temp }}/evergreen/docs
+          CANARY_LOG: ${{ runner.temp }}/canary.log
+        run: |
+          if [ -f "$EVERGREEN_DOCS/mizzen.yml" ]; then
+            echo "Evergreen has switched; building its docs with this repository's engine and theme."
+            node packages/engine/bin/slipway.ts build "$EVERGREEN_DOCS" \
+              --out "$RUNNER_TEMP/out" --theme packages/theme 2>&1 | tee "$CANARY_LOG"
+          else
+            echo "Evergreen is still on 0.2; running the migration tool as a dry run."
+            node tools/migrate/run.ts "$EVERGREEN_DOCS" --dry-run 2>&1 | tee "$CANARY_LOG"
+          fi
+      - name: Open or update the canary issue
+        if: steps.canary.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CANARY_LOG: ${{ runner.temp }}/canary.log
+          ISSUE_BODY: ${{ runner.temp }}/canary-issue.md
+        run: |
+          {
+            echo "<!-- slipway-evergreen-canary -->"
+            echo
+            echo "Building a fresh checkout of arminazimi/evergreen's \`docs/\` with this repository's engine, theme, and migration tool failed."
+            echo
+            echo "- Run: $RUN_URL"
+            echo "- Branch: \`$GITHUB_REF_NAME\`"
+            echo "- Commit: \`$GITHUB_SHA\`"
+            echo
+            echo "<details><summary>Last 80 lines of the canary output</summary>"
+            echo
+            echo '```'
+            if [ -f "$CANARY_LOG" ]; then
+              # Keep a fence in the log from closing the one around it.
+              tail -n 80 "$CANARY_LOG" | sed 's/\x60\x60\x60/""" /g'
+            else
+              echo "no canary output was written"
+            fi
+            echo '```'
+            echo
+            echo "</details>"
+          } > "$ISSUE_BODY"
+
+          existing="$(gh issue list --label canary --state open --limit 100 --json number,body \
+            --jq '[.[] | select((.body // "") | contains("<!-- slipway-evergreen-canary -->"))][0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --body-file "$ISSUE_BODY"
+          else
+            gh label create canary --color d93f0b --description "The nightly Evergreen canary failed" || true
+            gh issue create --title "Evergreen canary" --label canary --body-file "$ISSUE_BODY"
+          fi
+      - name: Close the canary issue after a pass
+        if: steps.canary.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          existing="$(gh issue list --label canary --state open --limit 100 --json number,body \
+            --jq '[.[] | select((.body // "") | contains("<!-- slipway-evergreen-canary -->"))][0].number // empty')"
+          if [ -z "$existing" ]; then
+            echo "canary: no open issue"
+            exit 0
+          fi
+          gh issue close "$existing" --comment "The latest canary passed: $RUN_URL"
+      # A failing canary must fail the run too; the report steps above ran first.
+      - name: Fail the run when the canary failed
+        if: steps.canary.outcome == 'failure'
+        run: exit 1
