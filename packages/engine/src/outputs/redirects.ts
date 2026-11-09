@@ -112,6 +112,36 @@ function pageTarget(page: Page, site: Site): string {
 }
 
 /**
+ * The path an internal target names, with the site origin removed when it is written as an absolute URL.
+ * Returns `undefined` for an external URL, which cannot name another redirect on this site.
+ */
+function targetPath(target: string, site: Site): string | undefined {
+  if (/^https?:\/\//i.test(target)) {
+    let parsed: URL;
+    try {
+      parsed = new URL(target);
+    } catch {
+      return undefined;
+    }
+    const origin = originOf(site);
+    return origin === undefined || parsed.origin !== origin ? undefined : parsed.pathname;
+  }
+  return target.startsWith("/") ? target : undefined;
+}
+
+/**
+ * The route an old path or a target names inside the output folder, with `base` and the difference between
+ * `/old/` and `/old` removed, so two values that write the same file compare equal. `undefined` for a target
+ * outside the site.
+ */
+function routeOf(value: string, site: Site): string | undefined {
+  const path = targetPath(value, site);
+  if (path === undefined) return undefined;
+  const under = underBase(path, site.config.base);
+  return under === "" ? undefined : filePath(under);
+}
+
+/**
  * The redirect page: a meta refresh, a canonical link to the new address, a plain link for readers whose browser does
  * not follow the refresh, and one script that replaces the location without adding a history entry. Every value is
  * escaped for the place it lands in, so a URL with `&`, quotes, or `</script>` cannot break the document.
@@ -149,6 +179,65 @@ interface Claim {
   readonly pos?: SourcePos;
 }
 
+/** A claim that won its old path, with the routes its two ends name for matching it against other claims. */
+interface Entry {
+  readonly claim: Claim;
+  /** The route the old path names. */
+  readonly route: string;
+  /** The route the target names, or `undefined` for a target outside the site. */
+  readonly targetRoute: string | undefined;
+}
+
+/**
+ * Where a redirect ends: either at a target that is not another redirect, or in a loop. A loop's `cycle` holds
+ * each redirect of the cycle once, in order.
+ */
+type Resolution =
+  | { readonly kind: "done"; readonly path: readonly Entry[]; readonly target: string }
+  | { readonly kind: "loop"; readonly cycle: readonly Entry[] };
+
+/**
+ * Follows a redirect through every old path it names and returns the target the chain ends at. The first repeated
+ * route closes a loop; without one, the walk stops at the first target the site does not redirect.
+ */
+function resolveRedirect(entry: Entry, byRoute: ReadonlyMap<string, Entry>): Resolution {
+  const path: Entry[] = [entry];
+  const seen = new Map<string, number>([[entry.route, 0]]);
+  let current = entry;
+  while (current.targetRoute !== undefined) {
+    const next = byRoute.get(current.targetRoute);
+    if (next === undefined) break;
+    const at = seen.get(next.route);
+    if (at !== undefined) return { kind: "loop", cycle: path.slice(at) };
+    seen.set(next.route, path.length);
+    path.push(next);
+    current = next;
+  }
+  return { kind: "done", path, target: current.claim.target };
+}
+
+/** The message for a loop, from the redirects that form it: one points at itself, or the cycle closes on the first. */
+function loopMessage(cycle: readonly Entry[]): string {
+  const first = cycle[0]!;
+  if (cycle.length === 1) return `The redirect from ${quote(first.claim.oldPath)} points to itself.`;
+  const steps = [...cycle.map((entry) => entry.claim.oldPath), first.claim.oldPath];
+  return `The redirects ${steps.map(quote).join(" -> ")} form a loop.`;
+}
+
+/** The message for a chain: the old paths it passes through before the target `_redirects` writes. */
+function chainMessage(entry: Entry, target: string, path: readonly Entry[]): string {
+  const through = path
+    .slice(1)
+    .map((next) => quote(next.claim.oldPath))
+    .join(", ");
+  return `The redirect from ${quote(entry.claim.oldPath)} passes through ${through} and ends at ${quote(target)}; _redirects points straight at the final target.`;
+}
+
+/** The target written to `_redirects`: a site path is relative to the output folder, so `base` is stripped; an absolute URL is kept. */
+function redirectsTarget(target: string, base: string): string {
+  return target.startsWith("/") ? underBase(target, base) : target;
+}
+
 /**
  * Writes a small redirect page at every old address, from the config's `redirects` map and from each page's
  * `redirect_from` (a string or a list).
@@ -160,6 +249,16 @@ interface Claim {
  *
  * A redirect that would overwrite a real page, and an old path claimed twice, are errors. The first claim wins: the
  * config before the front matter, and pages in model order. Files come back sorted by path (ADR 0022, rule 5).
+ *
+ * When at least one redirect is written, a root `_redirects` file carries the same entries as one
+ * `<old-path> <target> 301` line each, for hosts that read a redirects file. Its paths are relative to the output
+ * folder, so `base` is stripped from the old path and from a site-relative target; an absolute URL is kept as written
+ * and may point outside the site. Lines come back sorted by old path.
+ *
+ * An old path whose target is another old path is a chain: it is a warning, and `_redirects` points straight at the
+ * target the chain ends at, so a host follows one hop instead of several. A chain that closes on itself, or an old
+ * path that targets itself, is a loop: it is an error, and its loop's entries are left out of `_redirects` because a
+ * generated rule would send readers in circles. The HTML pages stay exactly as written for every entry.
  */
 export const redirects: Output = {
   name: "redirects",
@@ -167,6 +266,7 @@ export const redirects: Output = {
     const base = site.config.base;
     const files: OutputFile[] = [];
     const claimed = new Map<string, Claim>();
+    const entries: Entry[] = [];
 
     const pagesByPath = new Map<string, Page>();
     for (const page of site.pages) {
@@ -202,6 +302,11 @@ export const redirects: Output = {
       }
 
       claimed.set(path, claim);
+      entries.push({
+        claim,
+        route: routeOf(claim.oldPath, site) ?? path,
+        targetRoute: routeOf(claim.target, site),
+      });
       files.push({ path, contents: redirectHtml(site, claim.target) });
     };
 
@@ -268,6 +373,42 @@ export const redirects: Output = {
         add({ oldPath: normalized, target: pageTarget(page, site), from: `the page ${quote(page.url)}`, pos: page.source });
       }
     }
+
+    const byRoute = new Map<string, Entry>();
+    for (const entry of entries) byRoute.set(entry.route, entry);
+
+    const looped = new Set<string>();
+    const rules: string[] = [];
+    for (const entry of entries) {
+      const resolution = resolveRedirect(entry, byRoute);
+      if (resolution.kind === "loop") {
+        const start = resolution.cycle[0]!;
+        if (!looped.has(start.route)) {
+          for (const member of resolution.cycle) looped.add(member.route);
+          const pos = resolution.cycle.find((member) => member.claim.pos !== undefined)?.claim.pos;
+          ctx.report({
+            id: "redirects.loop",
+            severity: "error",
+            message: loopMessage(resolution.cycle),
+            ...(pos === undefined ? {} : { pos }),
+            help: "Point one of these redirects at a page that does not redirect.",
+          });
+        }
+        continue;
+      }
+      if (resolution.path.length > 1) {
+        ctx.report({
+          id: "redirects.chain",
+          severity: "warning",
+          message: chainMessage(entry, resolution.target, resolution.path),
+          ...(entry.claim.pos === undefined ? {} : { pos: entry.claim.pos }),
+          help: `Point the redirect straight at ${quote(resolution.target)}.`,
+        });
+      }
+      const oldPath = underBase(entry.claim.oldPath, base);
+      rules.push(`${oldPath} ${redirectsTarget(resolution.target, base)} 301`);
+    }
+    if (rules.length > 0) files.push({ path: "_redirects", contents: `${rules.sort(byCodePoint).join("\n")}\n` });
 
     return files.sort((a, b) => byCodePoint(a.path, b.path));
   },
