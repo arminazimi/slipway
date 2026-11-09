@@ -105,6 +105,9 @@
   "version_changed": "Changed in version {version}",
   "version_removed": "Removed in version {version}",
   "versions": "Versions",
+  "video_missing_title": "Video is missing a title. Add title=\"…\" to the ::video directive so the player has an accessible name.",
+  "video_play": "Play video",
+  "video_watch": "Watch on {provider}",
   "view_markdown": "View Markdown",
   "yes": "Yes"
 }

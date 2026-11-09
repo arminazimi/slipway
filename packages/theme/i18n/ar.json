@@ -105,6 +105,9 @@
   "version_changed": "تغيّر في الإصدار {version}",
   "version_removed": "أُزيل في الإصدار {version}",
   "versions": "Versions",
+  "video_missing_title": "الفيديو بلا عنوان. أضف title=\"…\" إلى توجيه ::video ليحصل المشغّل على اسم يقرأه قارئ الشاشة.",
+  "video_play": "تشغيل الفيديو",
+  "video_watch": "المشاهدة على {provider}",
   "view_markdown": "عرض ماركداون",
   "yes": "نعم"
 }
