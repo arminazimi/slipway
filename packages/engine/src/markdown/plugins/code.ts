@@ -165,7 +165,7 @@ function buildGroup(open: RootContent, codes: Code[], close: RootContent): CodeG
 }
 
 /** Replaces each `:::code-group` run among `parent`'s children with one group, then recurses. */
-function groupTabs(parent: Parent): void {
+function groupTabs(parent: Parent, source: string): void {
   const out: RootContent[] = [];
   const siblings = parent.children;
   for (let i = 0; i < siblings.length; i++) {
@@ -174,7 +174,10 @@ function groupTabs(parent: Parent): void {
     // With remark-directive active at parse time, `:::code-group … :::` arrives as a container directive.
     if (node.type === "containerDirective" && node.name === "code-group") {
       const kids = node.children;
-      if (kids.length > 0 && kids.every((k) => k.type === "code")) {
+      // The parser closes a directive left open at the end of the file; only a real `:::` closes a group.
+      const end = node.position?.end.offset;
+      const closed = end !== undefined && source.slice(0, end).trimEnd().endsWith(":::");
+      if (closed && kids.length > 0 && kids.every((k) => k.type === "code")) {
         const group: CodeGroup = {
           type: "codeGroup",
           children: kids as Code[],
@@ -203,13 +206,13 @@ function groupTabs(parent: Parent): void {
   }
   parent.children = out;
   for (const child of out) {
-    if ("children" in child) groupTabs(child as Parent);
+    if ("children" in child) groupTabs(child as Parent, source);
   }
 }
 
 export const name = "code";
 export const order = 10;
-export const plugin: Plugin<[], Root> = () => (tree) => {
+export const plugin: Plugin<[], Root> = () => (tree, file) => {
   attachMeta(tree);
-  groupTabs(tree);
+  groupTabs(tree, String(file.value));
 };
