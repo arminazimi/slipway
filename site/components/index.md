@@ -45,6 +45,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Steps](./steps/) | A numbered sequence or tutorial. |
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
+| [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 
 ## Moving from the old blocks
 
