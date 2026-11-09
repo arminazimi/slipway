@@ -1,74 +1,66 @@
+// Root-relative Markdown links break when a site is served under a base path. Jekyll names that path
+// `baseurl`; the engine names it `base` (ADR 0024). The check reads whichever config the site has.
 export const id = "doctor.root-links";
 export const level = "warning";
 
-import { blocks, codeSpans } from "../markdown.ts";
+import { detect } from "../detect.ts";
+import { blocks } from "../markdown.ts";
 
 const result = (findings) => ({ status: findings.length ? "fail" : "pass", findings });
 
-export async function run(site) {
-  let baseurl = "";
+/** The site's base path and the config key that names it, for the generator at hand. */
+function baseOf(site) {
+  if (detect(site.source).generator === "mizzen") {
+    const base = site.config()?.data?.base;
+    return { base: typeof base === "string" ? base : "", key: "base" };
+  }
   for (const name of ["_config.yml", "_config.yaml"]) {
     if (site.isFile(site.source, name)) {
       const configParsed = site.dataOf(name);
-      if (configParsed?.data?.baseurl) {
-        baseurl = configParsed.data.baseurl;
-      }
-      break;
+      const baseurl = configParsed?.data?.baseurl;
+      return { base: typeof baseurl === "string" ? baseurl : "", key: "baseurl" };
     }
   }
+  return { base: "", key: "baseurl" };
+}
 
-  // The issue states: "Report root-relative links in Markdown sources when baseurl is set"
-  if (!baseurl) {
+export async function run(site) {
+  const { base, key } = baseOf(site);
+  if (!base) {
     return result([]);
   }
 
   const findings = [];
 
-  for (const file of site.files(site.source)) {
-    if (!file.endsWith(".md") && !file.endsWith(".markdown")) continue;
+  // An engine site that has a manifest names its pages there; without one, read every Markdown source.
+  const listed = site.sources();
+  const files = listed.length
+    ? listed.filter((file) => /\.(md|markdown)$/i.test(file))
+    : site.files().filter((file) => /\.(md|markdown)$/i.test(file));
 
+  for (const file of files) {
     const content = site.read(file);
-    if (content === null) continue;
 
-    // We want to skip code blocks and inline code
-    const mdBlocks = blocks(content);
-    // get inline code spans to exclude
-    const spans = codeSpans(content);
-
-    for (const { line, text } of mdBlocks.prose) {
+    // Skip code blocks: `blocks` returns the prose lines only. Inline code spans are excluded below.
+    for (const { line, text } of blocks(content).prose) {
       // Find Markdown links [text](/root-relative/path)
-      // Exclude those that are inside inline code spans
-
       const linkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
       let match;
       while ((match = linkRegex.exec(text)) !== null) {
         const url = match[2];
-        if (url.startsWith("/") && !url.startsWith("//")) {
-           // We have a root-relative link
+        if (!url.startsWith("/") || url.startsWith("//")) continue;
 
-           // Check if it's within a code span
-           const matchIndex = match.index;
-           const matchEnd = match.index + match[0].length;
+        // A link inside an inline code span is an example, not a link.
+        const before = text.slice(0, match.index);
+        if ((before.match(/`/g) ?? []).length % 2 !== 0) continue;
 
-           // Simple check: count backticks on the line before the match
-           let isInsideCode = false;
-           let backticks = 0;
-           for (let i = 0; i < matchIndex; i++) {
-             if (text[i] === '`') backticks++;
-           }
-           if (backticks % 2 !== 0) {
-             isInsideCode = true;
-           }
-
-           if (!isInsideCode) {
-              findings.push({
-                in: "source",
-                file,
-                line,
-                message: `Root-relative link \`${url}\` will break when \`baseurl\` is set. Use a relative link or \`relative_url\`.`
-              });
-           }
-        }
+        const alternative = key === "base" ? "Use a relative link." : "Use a relative link or `relative_url`.";
+        findings.push({
+          in: "source",
+          file,
+          line,
+          message: `Root-relative link \`${url}\` will break when \`${key}\` is set. ${alternative}`,
+        });
       }
     }
   }
