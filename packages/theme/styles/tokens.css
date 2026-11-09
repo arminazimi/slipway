@@ -40,6 +40,13 @@
   --type-weight-regular: 400;
   --type-weight-medium: 500;
   --type-weight-bold: 700;
+  --rtl-font-body: Vazirmatn, Geist, "Vazirmatn Fallback", "Geist Fallback", system-ui, sans-serif;
+  --rtl-font-heading: Vazirmatn, Geist, "Vazirmatn Fallback", "Geist Fallback", system-ui, sans-serif;
+  --rtl-font-ui: Vazirmatn, Geist, "Vazirmatn Fallback", "Geist Fallback", system-ui, sans-serif;
+  --rtl-leading-body: 1.8;
+  --rtl-leading-heading: 1.4;
+  --rtl-leading-tight: 1.35;
+  --rtl-letter-spacing: normal;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
