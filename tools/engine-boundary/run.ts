@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(fileURLToPath(import.meta.url), "../../..");
 const SOURCE = new Set([".ts", ".mts", ".cts", ".js", ".mjs", ".cjs", ".json"]);
-const SKIP_DIRS = new Set(["node_modules", "dist", ".git"]);
+const SKIP_DIRS = new Set(["node_modules", "dist", ".git", ".slipway"]);
 const NAME_ALLOWED = new Set(["package.json", "README.md"]);
 
 /** Theme palette names; the engine has no reason to spell them. */
