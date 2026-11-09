@@ -51,6 +51,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
 | [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
+| [Video](./video/) | A click-to-load video with a poster and a link that works without JavaScript. |
 
 ## Moving from the old blocks
 
