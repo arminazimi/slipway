@@ -85,6 +85,10 @@ function html(node: unknown): string {
   return `<${tag}${attrs}>${html(children)}</${tag}>`;
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 const names = JSON.parse(readFileSync(new URL("../tokens/names.json", import.meta.url), "utf8")) as Record<
   string,
   Record<string, unknown>
@@ -154,7 +158,7 @@ test("the provider list comes from theme options, which replace the defaults", (
   assert.doesNotMatch(out, /claude\.ai/);
   assert.doesNotMatch(out, /chatgpt\.com/);
   assert.doesNotMatch(out, /cursor\.com/);
-  assert.match(out, new RegExp(`href="https://example\\.com/ask\\?page=${absolutePage.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+  assert.match(out, new RegExp(`href="https://example\\.com/ask\\?page=${escapeRegExp(absolutePage)}"`));
   assert.match(out, /href="https:\/\/example\.com\/help\?title=Install"/);
 });
 
