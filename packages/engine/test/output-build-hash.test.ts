@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -13,6 +13,19 @@ import { build } from "../src/pipeline/build.ts";
 
 const THEME = fileURLToPath(new URL("../../theme", import.meta.url));
 const FIXTURE = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
+
+/** Folders another test's build may be writing into the fixture; a build cache is never input. */
+const TRANSIENT = new Set([".slipway", ".tmp", "node_modules", ".git"]);
+
+/** Copies the fixture into `parent` so the CLI's build cache cannot land inside the shared fixture. */
+function copyFixture(parent: string): string {
+  const root = join(parent, "docs-site");
+  cpSync(FIXTURE, root, {
+    recursive: true,
+    filter: (source) => !source.split(/[\\/]/).some((part) => TRANSIENT.has(part)),
+  });
+  return root;
+}
 
 // ajv is CommonJS: its default export is the class at run time, but its types name it.
 const Ajv2020 = createRequire(import.meta.url)("ajv/dist/2020.js") as typeof Ajv2020Class;
@@ -124,7 +137,7 @@ test("mizzen verify exits 0 for a matching build and 1 with the file that change
   const { parent, out } = scratch();
   try {
     const built = capture();
-    assert.equal(await main(["build", FIXTURE, "--out", out, "--theme", THEME], built.io), 0);
+    assert.equal(await main(["build", copyFixture(parent), "--out", out, "--theme", THEME], built.io), 0);
     const manifest = manifestOf(out);
     assert.ok(manifest.build);
 

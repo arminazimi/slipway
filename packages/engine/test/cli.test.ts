@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -10,6 +10,19 @@ import { NAME, main, parseArgs, usage } from "../src/cli/index.ts";
 const THEME = fileURLToPath(new URL("../../theme", import.meta.url));
 const BIN = fileURLToPath(new URL("../bin/slipway.ts", import.meta.url));
 const FIXTURE = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
+
+/** Folders another test's build may be writing into the fixture; a build cache is never input. */
+const TRANSIENT = new Set([".slipway", ".tmp", "node_modules", ".git"]);
+
+/** Copies the fixture into `parent` so the CLI's build cache cannot land inside the shared fixture. */
+function copyFixture(parent: string): string {
+  const root = join(parent, "docs-site");
+  cpSync(FIXTURE, root, {
+    recursive: true,
+    filter: (source) => !source.split(/[\\/]/).some((part) => TRANSIENT.has(part)),
+  });
+  return root;
+}
 
 /** A temporary folder holding `files`. */
 function tree(files: Record<string, string>): string {
@@ -137,7 +150,7 @@ test("the bin builds fixtures/docs-site with the sibling theme", () => {
   const parent = mkdtempSync(join(tmpdir(), "cli-bin-"));
   const out = join(parent, "site");
   try {
-    const result = spawnSync(process.execPath, [BIN, "build", FIXTURE, "--out", out], {
+    const result = spawnSync(process.execPath, [BIN, "build", copyFixture(parent), "--out", out], {
       encoding: "utf8",
       env: process.env,
     });
