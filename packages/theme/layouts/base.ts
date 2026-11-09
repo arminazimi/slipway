@@ -1,6 +1,7 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
+import announcement from "../chrome/announcement/index.ts";
 import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
 
 export { MAIN_ID, NAVIGATION_ID };
@@ -78,6 +79,7 @@ export default function base(props: BaseProps) {
       "body",
       null,
       skipLinks({ ...props, navigation: sidebar != null }),
+      announcement(props) as ComponentChildren,
       header == null ? null : h("header", null, header),
       h(
         "div",

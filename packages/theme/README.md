@@ -89,6 +89,10 @@ The rest of `theme.options` is the theme's as well. Lateen reads four blocks:
 ```yaml
 theme:
   options:
+    announcement:
+      id: v0-4
+      text: Slipway 0.4 is out.
+      href: /changelog/
     logo:
       light: /assets/logo.svg
       dark: /assets/logo-dark.svg
@@ -108,6 +112,7 @@ theme:
 
 | Option | What it changes |
 | --- | --- |
+| `announcement.id`, `announcement.text`, `announcement.href` | A dismissible bar above the header. `text` is required; the bar renders nothing without it. `href` links the text; `http`, `https`, `mailto`, and root-relative paths are shown. Dismissal is remembered per `id`. |
 | `logo.light`, `logo.dark` | The header mark. A root-relative path gets the site's `base`; an absolute URL is used as written. With both, the header swaps them with the theme; with one, it shows that one in both modes. |
 | `footer.copyright`, `footer.license` | The two lines of the site footer. |
 | `footer.links[]` | Footer links with `title` and `url`; only `http`, `https`, `mailto`, and root-relative paths are shown. |
