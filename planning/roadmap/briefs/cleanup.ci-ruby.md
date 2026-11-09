@@ -1,13 +1,10 @@
 ## Goal
-Remove Ruby setup and Jekyll builds from every workflow.
+Remove Ruby setup and Jekyll builds from every workflow. Done: `ci.yml` is Node-only, and the workflows that only built or released the Jekyll site (`nightly`, `pages-doctor`, `release`, and others) are deleted.
 
 ## Files
 
 **Edit**
 - `.github/workflows/ci.yml`
-- `.github/workflows/nightly.yml`
-- `.github/workflows/pages-doctor.yml`
-- `.github/workflows/release.yml`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
