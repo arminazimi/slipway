@@ -1,40 +1,51 @@
 # create-slipway
 
-Creates a [Slipway](https://github.com/arminazimi/slipway) site in a new folder.
+Creates a [Slipway](https://github.com/arminazimi/slipway) docs site in a new folder. The site
+builds with the engine, Mizzen, and the theme, Lateen; it needs no Ruby.
 
 ```bash
-npx create-slipway my-site                                   # asks for what is missing
-npx create-slipway my-site --title "My site" --lang fa --yes # agents: flags only, never prompts
+npx create-slipway my-site                                                # asks for what is missing
+npx create-slipway my-site --title "My site" --repository me/my-docs --yes # agents: flags only
 ```
 
 | Flag | Default | Meaning |
 | --- | --- | --- |
 | `<dir>` | (required) | Folder for the site. It must be empty or not exist (a lone `.git` is fine). |
 | `--title` | the folder name | Site title. |
+| `--repository` | | The GitHub repository as `owner/name` or an https URL, for "Edit this page" links. An empty answer leaves it out. |
 | `--lang` | `en` | Language code, such as `en`, `fa`, or `pt-BR`. |
-| `--mode` | `remote` | `remote`: `remote_theme` on GitHub Pages. `gem`: `theme: slipway-theme`. `template`: the theme files live in the site. |
 | `--yes`, `-y` | | Never prompt. Without a terminal on stdin it never prompts either. |
 
-It copies `examples/bare` and `starter-files/` from this repository, then writes `_config.yml` and a `Gemfile`. It never touches the network.
+It writes:
+
+```text
+mizzen.yml                          the site config
+docs/index.md                       the home page
+docs/quickstart.md                  the first guide
+docs/configuration.md               the config reference
+.github/workflows/deploy.yml        build and deploy to GitHub Pages
+content-schemas.json                which schema checks which file
+schema/                             the config and front matter schemas
+```
+
+For a project repository, `--repository owner/name` sets `url` to `https://owner.github.io` and
+`base` to `/name`, so the deployed site's links work. A user or organization site, whose repository
+is named `owner.github.io`, keeps `base: ""`. It never touches the network.
 
 Exit codes: `0` created, `1` bad usage, `2` the folder is not empty.
 
-In the repository, run it as `node packages/create-slipway/bin/create-slipway.mjs`. `npm pack` copies the starter and the theme into `template/` first (`scripts/bundle.mjs`), so the package works on its own.
+In the repository, run it as `node packages/create-slipway/bin/create-slipway.mjs`. `npm pack` copies
+the schemas into `template/` first (`scripts/bundle.mjs`), so the package works on its own.
 
-## Agent verification loop
+## After creating a site
 
-The Gemfile installs the Pages dependency versions with `require: false`: local builds use Jekyll directly so custom plugins run, rather than loading the Pages safe-mode wrapper.
-
-The CLI copies local schemas and the source-map/twin plugins in every mode, including the packed npm template. A local or Actions build targets **L2**; classic Pages safe mode does not run these plugins.
+Edit the Markdown in `docs/`, then build and preview:
 
 ```sh
-npx create-slipway my-site --yes
-cd my-site
-bundle install
-bundle exec jekyll build
-npx slipway doctor . --build _site --level L2
+npx @velella/mizzen build . --out dist
 ```
 
-Add `about.md` with `title: About` and `layout: page` in YAML front matter. Build and run the same Doctor command. Change `title` to a list (`title: [About]`): Doctor reports `about.md:2`. Restore the string, rebuild, and Doctor exits 0 with no failed MUST checks through L2. L3 skill discovery and schema style warnings may still be reported; this is conformance at the starter's claimed level, not an empty report.
-
-Doctor does not check arbitrary broken content links. The link-break → Markdown-line → repair loop belongs to the Seaworthy integration tracked in [#69](https://github.com/arminazimi/slipway/issues/69). The standalone agent epic's exit criterion uses a schema error until that integration is delivered.
+Push to `main` and the deploy workflow builds the site with the
+[deploy Action](../../action/deploy/README.md) and publishes it to GitHub Pages. Set the
+repository's Settings → Pages → Source to **GitHub Actions** once. For an agent, the build writes an
+`AGENTS.md` into the output that describes the site.
