@@ -41,6 +41,8 @@
   .page-footer,
   .page-agent-menu,
   [data-page-agent-menu],
+  .feedback,
+  [data-feedback],
   .block-actions,
   [data-block-actions],
   .search,

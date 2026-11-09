@@ -6,6 +6,7 @@ import blockActions from "../chrome/block-actions/index.ts";
 import breadcrumb from "../chrome/breadcrumb/index.ts";
 import copyMarkdown from "../chrome/copy-markdown/index.ts";
 import drawer from "../chrome/drawer/index.ts";
+import feedback from "../chrome/feedback/index.ts";
 import header from "../chrome/header/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
@@ -33,8 +34,8 @@ function statusProps(page: LayoutProps["page"]): PageStatusProps {
 }
 
 /**
- * The page itself: breadcrumb, status banner, title, body, page footer, copy-Markdown control, and
- * pager, marked for Pagefind.
+ * The page itself: breadcrumb, status banner, title, body, page footer, copy-Markdown control,
+ * feedback, and pager, marked for Pagefind.
  */
 function article(props: LayoutProps): ComponentChildren {
   const { page } = props;
@@ -47,6 +48,7 @@ function article(props: LayoutProps): ComponentChildren {
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
+    feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );
 }

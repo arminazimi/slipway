@@ -65,6 +65,17 @@ theme:
 
 Each URL may use `{markdown}` (the page's Markdown twin), `{url}` (the page's absolute URL), and `{title}`. The values are URL-encoded. A template that needs `{markdown}` or `{url}` is skipped when `url` is unset, because a relative path would give the agent a link it cannot open.
 
+## Page feedback
+
+With an endpoint configured, a doc page ends with "Was this page helpful?" and Yes and No buttons. The answer is POSTed as JSON, `{"url": "/guide/install/", "helpful": true}`, and the page remembers it in `sessionStorage` for the rest of the browser session; nothing is written to cookies or `localStorage`. The widget renders hidden and JavaScript reveals it, so a visitor without JavaScript sees no control. Without the block, no feedback markup is rendered.
+
+```yaml
+theme:
+  options:
+    feedback:
+      endpoint: https://feedback.example.com/vote
+```
+
 ## Navigation
 
 The header menu and the doc sidebar come from `_data/navigation.yml`. The shape is the one 0.2 used: `main` is the header, `docs` is the sidebar, and a group holds links under a heading.
