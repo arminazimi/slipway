@@ -129,7 +129,11 @@ test("two runs give deep-equal data with identical key order", async () => {
 
     assert.deepEqual(first.site.data, second.site.data);
     assert.deepEqual(Object.keys(first.site.data), Object.keys(second.site.data));
-    assert.deepEqual(Object.keys(first.site.data), ["aaa", "mmm", "zzz"]);
+    // The facts the engine ships with are already in the model; this folder adds its own three beside them.
+    const keys = [...new Set([...Object.keys(firstModel.site.data), "aaa", "mmm", "zzz"])].sort((a, b) =>
+      a < b ? -1 : a > b ? 1 : 0,
+    );
+    assert.deepEqual(Object.keys(first.site.data), keys);
   } finally {
     rmSync(root, { recursive: true, force: true });
     rmSync(dir, { recursive: true, force: true });
