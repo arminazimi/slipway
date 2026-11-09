@@ -4,9 +4,9 @@ The trail from the navigation tree above the title.
 ## Files
 
 **Create**
-- `packages/theme/chrome/breadcrumb/index.tsx`
+- `packages/theme/chrome/breadcrumb/index.ts`
 - `packages/theme/chrome/breadcrumb/style.css`
-- `packages/theme/test/chrome-breadcrumb.test.tsx`
+- `packages/theme/test/chrome-breadcrumb.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

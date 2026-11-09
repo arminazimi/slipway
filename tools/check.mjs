@@ -7,7 +7,7 @@
 // Tests: every `*.test.mjs` in tools/, tools/<name>/, planning/roadmap/, packages/*/test/ and adapters/*/test/, plus every
 // `*.test.ts` there (Node strips the types; packages/engine is TypeScript). A tool folder
 // with a playwright.config.js holds Playwright tests that its run.mjs starts, so node --test skips that folder.
-// Tools: every tools/<name>/run.mjs except the generators below. A run.mjs prints SKIP and exits 0 when its optional
+// Tools: every tools/<name>/run.ts (or legacy run.mjs) except the generators below. A run.mjs prints SKIP and exits 0 when its optional
 // dependency (Playwright, Ruby, Seaworthy) is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
 // Type check: every workspace with a `typecheck` script (`tsc --noEmit`) runs it after the tests.
 import { spawnSync } from "node:child_process";
@@ -34,8 +34,10 @@ export function testFiles(dir = root) {
   return folders.flatMap(testsIn).map((f) => relative(dir, f));
 }
 
+const runFile = (dir, name) => ["run.ts", "run.mjs"].map((f) => `tools/${name}/${f}`).find((f) => existsSync(join(dir, f)));
+
 export function toolChecks(dir = root, skip = (process.env.SLIPWAY_SKIP_TOOLS ?? "").split(",")) {
-  return dirs(join(dir, "tools")).filter((n) => !notChecks.has(n) && !skip.includes(n) && existsSync(join(dir, "tools", n, "run.mjs"))).map((n) => `tools/${n}/run.mjs`);
+  return dirs(join(dir, "tools")).filter((n) => !notChecks.has(n) && !skip.includes(n)).map((n) => runFile(dir, n)).filter(Boolean);
 }
 
 function run(label, command, args, dir) {

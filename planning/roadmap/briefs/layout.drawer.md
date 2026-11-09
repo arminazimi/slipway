@@ -4,10 +4,10 @@ Below 768 px, the menu button opens the sidebar in a drawer with a focus trap an
 ## Files
 
 **Create**
-- `packages/theme/chrome/drawer/index.tsx`
+- `packages/theme/chrome/drawer/index.ts`
 - `packages/theme/chrome/drawer/style.css`
 - `packages/theme/chrome/drawer/client.ts`
-- `packages/theme/test/chrome-drawer.test.tsx`
+- `packages/theme/test/chrome-drawer.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

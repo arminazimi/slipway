@@ -4,9 +4,9 @@ Turn ```` ```mermaid ```` fences into inline SVG at build time, with the diagram
 ## Files
 
 **Create**
-- `packages/theme/components/mermaid/index.tsx`
+- `packages/theme/components/mermaid/index.ts`
 - `packages/theme/components/mermaid/style.css`
-- `packages/theme/test/component-mermaid.test.tsx`
+- `packages/theme/test/component-mermaid.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

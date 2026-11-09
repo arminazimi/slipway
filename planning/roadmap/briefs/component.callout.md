@@ -4,9 +4,9 @@ Callouts from `:::note` style directives and GitHub alert syntax, with icons and
 ## Files
 
 **Create**
-- `packages/theme/components/callout/index.tsx`
+- `packages/theme/components/callout/index.ts`
 - `packages/theme/components/callout/style.css`
-- `packages/theme/test/component-callout.test.tsx`
+- `packages/theme/test/component-callout.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,10 +4,10 @@ Under the article: when the page last changed, a link to edit its source on GitH
 ## Files
 
 **Create**
-- `packages/theme/chrome/page-footer/index.tsx`
+- `packages/theme/chrome/page-footer/index.ts`
 - `packages/theme/chrome/page-footer/style.css`
 - `packages/theme/chrome/page-footer/client.ts`
-- `packages/theme/test/chrome-page-footer.test.tsx`
+- `packages/theme/test/chrome-page-footer.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,8 +4,8 @@ A friendly 404 with a search box and links to the home and top sections.
 ## Files
 
 **Create**
-- `packages/theme/layouts/not-found.tsx`
-- `packages/theme/test/layout-not-found.test.tsx`
+- `packages/theme/layouts/not-found.ts`
+- `packages/theme/test/layout-not-found.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

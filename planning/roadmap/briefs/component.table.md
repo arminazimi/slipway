@@ -4,9 +4,9 @@ Style Markdown tables and wrap wide ones in a scroll container with a visible ed
 ## Files
 
 **Create**
-- `packages/theme/components/table/index.tsx`
+- `packages/theme/components/table/index.ts`
 - `packages/theme/components/table/style.css`
-- `packages/theme/test/component-table.test.tsx`
+- `packages/theme/test/component-table.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

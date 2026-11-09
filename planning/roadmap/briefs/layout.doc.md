@@ -4,9 +4,9 @@ Compose the chrome into the docs layout at the widths in the design.
 ## Files
 
 **Create**
-- `packages/theme/layouts/doc.tsx`
+- `packages/theme/layouts/doc.ts`
 - `packages/theme/layouts/doc.css`
-- `packages/theme/test/layout-doc.test.tsx`
+- `packages/theme/test/layout-doc.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

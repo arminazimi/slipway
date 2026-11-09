@@ -276,8 +276,8 @@ Slipway has a new, docs-first design: a written brief based on Next.js, Tailwind
 A three-column docs layout (sidebar, article, on-this-page) with a sticky header, section tabs, collapsible sidebar groups, a mobile drawer, a table of contents that follows the reader, breadcrumbs, a pager, a page footer with edit links, a ⌘K search dialog, and a theme switch, plus home, 404, and app-page layouts. Everything works without JavaScript except search and the switches.
 
 ### Scope
-- `packages/theme/layouts/*.tsx`
-- `packages/theme/chrome/<name>/` (index.tsx, style.css, optional client.ts)
+- `packages/theme/layouts/*.ts`
+- `packages/theme/chrome/<name>/` (index.ts, style.css, optional client.ts)
 
 ### Non-goals
 - Components inside the article (E-components)
@@ -327,7 +327,7 @@ A three-column docs layout (sidebar, article, on-this-page) with a sticky header
 Authors have the components a docs site needs, written in Markdown: code blocks highlighted at build time with titles, line marks, diffs, copy buttons, and tabs that stay in sync across the page and site; terminals; callouts (GitHub alert syntax too); cards; steps; tables; file trees; details; figures; endpoints; schema tables; page status banners; heading anchors; and tabs. Each is one folder, styled only with tokens, and documented with an example in `fixtures/docs-site`.
 
 ### Scope
-- `packages/theme/components/<name>/` (index.tsx, style.css, optional client.ts, test)
+- `packages/theme/components/<name>/` (index.ts, style.css, optional client.ts, test)
 
 ### Non-goals
 - Marketing blocks (pricing, testimonials, logos), which are removed in E-cleanup

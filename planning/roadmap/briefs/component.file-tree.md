@@ -4,9 +4,9 @@ Turn a nested list inside `:::file-tree` into a file tree with folder and file i
 ## Files
 
 **Create**
-- `packages/theme/components/file-tree/index.tsx`
+- `packages/theme/components/file-tree/index.ts`
 - `packages/theme/components/file-tree/style.css`
-- `packages/theme/test/component-file-tree.test.tsx`
+- `packages/theme/test/component-file-tree.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

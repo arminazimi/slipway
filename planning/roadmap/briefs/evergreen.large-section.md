@@ -4,7 +4,7 @@ A section of 500 generated pages shows as one sidebar entry, marks itself active
 ## Files
 
 **Create**
-- `packages/theme/test/large-section.test.tsx`
+- `packages/theme/test/large-section.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

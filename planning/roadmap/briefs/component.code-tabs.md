@@ -4,10 +4,10 @@ Group fences under `:::code-group` into accessible tabs.
 ## Files
 
 **Create**
-- `packages/theme/components/code-tabs/index.tsx`
+- `packages/theme/components/code-tabs/index.ts`
 - `packages/theme/components/code-tabs/style.css`
 - `packages/theme/components/code-tabs/client.ts`
-- `packages/theme/test/component-code-tabs.test.tsx`
+- `packages/theme/test/component-code-tabs.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

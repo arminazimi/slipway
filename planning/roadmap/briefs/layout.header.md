@@ -4,9 +4,9 @@ The sticky top bar.
 ## Files
 
 **Create**
-- `packages/theme/chrome/header/index.tsx`
+- `packages/theme/chrome/header/index.ts`
 - `packages/theme/chrome/header/style.css`
-- `packages/theme/test/chrome-header.test.tsx`
+- `packages/theme/test/chrome-header.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

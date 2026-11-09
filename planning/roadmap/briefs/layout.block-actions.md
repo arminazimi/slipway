@@ -4,10 +4,10 @@ On hover or focus, every block shows "Edit with your agent", which copies a prom
 ## Files
 
 **Create**
-- `packages/theme/chrome/block-actions/index.tsx`
+- `packages/theme/chrome/block-actions/index.ts`
 - `packages/theme/chrome/block-actions/style.css`
 - `packages/theme/chrome/block-actions/client.ts`
-- `packages/theme/test/chrome-block-actions.test.tsx`
+- `packages/theme/test/chrome-block-actions.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

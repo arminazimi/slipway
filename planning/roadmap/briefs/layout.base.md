@@ -4,8 +4,8 @@ The shell every page uses: `<html lang dir>`, head from `Head` data, theme initi
 ## Files
 
 **Create**
-- `packages/theme/layouts/base.tsx`
-- `packages/theme/test/layout-base.test.tsx`
+- `packages/theme/layouts/base.ts`
+- `packages/theme/test/layout-base.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,9 +4,9 @@ Small inline labels (`:badge[New]{variant=tip}`) for versions and status.
 ## Files
 
 **Create**
-- `packages/theme/components/badge/index.tsx`
+- `packages/theme/components/badge/index.ts`
 - `packages/theme/components/badge/style.css`
-- `packages/theme/test/component-badge.test.tsx`
+- `packages/theme/test/component-badge.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

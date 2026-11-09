@@ -6,6 +6,7 @@ test("check.mjs finds the browser tools but not the generators, and no Playwrigh
   const tools = toolChecks();
   for (const name of ["a11y", "browser", "nojs", "screenshots"]) assert.ok(tools.includes(`tools/${name}/run.mjs`), name);
   for (const name of ["sourcemap", "twins", "html-validate"]) assert.ok(!tools.includes(`tools/${name}/run.mjs`), name);
+  assert.ok(tools.includes("tools/ts-only/run.ts"), "run.ts tools are found");
   const tests = testFiles();
   assert.ok(tests.includes("tools/release/prepare.test.mjs") && tests.includes("tools/plugins.test.mjs"));
   assert.ok(!tests.some((f) => /^tools\/(a11y|browser|nojs|screenshots)\//.test(f)));
