@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { h } from "preact";
 import { test } from "node:test";
 import type { Head, Layout, Page, Site } from "../src/contracts/index.ts";
+import { parseMarkdown } from "../src/markdown/parse.ts";
+import { markdownToHtml } from "../src/markdown/to-html.ts";
 import { renderPage } from "../src/render/render.ts";
 import type { ThemeComponent } from "../src/render/render.ts";
 
@@ -82,6 +84,23 @@ test("a layout and a component render; data-src stays on the component root", ()
   assert.deepEqual(result.islands, [{ name: "callout", src: "/example/assets/callout.js" }]);
   assert.deepEqual(result.css, ["components/callout/style.css"]);
   assert.equal(result.diagnostics.length, 0);
+});
+
+test("a directive's props survive the Markdown stage", async () => {
+  const tree = await parseMarkdown(':::callout{type=warning}\nWatch out.\n:::\n\n::badge{label="New"}\n');
+  const { html } = await markdownToHtml(tree, "a.md");
+  const result = renderPage({
+    site,
+    page: page(html),
+    layout,
+    components: { badge, callout },
+    trail: [],
+    pager: {},
+    head,
+  });
+  assert.equal(result.diagnostics.length, 0);
+  assert.match(result.html, /<aside class="callout callout-warning"/);
+  assert.match(result.html, /<span class="badge"[^>]*>New<\/span>/);
 });
 
 test("nested components resolve inside-out and collect each island and CSS once, sorted by name", () => {

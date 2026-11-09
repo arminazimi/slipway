@@ -61,14 +61,27 @@ function parseAttrs(raw: string): Record<string, string> {
   return out;
 }
 
-/** Decodes the few entities that appear in attribute values from the Markdown stage. */
+/** The named character references that can appear in an attribute value from the Markdown stage. */
+const ENTITIES: Readonly<Record<string, string>> = { amp: "&", apos: "'", gt: ">", lt: "<", quot: '"' };
+
+/** Decodes one named or numeric character reference; an unknown or invalid one stays as written. */
+function decodeEntity(
+  match: string,
+  hex: string | undefined,
+  decimal: string | undefined,
+  named: string | undefined,
+): string {
+  if (named !== undefined) return ENTITIES[named.toLowerCase()] ?? match;
+  const code = hex !== undefined ? Number.parseInt(hex, 16) : Number.parseInt(decimal ?? "", 10);
+  return Number.isInteger(code) && code >= 0 && code <= 0x10ffff ? String.fromCodePoint(code) : match;
+}
+
+/**
+ * Decodes the character references in an attribute value from the Markdown stage. `rehype-stringify` writes
+ * quotes as numeric references (`&#x22;`), so named ones alone are not enough.
+ */
 function decodeAttr(value: string): string {
-  return value
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&");
+  return value.replace(/&(?:#x([0-9a-f]+)|#(\d+)|([a-z][a-z0-9]*));/gi, decodeEntity);
 }
 
 /** Parses a `data-src` value, a full span or a point, into a {@link SourcePos}. */
