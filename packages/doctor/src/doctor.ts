@@ -44,7 +44,10 @@ export function levelReached(results) {
 export async function doctor(source, { build = null, network = false, tests = loadTests(), deprecations }: any = {}) {
   if (!existsSync(source)) throw new Error(`${source}: no such folder`);
   if (build && !existsSync(build)) throw new Error(`${build}: no such folder`);
+  const detection = detect(source);
   const site = new Site(source, { build, network });
+  // What an engine site's checks read, from the manifest and config once: pages, their sources, and the config.
+  const engine = { config: site.config(), pages: site.pages(), sources: site.sources() };
   const results = [];
   for (const test of tests.tests) {
     const result: any = { id: test.id, level: test.level, keyword: test.keyword, scope: test.scope, description: test.description, status: "pass", findings: [] };
@@ -63,7 +66,7 @@ export async function doctor(source, { build = null, network = false, tests = lo
   for (const [name, generator] of Object.entries(generators)) {
     if (!generator.applies(site)) continue;
     for (const [id, check] of Object.entries(generator.checks)) {
-      results.push({ id, level: null, keyword: null, scope: name, ...(await check(site, { deprecations })) });
+      results.push({ id, level: null, keyword: null, scope: name, ...(await check(site, { deprecations, ...engine })) });
     }
   }
   for (const result of results) result.findings = result.findings.map((finding) => locate(site, finding));
@@ -75,7 +78,7 @@ export async function doctor(source, { build = null, network = false, tests = lo
   return {
     spec: "agent-editable",
     version: tests.version,
-    generator: detect(site.source).generator,
+    generator: detection.generator,
     level: levelReached(results),
     notRun: results.filter((r) => r.status === "not-run").map((r) => r.id),
     tests: results,
