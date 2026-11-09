@@ -28,13 +28,16 @@ Usage: mizzen <command> [dir] [options]
 Commands:
   build [dir]   Build the site into --out (default: dist)
   check [dir]   Build to a temp folder and print diagnostics only
+  dev [dir]     Serve the site, rebuild on change, and reload the browser
   verify [dir]  Check a built folder against the hash in its manifest
 
 Options:
-  --out <dir>          Output folder for build (default: dist)
+  --out <dir>          Output folder for build (default: dist) or dev (default: .slipway/dev)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --port <number>      Port for dev (default: 3000; 0 picks a free one)
+  --host <host>        Host for dev (default: 127.0.0.1)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.
@@ -46,9 +49,10 @@ From this repository, run it as `node packages/engine/bin/slipway.ts`; from a si
 | --- | --- |
 | `mizzen build [dir] --out <dir> --theme <dir>` | Builds `dir` (default `.`) into `--out` (default `dist`). Prints diagnostics as text. A build with an error still writes the site and exits `1`. |
 | `mizzen check [dir] --format text\|json\|sarif --theme <dir>` | Builds into a temporary folder, prints only the diagnostics in the chosen format, and removes the folder. Exits `1` on an error. |
+| `mizzen dev [dir] --port <number> --host <host> --theme <dir>` | Builds `dir`, serves the output with pretty URLs, watches the source and theme, rebuilds on change, and reloads the browser over Server-Sent Events. The reload script is added to HTML responses only; the files on disk stay as `build` wrote them. Ctrl-C stops the server. |
 | `mizzen verify [dir] --hash <hex>` | Hashes a built folder by the same rule the build used and compares it with `.slipway/manifest.json` (or `--hash`). Exits `1` on a mismatch. |
 
-`--out` is resolved from the current working directory, not from the site root. `check` is the command to use in CI: it never touches `dist`.
+`--out` is resolved from the current working directory, not from the site root, for `build` and `dev`; `dev`'s default is `<site>/.slipway/dev`. `check` is the command to use in CI: it never touches `dist`.
 
 The theme root is picked in this order:
 
