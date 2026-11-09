@@ -15,7 +15,8 @@ A file that exports no `Output` is a helper and is not run. `app-pages.ts` is on
 
 ## Rules
 
-- Every output runs before anything is written. A path outside the output folder is an error and is not written. When two outputs write the same path, the first one (in file-name order) wins and the other is an error. A path that a site file already has is an error too, and the site file wins.
+- Every output runs before anything is written. A path outside the output folder is an error and is not written. When two outputs write the same path, the first one (in file-name order) wins and the other is an error.
+- A site's own file wins over an output's file at the same path: the output's file is skipped, with no diagnostic. A site's `llms.txt` replaces the generated one this way.
 - The site is written to a staging folder beside the output folder and swapped in only when complete.
 - Output must be deterministic: the same site gives the same bytes, in the same order.
 

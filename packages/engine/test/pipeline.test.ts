@@ -70,7 +70,9 @@ test("a site builds to one folder: pages in index.html files, assets copied, and
   try {
     const result = await build({ root, out, themeRoot: THEME, defaultLayout: "doc" });
     assert.deepEqual(errors(result.diagnostics), []);
-    assert.deepEqual(result.files, ["guide/install/index.html", "logo.txt"]);
+    assert.deepEqual([...snapshot(out).keys()].sort(), result.files, "the listed files are exactly the files written");
+    assert.ok(result.files.includes("guide/install/index.html"));
+    assert.ok(result.files.includes("logo.txt"));
     assert.equal(result.out, out);
     const page = readFileSync(join(out, "guide/install/index.html"), "utf8");
     assert.match(page, /^<!DOCTYPE html>/);
@@ -241,6 +243,24 @@ test("an output whose name differs from its file name is an error and does not r
   }
 });
 
+test("a site file wins over an output file at the same path, with no diagnostic", async () => {
+  const root = tree({ "robots.txt": "site\n" });
+  const outputs = outputsTree({
+    "robots.ts": 'export const robots = { name: "robots", run() { return Promise.resolve([{ path: "robots.txt", contents: "generated\\n" }]); } };\n',
+  });
+  const { parent, out } = scratch();
+  try {
+    const result = await build({ root, out, themeRoot: THEME, outputsDir: outputs });
+    assert.deepEqual(result.diagnostics, []);
+    assert.deepEqual(result.files, ["robots.txt"]);
+    assert.equal(readFileSync(join(out, "robots.txt"), "utf8"), "site\n");
+  } finally {
+    rmSync(root, { recursive: true });
+    rmSync(outputs, { recursive: true });
+    rmSync(parent, { recursive: true });
+  }
+});
+
 test("a page with no layout, or an unknown one, is an error that names the page", async () => {
   const root = tree({ "a.md": "# A\n", "b.md": "---\nlayout: nope\n---\n# B\n" });
   const { parent, out } = scratch();
@@ -273,8 +293,8 @@ test("a _site folder inside the source is not picked up by the next build", asyn
   try {
     const first = await build({ root, out, themeRoot: THEME, defaultLayout: "doc" });
     const second = await build({ root, out, themeRoot: THEME, defaultLayout: "doc" });
-    assert.deepEqual(first.files, ["guide/install/index.html"]);
-    assert.deepEqual(second.files, first.files);
+    assert.ok(first.files.includes("guide/install/index.html"));
+    assert.deepEqual(second.files, first.files, "the second build does not pick up the first build's output");
     assert.deepEqual(errors(second.diagnostics), []);
   } finally {
     rmSync(root, { recursive: true });
@@ -288,6 +308,7 @@ test("the pipeline builds fixtures/docs-site with the theme: no errors, app page
     assert.deepEqual(errors(result.diagnostics), []);
     assert.ok(result.files.includes("quickstart/index.html"));
     assert.ok(result.files.includes("404.html"));
+    assert.equal(readFileSync(join(out, "llms.txt"), "utf8"), readFileSync(join(FIXTURE, "llms.txt"), "utf8"), "the site's own llms.txt wins");
     assert.deepEqual(readFileSync(join(out, "dashboard/index.html")), readFileSync(join(FIXTURE, "dashboard/index.html")));
   } finally {
     rmSync(parent, { recursive: true });

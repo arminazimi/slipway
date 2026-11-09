@@ -177,9 +177,10 @@ async function commit(staging: string, out: string): Promise<void> {
  * Builds the site: model, theme, outputs, and write.
  *
  * Every output runs first, in file-name order, and its files are checked in memory: a path outside the output folder
- * is an error, and so is a path two outputs (or a site file) both write; the first one wins. Then the site's assets
- * are copied and the output files written, all into a staging folder beside `out`. Only when that is complete is it
- * swapped in, so `out` is never half-written. Outputs switched off by `outputs` in the config do not run.
+ * is an error, and so is a path two outputs both write; the first one wins. Then the site's assets are copied and the
+ * output files written, all into a staging folder beside `out`. A site file wins over an output file at the same path:
+ * the output's file is skipped, with no diagnostic. Only when the staging folder is complete is it swapped in, so `out`
+ * is never half-written. Outputs switched off by `outputs` in the config do not run.
  *
  * Problems in the content and the theme come back as diagnostics; a throw means a bug, such as an output or layout
  * that threw, and leaves `out` as it was. `out` must not be the source folder nor sit inside it, unless its name
@@ -284,12 +285,8 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     const written = assets.files.map((f) => f.path);
 
     for (const { output, file } of pending) {
-      if (assetPaths.has(file.path)) {
-        diagnostics.error("output.duplicate-path", `Output "${output}" writes "${file.path}", which the site already has as a file.`, {
-          help: "Turn the output off in `outputs`, or rename the file.",
-        });
-        continue;
-      }
+      // A site's own file wins over a generated one at the same path, silently: a site `llms.txt` replaces the output's.
+      if (assetPaths.has(file.path)) continue;
       const abs = join(staging, file.path);
       await mkdir(dirname(abs), { recursive: true });
       await writeFile(abs, file.contents);
