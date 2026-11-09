@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs, { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import fs, { cpSync, mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,6 +11,12 @@ const bin = fileURLToPath(new URL("../bin/slipway-mcp.ts", import.meta.url));
 const docs = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples/docs", import.meta.url));
 const docsSite = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
 const conforming = fileURLToPath(new URL("../../doctor/test/fixtures/conforming", import.meta.url));
+
+/** Replace `dir` with a copy of fixtures/docs-site, so a tool that writes files never touches the fixture. */
+function copyFixture(dir: string) {
+  rmSync(dir, { recursive: true, force: true });
+  cpSync(docsSite, dir, { recursive: true });
+}
 
 async function connect(site, t) {
   const client = new Client({ name: "slipway-test", version: "0.0.0" });
@@ -174,14 +180,32 @@ test("add_navigation_item adds an item to _data/navigation.yml", async (t) => {
   assert.match(fileContent, /- title: Home\n    url: \//);
 });
 
-test("preview returns instructions with jekyll serve", async (t) => {
+test("preview runs slipway dev, serves a page, and stops the server", { timeout: 120_000 }, async (t) => {
   const site = mkdtempSync(join(tmpdir(), "slipway-mcp-"));
   t.after(() => rmSync(site, { recursive: true, force: true }));
+  copyFixture(site);
   const client = await connect(site, t);
-  const result = await client.callTool({ name: "preview", arguments: {} });
-  assert.ok(!result.isError, result.content[0].text);
-  const parsed = json(result);
-  assert.match(parsed.instructions, /jekyll serve/);
+
+  const started = await client.callTool({ name: "preview", arguments: {} });
+  assert.ok(!started.isError, started.content[0].text);
+  const server = json(started);
+  assert.equal(server.status, "running");
+  assert.match(server.url, /^http:\/\/127\.0\.0\.1:\d+\/$/);
+  assert.ok(server.port > 0, "port 0 is resolved to the bound port");
+  assert.match(server.stop, /action.*stop/);
+
+  const page = await fetch(new URL("install/", server.url));
+  assert.equal(page.status, 200);
+  assert.match(page.headers.get("content-type") ?? "", /text\/html/);
+  assert.match(await page.text(), /Install/);
+
+  const stopped = await client.callTool({ name: "preview", arguments: { action: "stop" } });
+  assert.ok(!stopped.isError, stopped.content[0].text);
+  assert.equal(json(stopped).status, "stopped");
+  await assert.rejects(fetch(server.url), /fetch failed|ECONNREFUSED/);
+
+  const again = await client.callTool({ name: "preview", arguments: { action: "status" } });
+  assert.equal(json(again).status, "stopped");
 });
 
 test("find_text searches content and returns file, line, and heading", async (t) => {
