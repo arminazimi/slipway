@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import { prose } from "../src/prose.ts";
 
 const texts = (file) => prose(file).runs.map((run) => run.text);
+const features = fileURLToPath(new URL("../../../fixtures/docs-site/features.md", import.meta.url));
 
 test("plain prose is returned with its position", () => {
   const { lang, runs } = prose({ text: "One line.\nA second line.", lang: "en" });
@@ -69,4 +72,47 @@ test("columns count from the start of the original line", () => {
 
 test("a code span inside a link label is still code", () => {
   assert.deepEqual(texts("## [`slipway`](/config.html) is here"), ["is here"]);
+});
+
+test("directive fences are skipped and the body around them stays prose", () => {
+  const file = [
+    ":::callout{type=warning title=\"Read first\"}",
+    "Watch out.",
+    ":::",
+    "::::tabs",
+    "::::tab{label=\"macOS\"}",
+    "Use Homebrew.",
+    ":::",
+    "::::",
+    "::badge{label=new}",
+  ].join("\n");
+  assert.deepEqual(texts(file), ["Watch out.", "Use Homebrew."]);
+});
+
+test("a text directive's label is prose and its attributes are not", () => {
+  const runs = prose("A :badge[New]{variant=tip} mark.").runs;
+  assert.deepEqual(runs.map((run) => run.text), ["A New", "mark."]);
+  const label = prose(":badge[New]{variant=tip}").runs;
+  assert.deepEqual(label.map((run) => run.text), ["New"]);
+  assert.equal(label[0].column, 7, "the label starts after the directive's name, like a link label");
+});
+
+test("a GitHub alert marker is skipped, but a marker with text stays a quote", () => {
+  assert.deepEqual(texts("> [!NOTE]\n> Useful text."), ["Useful text."]);
+  assert.deepEqual(texts("> [!NOTE] not an alert"), ["[!NOTE] not an alert"]);
+});
+
+test("a heading anchor and a task-list box are markers, not prose", () => {
+  assert.deepEqual(texts("## A heading {#custom-id}"), ["A heading"]);
+  assert.deepEqual(texts("- [ ] first\n- [x] second"), ["first", "second"]);
+});
+
+test("fixtures/docs-site prose skips the engine's directives, alerts, and attributes", () => {
+  const { runs } = prose({ text: readFileSync(features, "utf8") });
+  assert.ok(runs.length > 0, "the page has prose");
+  for (const run of runs) {
+    assert.doesNotMatch(run.text, /^:{2,}|\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]|\{#[^\s{}]+\}/, `${run.line}:${run.column}`);
+  }
+  assert.ok(runs.some((run) => run.text === "Credentials never appear in"), "the alert body is prose");
+  assert.ok(runs.some((run) => run.text === "points an environment at an older artifact. It does not delete the newer one."), "the callout body is prose");
 });
