@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../packages/engine/schema/config.schema.json
+# Slipway's documentation site, read by Mizzen (ADR 0024). The theme is Lateen, the default
+# (ADR 0025). The 0.2 file's `theme: slipway-theme`, `remote_theme: arminazimi/slipway`, and
+# `plugins: [jekyll-remote-theme]` named the default theme and Jekyll machinery; they are
+# dropped by the migration mapping (ADR 0024, rule 5).
+title: Slipway
+description: An editorial, RTL-ready, agent-native site template, verified by Seaworthy.
+lang: en
+url: https://arminazimi.github.io
+base: /slipway

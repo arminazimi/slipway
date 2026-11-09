@@ -1,7 +1,7 @@
 ---
 title: Audio block
 description: A native audio player for podcast episodes, with optional chapters and a transcript.
-layout: page
+layout: doc
 audio:
   src: audio/podcast-episode-12.mp3
   title: Building with blocks, episode 12

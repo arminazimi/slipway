@@ -1,7 +1,7 @@
 ---
 title: Compare block
 description: A pros/cons pair or a feature matrix with yes, no, and partial.
-layout: page
+layout: doc
 pros:
   - Fast and lightweight
   - Accessible out of the box

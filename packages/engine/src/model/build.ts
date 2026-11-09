@@ -42,7 +42,13 @@ function withDefaults(
   return { ...merged, ...data } as FrontMatter;
 }
 
-/** The file position (repository-root-relative: here, site-root-relative) a path under `source` has. */
+/** The site root's folder inside the repository, `/`-separated with no leading `./` or trailing `/`; `""` at the repository root. */
+function repositoryFolder(dir: string | undefined): string {
+  const folder = (dir ?? "").replace(/\\/g, "/").replace(/^(\.\/)+/, "").replace(/\/+$/, "");
+  return folder === "." ? "" : folder;
+}
+
+/** The file position, relative to the repository root, a path under `source` has. */
 function posOf(file: string, line: number, endLine = line): SourcePos {
   return { file, line, column: 1, endLine };
 }
@@ -84,8 +90,11 @@ export async function buildModel(root: string): Promise<ModelResult> {
   for (const d of loaded.diagnostics) diagnostics.report(d);
   const config = loaded.config;
   const sourceDir = resolve(siteRoot, config.source);
-  // Paths in positions are relative to the site root, so they stay stable wherever the site is checked out.
-  const sourcePrefix = relative(siteRoot, sourceDir).split("\\").join("/");
+  // Positions are relative to the repository root, so a site in `docs/` names `docs/…` paths. Without a repository
+  // folder they stay relative to the site root, which is always stable wherever the site is checked out.
+  const sourcePrefix = [repositoryFolder(config.repository?.dir), relative(siteRoot, sourceDir).split("\\").join("/")]
+    .filter((part) => part !== "" && part !== ".")
+    .join("/");
   const fileOf = (path: string): string => (sourcePrefix === "" ? path : posix.join(sourcePrefix, path));
 
   const files: DiscoveredFile[] = await discover(sourceDir, { include: config.include, exclude: config.exclude });
@@ -192,7 +201,7 @@ export async function buildModel(root: string): Promise<ModelResult> {
 
   const navFile = resolve(siteRoot, config.navigation);
   const navRel = relative(siteRoot, navFile).split("\\").join("/");
-  const navResult = loadNavigation(navFile, navRel, { pages: new Set(pages.map((p) => p.url)) });
+  const navResult = loadNavigation(navFile, navRel, { pages: new Set(pages.map((p) => p.url)), base: config.base });
   for (const d of navResult.diagnostics) diagnostics.report(d);
   const nav: NavTree =
     Object.keys(navResult.nav).length > 0 ? navResult.nav : { docs: navFromFolders(folderPages) };

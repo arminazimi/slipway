@@ -1,7 +1,7 @@
 ---
 title: Cards block
 description: A responsive grid of cards for links and features, from a list in the front matter or `_data`.
-layout: page
+layout: doc
 cards:
   - title: Install and quickstart
     url: /install/

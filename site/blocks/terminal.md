@@ -1,7 +1,7 @@
 ---
 title: Terminal block
 description: A terminal session with commands, prompts, and optional output.
-layout: page
+layout: doc
 commands: |-
   npm install
   npm run test

@@ -1,7 +1,7 @@
 ---
 title: File tree block
 description: A folder structure with notes per file.
-layout: page
+layout: doc
 ---
 
 {::nomarkdown}{% include component-css.html name="file-tree" %}{:/nomarkdown}

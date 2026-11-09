@@ -1,7 +1,7 @@
 ---
 title: Download block
 description: A file download with a button, file name, size, and checksum.
-layout: page
+layout: doc
 download:
   url: /assets/images/social.png
   label: Download the image

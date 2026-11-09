@@ -1,7 +1,7 @@
 ---
 title: Callout block
 description: A short note, tip, warning, or danger message with an icon that stays at the reading start in both directions.
-layout: page
+layout: doc
 note_body: Remember to run the tests before you open a pull request.
 tip_body: Save the file before you run the build to pick up your changes.
 warning_body: This option changes the output of every page on the site.

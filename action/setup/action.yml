@@ -1,5 +1,5 @@
 name: slipway setup
-description: Installs Node, the slipway doctor's dependencies, and puts `slipway` on the PATH for the rest of the job.
+description: Installs Node and the engine's dependencies, and puts `slipway` on the PATH for the rest of the job.
 author: Slipway
 branding:
   icon: terminal
@@ -10,10 +10,10 @@ inputs:
     description: Cache the npm download cache between jobs, keyed on the checkout's package-lock.json. Set to false to skip it.
     default: "true"
   node-version:
-    description: The Node version actions/setup-node installs. The doctor needs 22 or later.
-    default: "22"
+    description: The Node version actions/setup-node installs. The engine needs 24 or later.
+    default: "24"
   path:
-    description: The Slipway checkout that holds packages/doctor, relative to the repository root. When the folder has no Slipway checkout, the Action uses its own copy.
+    description: The Slipway checkout that holds packages/engine, relative to the repository root. When the folder has no Slipway checkout, the Action uses its own copy.
     default: "."
 
 runs:
@@ -29,7 +29,7 @@ runs:
       run: |
         set -euo pipefail
         repo_root="$SLIPWAY_PATH"
-        if [ ! -f "$repo_root/packages/doctor/bin/slipway.ts" ]; then
+        if [ ! -f "$repo_root/packages/engine/bin/slipway.ts" ]; then
           repo_root="$GITHUB_ACTION_PATH/../.."
         fi
         repo_root="$(cd "$repo_root" && pwd -P)"
@@ -44,13 +44,13 @@ runs:
         node-version: ${{ inputs.node-version }}
         cache: ${{ inputs.cache == 'true' && 'npm' || '' }}
         cache-dependency-path: ${{ steps.checkout.outputs.lockfile }}
-    # Install once, in the Slipway checkout that holds packages/doctor, never in the caller's site.
-    - name: Install the doctor's dependencies
+    # Install once, in the Slipway checkout that holds the engine, never in the caller's site.
+    - name: Install the engine's dependencies
       shell: bash
       run: |
         set -euo pipefail
         cd "$SLIPWAY_REPO_ROOT"
-        if [ ! -d node_modules/ajv ] || [ ! -d node_modules/yaml ]; then
+        if [ ! -d node_modules/preact ] || [ ! -d node_modules/remark-parse ]; then
           npm ci --omit=dev --ignore-scripts --no-audit --no-fund
         fi
     - name: Put slipway on the PATH
@@ -59,7 +59,7 @@ runs:
         set -euo pipefail
         shim_dir="$RUNNER_TEMP/slipway-bin"
         mkdir -p "$shim_dir"
-        cli="$SLIPWAY_REPO_ROOT/packages/doctor/bin/slipway.ts"
+        cli="$SLIPWAY_REPO_ROOT/packages/engine/bin/slipway.ts"
         printf '#!/bin/sh\nexec node "%s" "$@"\n' "$cli" > "$shim_dir/slipway"
         chmod +x "$shim_dir/slipway"
         # cmd.exe and PowerShell find slipway through PATHEXT; bash finds the shim above.
