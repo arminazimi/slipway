@@ -1,5 +1,7 @@
 import { h } from "preact";
+import type { ComponentChildren } from "preact";
 import type { Chrome, SiteConfig } from "@velella/mizzen/contracts";
+import sectionTabs from "../section-tabs/index.ts";
 
 type Logo = { readonly light?: string; readonly dark?: string };
 
@@ -45,8 +47,9 @@ function repositoryLink(config: SiteConfig) {
   );
 }
 
-/** Header: logo and title, the section tabs slot, search and menu buttons (enhanced by JavaScript), and the repository link. */
-const header: Chrome = ({ site }) => {
+/** Header: logo and title, the section tabs, search and menu buttons (enhanced by JavaScript), and the repository link. */
+const header: Chrome = (props) => {
+  const { site } = props;
   const { config } = site;
   return h(
     "header",
@@ -55,7 +58,7 @@ const header: Chrome = ({ site }) => {
       "div",
       { class: "header-inner" },
       home(config),
-      h("div", { class: "header-tabs", "data-slot": "section-tabs" }),
+      h("div", { class: "header-tabs", "data-slot": "section-tabs" }, sectionTabs(props) as ComponentChildren),
       h(
         "div",
         { class: "header-actions" },

@@ -181,6 +181,38 @@ test("site-local URLs and match prefixes carry the site base, and the page check
   assert.deepEqual(nav.docs, [{ title: "Rules", url: "/docs/rules/", match: "/docs/rules/" }]);
 });
 
+test("tab: true rides along on a link and a group; tab: false is dropped", () => {
+  const text = [
+    "main:",
+    "  - title: Guides",
+    "    url: /guides/",
+    "    tab: true",
+    "  - title: Reference",
+    "    tab: true",
+    "    children:",
+    "      - title: Config",
+    "        url: /config/",
+    "  - title: Home",
+    "    url: /",
+    "    tab: false",
+    "",
+  ].join("\n");
+  const { nav, diagnostics } = navFromYaml(text, "_data/navigation.yml");
+  assert.deepEqual(diagnostics, []);
+  assert.deepEqual(nav.main, [
+    { title: "Guides", url: "/guides/", tab: true },
+    { title: "Reference", tab: true, children: [{ title: "Config", url: "/config/" }] },
+    { title: "Home", url: "/" },
+  ]);
+});
+
+test("a tab that is not a boolean is an error, and the entry still loads without it", () => {
+  const text = "main:\n  - title: Guides\n    url: /guides/\n    tab: yes please\n";
+  const { nav, diagnostics } = navFromYaml(text, "_data/navigation.yml");
+  assert.deepEqual(diagnostics.map((d) => [d.id, d.severity, d.pos?.line]), [["nav.invalid-tab", "error", 4]]);
+  assert.deepEqual(nav.main, [{ title: "Guides", url: "/guides/" }]);
+});
+
 test("a missing navigation file is an empty navigation with no diagnostics", () => {
   const root = mkdtempSync(join(tmpdir(), "nav-yaml-"));
   try {

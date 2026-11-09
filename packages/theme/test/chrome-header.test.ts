@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { Fragment } from "preact";
-import type { ChromeProps, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
+import type { ChromeProps, NavItem, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
 import header from "../chrome/header/index.ts";
 
 const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
@@ -112,6 +112,16 @@ test("search and menu buttons start hidden for JavaScript to enable; the section
   assert.match(out, /<button type="button" class="header-search" aria-label="Search" hidden data-search-open>/);
   assert.match(out, /<button type="button" class="header-menu" aria-label="Menu" aria-expanded="false" hidden data-drawer-open>/);
   assert.match(out, /<div class="header-tabs" data-slot="section-tabs">/);
+});
+
+test("the header places the section tabs from the main navigation", () => {
+  const tabbed: NavItem & { readonly tab: true } = { title: "Guides", url: "/example/guides/", tab: true };
+  const site: Site = { config: configWith(), pages: [page], nav: { main: [tabbed] }, data: {} };
+  const out = html(header({ site, page, trail, pager }));
+  assert.match(
+    out,
+    /<div class="header-tabs" data-slot="section-tabs"><nav class="section-tabs" aria-label="Sections"><a class="section-tab" href="\/example\/guides\/">Guides<\/a><\/nav><\/div>/,
+  );
 });
 
 test("style.css uses only token names from tokens/names.json for var(--*) references", () => {
