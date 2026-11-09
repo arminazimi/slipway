@@ -5,7 +5,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { basename, join, relative, sep } from "node:path";
 import { parse } from "yaml";
 import { allowedFor, frontMatter } from "slipway/yaml";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 export { allowedFor, frontMatter };
 

@@ -7,7 +7,7 @@ import { join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { allowedFor, formatProblem, frontMatter, parseWithLines } from "slipway/yaml";
 import { markdownFiles, validateFrontMatter } from "./front-matter.ts";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 export { allowedFor, formatProblem, frontMatter, parseWithLines };
 

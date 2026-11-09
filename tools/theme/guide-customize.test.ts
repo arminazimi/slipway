@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 test("customization guide exists and contains expected sections", () => {
   const guidePath = join(root, "site/guides/customize.md");

@@ -1,5 +1,5 @@
 {
-  "//": "Type check for code outside the workspaces with their own tsconfig.json: tools/, planning/, action/, packages/tokens, and the fixture generators. Code converted from JavaScript starts non-strict; tighten a folder to strict when you change it substantially.",
+  "//": "Type check for code outside the workspaces with their own tsconfig.json: tools/, planning/, action/, and the fixture generators. Code converted from JavaScript starts non-strict; tighten a folder to strict when you change it substantially.",
   "compilerOptions": {
     "target": "esnext",
     "module": "nodenext",
@@ -26,8 +26,7 @@
   "include": [
     "tools/**/*.ts",
     "planning/**/*.ts",
-    "action/**/*.ts",
-    "packages/tokens/**/*.ts"
+    "action/**/*.ts"
   ],
   "exclude": [
     "**/fixtures/**",

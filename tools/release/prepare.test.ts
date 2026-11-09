@@ -18,7 +18,7 @@ import {
   tagFor,
   writeRelease,
 } from "./prepare.ts";
-import { root } from "../theme/tokens.ts";
+import { root } from "../root.ts";
 
 // Fixtures live in the OS temp folder, as every check that writes files does.
 const work = mkdtempSync(join(tmpdir(), "slipway-release-"));

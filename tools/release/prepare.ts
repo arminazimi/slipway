@@ -18,7 +18,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { pathToFileURL } from "node:url";
-import { root } from "../theme/tokens.ts";
+import { root } from "../root.ts";
 
 /** The workspaces a release versions, in the order they are published: the engine first ([ADR 0025](../../docs/adr/0025-mizzen-and-lateen.md)). */
 export const packageDirs = ["packages/engine", "packages/theme"];
