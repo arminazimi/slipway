@@ -1,11 +1,16 @@
 {
-  "//": "Type check for the repository's own tools and planning scripts (tools/, planning/). Packages have their own tsconfig.json. Code converted from JavaScript starts non-strict; tighten a folder to strict when you change it substantially.",
+  "//": "Type check for code outside the workspaces with their own tsconfig.json: tools/, planning/, action/, packages/tokens, and the fixture generators. Code converted from JavaScript starts non-strict; tighten a folder to strict when you change it substantially.",
   "compilerOptions": {
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "lib": ["esnext", "dom"],
-    "types": ["node"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "types": [
+      "node"
+    ],
     "strict": false,
     "noEmit": true,
     "allowJs": true,
@@ -18,6 +23,18 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["tools/**/*.ts", "planning/**/*.ts"],
-  "exclude": ["**/fixtures/**", "node_modules"]
+  "include": [
+    "tools/**/*.ts",
+    "planning/**/*.ts",
+    "action/**/*.ts",
+    "packages/tokens/**/*.ts"
+  ],
+  "exclude": [
+    "**/fixtures/**",
+    "node_modules"
+  ],
+  "files": [
+    "fixtures/docs-site/generate.ts",
+    "examples/product-docs/generate.ts"
+  ]
 }

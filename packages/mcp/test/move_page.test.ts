@@ -3,7 +3,7 @@ import { after, before, test } from "node:test";
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { movePage } from "../src/tools/move_page.mjs";
+import { movePage } from "../src/tools/move_page.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const testDir = join(root, ".tmp/test-move-page");
@@ -58,7 +58,7 @@ test("a moved page keeps its old URL and the links to it", () => {
 
   const files = result.changed.map((entry) => entry.file).sort();
   assert.deepEqual(files, ["_data/navigation.yml", "notes/b.md", "notes/renamed.md"]);
-  for (const entry of result.changed) assert.ok(entry.line > 0, `${entry.file} reports a line`);
+  for (const entry of result.changed as any[]) assert.ok(entry.line > 0, `${entry.file} reports a line`);
 });
 
 test("a page with a permalink keeps its URL, so nothing points at the old path", () => {

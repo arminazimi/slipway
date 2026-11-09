@@ -1,5 +1,5 @@
 import { Site } from "../../../doctor/src/site.ts";
-import { insideSite } from "../tools.mjs";
+import { insideSite } from "../tools.ts";
 
 const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_modules)\//;
 const isMarkdown = (path) => /\.(md|markdown|html)$/i.test(path);
@@ -19,7 +19,7 @@ export const definition = {
   annotations: { readOnlyHint: true },
 };
 
-export function listPages(siteDir, { folder, layout, lang } = {}) {
+export function listPages(siteDir, { folder, layout, lang }: any = {}) {
   const site = new Site(siteDir, { build: siteDir });
 
   if (folder) {

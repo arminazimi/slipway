@@ -4,7 +4,7 @@ Build `packages/theme/tokens/*.json` (one file per group) into `packages/theme/s
 ## Files
 
 **Create**
-- `packages/theme/scripts/tokens.mjs`
+- `packages/theme/scripts/tokens.ts`
 - `packages/theme/tokens/names.json`
 - `packages/theme/test/tokens.test.ts`
 

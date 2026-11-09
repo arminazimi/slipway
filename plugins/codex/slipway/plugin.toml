@@ -15,4 +15,4 @@ path = "../../../skills/slipway-doctor"
 
 [mcp_servers.slipway]
 command = "node"
-args = ["../../../packages/mcp/bin/slipway-mcp.mjs", "."]
+args = ["../../../packages/mcp/bin/slipway-mcp.ts", "."]

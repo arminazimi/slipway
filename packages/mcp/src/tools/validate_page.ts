@@ -1,7 +1,7 @@
 import { sep } from "node:path";
 import { Site } from "../../../doctor/src/site.ts";
 import { schemaProblems } from "../../../doctor/src/utils.ts";
-import { insideSite } from "../tools.mjs";
+import { insideSite } from "../tools.ts";
 
 export const definition = {
   name: "validate_page",

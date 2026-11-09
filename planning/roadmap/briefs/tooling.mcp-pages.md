@@ -4,9 +4,9 @@
 ## Files
 
 **Edit**
-- `packages/mcp/src/tools/move_page.mjs`
-- `packages/mcp/src/tools/scaffold_translation.mjs`
-- `packages/mcp/src/tools/preview.mjs`
+- `packages/mcp/src/tools/move_page.ts`
+- `packages/mcp/src/tools/scaffold_translation.ts`
+- `packages/mcp/src/tools/preview.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

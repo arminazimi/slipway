@@ -24,7 +24,7 @@ test('Codex plugin is valid', () => {
   assert.match(toml, /slipway-site/);
   assert.match(toml, /slipway-content/);
   assert.match(toml, /slipway-doctor/);
-  assert.match(toml, /slipway-mcp.mjs/);
+  assert.match(toml, /slipway-mcp\.ts/);
 
   // verify paths resolve
   const m = toml.match(/path = "(.*?)"/);

@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
+const bin = fileURLToPath(new URL("../bin/slipway-mcp.ts", import.meta.url));
 const docs = fileURLToPath(new URL("../../../packages/doctor/test/fixtures/examples/docs", import.meta.url));
 const conforming = fileURLToPath(new URL("../../doctor/test/fixtures/conforming", import.meta.url));
 
@@ -80,12 +80,13 @@ test("paths outside the site are refused as tool errors, and the server keeps ru
     assert.equal(result.isError, true, file);
     assert.match(result.content[0].text, /outside the site/, file);
   }
-  for (const [args, message] of [
+  const cases: [any, RegExp][] = [
     [{ file: "package.json" }, /not a YAML config file/],
     [{ file: "missing.yml" }, /does not exist/],
     [{ file: "broken.yml" }, /not valid YAML/],
     [{ file: 3 }, /must be a string/],
-  ]) {
+  ];
+  for (const [args, message] of cases) {
     const result = await client.callTool({ name: "read_config", arguments: args });
     assert.equal(result.isError, true, JSON.stringify(args));
     assert.match(result.content[0].text, message);

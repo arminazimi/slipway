@@ -1,7 +1,7 @@
 import { mkdirSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import * as yaml from "yaml";
-import { outside } from "../tools.mjs";
+import { outside } from "../tools.ts";
 
 export const definition = {
   name: "create_page",

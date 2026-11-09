@@ -3,15 +3,15 @@ import assert from "node:assert/strict";
 import { readdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { loadTools, tools } from "../src/server.mjs";
+import { loadTools, tools } from "../src/server.ts";
 
-const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
+const bin = fileURLToPath(new URL("../bin/slipway-mcp.ts", import.meta.url));
 const toolsDir = new URL("../src/tools/", import.meta.url);
 
 test("every file in src/tools/ is a tool named after its file, loaded in sorted order", async () => {
-  const files = readdirSync(toolsDir).filter((file) => file.endsWith(".mjs")).sort();
+  const files = readdirSync(toolsDir).filter((file) => file.endsWith(".ts")).sort();
   const loaded = await loadTools();
-  assert.deepEqual(loaded.map(({ definition }) => definition.name + ".mjs"), files);
+  assert.deepEqual(loaded.map(({ definition }) => definition.name + ".ts"), files);
   for (const { definition, handler } of loaded) {
     assert.equal(typeof handler, "function", `${definition.name} exports a handler`);
     assert.equal(definition.inputSchema.type, "object", `${definition.name} has an object input schema`);

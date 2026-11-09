@@ -1,7 +1,7 @@
 import { realpathSync } from "node:fs";
 import { exitCode } from "../../../doctor/src/cli.ts";
 import { doctor, levels } from "../../../doctor/src/doctor.ts";
-import { insideSite } from "../tools.mjs";
+import { insideSite } from "../tools.ts";
 
 export const definition = {
   name: "doctor",
@@ -23,7 +23,7 @@ export const definition = {
  * `ok` and `target` first: `ok` follows the CLI's exit code, true when the site reaches `level`, or with no level
  * when every MUST test passes. Never uses the network.
  */
-export async function runDoctor(site, { build, level } = {}) {
+export async function runDoctor(site, { build, level }: any = {}) {
   if (level !== undefined && !levels.includes(level)) throw new Error(`level must be one of ${levels.join(", ")}`);
   const report = await doctor(realpathSync(site), { build: build === undefined ? null : insideSite(site, build) });
   return { ok: exitCode(report, level) === 0, target: level ?? null, ...report };

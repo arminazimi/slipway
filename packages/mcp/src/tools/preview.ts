@@ -11,4 +11,4 @@ export function preview() {
   };
 }
 
-export const handler = (site) => preview(site);
+export const handler = () => preview();

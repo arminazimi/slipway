@@ -17,7 +17,7 @@ export const definition = {
   annotations: { readOnlyHint: true },
 };
 
-export function findText(siteDir, { query } = {}) {
+export function findText(siteDir, { query }: any = {}) {
   const site = new Site(siteDir);
   const matches = [];
 

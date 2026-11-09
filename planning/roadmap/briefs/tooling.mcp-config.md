@@ -4,8 +4,8 @@
 ## Files
 
 **Edit**
-- `packages/mcp/src/tools/read_config.mjs`
-- `packages/mcp/src/tools/set_token.mjs`
+- `packages/mcp/src/tools/read_config.ts`
+- `packages/mcp/src/tools/set_token.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

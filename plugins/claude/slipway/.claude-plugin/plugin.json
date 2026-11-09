@@ -14,7 +14,7 @@
   "mcpServers": {
     "slipway": {
       "command": "node",
-      "args": ["../../../../packages/mcp/bin/slipway-mcp.mjs", "."]
+      "args": ["../../../../packages/mcp/bin/slipway-mcp.ts", "."]
     }
   }
 }

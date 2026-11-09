@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const bin = fileURLToPath(new URL("../bin/slipway-mcp.mjs", import.meta.url));
+const bin = fileURLToPath(new URL("../bin/slipway-mcp.ts", import.meta.url));
 const docs = fileURLToPath(new URL("../../../examples/docs", import.meta.url));
 
 async function connect(site, t) {

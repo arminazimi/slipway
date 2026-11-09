@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
-import { insideSite, themeRoot } from "../tools.mjs";
+import { insideSite, themeRoot } from "../tools.ts";
 
 export const definition = {
   name: "list_blocks",

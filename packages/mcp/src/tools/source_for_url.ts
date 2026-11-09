@@ -18,7 +18,7 @@ export const definition = {
   annotations: { readOnlyHint: true },
 };
 
-export function sourceForUrl(siteDir, { url, anchor } = {}) {
+export function sourceForUrl(siteDir, { url, anchor }: any = {}) {
   if (!url) return {};
   if (url.includes("../") || url.includes("..\\")) return {};
 

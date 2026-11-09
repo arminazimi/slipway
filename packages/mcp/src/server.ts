@@ -7,9 +7,9 @@ const { version } = JSON.parse(readFileSync(new URL("../package.json", import.me
 
 /** Every tool in ./tools/<name>.mjs, in sorted order: its `definition` and its `handler(site, args)`. */
 export async function loadTools(dir = new URL("./tools/", import.meta.url)) {
-  const files = readdirSync(dir).filter((file) => file.endsWith(".mjs")).sort();
+  const files = readdirSync(dir).filter((file) => file.endsWith(".ts")).sort();
   return Promise.all(files.map(async (file) => {
-    const { definition, handler } = await import(new URL(file, dir));
+    const { definition, handler } = await import(new URL(file, dir).href);
     return { definition, handler };
   }));
 }

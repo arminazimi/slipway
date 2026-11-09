@@ -1,7 +1,7 @@
 import { realpathSync } from "node:fs";
 import { resolve, relative, sep } from "node:path";
 import { doctor } from "../../../doctor/src/doctor.ts";
-import { outside } from "../tools.mjs";
+import { outside } from "../tools.ts";
 
 export const definition = {
   name: "findings_for_file",

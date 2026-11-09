@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { badgeJson, summaryMarkdown } from "./summary.mjs";
+import { badgeJson, summaryMarkdown } from "./summary.ts";
 
 const report = (overrides = {}) => ({
   spec: "agent-editable",
@@ -69,8 +69,8 @@ test("the badge maps each level to its colour, and red without a level", () => {
   }
 });
 
-test("run.mjs writes the summary and the badge only when their paths are set", () => {
-  const run = readFileSync(fileURLToPath(new URL("../run.mjs", import.meta.url)), "utf8");
+test("run.ts writes the summary and the badge only when their paths are set", () => {
+  const run = readFileSync(fileURLToPath(new URL("../run.ts", import.meta.url)), "utf8");
   assert.match(run, /\bGITHUB_STEP_SUMMARY\b/);
   assert.match(run, /\bSLIPWAY_BADGE_FILE\b/);
   assert.match(run, /summaryMarkdown\(report, folders\)/);

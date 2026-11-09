@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
-import { tools } from "../../packages/mcp/src/server.mjs";
+import { tools } from "../../packages/mcp/src/server.ts";
 import { parseArgs } from "../../packages/doctor/src/cli.ts";
 import { root } from "./config-reference.ts";
 

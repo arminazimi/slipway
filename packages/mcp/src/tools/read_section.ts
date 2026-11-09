@@ -2,8 +2,8 @@
 import { readFileSync, realpathSync } from "node:fs";
 import { relative, sep } from "node:path";
 import { blocks } from "../../../doctor/src/markdown.ts";
-import { insideSite } from "../tools.mjs";
-import { sourceForUrl } from "./source_for_url.mjs";
+import { insideSite } from "../tools.ts";
+import { sourceForUrl } from "./source_for_url.ts";
 
 export const definition = {
   name: "read_section",
@@ -51,7 +51,7 @@ function pageFile(siteDir, { url, file }) {
 }
 
 /** One section of a Markdown page: its heading, its lines, and its text. */
-export function readSection(siteDir, args = {}) {
+export function readSection(siteDir, args: any = {}) {
   const { file, heading, line, url } = args;
 
   if (!url && !file) throw new Error("read_section needs a url or a file");

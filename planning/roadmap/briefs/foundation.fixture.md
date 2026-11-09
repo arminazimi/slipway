@@ -6,7 +6,7 @@ Give every epic the same realistic input: about 600 pages shaped like Evergreen'
 **Create**
 - `fixtures/README.md`
 - `fixtures/docs-site/`
-- `fixtures/docs-site/generate.mjs`
+- `fixtures/docs-site/generate.ts`
 - `fixtures/rtl-site/`
 
 Touch no other file. If one must change, stop and say why in the issue.

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, realpathSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, posix, relative, resolve, sep } from "node:path";
 import { parseDocument } from "yaml";
-import { insideSite, outside } from "../tools.mjs";
+import { insideSite, outside } from "../tools.ts";
 
 export const definition = {
   name: "move_page",

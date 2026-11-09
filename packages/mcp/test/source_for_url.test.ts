@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { cpSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { sourceForUrl } from "../src/tools/source_for_url.mjs";
+import { sourceForUrl } from "../src/tools/source_for_url.ts";
 
 const root = fileURLToPath(new URL("../../../", import.meta.url));
 const testDir = join(root, ".tmp/test-source-for-url");
