@@ -3,9 +3,11 @@
 
 ## Files
 
+**Delete**
+- `site/llms.txt`
+
 **Edit**
 - `site/spec.md`
-- `site/llms.txt`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
