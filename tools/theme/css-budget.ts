@@ -4,7 +4,7 @@
 //     The ceiling leaves roughly 10 KB of headroom for each new block stylesheet in Epic #669.
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 export const budgetBytes = 58 * 1024; // 58 KB
 

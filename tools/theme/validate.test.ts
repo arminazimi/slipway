@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { configProblems, exampleSites, formatProblem, main, validateSite } from "./validate.ts";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 /** A temporary site folder with the given files. */
 function site(files: Record<string, string>) {

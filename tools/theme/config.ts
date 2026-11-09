@@ -3,7 +3,7 @@ import { Ajv2020 } from "ajv/dist/2020.js";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 const schema = JSON.parse(readFileSync(join(root, "schema/slipway-config.schema.json"), "utf8"));
 const validate = new Ajv2020({ allErrors: true }).compile<any>(schema);

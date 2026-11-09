@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { findDeprecations } from "slipway/deprecations";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 export const defaultList = join(root, "schema/deprecations.json");
 const schema = JSON.parse(readFileSync(join(root, "schema/deprecations.schema.json"), "utf8"));
