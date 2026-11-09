@@ -48,6 +48,21 @@ theme:
 - `logo.light` and `logo.dark` are shown in the respective color scheme. Both are site paths; `base` is added for you. Without a logo, the header shows the site title.
 - `footer.copyright` and `footer.license` are plain text. `footer.links` accepts a `title` and a `url`; site paths start with `/`, and `https`, `http`, and `mailto` links work. Other schemes are dropped, so a config value cannot inject a script.
 
+## Announcement bar
+
+A dismissible bar above the header announces a release or an event:
+
+```yaml
+theme:
+  options:
+    announcement:
+      id: v0-4
+      text: Slipway 0.4 is out.
+      href: /changelog/
+```
+
+`text` is shown only when it is not empty, and `href` is optional: when set, the text becomes a link, with the same safe-scheme rule as footer links. Use a new `id` for each announcement, because a visitor's dismissal is remembered under `slipway-announcement:<id>`. The bar is readable without JavaScript; the dismiss button appears once the script loads, and a returned visitor's bar hides at that point rather than before first paint.
+
 ## Page-agent menu
 
 On a doc page, the "Use with an agent" menu copies the page's Markdown and offers links that open it in an agent. The defaults are Claude, ChatGPT, and Cursor. Replace them with `theme.options.pageAgent.providers`:
@@ -64,6 +79,17 @@ theme:
 ```
 
 Each URL may use `{markdown}` (the page's Markdown twin), `{url}` (the page's absolute URL), and `{title}`. The values are URL-encoded. A template that needs `{markdown}` or `{url}` is skipped when `url` is unset, because a relative path would give the agent a link it cannot open.
+
+## Page feedback
+
+With an endpoint configured, a doc page ends with "Was this page helpful?" and Yes and No buttons. The answer is POSTed as JSON, `{"url": "/guide/install/", "helpful": true}`, and the page remembers it in `sessionStorage` for the rest of the browser session; nothing is written to cookies or `localStorage`. The widget renders hidden and JavaScript reveals it, so a visitor without JavaScript sees no control. Without the block, no feedback markup is rendered.
+
+```yaml
+theme:
+  options:
+    feedback:
+      endpoint: https://feedback.example.com/vote
+```
 
 ## Navigation
 

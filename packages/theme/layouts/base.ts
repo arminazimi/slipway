@@ -1,13 +1,14 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
+import announcement from "../chrome/announcement/index.ts";
 import shortcuts from "../chrome/shortcuts/index.ts";
+import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
+
+export { MAIN_ID, NAVIGATION_ID };
 
 /** localStorage key that holds the visitor's choice: `light`, `dark`, or `system`. */
 export const THEME_KEY = "slipway-theme";
-
-/** Id of the `<main>` element, which the skip link targets. */
-export const MAIN_ID = "main";
 
 /**
  * Sets `data-theme` on `<html>` before first paint. A stored `light` or `dark` wins; `system` follows
@@ -65,8 +66,9 @@ function headNodes(head: Head) {
 }
 
 /**
- * The document shell every page uses: `<html lang dir>`, the head, a skip link, and header, main, and footer
- * landmarks, with slots for header, sidebar, main, aside, and footer. Islands load at the end of the body.
+ * The document shell every page uses: `<html lang dir>`, the head, the skip links, and header, main, and
+ * footer landmarks, with slots for header, sidebar, main, aside, and footer. Islands load at the end of
+ * the body. The navigation skip link is left out when no sidebar slot is given, since its target is not there.
  */
 export default function base(props: BaseProps) {
   const { page, head, islands, header, sidebar, main, aside, footer } = props;
@@ -77,12 +79,15 @@ export default function base(props: BaseProps) {
     h(
       "body",
       null,
-      h("a", { class: "skip-link", href: `#${MAIN_ID}` }, "Skip to content"),
+      skipLinks({ ...props, navigation: sidebar != null }),
+      announcement(props) as ComponentChildren,
       header == null ? null : h("header", null, header),
       h(
         "div",
         { class: "layout" },
-        sidebar == null ? null : h("aside", { class: "sidebar", "aria-label": "Site navigation" }, sidebar),
+        sidebar == null
+          ? null
+          : h("aside", { class: "sidebar", id: NAVIGATION_ID, "aria-label": "Site navigation" }, sidebar),
         h(
           "main",
           { id: MAIN_ID, tabIndex: -1 },
