@@ -76,8 +76,13 @@ function absolute(config: SiteConfig, url: string): string {
   return `${config.url.replace(/\/+$/, "")}${url}`;
 }
 
-/** Fills `{markdown}`, `{url}`, and `{title}` in a provider template, encoding each value. */
-function expand(config: SiteConfig, page: Page, template: string, markdown: string): string {
+/**
+ * Fills `{markdown}`, `{url}`, and `{title}` in a provider template, encoding each value. A template
+ * that needs the page's address returns nothing when the config names no published site: a relative
+ * path would give an agent a link it cannot open.
+ */
+function expand(config: SiteConfig, page: Page, template: string, markdown: string): string | undefined {
+  if (config.url === undefined && /\{(?:markdown|url)\}/.test(template)) return undefined;
   const values: Readonly<Record<string, string>> = {
     markdown: absolute(config, markdown),
     url: absolute(config, page.url),
@@ -107,9 +112,11 @@ const pageAgentMenu: Chrome = ({ site, page }) => {
   if (markdown === undefined) return null;
 
   const lang = page.lang;
-  const providers = providersOf(site.config)
-    .map((provider) => ({ title: provider.title, href: expand(site.config, page, provider.url, markdown) }))
-    .filter((provider) => SAFE_SCHEME.test(provider.href));
+  const providers: Array<{ title: string; href: string }> = [];
+  for (const provider of providersOf(site.config)) {
+    const href = expand(site.config, page, provider.url, markdown);
+    if (href !== undefined && SAFE_SCHEME.test(href)) providers.push({ title: provider.title, href });
+  }
 
   return h(
     "details",

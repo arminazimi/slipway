@@ -174,18 +174,22 @@ test("an empty provider list keeps the copy and view actions but shows no open-i
 test("a provider with an unsafe or incomplete entry is dropped", () => {
   const out = html(
     pageAgentMenu(
-      props(pageWith(), {
-        pageAgent: {
-          providers: [
-            { title: "Script", url: "javascript:alert({markdown})" },
-            { title: "Data", url: "data:text/html,hi" },
-            { title: "", url: "https://example.com/empty-title" },
-            { title: "No URL" },
-            null,
-            { title: "Safe", url: "https://example.com/safe" },
-          ],
+      props(
+        pageWith(),
+        {
+          pageAgent: {
+            providers: [
+              { title: "Script", url: "javascript:alert({markdown})" },
+              { title: "Data", url: "data:text/html,hi" },
+              { title: "", url: "https://example.com/empty-title" },
+              { title: "No URL" },
+              null,
+              { title: "Safe", url: "https://example.com/safe" },
+            ],
+          },
         },
-      }),
+        "https://docs.example.com",
+      ),
     ),
   );
 
@@ -196,11 +200,20 @@ test("a provider with an unsafe or incomplete entry is dropped", () => {
   assert.match(out, /href="https:\/\/example\.com\/safe"/);
 });
 
-test("the site's base stays in the Markdown link, and no absolute twin is made without config.url", () => {
+test("the site's base stays in the Markdown link, and address providers wait for a published site URL", () => {
   const out = html(pageAgentMenu(props(pageWith("/prefix/guide/install/"))));
 
   assert.match(out, /href="\/prefix\/guide\/install\/index.md"/);
-  assert.match(out, new RegExp(`https://claude\\.ai/new\\?q=Read\\+${encodeURIComponent("/prefix/guide/install/index.md")}`));
+  assert.doesNotMatch(out, /claude\.ai|chatgpt\.com|cursor\.com/);
+  assert.doesNotMatch(out, /page-agent-menu-heading/);
+});
+
+test("a provider with a fixed URL needs no site URL", () => {
+  const out = html(
+    pageAgentMenu(props(pageWith(), { pageAgent: { providers: [{ title: "Support", url: "https://example.com/support" }] } })),
+  );
+
+  assert.match(out, /href="https:\/\/example\.com\/support"/);
 });
 
 test("an app page, or a doc page whose URL names another file, renders nothing", () => {
