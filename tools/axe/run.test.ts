@@ -40,7 +40,7 @@ function folder(t: { after: (fn: () => void) => void }, files: Record<string, st
 function page(url: string, layout?: string): Page {
   return {
     url,
-    source: { file: `${url.replace(/^\/|\/$/g, "") || "index"}.md`, line: 1, column: 1, endLine: 1 },
+    source: { file: `${url.replace(/^\/|\/$/g, "") || "index"}.md`, line: 1, column: 1, endLine: 1, endColumn: 1 },
     frontMatter: layout === undefined ? {} : { layout },
     title: url,
     lang: "en",
