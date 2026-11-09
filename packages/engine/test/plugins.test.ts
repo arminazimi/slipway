@@ -134,7 +134,7 @@ test("a default export with no plugin list is an error", async () => {
     const loaded = await loadCodeConfig(root);
     assert.deepEqual(loaded.plugins, []);
     assert.equal(loaded.diagnostics[0]?.id, "plugin.invalid-code-config");
-    assert.ok(loaded.diagnostics[0]?.message.includes("`plugins`"), loaded.diagnostics[0]?.message);
+    assert.ok(loaded.diagnostics[0]?.message.includes("`plugins`"), loaded.diagnostics[0]?.message ?? "");
   } finally {
     rmSync(root, { recursive: true });
   }
@@ -167,11 +167,11 @@ test("an entry that is not a plugin is dropped and the sound entries run", async
       assert.equal(diagnostic.severity, "error");
       assert.ok(diagnostic.message.includes(CODE_CONFIG_FILE), diagnostic.message);
     }
-    assert.ok(loaded.diagnostics[0]?.message.includes("Plugin 2"), loaded.diagnostics[0]?.message);
-    assert.ok(loaded.diagnostics[0]?.message.includes("not an object"), loaded.diagnostics[0]?.message);
-    assert.ok(loaded.diagnostics[1]?.message.includes("Plugin 3"), loaded.diagnostics[1]?.message);
-    assert.ok(loaded.diagnostics[1]?.message.includes("no non-empty"), loaded.diagnostics[1]?.message);
-    assert.ok(loaded.diagnostics[2]?.message.includes("Plugin 4"), loaded.diagnostics[2]?.message);
+    assert.ok(loaded.diagnostics[0]?.message.includes("Plugin 2"), loaded.diagnostics[0]?.message ?? "");
+    assert.ok(loaded.diagnostics[0]?.message.includes("not an object"), loaded.diagnostics[0]?.message ?? "");
+    assert.ok(loaded.diagnostics[1]?.message.includes("Plugin 3"), loaded.diagnostics[1]?.message ?? "");
+    assert.ok(loaded.diagnostics[1]?.message.includes("no non-empty"), loaded.diagnostics[1]?.message ?? "");
+    assert.ok(loaded.diagnostics[2]?.message.includes("Plugin 4"), loaded.diagnostics[2]?.message ?? "");
   } finally {
     rmSync(root, { recursive: true });
   }
@@ -289,17 +289,17 @@ test("a hook that returns an unusable value is an error naming the plugin", asyn
   assert.equal(content.value.title, "/install/");
   assert.equal(content.diagnostics.length, 1);
   assert.equal(content.diagnostics[0]?.id, "plugin.hook-failed");
-  assert.ok(content.diagnostics[0]?.message.includes("confused"), content.diagnostics[0]?.message);
-  assert.ok(content.diagnostics[0]?.message.includes("a page"), content.diagnostics[0]?.message);
+  assert.ok(content.diagnostics[0]?.message.includes("confused"), content.diagnostics[0]?.message ?? "");
+  assert.ok(content.diagnostics[0]?.message.includes("a page"), content.diagnostics[0]?.message ?? "");
 
   const model = await runModelHooks([badHookPlugin("silent", "model", undefined)], site([]));
   assert.equal(model.diagnostics.length, 1);
-  assert.ok(model.diagnostics[0]?.message.includes("silent"), model.diagnostics[0]?.message);
-  assert.ok(model.diagnostics[0]?.message.includes("a site model"), model.diagnostics[0]?.message);
+  assert.ok(model.diagnostics[0]?.message.includes("silent"), model.diagnostics[0]?.message ?? "");
+  assert.ok(model.diagnostics[0]?.message.includes("a site model"), model.diagnostics[0]?.message ?? "");
 
   const outputs = await runOutputsHooks([badHookPlugin("wrong", "outputs", "not a list")], [], site([]));
   assert.deepEqual(outputs.value, []);
-  assert.ok(outputs.diagnostics[0]?.message.includes("a list of output files"), outputs.diagnostics[0]?.message);
+  assert.ok(outputs.diagnostics[0]?.message.includes("a list of output files"), outputs.diagnostics[0]?.message ?? "");
 });
 
 test("a plugin that implements no hook costs nothing", async () => {
@@ -362,8 +362,8 @@ test("a plugin loaded from the code file that throws names itself", async () => 
     assert.deepEqual(diagnostics, []);
     const result = await runContentHooks(plugins, page("/install/"));
     assert.equal(result.diagnostics.length, 1);
-    assert.ok(result.diagnostics[0]?.message.includes("thrower"), result.diagnostics[0]?.message);
-    assert.ok(result.diagnostics[0]?.message.includes("no thanks"), result.diagnostics[0]?.message);
+    assert.ok(result.diagnostics[0]?.message.includes("thrower"), result.diagnostics[0]?.message ?? "");
+    assert.ok(result.diagnostics[0]?.message.includes("no thanks"), result.diagnostics[0]?.message ?? "");
     assert.equal(result.value.url, "/install/");
   } finally {
     rmSync(root, { recursive: true });

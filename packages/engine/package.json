@@ -22,7 +22,7 @@
   "dependencies": {
     "lightningcss": "^1.33.0",
     "pagefind": "^1.6.0",
-    "preact": "^10.29.8",
+    "preact": "^11.2.0",
     "preact-render-to-string": "^6.8.2",
     "rehype-stringify": "^10.0.1",
     "remark-directive": "^4.0.0",
@@ -32,6 +32,6 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@types/node": "^24.19.2"
+    "@types/node": "^26.6.6"
   }
 }
