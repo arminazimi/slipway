@@ -1,7 +1,7 @@
 ---
 title: Annotations block
 description: A code sample with numbered markers and a note for each number.
-layout: page
+layout: doc
 annotations:
   caption: Debouncing a search request.
   language: javascript

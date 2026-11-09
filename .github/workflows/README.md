@@ -7,6 +7,7 @@ GitHub Actions for this repository. [AGENTS.md](../../AGENTS.md) lists the comma
 | [`ci.yml`](ci.yml) | push to `main`, every pull request, every merge queue batch | `check` runs `npm run check` on Node 24 (tests, type checks, fixed checks; no Ruby, browser, or Seaworthy); `ci-ok` passes only when it did | yes |
 | [`codeql.yml`](codeql.yml) | push, pull request, weekly | CodeQL scan of the JavaScript and TypeScript | no |
 | [`dependency-review.yml`](dependency-review.yml) | pull requests changing a manifest or lock file | fails on a vulnerable or unlicensed new dependency | no |
+| [`deploy-site.yml`](deploy-site.yml) | push to `main`, manual | builds `site/` with the engine and deploys it to Pages with `action/deploy` | no |
 | [`ops-ci-feedback.yml`](ops-ci-feedback.yml) | a failed `ci` run | comments the failing step's log on an agent's pull request | no |
 | [`ops-overlap.yml`](ops-overlap.yml) | pull request events | comments the files shared with other open pull requests | no |
 | [`ops-progress.yml`](ops-progress.yml) | a task closes | keeps its epic's progress line current | no |

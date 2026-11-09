@@ -1,7 +1,7 @@
 ---
 title: Diff block
 description: Before and after code, with removed and added lines marked by a sign as well as color.
-layout: page
+layout: doc
 diff:
   caption: Change the server port
   language: yaml

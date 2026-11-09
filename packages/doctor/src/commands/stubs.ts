@@ -2,15 +2,22 @@ import { resolve, join, dirname } from "node:path";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { stubs, siteFiles } from "../checks/jekyll.ts";
+import { detect } from "../detect.ts";
 
 export const usage = `Usage: slipway stubs <source-dir> [options]
 
 Copy or update the stub files a site needs, keeping files the site owns.
 
+On an engine site the engine generates AGENTS.md and the search index itself,
+so those stubs are left out and reported as not needed.
+
 Options:
   --check              list what is missing or stale instead of copying
   --json               output result as JSON
   -h, --help           show this help`;
+
+/** Stubs the engine generates on its own: `AGENTS.md` (agents-md output) and the search index (search output). */
+const engineGenerated = ["AGENTS.md", "search.json"];
 
 export function parseArgs(args) {
   const [command, ...rest] = args;
@@ -59,11 +66,16 @@ export async function main(args, { log = console.log, error = console.error } = 
   const pkgRoot = resolve(__dirname, "..", "..", "..", "..");
   const startersDir = join(pkgRoot, "starter-files");
 
+  // The engine writes these files itself, so an engine site needs no stub for them.
+  const notNeeded = detect(sourceDir).generator === "mizzen"
+    ? stubs.filter((stub) => engineGenerated.includes(stub))
+    : [];
+
   const missing = [];
   const stale = [];
 
   for (const stub of stubs) {
-    if (siteFiles.includes(stub)) continue;
+    if (siteFiles.includes(stub) || notNeeded.includes(stub)) continue;
 
     const sourcePath = join(startersDir, stub);
     const destPath = join(sourceDir, stub);
@@ -81,7 +93,7 @@ export async function main(args, { log = console.log, error = console.error } = 
 
   if (check) {
     if (json) {
-      log(JSON.stringify({ missing, stale }, null, 2));
+      log(JSON.stringify({ missing, stale, notNeeded }, null, 2));
     } else {
       if (missing.length === 0 && stale.length === 0) {
         log("all stubs are present and up to date");
@@ -95,6 +107,7 @@ export async function main(args, { log = console.log, error = console.error } = 
           for (const stub of stale) log(`  ${stub}`);
         }
       }
+      for (const stub of notNeeded) log(`not needed: ${stub} (the engine generates it)`);
     }
     return missing.length > 0 || stale.length > 0 ? 1 : 0;
   }
@@ -111,7 +124,7 @@ export async function main(args, { log = console.log, error = console.error } = 
   }
 
   if (json) {
-    log(JSON.stringify({ copied: [...missing, ...stale] }, null, 2));
+    log(JSON.stringify({ copied: [...missing, ...stale], notNeeded }, null, 2));
   } else {
     if (missing.length === 0 && stale.length === 0) {
       log("all stubs are present and up to date");
@@ -119,6 +132,7 @@ export async function main(args, { log = console.log, error = console.error } = 
       for (const stub of missing) log(`copied ${stub}`);
       for (const stub of stale) log(`updated ${stub}`);
     }
+    for (const stub of notNeeded) log(`not needed: ${stub} (the engine generates it)`);
   }
 
   return 0;

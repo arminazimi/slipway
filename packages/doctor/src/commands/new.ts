@@ -18,6 +18,9 @@ required keys become flags, optional keys stay out, and the site's default
 lang goes in. Layouts: page, post, doc. A post path without a date in its
 file name gets today's date.
 
+The site root is the nearest folder above the path with an engine config
+(mizzen.yml or slipway.yml), or with Jekyll's _config.yml.
+
 Options:
   --title <title>      the page title (required)
   --lang <tag>         the page language (default: the site's lang)
@@ -63,7 +66,15 @@ export function parseArgs(args) {
   return { options };
 }
 
-/** Finds the site root above a path, starting at its nearest existing ancestor. */
+/** Files that mark a site root: the engine's config first (ADR 0025), then Jekyll's. */
+const siteConfigFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml", "_config.yml"];
+
+/** The config file that marks `dir` as a site root, or null. */
+function configFileIn(dir) {
+  return siteConfigFiles.find((file) => existsSync(join(dir, file))) ?? null;
+}
+
+/** Finds the site root above a path, starting at its nearest existing ancestor: `{ root, file }` or null. */
 function findSiteRoot(target) {
   let current = dirname(target);
   while (!existsSync(current)) {
@@ -72,10 +83,12 @@ function findSiteRoot(target) {
     current = parent;
   }
   while (current !== dirname(current)) {
-    if (existsSync(join(current, "_config.yml"))) return current;
+    const file = configFileIn(current);
+    if (file) return { root: current, file };
     current = dirname(current);
   }
-  return existsSync(join(current, "_config.yml")) ? current : null;
+  const file = configFileIn(current);
+  return file ? { root: current, file } : null;
 }
 
 /** The required front-matter keys the layout's schema adds, `title` included. */
@@ -116,14 +129,14 @@ export async function main(args, { log = console.log, error = console.error } = 
     target = join(dirname(target), `${new Date().toISOString().slice(0, 10)}-${basename(target)}`);
   }
 
-  const siteRoot = findSiteRoot(target);
-  if (siteRoot === null) {
-    if (format === "json") log(JSON.stringify({ error: `no site root (no _config.yml) above ${target}` }));
-    else error(`slipway new: no site root (no _config.yml) above ${target}`);
+  const site = findSiteRoot(target);
+  if (site === null) {
+    if (format === "json") log(JSON.stringify({ error: `no site root (no mizzen.yml, slipway.yml, or _config.yml) above ${target}` }));
+    else error(`slipway new: no site root (no mizzen.yml, slipway.yml, or _config.yml) above ${target}`);
     return 1;
   }
 
-  const relativePath = relative(siteRoot, target).split("\\").join("/");
+  const relativePath = relative(site.root, target).split("\\").join("/");
 
   if (existsSync(target)) {
     if (format === "json") log(JSON.stringify({ error: `file already exists: ${relativePath}` }));
@@ -132,7 +145,7 @@ export async function main(args, { log = console.log, error = console.error } = 
   }
 
   if (lang === null) {
-    const configPath = join(siteRoot, "_config.yml");
+    const configPath = join(site.root, site.file);
     const config = yaml.parse(readFileSync(configPath, "utf8")) ?? {};
     lang = config.lang ?? "en";
   }

@@ -1,7 +1,7 @@
 ---
 title: Testimonial block
 description: A quote from a customer, with their name, role, avatar, and source.
-layout: page
+layout: doc
 testimonial:
   quote: Our writers publish a page in minutes now, without waiting for a developer to change the theme.
   name: Mina Rahimi

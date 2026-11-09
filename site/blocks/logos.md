@@ -1,7 +1,7 @@
 ---
 title: Logos block
 description: A row of customer or partner logos that keeps its contrast in light and dark mode.
-layout: page
+layout: doc
 logos:
   - name: Slipway
     image: /assets/images/social.png
