@@ -10,6 +10,17 @@ import { DEFAULT_DEV_HOST, DEFAULT_DEV_PORT, dev, EVENTS_PATH, RELOAD_MARKER } f
 const THEME = fileURLToPath(new URL("../../theme", import.meta.url));
 const FIXTURE = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
 
+/** Folders other test files write into the fixture while it is being copied; a build cache is never input. */
+const TRANSIENT = new Set([".slipway", ".tmp", "node_modules", ".git"]);
+
+/** Copies the fixture without the folders a concurrent build may be writing, so the copy cannot race. */
+function copyFixture(to: string): void {
+  cpSync(FIXTURE, to, {
+    recursive: true,
+    filter: (source) => !source.split(/[\\/]/).some((part) => TRANSIENT.has(part)),
+  });
+}
+
 /** A temporary folder holding `files`. */
 function tree(files: Record<string, string>): string {
   const root = mkdtempSync(join(tmpdir(), "dev-"));
@@ -152,7 +163,7 @@ test("a source change rebuilds and sends a reload event before the next request"
 test("a change to fixtures/docs-site is picked up, and its rebuild time is reported", async (t) => {
   const { parent, out } = scratch();
   const root = join(parent, "docs-site");
-  cpSync(FIXTURE, root, { recursive: true });
+  copyFixture(root);
   const server = await dev({ root, out, themeRoot: THEME, port: 0, host: "127.0.0.1", defaultLayout: "doc" });
   try {
     const events = await fetch(new URL(EVENTS_PATH, server.url));
