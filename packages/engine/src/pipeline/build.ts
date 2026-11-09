@@ -7,6 +7,7 @@ import type { Diagnostic, Head, Output, OutputContext, OutputFile, Page, Pager, 
 import { buildModel } from "../model/build.ts";
 import { navState } from "../nav/tree.ts";
 import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
+import { hreflangLinks } from "../outputs/hreflang.ts";
 import { loadRegistry, type ThemeRegistry } from "../render/registry.ts";
 import { renderPage, type ThemeComponent } from "../render/render.ts";
 import { copyAssets } from "./assets.ts";
@@ -143,13 +144,13 @@ function placeOf(site: Site, page: Page): { trail: Trail; pager: Pager } {
   return { trail: [], pager: {} };
 }
 
-/** The head of a page: its title and, when it has one, its description. */
-function headOf(page: Page): Head {
+/** The head of a page: its title and, when it has one, its description, and its `hreflang` alternates. */
+function headOf(site: Site, page: Page): Head {
   const description = page.frontMatter.description;
   return {
     title: page.title,
     meta: typeof description === "string" ? [{ name: "description", content: description }] : [],
-    links: [],
+    links: hreflangLinks(site, page),
     jsonLd: [],
   };
 }
@@ -279,7 +280,7 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
       components,
       trail,
       pager,
-      head: headOf(page),
+      head: headOf(site, page),
     });
     for (const d of result.diagnostics) diagnostics.report(d);
     return result.html;
