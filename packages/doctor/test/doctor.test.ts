@@ -37,7 +37,7 @@ test("the conforming fixture reaches L3 with only the review and detection tests
   const report = await run("conforming");
   assert.equal(report.level, "L3");
   assert.deepEqual(report.findings, []);
-  assert.deepEqual(report.notRun.sort(), ["ae.edit-prompt.content", "ae.edit-prompt.no-send", "ae.schemas.config"]);
+  assert.deepEqual(report.notRun.sort(), ["ae.edit-prompt.content", "ae.edit-prompt.no-send"]);
 });
 
 test("a site without AGENTS.md has no level", async () => {

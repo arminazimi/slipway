@@ -6,7 +6,27 @@ import { pass, failWith, notRun, agentsFinding, noOutput, agentsOr, sourcemapOr,
 export const id = "ae.schemas.config";
 export const level = "L1";
 
+/** The configuration files the detected generator reads: the engine's `slipway.yml`, else Jekyll's `_config.yml`. */
+function configFiles(site) {
+  const engine = site.config();
+  if (engine) return [engine.file];
+  return ["_config.yml", "_config.yaml"].filter((name) => site.isFile(site.source, name));
+}
+
 export function run(site) {
-  // Which files a generator reads as configuration is learned by detecting the generator (doctor.detect).
-    return notRun("needs generator detection, which this version of slipway doctor does not have");
+  const { fail, data } = indexOr(site);
+  if (fail) return fail;
+  const entries = (data.schemas ?? []).filter((entry) => entry.target === "file");
+  const findings = [];
+  for (const file of configFiles(site)) {
+    if (!entries.some((entry) => site.applies(entry, file))) {
+      findings.push({
+        in: "source",
+        file,
+        line: 1,
+        message: 'is a configuration file the generator reads, but no `target: "file"` entry in content-schemas.json matches it',
+      });
+    }
+  }
+  return failWith(findings);
 }
