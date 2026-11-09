@@ -130,7 +130,7 @@ test("the breadcrumb leads the article and repeats the trail, end at the current
 test("the sidebar renders in the site-navigation aside and the toc in the on-this-page aside", () => {
   const nav = [{ title: "Guides", children: [{ title: "Install", url: "/guide/install/" }] }];
   const page = out(pageWith({ headings: [heading(2, "Pick a mode"), heading(3, "Gem")] }), nav);
-  assert.match(page, /<aside class="sidebar" aria-label="Site navigation"><nav class="sidebar-nav"/);
+  assert.match(page, /<aside class="sidebar" id="site-navigation" aria-label="Site navigation"><nav class="sidebar-nav"/);
   assert.match(page, /<aside class="aside" aria-label="On this page"><aside class="toc" aria-label="On this page">/);
   assert.match(page, /<details class="toc-fold"><summary>On this page<\/summary>/);
 });
