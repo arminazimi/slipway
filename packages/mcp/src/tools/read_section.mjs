@@ -1,7 +1,7 @@
 // Reads one section of a page: from its heading to the next heading of the same or higher level.
 import { readFileSync, realpathSync } from "node:fs";
 import { relative, sep } from "node:path";
-import { blocks } from "../../../doctor/src/markdown.mjs";
+import { blocks } from "../../../doctor/src/markdown.ts";
 import { insideSite } from "../tools.mjs";
 import { sourceForUrl } from "./source_for_url.mjs";
 

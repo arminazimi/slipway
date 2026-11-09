@@ -17,7 +17,7 @@ From the root of the theme repository (the [Content skill](https://github.com/ar
 
 ```sh
 node tools/theme/validate.ts <site>
-node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/_site
+node packages/doctor/bin/slipway.ts doctor <site> --build <site>/_site
 ```
 
 Pass the site folder; build it first when its output is missing or older than its source (section 6). Your work is done when the two checks add no problem and no finding.
@@ -90,7 +90,7 @@ Then, from the root of the theme repository:
 
 ```sh
 node tools/theme/validate.ts <site>
-node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/_site
+node packages/doctor/bin/slipway.ts doctor <site> --build <site>/_site
 ```
 
 `validate.mjs` prints each problem as `file:line key: message (allowed: ...)`; fix it at that line and run it again. Read every error and warning in the build and fix the ones that name a file. The doctor checks the source and the built post: a finding that names your file is yours. Compare all three with the baseline from section 1; the post and the changelog line must add none.

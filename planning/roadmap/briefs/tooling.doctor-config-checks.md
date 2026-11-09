@@ -4,9 +4,9 @@
 ## Files
 
 **Edit**
-- `packages/doctor/src/checks/unknown-config.mjs`
-- `packages/doctor/src/checks/ae.schemas.config.mjs`
-- `packages/doctor/src/checks/jekyll.mjs`
+- `packages/doctor/src/checks/unknown-config.ts`
+- `packages/doctor/src/checks/ae.schemas.config.ts`
+- `packages/doctor/src/checks/jekyll.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

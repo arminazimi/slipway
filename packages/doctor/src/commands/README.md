@@ -1,6 +1,6 @@
 # Commands
 
-`slipway <command> [options]` loads every `.mjs` file in this folder by file name, in sorted order. Adding a command is adding a file: there is no list to edit. `src/cli.mjs` reads the folder, prints each command in `slipway --help`, and passes the arguments, starting with the command name, to the module's `main`.
+`slipway <command> [options]` loads every `.ts` file in this folder by file name, in sorted order. Adding a command is adding a file: there is no list to edit. `src/cli.ts` reads the folder, prints each command in `slipway --help`, and passes the arguments, starting with the command name, to the module's `main`.
 
 ## Template
 
@@ -62,4 +62,4 @@ export async function main(args, { log = console.log, error = console.error } = 
 
 Exit codes are the same for every command: `0` success, `1` findings or a failed check, `2` a usage error or a missing folder.
 
-`packages/doctor/test/commands.test.mjs` loads this folder, so a new file needs a callable `main`, a `usage`, and a one-line summary. Add a test next to the command for its behavior.
+`packages/doctor/test/commands.test.ts` loads this folder, so a new file needs a callable `main`, a `usage`, and a one-line summary. Add a test next to the command for its behavior.

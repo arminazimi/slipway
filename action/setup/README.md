@@ -25,7 +25,7 @@ The Action has no outputs. It writes the shim folder to `$GITHUB_PATH`, so only 
 1. Finds the Slipway checkout: `path` when it holds `packages/doctor`, otherwise the Action's own downloaded copy. It resolves a native absolute path once, so the shims and the cache key work from any folder and on Windows.
 2. Installs Node with `actions/setup-node`. With `cache: true` (the default), that also restores the npm download cache before the install and saves it after the job.
 3. Runs `npm ci --omit=dev --ignore-scripts --no-audit --no-fund` in the Slipway checkout, only when `node_modules/ajv` or `node_modules/yaml` is missing. A second `slipway setup` in the same job reuses the first install.
-4. Writes two shims to `$RUNNER_TEMP/slipway-bin`, adds that folder to `$GITHUB_PATH`, and runs `slipway` through the checkout's `packages/doctor/bin/slipway.mjs`:
+4. Writes two shims to `$RUNNER_TEMP/slipway-bin`, adds that folder to `$GITHUB_PATH`, and runs `slipway` through the checkout's `packages/doctor/bin/slipway.ts`:
    - `slipway`, a `#!/bin/sh` script, for bash on Ubuntu, macOS, and Windows (Git Bash).
    - `slipway.cmd`, for `cmd.exe` and PowerShell on Windows, where `PATHEXT` picks it up.
 

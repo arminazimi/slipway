@@ -2,10 +2,10 @@
 // SARIF, the job summary, and the badge when asked. Inputs arrive as SLIPWAY_* variables from action.yml.
 import { appendFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { doctor, levels } from "../../packages/doctor/src/doctor.mjs";
-import { exitCode, formatText } from "../../packages/doctor/src/cli.mjs";
-import { toSarif } from "../../packages/doctor/src/report.mjs";
-import { toAnnotations } from "../../packages/doctor/src/github.mjs";
+import { doctor, levels } from "../../packages/doctor/src/doctor.ts";
+import { exitCode, formatText } from "../../packages/doctor/src/cli.ts";
+import { toSarif } from "../../packages/doctor/src/report.ts";
+import { toAnnotations } from "../../packages/doctor/src/github.ts";
 import { badgeJson, summaryMarkdown } from "./src/summary.mjs";
 
 const input = (name) => (process.env[`SLIPWAY_${name}`] ?? "").trim();

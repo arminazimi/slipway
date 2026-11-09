@@ -4,8 +4,8 @@
 ## Files
 
 **Edit**
-- `packages/doctor/src/checks/lang-mismatch.mjs`
-- `packages/doctor/src/checks/i18n.zwnj.mjs`
+- `packages/doctor/src/checks/lang-mismatch.ts`
+- `packages/doctor/src/checks/i18n.zwnj.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

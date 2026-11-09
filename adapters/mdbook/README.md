@@ -30,7 +30,7 @@ It needs mdBook 0.5 or later and Node 18 or later. It writes nothing for L3 (the
 
    ```sh
    mdbook build
-   node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/book/html
+   node packages/doctor/bin/slipway.ts doctor <site> --build <site>/book/html
    ```
 
 ## How it works

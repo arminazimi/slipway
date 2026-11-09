@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
 import { tools } from "../../packages/mcp/src/server.mjs";
-import { parseArgs } from "../../packages/doctor/src/cli.mjs";
+import { parseArgs } from "../../packages/doctor/src/cli.ts";
 import { root } from "./config-reference.ts";
 
 const skillDir = join(root, "skills/slipway-doctor");

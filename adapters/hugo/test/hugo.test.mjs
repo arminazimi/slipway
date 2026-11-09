@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { doctor } from "../../../packages/doctor/src/doctor.mjs";
+import { doctor } from "../../../packages/doctor/src/doctor.ts";
 import { validateSourcemap } from "../../../tools/theme/sourcemap.ts";
 
 const adapter = fileURLToPath(new URL("..", import.meta.url));

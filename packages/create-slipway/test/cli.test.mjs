@@ -8,8 +8,8 @@ import { after, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { bundleAvailable, root } from "../../../tools/theme/build.mjs";
-import { doctor } from "../../doctor/src/doctor.mjs";
-import { exitCode } from "../../doctor/src/cli.mjs";
+import { doctor } from "../../doctor/src/doctor.ts";
+import { exitCode } from "../../doctor/src/cli.ts";
 import { main, createSite, siteConfig } from "../src/cli.mjs";
 import { copySources, bundledSources, repoSources, themeDirs } from "../src/sources.mjs";
 

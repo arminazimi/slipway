@@ -1,4 +1,4 @@
-import { Site } from "../../../doctor/src/site.mjs";
+import { Site } from "../../../doctor/src/site.ts";
 import { insideSite } from "../tools.mjs";
 
 const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_modules)\//;

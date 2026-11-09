@@ -1,0 +1,21 @@
+{
+  "//": "Converted from JavaScript, so it starts non-strict. Tighten to strict when the doctor is ported to the engine (E-tooling).",
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["esnext", "dom"],
+    "types": ["node"],
+    "strict": false,
+    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["bin/**/*.ts", "src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["test/fixtures/**"]
+}

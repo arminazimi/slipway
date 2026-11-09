@@ -111,7 +111,7 @@ bundle exec jekyll build
 A misspelled block or include is a build error. A wrong option value usually is not: the block renders with the option ignored or empty, so open the built page and look for the block's root class, `sl-<name>` with the block's name (`sl-timeline`, `sl-stats`, `sl-badge`), and its text. Then run the doctor on the source and the build:
 
 ```sh
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 In a Jekyll or Slipway site the doctor reports each include line, and the stylesheet line, as jekyll.liquid-in-content: a warning that the content is tied to Jekyll. That is expected for a block and never lowers the level; blocks are the only Liquid a page may contain. Every other finding is yours to fix. Compare with your baseline.

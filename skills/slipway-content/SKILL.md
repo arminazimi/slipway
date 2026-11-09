@@ -93,7 +93,7 @@ bundle exec jekyll build
 Read every error and warning and fix it at the file it names. Then run the doctor on the source and the build. It checks the site against the agent-editable spec: `AGENTS.md`, `content-schemas.json` (when the site has one, it validates your front matter against the schemas it names), the source map, and the edit prompts:
 
 ```sh
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 Compare its findings with your baseline. A finding that names your file is yours to fix. Without a `Gemfile`, run the doctor without `--build` and read the log of the Pages build after you push.

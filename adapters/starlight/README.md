@@ -32,7 +32,7 @@ It needs Astro 7, Starlight 0.42, and Node.js 22.23.4 or later, and has no depen
 
    ```sh
    npx astro build
-   node packages/doctor/bin/slipway.mjs doctor . --build dist
+   node packages/doctor/bin/slipway.ts doctor . --build dist
    ```
 
 ## How it works

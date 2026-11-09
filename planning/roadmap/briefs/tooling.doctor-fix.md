@@ -4,9 +4,9 @@ Auto-fixes and deprecation hints use engine config keys.
 ## Files
 
 **Edit**
-- `packages/doctor/src/fix.mjs`
-- `packages/doctor/src/deprecations.mjs`
-- `packages/doctor/src/prose.mjs`
+- `packages/doctor/src/fix.ts`
+- `packages/doctor/src/deprecations.ts`
+- `packages/doctor/src/prose.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

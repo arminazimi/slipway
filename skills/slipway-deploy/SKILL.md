@@ -25,7 +25,7 @@ From the site folder, check the config and the front matter, build, and run the 
 ```sh
 node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 The build needs a `Gemfile`. A site without one can add `gem "github-pages", group: :jekyll_plugins, require: false` and run `bundle install`. `require: false` matters: the Pages gem's normal require turns on safe mode, which skips `_plugins/`. Until the site has a `Gemfile`, run the doctor without `--build` and read the log of the Pages build after you push. [The doctor skill](../slipway-doctor/SKILL.md) says how to read its findings.

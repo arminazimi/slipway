@@ -96,7 +96,7 @@ From the site folder, validate the config and every front matter block, build, a
 ```sh
 node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 Each problem is printed as `file:line key: message`. Fix it at that line and run it again. The doctor must keep the level and finding count of your baseline; a finding that names your file is yours to fix. Without a `Gemfile`, push and read the log of the Pages build.

@@ -40,6 +40,7 @@ const allowed = new Set([
   "fixtures",
   "package-lock.json",
   "package.json",
+  "tsconfig.json",
   "packages",
   "planning",
   "plugins",

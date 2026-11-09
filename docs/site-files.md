@@ -27,7 +27,7 @@ matter satisfies the site, and none of those four names is part of the required-
 stub nor its own file still gets the same finding as before.
 
 `packages/doctor/test/fixtures/own-site-files/` is the site that owns all four, and
-`packages/doctor/test/own-site-files.test.mjs` fails if a later change starts asking for them.
+`packages/doctor/test/own-site-files.test.ts` fails if a later change starts asking for them.
 
 ## Known gap
 

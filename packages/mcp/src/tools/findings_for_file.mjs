@@ -1,6 +1,6 @@
 import { realpathSync } from "node:fs";
 import { resolve, relative, sep } from "node:path";
-import { doctor } from "../../../doctor/src/doctor.mjs";
+import { doctor } from "../../../doctor/src/doctor.ts";
 import { outside } from "../tools.mjs";
 
 export const definition = {
