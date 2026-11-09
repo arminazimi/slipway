@@ -643,9 +643,24 @@ async function scenarioSearch(page: Page, origin: string, add: Add): Promise<voi
     add(DOC_PAGE, "search", `typing "${FOLLOW_QUERY}" showed no results`);
     return;
   }
-  await page.keyboard.press("ArrowDown");
-  const href = await page.evaluate(() => document.activeElement?.getAttribute("href"));
-  if (href === null || href === undefined) {
+  // A result may render just after the selector matches, and a debounced search can ignore the first keypress.
+  // Press until a result link really has focus, and only then call it a finding.
+  let href: string | null = null;
+  for (let attempt = 0; attempt < 3 && href === null; attempt += 1) {
+    await page.keyboard.press("ArrowDown");
+    href = await page
+      .waitForFunction(
+        () => {
+          const active = document.activeElement;
+          return active instanceof HTMLAnchorElement ? active.getAttribute("href") : null;
+        },
+        undefined,
+        { timeout: 1500 },
+      )
+      .then((handle) => handle.jsonValue() as Promise<string | null>)
+      .catch(() => null);
+  }
+  if (href === null) {
     add(DOC_PAGE, "search", "the focused result has no href");
     return;
   }
