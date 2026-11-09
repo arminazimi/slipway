@@ -5,6 +5,7 @@ import { discover } from "../content/discover.ts";
 import type { Diagnostic, Head, Output, OutputContext, OutputFile, Page, Pager, Site, Trail } from "../contracts/index.ts";
 import { buildModel } from "../model/build.ts";
 import { navState } from "../nav/tree.ts";
+import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
 import { loadRegistry, type ThemeRegistry } from "../render/registry.ts";
 import { renderPage, type ThemeComponent } from "../render/render.ts";
 import { copyAssets } from "./assets.ts";
@@ -292,6 +293,10 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
       await writeFile(abs, file.contents);
       written.push(file.path);
     }
+
+    // The build's one hash goes into the manifest last, so every other file is in place (#1252). The manifest that
+    // records the hash is left out of it, and a site file that replaced the generated manifest is left alone.
+    if (claimed.get(MANIFEST_PATH) === "manifest" && !assetPaths.has(MANIFEST_PATH)) await recordBuildHash(staging);
 
     await commit(staging, out);
     return {
