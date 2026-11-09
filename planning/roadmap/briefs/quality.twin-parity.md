@@ -4,8 +4,8 @@ Prove that each page's Markdown twin says the same thing as its HTML, so agents 
 ## Files
 
 **Create**
-- `tools/twin-parity/run.mjs`
-- `tools/twin-parity/run.test.mjs`
+- `tools/twin-parity/run.ts`
+- `tools/twin-parity/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

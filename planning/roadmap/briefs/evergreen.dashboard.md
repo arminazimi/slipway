@@ -4,8 +4,8 @@ In `examples/product-docs`, the dashboard folder is copied byte-for-byte and app
 ## Files
 
 **Create**
-- `tools/app-page-check/run.mjs`
-- `tools/app-page-check/run.test.mjs`
+- `tools/app-page-check/run.ts`
+- `tools/app-page-check/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

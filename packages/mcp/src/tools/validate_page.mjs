@@ -1,6 +1,6 @@
 import { sep } from "node:path";
-import { Site } from "../../../doctor/src/site.mjs";
-import { schemaProblems } from "../../../doctor/src/utils.mjs";
+import { Site } from "../../../doctor/src/site.ts";
+import { schemaProblems } from "../../../doctor/src/utils.ts";
 import { insideSite } from "../tools.mjs";
 
 export const definition = {

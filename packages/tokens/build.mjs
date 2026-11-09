@@ -15,7 +15,7 @@ mkdirSync(dist, { recursive: true });
 copyFileSync(srcTokens, join(dist, "theme.tokens.json"));
 
 // Generate tokens.css in dist
-import { loadTokens, buildCss } from "../../tools/theme/tokens.mjs";
+import { loadTokens, buildCss } from "../../tools/theme/tokens.ts";
 const tokens = loadTokens(srcTokens);
 writeFileSync(join(dist, "tokens.css"), buildCss(tokens));
 

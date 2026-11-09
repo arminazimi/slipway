@@ -36,4 +36,4 @@ jobs:
       - name: Update behind pull requests
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/ops/update.mjs
+        run: node tools/ops/update.ts

@@ -4,8 +4,8 @@ An MCP tool that edits one block by its ID and proves, by rebuilding the page, t
 ## Files
 
 **Create**
-- `packages/mcp/src/tools/edit_block.mjs`
-- `packages/mcp/test/edit_block.test.mjs`
+- `packages/mcp/src/tools/edit_block.ts`
+- `packages/mcp/test/edit_block.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -128,7 +128,7 @@ In these files, add `defer` to scripts (every page must read without JavaScript)
 Run `slipway doctor` on the site. It is not on npm yet: run it from a clone of https://github.com/arminazimi/slipway after `npm ci`, with the site folder as the argument, and add `--build` with the built folder when you have one:
 
 ```sh
-node packages/doctor/bin/slipway.mjs doctor ../my-site --build ../my-site/_site
+node packages/doctor/bin/slipway.ts doctor ../my-site --build ../my-site/_site
 ```
 
 It prints the conformance level the site reaches and each finding as `path:line key: message`. It also warns about starter files the site has not copied, Liquid in content, and translations with a missing language. Fix each finding at the file and line it names and run it again until it is clean.

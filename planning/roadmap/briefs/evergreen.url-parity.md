@@ -4,8 +4,8 @@ Given an old `sitemap.xml` and a new build, list every old URL that is missing a
 ## Files
 
 **Create**
-- `tools/url-parity/run.mjs`
-- `tools/url-parity/run.test.mjs`
+- `tools/url-parity/run.ts`
+- `tools/url-parity/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

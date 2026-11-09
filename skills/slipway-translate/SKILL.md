@@ -21,8 +21,8 @@ cd "$HOME/.slipway" && npm ci && cd -
 From the site folder, run the schema check and the doctor before you change anything, and keep the output:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/tools/theme/validate.ts" .
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 Your edit is done when it adds no problem and no finding to that output, apart from the translation-coverage warnings that step 5 explains.
@@ -62,7 +62,7 @@ A site language stops here: `_includes/t.html` reads `_data/i18n/` before the bu
 2. Create the translation from the site folder:
 
    ```sh
-   node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" translate about.md --to de
+   node "$HOME/.slipway/packages/doctor/bin/slipway.ts" translate about.md --to de
    ```
 
    It writes the copy under `de/` with the front matter kept and `lang: de`, and it stops when the source has no `translation_key`. For a post, copy the file by hand into `_posts/` with the language in the slug, `_posts/<date>-<slug>-<code>.md`: Jekyll reads posts only from `_posts/` at the site root.
@@ -90,9 +90,9 @@ A site language stops here: `_includes/t.html` reads `_data/i18n/` before the bu
 ## 6. Check the edit
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 Open the built home page and the translated page: the switcher should link the two, the translated page should carry `dir="rtl"` only for a right-to-left language, and its source should have one alternate `hreflang` link per translation. Compare the doctor's output with the baseline; a finding that names your file is yours to fix. Without a `Gemfile`, skip the build, run the doctor without `--build`, and read the Pages build log after you push.

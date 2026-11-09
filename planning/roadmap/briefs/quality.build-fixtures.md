@@ -4,8 +4,8 @@ One helper that builds `fixtures/docs-site` and `fixtures/rtl-site` with the eng
 ## Files
 
 **Create**
-- `tools/fixture-build/build.mjs`
-- `tools/fixture-build/build.test.mjs`
+- `tools/fixture-build/build.ts`
+- `tools/fixture-build/build.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

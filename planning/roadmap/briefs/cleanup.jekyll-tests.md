@@ -4,14 +4,14 @@ Delete the tests in `tools/theme/` that build or inspect the Jekyll theme, keepi
 ## Files
 
 **Edit**
-- `tools/theme/check.mjs`
-- `tools/check.mjs`
+- `tools/theme/check.ts`
+- `tools/check.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
 ## Steps
 1. List what each remaining file in `tools/theme/` is used by; delete the unused ones.
-2. Remove Jekyll build steps from `tools/check.mjs`.
+2. Remove Jekyll build steps from `tools/check.ts`.
 
 ## Done when
 - [ ] `tools/theme/` holds no test that needs Jekyll.

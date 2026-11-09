@@ -23,7 +23,7 @@ Use the `doctor` tool when the Slipway MCP server is registered for the site (`p
 Otherwise run the command line from a clone of the theme repository, after `npm ci`:
 
 ```sh
-node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/_site --format json
+node packages/doctor/bin/slipway.ts doctor <site> --build <site>/_site --format json
 ```
 
 Add `--level L2` (or the level the site's `AGENTS.md` names) to fail below that level. In CI, `--format sarif` writes the findings for GitHub code scanning. Exit code `0` means the target is reached, `1` means findings, and `2` a usage error or a missing folder.

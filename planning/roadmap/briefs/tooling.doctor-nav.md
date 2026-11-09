@@ -4,7 +4,7 @@
 ## Files
 
 **Edit**
-- `packages/doctor/src/checks/doctor.nav-targets.mjs`
+- `packages/doctor/src/checks/doctor.nav-targets.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,9 +4,9 @@ Teach doctor to detect an engine site (`slipway.yml`) and read the manifest and 
 ## Files
 
 **Edit**
-- `packages/doctor/src/detect.mjs`
-- `packages/doctor/src/site.mjs`
-- `packages/doctor/src/doctor.mjs`
+- `packages/doctor/src/detect.ts`
+- `packages/doctor/src/site.ts`
+- `packages/doctor/src/doctor.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

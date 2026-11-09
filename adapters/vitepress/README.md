@@ -35,7 +35,7 @@ It needs VitePress 1 and has no dependencies of its own. It writes nothing for L
 
    ```sh
    npx vitepress build .
-   node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/.vitepress/dist
+   node packages/doctor/bin/slipway.ts doctor <site> --build <site>/.vitepress/dist
    ```
 
 ## How it works

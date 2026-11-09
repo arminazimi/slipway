@@ -4,8 +4,8 @@ The scaffolding commands write `slipway.yml`, a `docs/` folder, and the deploy w
 ## Files
 
 **Edit**
-- `packages/doctor/src/commands/new.mjs`
-- `packages/doctor/src/commands/stubs.mjs`
+- `packages/doctor/src/commands/new.ts`
+- `packages/doctor/src/commands/stubs.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

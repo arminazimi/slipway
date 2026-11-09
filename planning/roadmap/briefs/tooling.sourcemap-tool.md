@@ -11,7 +11,7 @@ Touch no other file. If one must change, stop and say why in the issue.
 
 ## Steps
 1. Tests use `fixtures/docs-site`.
-2. Validate the output with `validateSourcemap` from `tools/theme/sourcemap.mjs`.
+2. Validate the output with `validateSourcemap` from `tools/theme/sourcemap.ts`.
 
 ## Done when
 - [ ] `sourcemap.json` for `fixtures/docs-site` validates.

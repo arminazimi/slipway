@@ -18,7 +18,7 @@ It has no dependencies of its own. It writes nothing for L3 (the agent-skills in
 
    ```sh
    npx hexo generate
-   node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/public
+   node packages/doctor/bin/slipway.ts doctor <site> --build <site>/public
    ```
 
 ## How it works

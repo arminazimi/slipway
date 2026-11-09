@@ -5,8 +5,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { doctor } from "../../../packages/doctor/src/doctor.mjs";
-import { validateSourcemap } from "../../../tools/theme/sourcemap.mjs";
+import { doctor } from "../../../packages/doctor/src/doctor.ts";
+import { validateSourcemap } from "../../../tools/theme/sourcemap.ts";
 
 const adapter = fileURLToPath(new URL("..", import.meta.url));
 const fixture = fileURLToPath(new URL("site", import.meta.url));
@@ -37,7 +37,7 @@ test("the fixture with the starter files reaches L2 with no errors", { skip }, a
   const report = await doctor(dir, { build: join(dir, "public") });
   const l3 = new Set(report.tests.filter((r) => r.level === "L3").map((r) => r.id));
   assert.deepEqual(report.findings.filter((f) => f.severity === "error" && !l3.has(f.id)), []);
-  // Note: we might need to add zola detect in packages/doctor/src/detect.mjs
+  // Note: we might need to add zola detect in packages/doctor/src/detect.ts
   // assert.equal(report.generator, "zola");
   assert.equal(report.level, "L2");
 });

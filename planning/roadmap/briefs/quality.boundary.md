@@ -4,8 +4,8 @@ Fail when `packages/engine` imports from `packages/theme`, or contains Slipway n
 ## Files
 
 **Create**
-- `tools/engine-boundary/run.mjs`
-- `tools/engine-boundary/run.test.mjs`
+- `tools/engine-boundary/run.ts`
+- `tools/engine-boundary/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

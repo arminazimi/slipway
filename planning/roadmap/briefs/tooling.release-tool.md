@@ -1,5 +1,5 @@
 ## Goal
-`tools/release/prepare.ts` versions and publishes `@slipway/engine` and `@slipway/theme` with npm provenance, alongside the GitHub release. The Jekyll-era `prepare.mjs` (gemspec bump) was deleted with Ruby; write the tool fresh in TypeScript.
+`tools/release/prepare.ts` versions and publishes `@slipway/engine` and `@slipway/theme` with npm provenance, alongside the GitHub release. The Jekyll-era `prepare.ts` (gemspec bump) was deleted with Ruby; write the tool fresh in TypeScript.
 
 ## Files
 

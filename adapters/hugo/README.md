@@ -32,7 +32,7 @@ It needs Hugo 0.123 or later. It writes nothing for L3 (the agent-skills index).
 
    ```sh
    hugo
-   node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/public
+   node packages/doctor/bin/slipway.ts doctor <site> --build <site>/public
    ```
 
 ## How lines are found

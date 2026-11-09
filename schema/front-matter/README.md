@@ -2,7 +2,7 @@
 
 JSON Schemas (draft 2020-12) for the front matter of Slipway pages, from the content model in [ADR 0003](../../docs/adr/0003-content-model.md). `base.schema.json` holds the keys every page may set; each layout schema builds on it. Unknown keys are kept and ignored, never rejected, so a site can add its own.
 
-`node tools/theme/front-matter.mjs [file or folder ...]` validates Markdown files (every example site by default) and prints the file, the key, and the allowed values for each problem.
+`node tools/theme/front-matter.ts [file or folder ...]` validates Markdown files (every example site by default) and prints the file, the key, and the allowed values for each problem.
 
 ## Which schema a page uses
 

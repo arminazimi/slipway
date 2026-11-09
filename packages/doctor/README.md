@@ -3,7 +3,7 @@
 Checks a static site against the [agent-editable site spec](../../spec/agent-editable/0.1.md) and prints the [conformance level](../../spec/agent-editable/levels.md) it reaches, L0 to L3. It works for any generator: it reads the source folder and, when given, the built output folder, and runs every test in [`spec/agent-editable/tests.json`](../../spec/agent-editable/tests.json). It needs Node 22 and no Ruby.
 
 ```bash
-node packages/doctor/bin/slipway.mjs doctor <source-dir> [--build <output-dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network] [--fix] [--dry-run] [--explain [<id>]]
+node packages/doctor/bin/slipway.ts doctor <source-dir> [--build <output-dir>] [--format text|json|sarif] [--level L0|L1|L2|L3] [--network] [--fix] [--dry-run] [--explain [<id>]]
 ```
 
 Copy-paste snippet for your AGENTS.md: docs/snippets/agents-md.md
@@ -42,7 +42,7 @@ A finding on a built page is moved to its source: when `sourcemap.json` lists th
 SARIF output has one rule per test (`ruleId` is the test id, a MUST is an `error`, a SHOULD a `warning`) and one result per finding. Its paths are relative to the folder you run the doctor in, so run it from the repository root and upload the file with `github/codeql-action/upload-sarif`:
 
 ```bash
-node packages/doctor/bin/slipway.mjs doctor . --build _site --format sarif > doctor.sarif
+node packages/doctor/bin/slipway.ts doctor . --build _site --format sarif > doctor.sarif
 ```
 
 A finding with no file, such as a missing output folder, has no location in SARIF; GitHub code scanning does not show those, so read the text or JSON output too. The SARIF test uses a copy of the official schema in `test/sarif-schema-2.1.0.json`.
@@ -65,7 +65,7 @@ When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote
 
 To add a new check, add a file in `src/checks/` (one per check) exporting its `id`, `level` or `warning`, and a `run(site)` function, then document it in `docs/checks/<id>.md` and add it to `tests.json`.
 
-`schema/deprecations.json` is a copy too; `tools/theme/deprecations.mjs` uses the same finder (`slipway/deprecations`).
+`schema/deprecations.json` is a copy too; `tools/theme/deprecations.ts` uses the same finder (`slipway/deprecations`).
 
 ## Generator detection
 

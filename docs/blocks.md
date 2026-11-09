@@ -101,7 +101,7 @@ Use logical properties so the same stylesheet works in left-to-right and right-t
 - `border-inline-start` instead of `border-left`
 - `inset-inline-start` instead of `left`
 
-Use theme tokens (`var(--sl-space-4)`, `var(--sl-color-text)`, and so on) rather than raw values. `node tools/theme/logical-css.mjs` rejects physical direction properties in `assets/css/`, and `npm run check` runs it.
+Use theme tokens (`var(--sl-space-4)`, `var(--sl-color-text)`, and so on) rather than raw values. `node tools/theme/logical-css.ts` rejects physical direction properties in `assets/css/`, and `npm run check` runs it.
 
 Some content always reads left to right, whatever the page direction: code, commands, paths, and URLs. Set `dir="ltr"` on that element inside the include, as `terminal.html` and `endpoint.html` do. Text that should follow the page direction must not set `dir`.
 
@@ -110,7 +110,7 @@ Some content always reads left to right, whatever the page direction: code, comm
 All CSS under `assets/css/**/*.css` must total at most 52 KB (53248 bytes) raw. The budget leaves roughly 10 KB of headroom for each of the twelve blocks tracked in Epic #669. Check it with:
 
 ```sh
-node tools/theme/css-budget.mjs
+node tools/theme/css-budget.ts
 ```
 
 `npm run check` runs the same check. A new block adds one component file; it does not get a larger share of the budget by moving rules into `slipway.css`.
@@ -194,7 +194,7 @@ text: Remember to run the tests.
 
 Test the block's contract, not the whole stylesheet: the root class, each variant, escaping, and the CSS link. The test must reference the block's include; the completeness test checks that, so a test that builds an unrelated page does not count.
 
-`tools/check.mjs` finds every `tools/**/*.test.mjs` file automatically. There is no registry to edit.
+`tools/check.ts` finds every `tools/**/*.test.mjs` file automatically. There is no registry to edit.
 
 ## Add a block: end to end
 
@@ -208,8 +208,8 @@ Test the block's contract, not the whole stylesheet: the root class, each varian
    ```sh
    node --test tools/theme/blocks-complete.test.mjs
    node --test tools/theme/block-<name>.test.mjs
-   node tools/theme/css-budget.mjs
-   node tools/theme/logical-css.mjs
+   node tools/theme/css-budget.ts
+   node tools/theme/logical-css.ts
    ```
 
 7. Run `npm run check`. It runs the rest of the theme checks and every build test.

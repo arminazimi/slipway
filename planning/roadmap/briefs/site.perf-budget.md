@@ -4,8 +4,8 @@ A public page with the performance budget and the real numbers from the gates (L
 ## Files
 
 **Create**
-- `tools/perf-report/run.mjs`
-- `tools/perf-report/run.test.mjs`
+- `tools/perf-report/run.ts`
+- `tools/perf-report/run.test.ts`
 - `site/performance.md`
 
 Touch no other file. If one must change, stop and say why in the issue.

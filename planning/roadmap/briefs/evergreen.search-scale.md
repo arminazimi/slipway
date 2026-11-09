@@ -4,8 +4,8 @@ Prove search is fast at Evergreen's size: the index loads only when search opens
 ## Files
 
 **Create**
-- `tools/search-scale/run.mjs`
-- `tools/search-scale/run.test.mjs`
+- `tools/search-scale/run.ts`
+- `tools/search-scale/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

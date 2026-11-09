@@ -4,7 +4,7 @@ description: The public roadmap, milestone by milestone, with every epic and the
 layout: doc
 permalink: /roadmap/
 ---
-<!-- Generated from ROADMAP.md by planning/roadmap/page.mjs. Do not edit by hand. -->
+<!-- Generated from ROADMAP.md by planning/roadmap/page.ts. Do not edit by hand. -->
 
 The plan behind Slipway, milestone by milestone. [ROADMAP.md](https://github.com/arminazimi/slipway/blob/main/ROADMAP.md) is the source of truth; this page is generated from it. Every epic is a tracking issue, and every task is one pull request that adds a small, independently reviewable change. New here? [CONTRIBUTING.md](https://github.com/arminazimi/slipway/blob/main/CONTRIBUTING.md) explains how to claim one.
 

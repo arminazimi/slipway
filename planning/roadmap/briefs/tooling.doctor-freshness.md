@@ -4,9 +4,9 @@
 ## Files
 
 **Edit**
-- `packages/doctor/src/checks/twin-fresh.mjs`
-- `packages/doctor/src/checks/sourcemap-fresh.mjs`
-- `packages/doctor/src/checks/root-links.mjs`
+- `packages/doctor/src/checks/twin-fresh.ts`
+- `packages/doctor/src/checks/sourcemap-fresh.ts`
+- `packages/doctor/src/checks/root-links.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

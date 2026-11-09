@@ -76,7 +76,7 @@ The theme sets `color-scheme`, so `light-dark()` works here, and the file loads 
 - `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, and `--sl-color-rose`, each on `--sl-color-canvas` and on `--sl-color-surface`: at least 4.5:1.
 - `--sl-color-on-rose-fill` on `--sl-color-rose-fill`: at least 4.5:1.
 
-The ratio is `(lighter + 0.05) / (darker + 0.05)` on WCAG relative luminance; `contrastRatio` in `tools/theme/contrast.mjs` is the function the theme's check uses, and its test pins known values. 4.5:1 covers text, 3:1 large text and interface marks. A palette that changes `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, or `--sl-color-line` must change and re-check all of them together.
+The ratio is `(lighter + 0.05) / (darker + 0.05)` on WCAG relative luminance; `contrastRatio` in `tools/theme/contrast.ts` is the function the theme's check uses, and its test pins known values. 4.5:1 covers text, 3:1 large text and interface marks. A palette that changes `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, or `--sl-color-line` must change and re-check all of them together.
 
 ## 5. Add to the theme through the slots
 
@@ -94,9 +94,9 @@ Prefer the `--sl-*` variables to styling `.sl-*` classes: the variables are publ
 From the site folder, validate the config and every front matter block, build, and run the doctor:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.mjs" .
+node "$HOME/.slipway/tools/theme/validate.ts" .
 bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.mjs" doctor . --build _site
+node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
 ```
 
 Each problem is printed as `file:line key: message`. Fix it at that line and run it again. The doctor must keep the level and finding count of your baseline; a finding that names your file is yours to fix. Without a `Gemfile`, push and read the log of the Pages build.

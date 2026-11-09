@@ -36,7 +36,7 @@ It needs Quarto 1.4 or later and Node on the machine for the post-render step. I
 
    ```sh
    quarto render
-   node packages/doctor/bin/slipway.mjs doctor . --build _site
+   node packages/doctor/bin/slipway.ts doctor . --build _site
    ```
 
 Quarto writes the site to `_site` because that is what `starter/_quarto.yml` sets. On an existing site with another output folder, change the `--build` argument.

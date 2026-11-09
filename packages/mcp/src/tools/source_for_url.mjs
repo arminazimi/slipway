@@ -1,4 +1,4 @@
-import { Site } from "../../../doctor/src/site.mjs";
+import { Site } from "../../../doctor/src/site.ts";
 
 const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_modules)\//;
 const isMarkdown = (path) => /\.(md|markdown|html)$/i.test(path);

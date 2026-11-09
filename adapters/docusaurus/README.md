@@ -41,7 +41,7 @@ It needs Docusaurus 3 and has no dependencies of its own. It writes nothing for 
 
    ```sh
    npx docusaurus build
-   node packages/doctor/bin/slipway.mjs doctor <site> --build <site>/build
+   node packages/doctor/bin/slipway.ts doctor <site> --build <site>/build
    ```
 
 ## How it works

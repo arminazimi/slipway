@@ -6,7 +6,7 @@ permalink: /front-matter/
 date: 2026-12-21
 author: Slipway
 ---
-<!-- Generated from schema/front-matter/*.schema.json by tools/theme/front-matter-doc.mjs. Do not edit below this line. -->
+<!-- Generated from schema/front-matter/*.schema.json by tools/theme/front-matter-doc.ts. Do not edit below this line. -->
 
 The keys every page may set (ADR 0003, decision 2). Unknown keys are kept and ignored, never rejected. The layout schemas build on this one.
 

@@ -35,4 +35,4 @@ jobs:
       - name: Comment the failing step
         env:
           GH_TOKEN: ${{ github.token }}
-        run: node tools/ops/ci-feedback.mjs
+        run: node tools/ops/ci-feedback.ts

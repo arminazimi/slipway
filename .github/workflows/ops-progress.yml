@@ -33,6 +33,6 @@ jobs:
           node-version: 24
       # Reads every issue (open and closed) and writes only the progress comment or body.
       - name: Update the progress line
-        run: node tools/ops/progress.mjs --apply
+        run: node tools/ops/progress.ts --apply
         env:
           GH_TOKEN: ${{ github.token }}

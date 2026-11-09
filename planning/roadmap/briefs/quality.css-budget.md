@@ -4,8 +4,8 @@ Sum compressed CSS for the site and fail above 40 KB.
 ## Files
 
 **Create**
-- `tools/css-budget-engine/run.mjs`
-- `tools/css-budget-engine/run.test.mjs`
+- `tools/css-budget-engine/run.ts`
+- `tools/css-budget-engine/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

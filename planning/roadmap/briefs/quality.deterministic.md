@@ -4,8 +4,8 @@ Build twice in different temp folders and fail on any byte difference, naming th
 ## Files
 
 **Create**
-- `tools/deterministic/run.mjs`
-- `tools/deterministic/run.test.mjs`
+- `tools/deterministic/run.ts`
+- `tools/deterministic/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

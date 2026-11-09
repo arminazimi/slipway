@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import * as yaml from "yaml";
-import { Site } from "../../../doctor/src/site.mjs";
-import { splitFrontMatter } from "../../../doctor/src/yaml.mjs";
+import { Site } from "../../../doctor/src/site.ts";
+import { splitFrontMatter } from "../../../doctor/src/yaml.ts";
 import { insideSite } from "../tools.mjs";
 
 export const definition = {

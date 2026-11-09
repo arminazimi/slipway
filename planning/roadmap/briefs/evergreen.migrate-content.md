@@ -4,8 +4,8 @@ Rewrite front matter that changed meaning (old layout names, Liquid in content, 
 ## Files
 
 **Create**
-- `tools/migrate/content.mjs`
-- `tools/migrate/content.test.mjs`
+- `tools/migrate/content.ts`
+- `tools/migrate/content.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

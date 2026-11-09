@@ -1,0 +1,23 @@
+{
+  "//": "Type check for the repository's own tools and planning scripts (tools/, planning/). Packages have their own tsconfig.json. Code converted from JavaScript starts non-strict; tighten a folder to strict when you change it substantially.",
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["esnext", "dom"],
+    "types": ["node"],
+    "strict": false,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["tools/**/*.ts", "planning/**/*.ts"],
+  "exclude": ["**/fixtures/**", "node_modules"]
+}

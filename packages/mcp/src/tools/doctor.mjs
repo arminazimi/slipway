@@ -1,6 +1,6 @@
 import { realpathSync } from "node:fs";
-import { exitCode } from "../../../doctor/src/cli.mjs";
-import { doctor, levels } from "../../../doctor/src/doctor.mjs";
+import { exitCode } from "../../../doctor/src/cli.ts";
+import { doctor, levels } from "../../../doctor/src/doctor.ts";
 import { insideSite } from "../tools.mjs";
 
 export const definition = {

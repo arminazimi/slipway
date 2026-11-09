@@ -4,8 +4,8 @@ Run the engine's link check on both fixtures in CI and fail on any error.
 ## Files
 
 **Create**
-- `tools/links/run.mjs`
-- `tools/links/run.test.mjs`
+- `tools/links/run.ts`
+- `tools/links/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,8 +4,8 @@ Block actions and the page agent menu work by keyboard and screen reader and sta
 ## Files
 
 **Create**
-- `tools/agent-ui/run.mjs`
-- `tools/agent-ui/run.test.mjs`
+- `tools/agent-ui/run.ts`
+- `tools/agent-ui/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

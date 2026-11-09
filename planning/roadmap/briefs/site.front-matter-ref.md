@@ -4,8 +4,8 @@ Generate `site/front-matter.md` from the front matter keys the engine reads.
 ## Files
 
 **Create**
-- `tools/front-matter-ref/run.mjs`
-- `tools/front-matter-ref/run.test.mjs`
+- `tools/front-matter-ref/run.ts`
+- `tools/front-matter-ref/run.test.ts`
 
 **Edit**
 - `site/front-matter.md`

@@ -29,7 +29,7 @@ runs:
       run: |
         set -euo pipefail
         repo_root="$SLIPWAY_PATH"
-        if [ ! -f "$repo_root/packages/doctor/bin/slipway.mjs" ]; then
+        if [ ! -f "$repo_root/packages/doctor/bin/slipway.ts" ]; then
           repo_root="$GITHUB_ACTION_PATH/../.."
         fi
         repo_root="$(cd "$repo_root" && pwd -P)"
@@ -59,7 +59,7 @@ runs:
         set -euo pipefail
         shim_dir="$RUNNER_TEMP/slipway-bin"
         mkdir -p "$shim_dir"
-        cli="$SLIPWAY_REPO_ROOT/packages/doctor/bin/slipway.mjs"
+        cli="$SLIPWAY_REPO_ROOT/packages/doctor/bin/slipway.ts"
         printf '#!/bin/sh\nexec node "%s" "$@"\n' "$cli" > "$shim_dir/slipway"
         chmod +x "$shim_dir/slipway"
         # cmd.exe and PowerShell find slipway through PATHEXT; bash finds the shim above.

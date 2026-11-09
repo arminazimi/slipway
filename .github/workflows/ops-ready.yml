@@ -37,4 +37,4 @@ jobs:
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ github.token }}
-        run: node tools/ops/ready.mjs
+        run: node tools/ops/ready.ts

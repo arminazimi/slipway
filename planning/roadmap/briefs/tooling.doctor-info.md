@@ -4,9 +4,9 @@ These commands read `slipway.yml`; `pin` pins the npm package version instead of
 ## Files
 
 **Edit**
-- `packages/doctor/src/commands/info.mjs`
-- `packages/doctor/src/commands/pin.mjs`
-- `packages/doctor/src/commands/translate.mjs`
+- `packages/doctor/src/commands/info.ts`
+- `packages/doctor/src/commands/pin.ts`
+- `packages/doctor/src/commands/translate.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -7,8 +7,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { doctor } from "../../../packages/doctor/src/doctor.mjs";
-import { validateSourcemap } from "../../../tools/theme/sourcemap.mjs";
+import { doctor } from "../../../packages/doctor/src/doctor.ts";
+import { validateSourcemap } from "../../../tools/theme/sourcemap.ts";
 import { headingsIn, linksIn, splitFrontMatter, titleOf, twinOf, twinUrl } from "../_extensions/slipway/markdown.mjs";
 import { writeSite } from "../_extensions/slipway/post-render.mjs";
 

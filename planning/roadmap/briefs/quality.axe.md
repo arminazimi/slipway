@@ -4,8 +4,8 @@ Run axe on every layout and on one page per component, in light and dark.
 ## Files
 
 **Create**
-- `tools/axe/run.mjs`
-- `tools/axe/run.test.mjs`
+- `tools/axe/run.ts`
+- `tools/axe/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

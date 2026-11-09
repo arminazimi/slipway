@@ -4,8 +4,8 @@ Playwright tests that a keyboard user can skip to content, use the sidebar, open
 ## Files
 
 **Create**
-- `tools/keyboard/run.mjs`
-- `tools/keyboard/run.test.mjs`
+- `tools/keyboard/run.ts`
+- `tools/keyboard/run.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

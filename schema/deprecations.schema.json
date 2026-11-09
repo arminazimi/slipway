@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/arminazimi/slipway/schema/deprecations.schema.json",
   "title": "Slipway deprecations",
-  "description": "schema/deprecations.json: every renamed config key and front-matter field that still works and warns (ADR 0012, rule 4). tools/theme/deprecations.mjs reads it to warn, and _includes/compat.html reads the old name when the new one is unset.",
+  "description": "schema/deprecations.json: every renamed config key and front-matter field that still works and warns (ADR 0012, rule 4). tools/theme/deprecations.ts reads it to warn, and _includes/compat.html reads the old name when the new one is unset.",
   "type": "object",
   "required": [
     "deprecations"
