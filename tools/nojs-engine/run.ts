@@ -88,8 +88,8 @@ function region(html: string, tag: string, name: string): string | undefined {
 /** The text a reader sees: scripts, styles, and tags removed. */
 function textOf(html: string): string {
   return html
-    .replace(/<script\b[\s\S]*?<\/script\s*>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style\s*>/gi, " ")
+    .replace(/<script\b[\s\S]*?<\/script[^>]*>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style[^>]*>/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&[a-z#0-9]+;/gi, " ")
     .replace(/\s+/g, " ")
