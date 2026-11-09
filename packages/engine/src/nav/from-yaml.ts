@@ -20,6 +20,11 @@ export interface NavFromYamlOptions {
    * warning with the YAML line. Leave it out to check only the shape of the file.
    */
   readonly pages?: ReadonlySet<string>;
+  /**
+   * Site `base` from config: a path starting with `/` and without a trailing slash, or `""` at a domain root.
+   * Navigation URLs are written without it and the engine adds it (ADR 0024).
+   */
+  readonly base?: string;
 }
 
 /** What {@link navFromYaml} read from a navigation file. */
@@ -35,7 +40,15 @@ interface Context {
   readonly file: string;
   readonly lineCounter: LineCounter;
   readonly pages: ReadonlySet<string> | undefined;
+  readonly base: string;
   readonly diagnostics: Diagnostics;
+}
+
+/** Prefix a site-local `url` with `base`. `base` is `""` or `/docs`-shaped (no trailing slash). */
+function withBase(base: string, url: string): string {
+  if (base === "") return url;
+  if (url === "/") return `${base}/`;
+  return `${base}${url}`;
 }
 
 function posOf(ctx: Context, node: Node | null | undefined): SourcePos {
@@ -90,7 +103,9 @@ function link(ctx: Context, map: YAMLMap): NavLink | undefined {
     });
     return undefined;
   }
-  if (url.startsWith("/") && ctx.pages !== undefined && !ctx.pages.has(url)) {
+  const siteLocal = url.startsWith("/");
+  const href = siteLocal ? withBase(ctx.base, url) : url;
+  if (siteLocal && ctx.pages !== undefined && !ctx.pages.has(href)) {
     ctx.diagnostics.warn("nav.unknown-url", `No page at \`${url}\`.`, {
       pos: posOf(ctx, urlNode),
       help: "Link to a page that exists, or add the page.",
@@ -104,7 +119,7 @@ function link(ctx: Context, map: YAMLMap): NavLink | undefined {
     return undefined;
   }
 
-  return { title, url, ...(match === undefined ? {} : { match }) };
+  return { title, url: href, ...(match === undefined ? {} : { match: withBase(ctx.base, match) }) };
 }
 
 /** Reads one entry of a list: a link, or a group of links. Returns undefined after reporting why it is neither. */
@@ -164,13 +179,20 @@ function entry(ctx: Context, node: Node): NavItem | undefined {
  *
  * Every problem carries the YAML line it is on. A malformed URL, an unknown key, an unknown list, or an invalid entry is an
  * error and that entry is left out; the rest of the file still loads. A site-local URL that is not in `options.pages` is a
- * warning. `file` names the file in diagnostic positions.
+ * warning. Site-local URLs and `match` prefixes are returned with `options.base` in front (ADR 0024). `file` names the
+ * file in diagnostic positions.
  */
 export function navFromYaml(text: string, file: string, options: NavFromYamlOptions = {}): NavFromYamlResult {
   const source = text.replace(/^﻿/, "");
   const lineCounter = new LineCounter();
   const doc = parseDocument(source, { lineCounter });
-  const ctx: Context = { file, lineCounter, pages: options.pages, diagnostics: createDiagnostics() };
+  const ctx: Context = {
+    file,
+    lineCounter,
+    pages: options.pages,
+    base: options.base ?? "",
+    diagnostics: createDiagnostics(),
+  };
 
   if (doc.errors.length > 0) {
     for (const error of doc.errors) {

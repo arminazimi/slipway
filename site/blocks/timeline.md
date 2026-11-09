@@ -1,7 +1,7 @@
 ---
 title: Timeline block
 description: A timeline of dated events, such as a release history or project milestones.
-layout: page
+layout: doc
 events:
   - date: 2026-11-23
     title: Phase 3 begins

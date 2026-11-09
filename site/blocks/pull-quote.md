@@ -1,7 +1,7 @@
 ---
 title: Pull Quote block
 description: An editorial pull quote with attribution and an optional source link.
-layout: page
+layout: doc
 ---
 
 {::nomarkdown}{% include component-css.html name="pull-quote" %}{:/nomarkdown}
