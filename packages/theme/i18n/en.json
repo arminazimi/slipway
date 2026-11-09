@@ -25,6 +25,7 @@
   "copy": "Copy",
   "copy_failed": "Press Ctrl+C",
   "copy_failed_select": "Copy failed. Select the text and copy it by hand.",
+  "copy_markdown_hint": "Press M to copy",
   "copy_page_md": "Copy page as Markdown",
   "default": "Default",
   "deprecated": "Deprecated",
@@ -91,5 +92,6 @@
   "version_changed": "Changed in version {version}",
   "version_removed": "Removed in version {version}",
   "versions": "Versions",
+  "view_markdown": "View Markdown",
   "yes": "Yes"
 }

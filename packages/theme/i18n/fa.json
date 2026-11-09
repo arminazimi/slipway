@@ -25,6 +25,7 @@
   "copy": "کپی",
   "copy_failed": "Ctrl+C را بزنید",
   "copy_failed_select": "کپی نشد. متن را انتخاب کنید و دستی کپی کنید.",
+  "copy_markdown_hint": "برای کپی M را بزنید",
   "copy_page_md": "کپی صفحه به صورت مارک‌داون",
   "default": "پیش‌فرض",
   "deprecated": "Deprecated",
@@ -91,5 +92,6 @@
   "version_changed": "تغییر کرد در نسخهٔ {version}",
   "version_removed": "حذف شد در نسخهٔ {version}",
   "versions": "Versions",
+  "view_markdown": "مشاهده مارک‌داون",
   "yes": "بله"
 }
