@@ -44,6 +44,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
 | [Link card](./link-card/) | One link that reads as a card, for next steps and related pages. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
+| [OS tabs](./os-tabs/) | Install instructions grouped by operating system, defaulting to the reader's system. |
 | [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
