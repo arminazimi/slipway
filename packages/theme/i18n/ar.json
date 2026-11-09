@@ -93,6 +93,7 @@
   "status_beta": "Beta",
   "status_deprecated": "Deprecated",
   "status_experimental": "Experimental",
+  "status_old_version": "Old version",
   "status_replaced_by": "Replaced by",
   "status_since": "Since",
   "superseded": "Superseded",
