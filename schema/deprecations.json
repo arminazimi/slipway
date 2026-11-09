@@ -1,4 +1,35 @@
 {
   "$schema": "./deprecations.schema.json",
-  "deprecations": []
+  "deprecations": [
+    { "kind": "config", "old": "baseurl", "new": "base", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "direction", "new": "dir", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "github", "new": "repository.url", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics", "new": "theme.options.analytics", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics.goatcounter", "new": "theme.options.analytics.goatcounter", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics.plausible", "new": "theme.options.analytics.plausible", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics.umami", "new": "theme.options.analytics.umami", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics.umami.url", "new": "theme.options.analytics.umami.url", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.analytics.umami.website_id", "new": "theme.options.analytics.umami.website_id", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.arabic", "new": "theme.options.arabic", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.arabic.digits", "new": "theme.options.arabic.digits", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.fonts", "new": "theme.options.fonts", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.header", "new": "theme.options.header", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.languages", "new": "languages", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.logo", "new": "theme.options.logo", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.logo.dark", "new": "theme.options.logo.dark", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.logo.favicon_svg", "new": "theme.options.logo.favicon_svg", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.logo.light", "new": "theme.options.logo.light", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.logo.touch_icon", "new": "theme.options.logo.touch_icon", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.persian", "new": "theme.options.persian", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.persian.digits", "new": "theme.options.persian.digits", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.search", "new": "search", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.search.text", "new": "search.text", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.source_dir", "new": "repository.dir", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens", "new": "theme.options.tokens", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens.accent", "new": "theme.options.tokens.accent", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens.canvas", "new": "theme.options.tokens.canvas", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens.font_body", "new": "theme.options.tokens.font_body", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens.radius", "new": "theme.options.tokens.radius", "since": "0.3.0", "removed_in": "0.4.0" },
+    { "kind": "config", "old": "slipway.tokens.text", "new": "theme.options.tokens.text", "since": "0.3.0", "removed_in": "0.4.0" }
+  ]
 }

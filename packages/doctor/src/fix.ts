@@ -1,6 +1,9 @@
-import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+/** The dotted path without its last key, such as `slipway.tokens` for `slipway.tokens.radius`. */
+const parentOf = (path) => path.split(".").slice(0, -1).join(".");
 
 /**
  * Generates a simple unified diff for a single file.
@@ -64,9 +67,13 @@ export function applyFixes(report, sourceDir, options = { dryRun: false }) {
     // Sort findings by line in reverse order, though for single-line replacements it might not matter if they are on different lines.
     // However, if multiple replacements happen on the same line, this simple replace might be tricky.
     // The deprecation check typically gives one key per line.
-    for (const finding of fileFindings) {
+    for (const finding of [...fileFindings].sort((a, b) => b.line - a.line)) {
       const lineIdx = finding.line - 1;
       if (lineIdx >= 0 && lineIdx < lines.length) {
+        // A rename inside the same block (baseurl -> base) is one edit on one line. A move to another
+        // block (slipway.source_dir -> repository.dir) changes the YAML structure, so it is reported
+        // for a person instead of guessed at.
+        if (parentOf(finding.old) !== parentOf(finding.new)) continue;
         // Only replace the key part, which is usually the last part of old
         const oldKey = finding.old.split(".").pop();
         const newKey = finding.new.split(".").pop();
