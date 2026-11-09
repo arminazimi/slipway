@@ -1,8 +1,10 @@
 name: ci
 
-# Mizzen and Lateen are TypeScript on Node's built-in type stripping, so CI needs Node and nothing else:
-# no Ruby, no browser, and no Seaworthy checkout. `npm run check` runs the roadmap check, every test, the type check of
-# each workspace, and the fixed checks; steps that need a missing optional tool print SKIP when they are missing.
+# Two jobs. `check` is Node only and runs on every pull request: the roadmap check, every test, the type
+# check of each workspace, and the fixed checks. Steps that need a missing optional tool print SKIP.
+# `browser` installs Chromium once, caches it between runs, and runs the gates that need it:
+# `tools/{lighthouse,axe,keyboard,visual,nojs-engine}/run.ts`. `npm run check` skips those five through
+# SLIPWAY_SKIP_TOOLS, so the fast job never waits for a browser.
 on:
   push:
     branches: [main]
@@ -25,6 +27,9 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
+    env:
+      # The browser job runs these gates. Skipping them here keeps this job Node-only and fast.
+      SLIPWAY_SKIP_TOOLS: lighthouse,axe,keyboard,visual,nojs-engine
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -37,12 +42,76 @@ jobs:
       - run: npm ci
       - run: npm run check
 
+  browser:
+    name: browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    env:
+      CI: "true"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      # Playwright downloads its browsers into ~/.cache/ms-playwright. The key names the installed
+      # Playwright version, so a cached browser is reused until the dependency moves.
+      - id: playwright
+        run: echo "version=$(node -p 'require("playwright-core/package.json").version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      # playwright-core has the same CLI; the repository has no `playwright` package.
+      - run: npx --no-install playwright-core install --with-deps chromium
+      # Each gate is its own step, so the job shows which one failed. The tools print their report and
+      # write no files, so the step keeps that output in `.tmp/browser/` for the artifact below.
+      # `pipefail` keeps tee from hiding a gate's exit code.
+      - name: Lighthouse budgets
+        run: |
+          set -o pipefail
+          mkdir -p .tmp/browser
+          node tools/lighthouse/run.ts 2>&1 | tee .tmp/browser/lighthouse.log
+      - name: Accessibility (axe)
+        run: |
+          set -o pipefail
+          mkdir -p .tmp/browser
+          node tools/axe/run.ts 2>&1 | tee .tmp/browser/axe.log
+      - name: Keyboard flows
+        run: |
+          set -o pipefail
+          mkdir -p .tmp/browser
+          node tools/keyboard/run.ts 2>&1 | tee .tmp/browser/keyboard.log
+      - name: Visual regression
+        run: |
+          set -o pipefail
+          mkdir -p .tmp/browser
+          node tools/visual/run.ts 2>&1 | tee .tmp/browser/visual.log
+      - name: No JavaScript
+        run: |
+          set -o pipefail
+          mkdir -p .tmp/browser
+          node tools/nojs-engine/run.ts 2>&1 | tee .tmp/browser/nojs-engine.log
+      - name: Upload the gate reports
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browser-gate-reports
+          path: .tmp/browser
+          if-no-files-found: ignore
+          retention-days: 7
+
   # The one check branch protection and the merge queue require. It runs even when a job it
   # needs failed or was cancelled, and fails unless every one of them succeeded.
   ci-ok:
     name: ci-ok
     if: always()
-    needs: [check]
+    needs: [check, browser]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
