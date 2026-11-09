@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@velella/mizzen": "0.3.0-dev"
+    "@velella/mizzen": "0.3.0-dev",
+    "shiki": "^4.6.0"
   },
   "peerDependencies": {
     "preact": "^10.0.0"
