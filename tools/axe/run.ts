@@ -122,6 +122,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   "schema-table": 'class="schema-table',
   steps: 'class="steps"',
   table: "<table",
+  tags: 'class="tags"',
   terminal: 'class="terminal',
 };
 
