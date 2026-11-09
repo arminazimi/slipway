@@ -5,9 +5,16 @@ import { decorateLines, HIGHLIGHT_CLASS, isHighlighted, LINE_CLASS } from "../co
 /** Shiki's inner HTML for three lines, one `span.line` each, joined by `\n`. */
 const SHIKI = '<span class="line"><span style="color:#111">a</span></span>\n<span class="line">b</span>\n<span class="line"></span>';
 
-/** The visible text of an HTML fragment: tags dropped. */
+/** The visible text of an HTML fragment: characters outside tags, scanned one at a time. */
 function textOf(html: string): string {
-  return html.replace(/<[^>]*>/g, "");
+  let text = "";
+  let inTag = false;
+  for (const char of html) {
+    if (char === "<") inTag = true;
+    else if (char === ">" && inTag) inTag = false;
+    else if (!inTag) text += char;
+  }
+  return text;
 }
 
 test("isHighlighted covers single lines and inclusive ranges", () => {
