@@ -174,7 +174,7 @@ test("slots land in their landmarks in document order", () => {
     footer: h("span", null, "F"),
   });
   assert.match(html, /<header><span>H<\/span><\/header>/);
-  assert.match(html, /<aside class="sidebar" aria-label="Site navigation"><nav>S<\/nav><\/aside>/);
+  assert.match(html, /<aside class="sidebar" id="site-navigation" aria-label="Site navigation"><nav>S<\/nav><\/aside>/);
   assert.match(html, /<main[^>]*>M<\/main>/);
   assert.match(html, /<aside class="aside" aria-label="On this page"><nav>A<\/nav><\/aside>/);
   assert.match(html, /<footer><span>F<\/span><\/footer>/);

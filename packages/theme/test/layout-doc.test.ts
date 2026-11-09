@@ -117,6 +117,16 @@ test("the body, page footer, and pager follow the title inside the article", () 
   );
 });
 
+test("the copy-Markdown control follows the page footer and stays before the pager", () => {
+  const page = out(pageWith());
+  const article = /<article class="doc"[^>]*>(.*?)<\/article>/s.exec(page);
+  assert.ok(article, "article present");
+  assert.match(
+    article[1] ?? "",
+    /<div class="page-footer">[\s\S]*<\/div><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
+  );
+});
+
 test("the breadcrumb leads the article and repeats the trail, end at the current page", () => {
   const trail = [
     { title: "Guides", url: "/guide/" },
@@ -130,7 +140,7 @@ test("the breadcrumb leads the article and repeats the trail, end at the current
 test("the sidebar renders in the site-navigation aside and the toc in the on-this-page aside", () => {
   const nav = [{ title: "Guides", children: [{ title: "Install", url: "/guide/install/" }] }];
   const page = out(pageWith({ headings: [heading(2, "Pick a mode"), heading(3, "Gem")] }), nav);
-  assert.match(page, /<aside class="sidebar" aria-label="Site navigation"><nav class="sidebar-nav"/);
+  assert.match(page, /<aside class="sidebar" id="site-navigation" aria-label="Site navigation"><nav class="sidebar-nav"/);
   assert.match(page, /<aside class="aside" aria-label="On this page"><aside class="toc" aria-label="On this page">/);
   assert.match(page, /<details class="toc-fold"><summary>On this page<\/summary>/);
 });

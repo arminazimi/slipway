@@ -31,6 +31,8 @@ main:
         url: /components/callout/
       - title: Cards
         url: /components/cards/
+      - title: Changelog entry
+        url: /components/changelog-entry/
       - title: Code
         url: /components/code/
       - title: Code tabs
