@@ -33,6 +33,11 @@ test("bodyText keeps line breaks, drops tags, and decodes entities", () => {
   assert.equal(bodyText('<pre data-src="a.md:1"><code class="language-sh">$ ls\nout\n</code></pre>'), "$ ls\nout");
 });
 
+test("bodyText drops tags that a first pass would rebuild", () => {
+  assert.doesNotMatch(bodyText("<scrip<script>t>alert(1)"), /<[^>]*>/);
+  assert.doesNotMatch(bodyText("<<b>b>x<<i>/i>"), /<[^>]*>/);
+});
+
 test("parseLines marks $ lines as commands and strips the prompt and one space", () => {
   assert.deepEqual(parseLines("$ npm ci\nadded\n$ \n$npm test"), [
     { kind: "command", text: "npm ci" },

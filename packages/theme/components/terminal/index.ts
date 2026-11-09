@@ -34,13 +34,27 @@ function decode(text: string): string {
 }
 
 /**
+ * Drops every tag, repeating until none is left: removing one tag can join the pieces of another
+ * (`<scrip<script>t>` becomes `<script>` after one pass), so a single pass is not enough.
+ */
+function stripTags(html: string): string {
+  let text = html;
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(/<[^>]*>/g, "");
+  } while (text !== previous);
+  return text;
+}
+
+/**
  * The plain text of a rendered body, with its line breaks kept: `<br>` and the end of a block become
  * newlines, every tag is dropped, and entities are decoded. Trailing newlines are removed. Works for a
  * paragraph of lines and for a fenced block inside `:::terminal` alike.
  */
 export function bodyText(html: string): string {
   const withBreaks = html.replace(/<br\s*\/?>/gi, "\n").replace(/<\/(?:p|pre|li|div)>/gi, "\n");
-  return decode(withBreaks.replace(/<[^>]*>/g, ""))
+  return decode(stripTags(withBreaks))
     .replace(/\r\n?/g, "\n")
     .replace(/\n+$/, "");
 }
