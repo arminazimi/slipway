@@ -9,7 +9,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { test } from "node:test";
 import { parseDocument, visit } from "yaml";
-import { root } from "../theme/tokens.ts";
+import { root } from "../root.ts";
 
 /** Folders that never hold a workflow or action of this repository. */
 const skipped = new Set(["node_modules", "vendor", ".git", ".qoder", "_site", ".seaworthy", ".tmp", "coverage"]);

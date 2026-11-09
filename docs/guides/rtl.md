@@ -107,7 +107,7 @@ Write this logical rule:
 
 The theme enforces this convention. Run `npm run check:logical` to find any physical properties in your CSS files; the check will fail if they are present.
 
-If you are styling components, review the available tokens in the [Theme Tokens](../tokens.md) guide rather than repeating colors or spacing manually.
+If you are styling components, review the available tokens in the [theme's token registry](../../packages/theme/tokens/README.md) rather than repeating colors or spacing manually.
 
 ## 5. Mixed-direction content
 

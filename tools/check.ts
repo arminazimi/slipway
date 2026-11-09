@@ -14,13 +14,13 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
-import { root } from "./theme/tokens.ts";
+import { root } from "./root.ts";
 
 /** run.mjs files that write files or are libraries rather than checks (their tests cover them). */
 export const notChecks = new Set(["html-validate", "sourcemap", "twins"]);
 
 /** Checks without a run.mjs, in the order they run after the tests. */
-export const fixedChecks = ["brand", "tokens", "contrast", "logical", "js", "css", "schemas", "docs"];
+export const fixedChecks = ["brand", "logical", "js", "css", "schemas", "docs"];
 
 const dirs = (path) => (existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []);
 /** Jekyll is being removed (cleanup.jekyll-theme): nothing that builds a site with it belongs in `npm run check`. */
