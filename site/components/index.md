@@ -42,6 +42,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Kbd](./kbd/) | A keyboard key or key combination. |
 | [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
+| [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
