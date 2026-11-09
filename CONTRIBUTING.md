@@ -19,6 +19,8 @@ Comment on the issue to claim it. If you go quiet for a week, someone else may p
 
 ## Do it
 
+All new code is TypeScript (`.ts`): see "TypeScript only" in [AGENTS.md](AGENTS.md).
+
 1. Read [AGENTS.md](AGENTS.md).
 2. Follow the issue's agent brief, if it has one. If not, comment with a short plan first.
 3. Keep the PR to that one issue.

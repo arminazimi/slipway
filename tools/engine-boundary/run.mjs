@@ -31,9 +31,12 @@ function walk(dir, out = []) {
   return out.sort();
 }
 
+/** Layout folder names that are ordinary words the engine uses itself (`base` is a config key), so they are not deny-listed. */
+const GENERIC_LAYOUTS = new Set(["base"]);
+
 export function layoutNames(repo = root) {
   const dir = join(repo, "packages/theme/layouts");
-  const found = existsSync(dir) ? readdirSync(dir).map((f) => f.replace(/\.[^.]+$/, "")).filter((n) => n && n.toLowerCase() !== "readme") : [];
+  const found = existsSync(dir) ? readdirSync(dir).map((f) => f.replace(/\.[^.]+$/, "")).filter((n) => n && n.toLowerCase() !== "readme" && !GENERIC_LAYOUTS.has(n.toLowerCase())) : [];
   return [...new Set([...baseLayouts, ...found])];
 }
 

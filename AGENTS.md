@@ -21,9 +21,9 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 
 ## CI
 
-`.github/workflows/release.yml` runs on a `v*` tag: it checks the tag against the gemspec, runs `npm run check`, and creates the GitHub release from `CHANGELOG.md`, then its `publish-gem` job pushes the gem to RubyGems through trusted publishing (the `rubygems` environment). Agents never run it or push a tag; no other package is published.
+Releases are tagged by maintainers (CONTRIBUTING.md, "Releasing"); there is no release workflow while Mizzen and Lateen are unpublished (`tooling.release-tool` adds one). Agents never push a tag; no package is published.
 
-`.github/workflows/ci.yml` runs `npm run check` in the GitHub Pages environment: the Ruby in `.ruby-version`, the `github-pages` gem from `Gemfile.lock` (Jekyll and the whitelisted plugins), and Node 22. It sets `SLIPWAY_REQUIRE_BUILD=1`, so a missing Ruby fails instead of skipping.
+`.github/workflows/ci.yml` runs `npm run check` on Node 24 and nothing else: no Ruby, Jekyll, or browser (`cleanup.ci-ruby`), so the site build and the browser tools print SKIP there until Mizzen builds the examples.
 
 ## Layout
 
@@ -67,6 +67,7 @@ Up to 20 tasks run at once and merge in any order ([ADR 0023](docs/adr/0023-engi
 
 ## Rules
 
+- **TypeScript only.** All new code is TypeScript (`.ts`), run by Node's built-in type stripping with `erasableSyntaxOnly` (no enums, namespaces, or parameter properties) and checked by `tsc --noEmit`. No new `.js`, `.mjs`, `.cjs`, Ruby, or Liquid files, in packages, tools, tests, and scripts alike. Write Preact with `h()`, not JSX, so files stay `.ts`. When you change a legacy `.mjs` file substantially, convert it in the same pull request. The only exceptions are files a platform requires in another format (`action.yml`, workflow YAML, JSON data, CSS) and client scripts under `assets/js/` until the engine replaces them. If a brief names a `.js`, `.mjs`, or `.tsx` file, write `.ts` instead and ask a maintainer for `scope: wide`.
 - One issue = one pull request, with `Closes #<issue>`.
 - **TypeScript only.** All new code is TypeScript (`.ts`) run by Node's type stripping, with erasable syntax only (no `enum`, `namespace`, parameter properties, or decorators), checked by `tsc --noEmit` ([ADR 0022](docs/adr/0022-engine.md)). Write Preact with `h()`, never JSX, so there are no `.tsx` files. This covers packages, tools (`tools/<name>/run.ts`), tests (`*.test.ts`), and scripts. Legacy `.js` and `.mjs` files are not converted for their own sake: code that is out of scope is deleted, not converted; a legacy file that stays and needs a substantial change is converted to `.ts` in the same pull request. If a brief or issue names a `.js`, `.mjs`, or `.tsx` file, write `.ts` instead. Only client scripts under `assets/js/` are exempt until the engine replaces them. `tools/ts-only/run.ts` fails on any new JavaScript or `.tsx` file; never add a line to `tools/ts-only/legacy.txt`.
 - Nothing a Slipway site needs may depend on Seaworthy before 1.0; Slipway's own CI runs it only as a regression net. Keep the dependency one-way and use only its public contracts: the CLI, the Action, the report format, and the specs. Never copy its code.
