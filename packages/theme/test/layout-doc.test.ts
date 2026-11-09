@@ -153,3 +153,36 @@ test("empty navigation leaves the sidebar and drawer out without breaking the pa
   assert.match(page, /^<html lang="en" dir="ltr"/);
   assert.match(page, /<a class="skip-link" href="#main">Skip to content<\/a>/);
 });
+
+test("the status banner from front matter sits between the breadcrumb and the title", () => {
+  const page = out(pageWith({ frontMatter: { status: "beta" } }));
+  assert.match(
+    page,
+    /<article class="doc"[^>]*><div class="page-status page-status-beta" role="note"><strong class="page-status-label">Beta<\/strong>[\s\S]*?<\/div><h1>Install<\/h1>/,
+  );
+});
+
+test("the banner shows `since`, and a deprecated page links to its replacement", () => {
+  const page = out(
+    pageWith({ frontMatter: { status: "deprecated", since: "0.3.0", replaced_by: "/guide/new-install/" } }),
+  );
+  assert.match(page, /<span class="page-status-since">Since 0\.3\.0<\/span>/);
+  assert.match(
+    page,
+    /<a class="page-status-replacement" href="\/guide\/new-install\/">Go to the replacement<\/a>/,
+  );
+});
+
+test("the banner renders above the body's own h1, which the layout still leaves out", () => {
+  const page = out(
+    pageWith({ frontMatter: { status: "experimental" }, headings: [heading(1, "Install")] }),
+  );
+  assert.match(page, /class="page-status page-status-experimental"/);
+  assert.doesNotMatch(page, /<h1>/);
+});
+
+test("a status with no banner, and a non-string `since`, leave the page as they found it", () => {
+  const page = out(pageWith({ frontMatter: { status: "accepted", since: 3 } }));
+  assert.doesNotMatch(page, /page-status/);
+  assert.match(page, /<article class="doc"[^>]*><h1>Install<\/h1>/);
+});
