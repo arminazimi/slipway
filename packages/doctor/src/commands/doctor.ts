@@ -18,6 +18,7 @@ Options:
   --explain [<id>]     print the check's page, or list all checks
   --build <dir>        the built output folder; tests on the output fail without it
   --format <format>    text, json, or sarif (default: text)
+  --json               shorthand for --format json
   --level L0|L1|L2|L3  exit 0 when this level is reached (default: every MUST passes)
   --network            fetch https schemas named in content-schemas.json
   --fix                automatically fix safe cases (e.g., missing stubs, deprecated keys)
@@ -32,6 +33,8 @@ export function parseArgs(args) {
   if (command === "-h" || command === "--help" || command === "help") return { help: true };
   if (command !== id) return { error: command ? `unknown command: ${command}` : "missing command" };
   const options = { format: "text", network: false, build: null, level: null, source: null, fix: false, dryRun: false, explain: null, explainGiven: false };
+  let formatGiven = false;
+  let json = false;
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
     const value = () => {
@@ -42,7 +45,11 @@ export function parseArgs(args) {
     try {
       if (arg === "-h" || arg === "--help") return { help: true };
       else if (arg === "--build") options.build = value();
-      else if (arg === "--format") options.format = value();
+      else if (arg === "--format") {
+        options.format = value();
+        formatGiven = true;
+      }
+      else if (arg === "--json") json = true;
       else if (arg === "--level") options.level = value();
       else if (arg === "--network") options.network = true;
       else if (arg === "--fix") options.fix = true;
@@ -63,6 +70,12 @@ export function parseArgs(args) {
     }
   }
   if (!options.explainGiven && options.source === null) return { error: "missing <source-dir>" };
+  if (json) {
+    if (formatGiven && options.format !== "json") {
+      return { error: `--json cannot be combined with --format ${options.format}` };
+    }
+    options.format = "json";
+  }
   if (!formats.includes(options.format)) return { error: `--format must be text, json, or sarif, not ${options.format}` };
   if (options.level !== null && !levels.includes(options.level)) return { error: `--level must be one of ${levels.join(", ")}` };
   return { options };
