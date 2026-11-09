@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, and `mizzen verify`: build a site, report diagnostics, or check a build (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, and `mizzen verify`: build a site, report diagnostics, serve it while developing, or check a build (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -8,6 +8,7 @@ import { loadConfig } from "../config/load.ts";
 import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
+import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
 import { verify, verifyMessage } from "./verify.ts";
 
 /** The command name on the PATH (ADR 0025). */
@@ -27,13 +28,16 @@ export const usage = `Usage: ${NAME} <command> [dir] [options]
 Commands:
   build [dir]   Build the site into --out (default: dist)
   check [dir]   Build to a temp folder and print diagnostics only
+  dev [dir]     Serve the site, rebuild on change, and reload the browser
   verify [dir]  Check a built folder against the hash in its manifest
 
 Options:
-  --out <dir>          Output folder for build (default: dist)
+  --out <dir>          Output folder for build (default: dist) or dev (default: .slipway/dev)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --port <number>      Port for dev (default: 3000; 0 picks a free one)
+  --host <host>        Host for dev (default: 127.0.0.1)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.`;
@@ -57,6 +61,15 @@ type CheckOpts = {
   readonly theme?: string;
 };
 
+type DevOpts = {
+  readonly command: "dev";
+  readonly root: string;
+  readonly out?: string;
+  readonly port: number;
+  readonly host: string;
+  readonly theme?: string;
+};
+
 type VerifyOpts = {
   readonly command: "verify";
   readonly root: string;
@@ -66,7 +79,7 @@ type VerifyOpts = {
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts | VerifyOpts };
+  | { readonly options: BuildOpts | CheckOpts | DevOpts | VerifyOpts };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -123,7 +136,7 @@ export function parseArgs(args: readonly string[]): Parsed {
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command !== "build" && command !== "check" && command !== "verify") {
+  if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify") {
     return { error: `unknown command: ${command}` };
   }
 
@@ -132,6 +145,8 @@ export function parseArgs(args: readonly string[]): Parsed {
   let theme: string | undefined;
   let format: Format = "text";
   let hash: string | undefined;
+  let port: number = DEFAULT_DEV_PORT;
+  let host: string = DEFAULT_DEV_HOST;
 
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i]!;
@@ -143,10 +158,10 @@ export function parseArgs(args: readonly string[]): Parsed {
     try {
       if (arg === "-h" || arg === "--help") return { help: true };
       if (arg === "--out") {
-        if (command !== "build") return { error: "--out is only valid for build" };
+        if (command !== "build" && command !== "dev") return { error: "--out is only valid for build and dev" };
         out = value();
       } else if (arg === "--theme") {
-        if (command === "verify") return { error: "--theme is only valid for build and check" };
+        if (command === "verify") return { error: "--theme is only valid for build, check, and dev" };
         theme = value();
       } else if (arg === "--format") {
         if (command !== "check") return { error: "--format is only valid for check" };
@@ -162,6 +177,17 @@ export function parseArgs(args: readonly string[]): Parsed {
           return { error: `--hash must be 64 lowercase hexadecimal characters, not ${raw}` };
         }
         hash = raw;
+      } else if (arg === "--port") {
+        if (command !== "dev") return { error: "--port is only valid for dev" };
+        const raw = value();
+        const parsed = Number(raw);
+        if (!/^\d+$/.test(raw) || !Number.isInteger(parsed) || parsed > 65535) {
+          return { error: `--port must be a whole number from 0 to 65535, not ${raw}` };
+        }
+        port = parsed;
+      } else if (arg === "--host") {
+        if (command !== "dev") return { error: "--host is only valid for dev" };
+        host = value();
       } else if (arg.startsWith("-")) {
         return { error: `unknown option: ${arg}` };
       } else if (root === undefined) {
@@ -181,6 +207,18 @@ export function parseArgs(args: readonly string[]): Parsed {
         command: "build",
         root: dir,
         out: out ?? "dist",
+        ...(theme === undefined ? {} : { theme }),
+      },
+    };
+  }
+  if (command === "dev") {
+    return {
+      options: {
+        command: "dev",
+        root: dir,
+        ...(out === undefined ? {} : { out }),
+        port,
+        host,
         ...(theme === undefined ? {} : { theme }),
       },
     };
@@ -261,6 +299,38 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       `${NAME}: no theme root. Pass --theme <dir>, or set theme.name in the site config to a folder or package.\n\n${usage}`,
     );
     return 2;
+  }
+
+  if (options.command === "dev") {
+    // A default --out stays inside the site (and hidden, so discovery skips it); an explicit one is from the cwd.
+    const out = options.out === undefined ? join(root, DEFAULT_DEV_OUT) : resolve(options.out);
+    try {
+      const server = await dev({
+        root,
+        out,
+        themeRoot,
+        defaultLayout: DEFAULT_LAYOUT,
+        port: options.port,
+        host: options.host,
+        log,
+      });
+      log(`mizzen dev: serving ${server.url}`);
+      const stop = (): void => {
+        void server.close();
+      };
+      process.once("SIGINT", stop);
+      process.once("SIGTERM", stop);
+      try {
+        await server.closed;
+      } finally {
+        process.off("SIGINT", stop);
+        process.off("SIGTERM", stop);
+      }
+      return 0;
+    } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
   }
 
   if (options.command === "build") {
