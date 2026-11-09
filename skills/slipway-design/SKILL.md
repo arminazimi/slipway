@@ -9,6 +9,27 @@ metadata:
 
 A Slipway site's look comes from `_config.yml` and four override slots, never from edited theme files. The theme ships an editorial serif, a warm sand palette, and one accent; a preset changes those through tokens and CSS variables that stay public across releases. If the site has an `AGENTS.md`, read it first; it wins where it differs.
 
+## Token names in the engine theme
+
+The engine theme (`packages/theme`) defines its tokens in `packages/theme/tokens/`. `names.json` is the registry: it freezes the token names, grouped as `color`, `type`, `space`, `radius`, `shadow`, `state`, `code`, and `motion`, with a placeholder value for each. Every other `tokens/<group>.json` file sets the values of its group, such as `motion.json` for the motion durations and easings; a name missing from `names.json` is an error. `npm run tokens` in `packages/theme` writes `styles/tokens.css` from these files. That file is generated; do not edit it by hand.
+
+Each token is a CSS custom property named `--<group>-<name>`:
+
+| Group | Examples |
+| --- | --- |
+| color | `--color-canvas`, `--color-text`, `--color-heading`, `--color-muted`, `--color-border`, `--color-accent`, `--color-link`, `--color-focus`, `--color-success`, `--color-warning`, `--color-danger`, `--color-info` |
+| type | `--type-font-body`, `--type-size-base`, `--type-leading-body`, `--type-weight-bold` |
+| space | `--space-1`, `--space-2`, `--space-4`, `--space-8` |
+| radius | `--radius-sm`, `--radius-md`, `--radius-full` |
+| shadow | `--shadow-sm`, `--shadow-md` |
+| state | `--state-hover-bg`, `--state-selected-bg`, `--state-focus-ring` |
+| code | `--code-bg`, `--code-fg`, `--code-border` |
+| motion | `--motion-fast`, `--motion-base`, `--motion-ease` |
+
+A color token has a light and a dark value. The dark value is set in `$extensions.lateen.dark` in `names.json`, and `tokens.css` joins the two with `light-dark()`, so one name works in both modes. Component CSS reads only these names; the component tests fail on a name that is not a token. Write your own CSS with the same names.
+
+The sections below use the `_config.yml` keys and the `--sl-*` variables of the Jekyll theme. Those names are not the engine's: use the token names above in engine sites.
+
 ## 1. Take a baseline
 
 Get the theme's checks once, into a folder outside the site. Run section 6 before you change anything and keep the output: the restyle is done when it adds no finding and no failed pair.
@@ -111,3 +132,4 @@ Look at one page in both modes with `bundle exec jekyll serve`: the theme toggle
 - Never style `.sl-*` classes to restyle a component; set the token it reads.
 - Never add a script that blocks rendering, or a control that shows without JavaScript.
 - Never lower the doctor's `level`, drop `--build`, or edit a built folder to make a check pass.
+- Never hard-code a color, space, radius, or duration in an engine component's CSS; read a token name from the table above.
