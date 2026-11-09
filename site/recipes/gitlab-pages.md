@@ -1,6 +1,6 @@
 ---
 title: Deploy to GitLab Pages
-description: How to deploy your Slipway site to GitLab Pages.
+description: Build a Slipway site with the engine and publish the output to GitLab Pages.
 layout: doc
 permalink: /recipes/gitlab-pages/
 date: 2024-03-20
@@ -9,29 +9,40 @@ author: Slipway
 
 ## Deploy to GitLab Pages
 
-You can build and deploy a Slipway site to GitLab Pages using GitLab CI/CD.
+GitLab Pages publishes the `public/` folder from a CI job. Build a Slipway site with the engine in that job; no Jekyll or Ruby is involved.
 
-Slipway relies on Jekyll, so you will build your site and push the output to the `public/` directory.
+### Configure the site
 
-### Prerequisites
+Keep the engine and the theme in the site's `package.json`:
 
-Since you will be running the build yourself, you must use standard Jekyll instead of `remote_theme`.
+```sh
+npm install --save-dev @velella/mizzen @velella/lateen
+```
 
-1. Ensure your `Gemfile` includes the theme:
-   ```ruby
-   source "https://rubygems.org"
-   gem "jekyll"
-   gem "slipway-theme"
-   ```
+For a project page such as `https://username.gitlab.io/projectname`, set `url` and `base` in `mizzen.yml`; for a group or user page at the domain root, leave `base` empty:
 
-2. In your `_config.yml`, use `theme` instead of `remote_theme`. If you are deploying to a project page (e.g., `https://username.gitlab.io/projectname`), you also need to set the `baseurl`:
-   ```yaml
-   baseurl: /projectname
-   theme: slipway-theme
-   ```
+```yaml
+url: https://username.gitlab.io
+base: /projectname
+```
 
-### Setup on GitLab Pages
+### Add the CI job
 
-To configure GitLab Pages, you need to add a `.gitlab-ci.yml` file to the root of your repository. This file will tell GitLab CI/CD how to build your site with the Pages gem and publish the `public/` directory.
+Create `.gitlab-ci.yml` at the repository root. The job builds into `public/`, which is the folder GitLab Pages publishes:
 
-Please refer to the [GitLab Pages documentation](https://docs.gitlab.com/ee/user/project/pages/) and the [Jekyll on GitLab Pages documentation](https://docs.gitlab.com/ee/user/project/pages/getting_started_part_four.html#jekyll) for details on how to set up the deployment step.
+```yaml
+pages:
+  image: node:24
+  script:
+    - npm ci
+    - npx mizzen build . --out public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+```
+
+Add `npx mizzen check .` before the build to fail the job on a diagnostic. GitLab runs the job on every push to the default branch and publishes the artifact.
+
+For the Pages settings and the `public/` requirement, see the [GitLab Pages documentation](https://docs.gitlab.com/ee/user/project/pages/).

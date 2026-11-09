@@ -1,6 +1,6 @@
 ---
 title: Deploy to Netlify
-description: How to deploy your Slipway site to Netlify.
+description: Build a Slipway site with the engine and publish the output to Netlify.
 layout: doc
 permalink: /recipes/netlify/
 date: 2024-03-20
@@ -9,32 +9,25 @@ author: Slipway
 
 ## Deploy to Netlify
 
-You can easily deploy a Slipway site to Netlify.
+Netlify runs the build on Node, so it can build a Slipway site with the engine. There is no Gemfile and no Jekyll build step.
 
 ### Prerequisites
 
-Since Slipway uses the `remote_theme` feature of Jekyll by default, it requires the GitHub Pages gem. If you want to deploy to Netlify, you'll need to set up a standard Jekyll build.
+Keep the engine and the theme in the site's `package.json`:
 
-1. Ensure you have a `Gemfile` in your repository:
-   ```ruby
-   source "https://rubygems.org"
-   gem "jekyll"
-   gem "slipway-theme"
-   ```
+```sh
+npm install --save-dev @velella/mizzen @velella/lateen
+```
 
-2. In your `_config.yml`, use `theme` instead of `remote_theme`:
-   ```yaml
-   theme: slipway-theme
-   ```
+Set `url` in `mizzen.yml` to the site's address, such as `https://docs.example.com`, so canonical links and the sitemap use the published domain.
 
 ### Setup on Netlify
 
-1. Go to the Netlify dashboard and click "Add new site" > "Import an existing project".
-2. Connect to your Git provider (GitHub, GitLab, or Bitbucket).
-3. Select your repository.
-4. Configure the build settings:
-   - **Build command:** `bundle exec jekyll build`
-   - **Publish directory:** `_site`
-5. Click "Deploy site".
+1. In the Netlify dashboard, choose **Add new site → Import an existing project** and pick the repository.
+2. Set the build settings:
+   - **Build command:** `npx mizzen build . --out dist`
+   - **Publish directory:** `dist`
+3. Set the Node version to 24 or later, with a `NODE_VERSION` environment variable or a `.nvmrc` file.
+4. Deploy the site.
 
-Netlify will now build and deploy your site automatically whenever you push changes to your repository.
+To catch a diagnostic before Netlify publishes, make the build command `npx mizzen check . && npx mizzen build . --out dist`. Netlify rebuilds on every push.
