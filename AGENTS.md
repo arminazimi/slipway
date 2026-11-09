@@ -30,7 +30,7 @@ Releases are tagged by maintainers (CONTRIBUTING.md, "Releasing"). Mizzen and La
 
 ### Engine and theme
 
-- `packages/engine/` (`@velella/mizzen`, Apache-2.0): config, content model, Markdown, navigation, the pipeline, the render host, outputs, diagnostics, and the CLI. Entry point `src/index.ts`; frozen types in `src/contracts/`; the config schema in `schema/`.
+- `packages/engine/` (`@velella/mizzen`, Apache-2.0): config, content model, Markdown, navigation, the pipeline, the render host, outputs, diagnostics, and the CLI. Entry point `src/index.ts`; frozen types in `src/contracts/`; the config and front matter schemas in `schema/`.
 - `packages/theme/` (`@velella/lateen`, MIT): layouts, chrome, components, design tokens, styles, and translations (`i18n/`). Entry point `src/index.ts` exports the theme manifest only.
 - `packages/tokens/` (`@slipway/tokens`): the design tokens and core CSS for other frameworks.
 
@@ -102,7 +102,7 @@ Do not edit these by hand. Run the command, then commit the output.
 | File | Made by | Stale check |
 | --- | --- | --- |
 | `site/config.md` | `npm run build:docs` (`tools/config-ref/run.ts`), from `packages/engine/schema/config.schema.json` | `tools/config-ref/run.ts`, run by `npm run check` |
-| `site/front-matter.md` | `npm run build:docs` (`tools/theme/front-matter-doc.ts`), from `schema/front-matter/` | `npm run check:docs` |
+| `site/front-matter.md` | `npm run build:docs` (`tools/front-matter-ref/run.ts`), from `packages/engine/schema/front-matter.schema.json` | `tools/front-matter-ref/run.ts`, run by `npm run check` |
 | `skills/slipway-site/reference/config.md` | `npm run build:skills` (`tools/skills/config-reference.ts`) | `tools/skills/skills.test.ts` |
 | `skills/slipway-content/reference/front-matter.md` | `npm run build:skills` (`tools/skills/front-matter-reference.ts`) | `tools/skills/content.test.ts` |
 | `assets/css/tokens.css`, `docs/tokens.md` | `npm run build:tokens` (`tools/theme/tokens-build.ts`) | `npm run check:tokens` |
