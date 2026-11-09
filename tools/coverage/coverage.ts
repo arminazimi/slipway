@@ -2,10 +2,11 @@
 //   node tools/coverage/coverage.ts          run the tests, print the table, fail below the floor
 //   node tools/coverage/coverage.ts --dry    same, but never fail
 // The floor lives in tools/coverage/floor.json and only rises: raise it by hand when the notice says so.
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { appendFileSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { testFiles as checkTests } from "../check.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const FLOOR_FILE = join(here, "floor.json");
@@ -32,8 +33,9 @@ export function summary(percent, floor, table) {
   return ["## Test coverage", "", `Lines: **${percent == null ? "unknown" : `${percent.toFixed(2)}%`}** (floor ${floor}%)`, "", "```", table.trim(), "```", ""].join("\n");
 }
 
+// The same tests `npm run check` runs (.test.mjs and .test.ts), limited to ROOTS.
 function testFiles() {
-  return execFileSync("git", ["ls-files", "*.test.mjs"], { encoding: "utf8" }).split("\n").filter((file) => ROOTS.some((root) => file.startsWith(root)));
+  return checkTests().filter((file) => ROOTS.some((root) => file.startsWith(root)));
 }
 
 function main() {
