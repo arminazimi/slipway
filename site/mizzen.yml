@@ -8,3 +8,10 @@ description: An editorial, RTL-ready, agent-native site template, verified by Se
 lang: en
 url: https://arminazimi.github.io
 base: /slipway
+# Pages removed from the docs site; their old addresses lead to the home page.
+redirects:
+  "/audio/": "/"
+  "/audio/podcast-episode-12.mp3": "/"
+  "/compare/": "/"
+  "/languages/": "/"
+  "/roadmap/": "/"

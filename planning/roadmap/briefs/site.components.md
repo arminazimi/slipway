@@ -4,10 +4,12 @@ One page per component with syntax, options, and a live example, replacing `site
 ## Files
 
 **Create**
-- `site/components/index.md`
+- `site/components/`
+- `site/_data/schema-table.json`
 
 **Edit**
-- `site/blocks/index.md`
+- `site/_data/navigation.yml`
+- `spec/docs-site/_data/navigation.yml`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
