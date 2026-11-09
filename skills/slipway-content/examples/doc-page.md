@@ -1,22 +1,23 @@
 ---
-# Save as docs/install.md, then add it to the docs list in _data/navigation.yml.
+# Save as docs/install.md. Its URL is /docs/install/; the sidebar lists it by its order key.
 title: Install
-description: Add the theme to a GitHub Pages site in two lines of config.
-layout: doc
-permalink: /docs/install/
-nav_order: 2
+description: Install Beacon on your machine in three steps.
+order: 2
 ---
 
-## Add the theme
+## Install the CLI
 
-Put these lines in `_config.yml`:
+:::steps
 
-```yaml
-remote_theme: arminazimi/slipway
-plugins:
-  - jekyll-remote-theme
-```
+1. Download the binary for your system from the releases page.
+2. Move it to a folder on your `PATH`.
+3. Run `beacon --version` to check the install.
 
-## Check the site
+:::
 
-Push the change. GitHub Pages builds the site and shows the log of each build.
+:::callout{type=tip}
+The binary has no dependencies. Copying it to another machine is enough.
+:::
+
+> [!WARNING]
+> Do not run `beacon` as root. It needs only your own user's access to the project folder.

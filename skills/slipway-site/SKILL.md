@@ -1,85 +1,66 @@
 ---
 name: slipway-site
-description: Create a new GitHub Pages site with the Slipway Jekyll theme, or customize an existing one through _config.yml, navigation, languages, tokens, and override slots.
+description: Create a Slipway docs site, or customize an existing one through slipway.yml, navigation, languages, redirects, and theme options, then check it with slipway check.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Create and customize a Slipway site
 
-Slipway is a Jekyll theme for GitHub Pages, right-to-left ready. You customize a site through config and three override slots, never by copying or editing theme files. Every key you may set is listed in [reference/config.md](reference/config.md); do not add keys it does not list under `slipway`.
+Slipway is a docs engine and a theme: the engine reads a folder of Markdown and writes a site, and the theme renders it, right-to-left ready. You customize a site through `slipway.yml`, `_data/navigation.yml`, and the theme's options, never by copying or editing engine or theme files. Every key you may set in `slipway.yml` is listed in [reference/config.md](reference/config.md). The file is closed: an unknown key is an error that names its line, so do not add keys the reference does not list.
 
 ## 1. Create the site
 
-Use `remote_theme`. It works on GitHub Pages with no build step. In an empty repository (or a folder of an existing one that Pages serves), create `_config.yml`:
+A site is a folder with a `slipway.yml` at its root. Every path in the file is relative to that folder.
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/arminazimi/slipway/main/schema/slipway-config.schema.json
+# slipway.yml
 title: My site
+description: What this site is, in one sentence.
+url: https://example.github.io
 lang: en
-remote_theme: arminazimi/slipway
-plugins:
-  - jekyll-remote-theme
 ```
 
-Then create `index.md`, the home page:
+Then create the home page, `index.md`:
 
 ```markdown
 ---
 title: My site
 description: What this site is, in one sentence.
-layout: default
 ---
 
 Plain Markdown here.
 ```
 
-Copy the theme's starter files into the site root, keeping their paths: `starter-files/AGENTS.md` (how an agent edits the site) and `starter-files/.vscode/settings.json` (schema autocomplete). Fetch them from https://github.com/arminazimi/slipway/tree/main/starter-files.
+A file with no front matter still builds: its title is its first heading and its URL comes from its path. Every other key is optional.
 
-Those two files are a working site. Add a page below for each feature the site needs; the theme fills it in. Each is front matter only; keep it even though it has no text:
+Set `url` to the scheme and host of the published site, with no path and no trailing slash. Without it, canonical links, the sitemap, and social images are relative or left out, and the engine warns. A project site lives under a path: set `base` to that path (such as `/my-site`, with a leading slash and no trailing slash). Leave `base` empty at a domain root.
 
-| File | Turns on | Front matter |
-| --- | --- | --- |
-| `search.json` | Search in the header | `layout: search-index`, `lang: en`, `permalink: /search.json` |
-| `feed.xml` | The Atom feed | `layout: feed`, `lang: en`, `permalink: /feed.xml` |
-| `sitemap.xml` | The sitemap | `layout: sitemap`, `permalink: /sitemap.xml` |
-| `llms.txt`, `llms-full.txt` | A page list for agents ([llmstxt.org](https://llmstxt.org)) and every page's text in one file | `layout: llms`, `permalink: /llms.txt`; `layout: llms-full`, `permalink: /llms-full.txt` |
-| `404.md` | A styled not-found page | `title: Page not found`, `layout: not-found`, `permalink: /404.html`, `sitemap: false`, `search: false` |
-
-Add `tags.md` (`layout: tags`, `permalink: /tags/`) and `archive.md` (`layout: archive`, `permalink: /archive/`) when the site has posts. `examples/minimal` in the theme repository has every one of these files. For post authors, add `_data/authors.yml` (each key is an id with a `name`, and optionally `bio`, `avatar`, and `links`) and one page per author with `layout: author` and `author: <id>`; `examples/blog` has both.
-
-To publish, the owner turns on GitHub Pages for the repository (Settings, Pages, deploy from a branch). That is a repository setting: ask the owner, do not change it yourself. Leave `url` and `baseurl` unset on GitHub Pages; Pages fills them in. Set `baseurl` (such as `/my-project`, no trailing slash) only to preview a project site locally.
+```yaml
+# slipway.yml
+url: https://example.github.io
+base: /my-site
+```
 
 ## 2. Set the title and languages
 
-- `title`: the site name in the header, the page title, and the feed.
-- `lang`: the default language, a BCP 47 tag such as `en` or `fa`. Right-to-left languages (`fa`, `ar`, `he`, `ur`) get a right-to-left layout on their own; set `direction` only to override it.
+- `title`: the site name in the header, the page titles, and `llms.txt`. Without it, the folder name is used.
+- `lang`: the default language, a BCP 47 tag such as `en` or `fa`. Text direction follows the language: `fa`, `ar`, `he`, and `ur` are right to left. Set `dir` only to override it.
 
-For more than one language, list them in switcher order. The default language has the prefix `""`:
-
-```yaml
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: فارسی, prefix: /fa }
-```
-
-Each other language needs a home page at `<prefix>/index.md` with `lang: fa`, `permalink: /fa/`, and the same `translation_key` as `index.md` (such as `home`). Give it its own `<prefix>/search.json` and `<prefix>/feed.xml` with `lang` and `permalink` under the prefix. `examples/minimal/fa/` shows all three.
-
-A Persian site can opt in to Persian digits and the Jalali calendar:
+For more than one language, list them in switcher order. The default language has an empty prefix:
 
 ```yaml
-slipway:
-  persian:
-    digits: true
-    jalali: true
+# slipway.yml
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: فارسی, prefix: /fa }
 ```
 
-The theme ships interface strings for English and Persian. For another language, add `_data/i18n/<lang>.yml`; copy the keys from `examples/minimal/_data/i18n/de.yml`.
+Pages in the second language live under its prefix folder (`fa/index.md`, `fa/install.md`), and each sets or inherits its `lang`. Their URLs come from their paths: `fa/install.md` is `/fa/install/`. Translation is described in [the content Skill](../slipway-content/SKILL.md).
 
 ## 3. Set the navigation
 
-Create `_data/navigation.yml`. `main` is the header menu; `docs` is the sidebar of the `doc` layout, in reading order, with one level of `children`. `url` is the page's address, not its file. A language other than the default gets its own list, such as `main_fa`.
+Navigation lives in `_data/navigation.yml`. The file is a set of top-level lists, such as `main` for the header and `docs` for the sidebar. Each item is a link or a group with `children`. A link `url` is a path on the site, written without `base`; the engine adds it.
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/arminazimi/slipway/main/schema/navigation.schema.json
@@ -87,10 +68,7 @@ main:
   - title: Home
     url: /
   - title: About
-    url: /about.html
-main_fa:
-  - title: خانه
-    url: /fa/
+    url: /about/
 docs:
   - title: Start
     children:
@@ -98,57 +76,74 @@ docs:
         url: /docs/
 ```
 
-## 4. Change the look with tokens
+`navigation` in `slipway.yml` names another file. Without the file, navigation is built from the folders and each page's `order`.
 
-Restyle through `slipway.tokens`, not CSS:
+## 4. Set the defaults and the repository
+
+`defaults` gives front matter to every page under a folder unless the page sets the key itself. A later entry wins over an earlier one; a page always wins.
 
 ```yaml
-slipway:
-  tokens:
-    accent: "#0b6e4f"
-    radius: 0.5rem
+# slipway.yml
+defaults:
+  - path: fa
+    values:
+      lang: fa
 ```
 
-Colors are `#rrggbb` or `oklch()`. A color you set applies to both light and dark, so check it reads in both. The keys and their defaults are in [reference/config.md](reference/config.md); what each token does is in https://github.com/arminazimi/slipway/blob/main/docs/tokens.md. Pick a header layout with `slipway.header`: `classic` (the default), `centered`, or `minimal` (title, language switcher, and theme toggle only, no navigation or search).
+`repository` lets pages link to their source and lets agents find it:
 
-## 5. Add to the theme with override slots
+```yaml
+# slipway.yml
+repository:
+  url: https://github.com/example/my-site
+  branch: main
+  dir: ""
+```
 
-Three files are the supported way to add markup or CSS. Create them in the site; they replace the theme's empty ones:
+`dir` is the site root's folder inside the repository, such as `docs`; leave it empty when the site is the repository.
 
-| Slot | Renders | Use it for |
-| --- | --- | --- |
-| `_includes/head-custom.html` | End of `<head>`, every page | Meta tags, analytics, a font link |
-| `_includes/footer-custom.html` | Inside `<footer>`, every page | An extra line or link |
-| `assets/css/custom.css` | After the theme styles and tokens | Overriding `--sl-*` variables, styling your own content |
+## 5. Set the theme options
 
-In these files, add `defer` to scripts (every page must read without JavaScript), and use logical CSS properties (`margin-inline-start`, not `margin-left`) so right-to-left works. Do not copy or shadow any other theme include or layout: only these three are stable across releases. `examples/docs` fills all three; details are in https://github.com/arminazimi/slipway/blob/main/docs/overrides.md.
+`theme.name` names the theme; the engine's theme is the default. `theme.options` is handed to the theme unread. Its keys belong to the theme, which validates them against its own schema and reports an unknown key with its line. This reference does not list them: do not guess a key. Read the theme's documentation or ask the owner.
 
-## 6. Check the site
+## 6. Set search, redirects, and outputs
 
-Run `slipway doctor` on the site. It is not on npm yet: run it from a clone of https://github.com/arminazimi/slipway after `npm ci`, with the site folder as the argument, and add `--build` with the built folder when you have one:
+- `search: false` builds no search index. As an object, `search.text` sets how many characters of each page's body the index keeps (default `300`). Pages leave the index with `search: false` in their front matter.
+- `redirects` maps an old path under `base` to a path on the site or an `https` URL. A redirect over a page that exists, or two redirects from the same old path, is an error.
+- `outputs` turns an output off by its name, the file name of the output in `packages/engine/src/outputs/`, with `false`. An unknown name is an error.
+
+```yaml
+# slipway.yml
+search:
+  text: 500
+redirects:
+  /old-install/: /docs/install/
+```
+
+## 7. Check the site
+
+From the site folder:
 
 ```sh
-node packages/doctor/bin/slipway.ts doctor ../my-site --build ../my-site/_site
+slipway check .
 ```
 
-It prints the conformance level the site reaches and each finding as `path:line key: message`. It also warns about starter files the site has not copied, Liquid in content, and translations with a missing language. Fix each finding at the file and line it names and run it again until it is clean.
+It prints each finding with its file and line. Fix each one at the line it names and run the check again until it is clean.
 
-To build the site locally, give it a `Gemfile` with `gem "github-pages", group: :jekyll_plugins`, then run:
+Build the site to a folder:
 
 ```sh
-bundle exec jekyll build
+slipway build . --out dist
 ```
 
-Read every error and warning and fix them the same way. To look at the result, run `bundle exec jekyll serve` and open the address it prints. Without a `Gemfile`, push and read the log of the Pages build.
+`slipway` is the engine's command line, released with the engine (`engine.cli`). Until it is installed, no check can run: say so in your report and do not invent a result.
 
-## 7. Dependencies
-
-Check a gem, npm package, or Action with Evergreen's `check_dependency` before adding it, when Evergreen is available. Evergreen stays optional.
+Turning on GitHub Pages, adding secrets, or changing repository settings is the owner's decision. Ask the owner; do not do it yourself.
 
 ## Never
 
-- Never edit files under `_site/`; the build replaces them.
-- Never copy theme layouts or includes into the site to change them; use tokens and the three slots.
-- Never put Liquid (`{{ }}` or `{% %}`) in page content.
-- Never add a key under `slipway` that [reference/config.md](reference/config.md) does not list; the schema rejects it.
+- Never add a key under the top level of `slipway.yml` that [reference/config.md](reference/config.md) does not list; the file is closed.
+- Never invent a `theme.options` key; the theme reports it, but guessing wastes a build.
+- Never edit the output folder (`dist/`, or the folder passed to `--out`); the build replaces it.
+- Never copy engine or theme files into the site to change them; use `slipway.yml`, `_data/navigation.yml`, and `theme.options`.
 - Never turn on Pages, add secrets, or change repository settings; ask the owner.

@@ -1,108 +1,126 @@
 ---
 name: slipway-content
-description: Write or edit a page, doc page, or post on a Slipway site, or translate one into another language, so it passes the front matter schemas and slipway doctor.
+description: Write or edit a page on a Slipway site, or translate one into another language, using the engine's front matter keys and directives, then check it with slipway check.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
-# Write pages and posts on a Slipway site
+# Write pages on a Slipway site
 
-A Slipway site is Markdown files with a block of front matter. The layouts do the rest: the title, the heading, the table of contents, the date, and the language switcher. You write the front matter from the schema and the words in plain Markdown. If the site has an `AGENTS.md`, read it first; it wins where it differs from this skill.
+A Slipway site is a folder of Markdown files, each with an optional block of front matter. The engine builds every `.md` and `.html` file under the site's `source` folder into a page; the theme renders the title, the navigation, the table of contents, and the language switcher. You write the front matter and the words. If the site has an `AGENTS.md`, read it first; it wins where it differs from this Skill.
 
 ## 1. Take a baseline
 
-Get the theme's checks once, into a folder outside the site:
+Run the check once, before you change anything, and keep its output:
 
 ```sh
-git clone --depth 1 https://github.com/arminazimi/slipway "$HOME/.slipway"
-cd "$HOME/.slipway" && npm ci && cd -
+slipway check .
 ```
 
-Run section 6 before you change anything and keep the output. Your edit is done when it adds no problem and no finding to it.
+Run it from the site folder. Your edit is done when it adds no finding that names your file.
 
-## 2. Pick the layout and the file
+`slipway` is the engine's command line. It is released with the engine (`engine.cli`). Until it is installed, no check can run: say so in your report and do not invent a result.
 
-| You are writing | `layout` | File |
+## 2. Pick the file and its URL
+
+| You are writing | File | URL |
 | --- | --- | --- |
-| A plain page (about, contact) | `page` | `<folder>/<page>.md`, served at `/<folder>/<page>.html` |
-| A documentation page with the sidebar | `doc` | any folder, often `docs/<page>.md`, with a `permalink` |
-| A dated post | `post` | `_posts/<date>-<slug>.md`, where `<date>` is `YYYY-MM-DD` |
-| The landing page | `home` | `index.md` |
+| A page | any `.md` file under the source folder, such as `guide/install.md` | the path: `/guide/install/` |
+| A folder's index | `index.md`, or `README.md` when the folder has no `index.md` | the folder: `/guide/` |
+| A page in another language | a file under that language's prefix folder, such as `fa/install.md` | the prefix and the path: `/fa/install/` |
+| A page that moves or has a custom address | any file, with `permalink` | the `permalink` value |
 
-A post's file name is its date and its address; to change the title, set `title`, never rename the file. A `doc` page shows in the sidebar only when the `docs` list in `_data/navigation.yml` links its `permalink`; add it there in reading order. Do not create `search.json`, `feed.xml`, `sitemap.xml`, `404.md`, `tags.md`, or `archive.md`: they exist already, and they have front matter and no text on purpose.
+Folders whose names start with `.` or `_` are skipped, unless `slipway.yml` lists them under `include`. Files in `node_modules`, the output folder, and `slipway.yml` are never pages.
 
-Drafts, scheduled posts, and edits, on a post: a draft goes in `_drafts/<slug>.md`, with no date in its name — GitHub Pages never builds `_drafts/`, and `jekyll serve --drafts` previews it with today's date. A scheduled post is a normal post whose `YYYY-MM-DD` file name is in the future: GitHub Pages publishes it automatically on that date, and `jekyll serve --future` previews it early, marked Scheduled on the page. After a substantial edit to a published post, add `updated: YYYY-MM-DD` (the same form as the file name's date): the post shows it as "edited on", and the feed, the sitemap, and the structured data report it as the last-modified date.
+Do not rename or move a published page to change its title. Set `title`. A page's address is its path or its `permalink`, and links to it would break if you change it. To change an address on purpose, set `permalink` and add a `redirect_from` entry for the old one.
 
-## 3. Fill the front matter from the schema
+Set `published: false` to keep a draft out of the build. Do not create `_posts/` folders: posts are not part of the engine.
 
-Every key, its type, and its allowed values are in [reference/front-matter.md](reference/front-matter.md), generated from the schemas the checks use. Use only keys it lists for your layout.
+## 3. Fill the front matter
 
-- `title` is required and must not be empty. The layout prints it as the page heading.
-- Add `description`: one sentence for search results and link previews.
-- `tags` and `categories` are a list: `tags: [release, notes]`.
-- `author` on a post is a key of `_data/authors.yml`, or a list of keys for several authors: `author: [ada, sam]`. If the key is missing from that file, add the author there first.
-- `series` on a post puts it in a series: use the exact same name on every part, `series: Writing for the web`. The parts are ordered by date.
-- `permalink` starts with `/`. Leave it out on a post in the default language; the site's config sets the address.
-- Set `lang` on a page that is not in the site's default language (`lang` in `_config.yml`), and on every page that has a translation.
-- `home` only: `cta_text` and `cta_url` go together, or not at all. `variant` picks the look: `editorial` (default), `landing` (add `features`, each with a `title`), `blog`, or `docs` (cards from the `docs` list of `_data/navigation.yml`).
+Every key the engine reads, its type, and its allowed values are in [reference/front-matter.md](reference/front-matter.md). Use only keys it lists.
+
+- `title` is the page heading. Without it, the first `h1` is used.
+- `description`: one sentence for the meta description, `llms.txt`, and search.
+- `order`: a number that sorts the page among its siblings in navigation built from folders.
+- `layout` is usually left out. The folder's `defaults` in `slipway.yml` or the theme's default layout applies. Set it only when the theme documents the layout name.
+- `permalink` starts with `/`. Leave it out unless the address must differ from the path.
+- `redirect_from` lists old addresses (a string or a list) that now redirect to this page.
+- `status` is one of `experimental`, `beta`, `deprecated`, `proposed`, `accepted`, `rejected`, or `superseded`.
+- `agent` tells agents how to edit the page: `edit: false` for a generated page, `source` for the file to edit instead, and `notes` for one short instruction.
 - Quote a value that contains `: ` or starts with a character YAML treats specially (`[`, `{`, `*`, `&`, `!`, `#`, `|`, `>`, `@`, or a backtick).
+
+Two keys are deprecated aliases: `nav_order` is `order`, and `direction` is `dir`. Do not write them in new content; the engine warns about them.
 
 ## 4. Write the body
 
-- Plain Markdown only. Never Liquid: no `{{ }}` and no `{% %}`, not even in a code block. The layouts already add what Liquid would.
-- Start sections at `##`. The `h1` is the title; one `#` heading in the body makes a second one.
-- Keep heading levels in order (`##`, then `###`), so the table of contents and the "Edit with your agent" button find every section.
-- Link to other pages by address, not file: `[Install](/docs/install/)`, `[About](/about.html)`.
-- Images live in `assets/`; give each one alt text: `![A chart of build times](/assets/build-times.png)`.
-- For a wider page, set `width: narrow`, `wide`, or `full` in the front matter. To widen one block instead (a table, an image, a figure), wrap it in an HTML element with the class `sl-wide` (up to 64rem) or `sl-bleed` (edge to edge): `<figure class="sl-wide"><img src="/assets/map.png" alt="A map of the route"></figure>`. The `doc` layout keeps sections in its column.
-- Give code blocks a language (` ```yaml `), so they highlight and read left to right in a right-to-left page.
+- Plain Markdown. The title is the page heading, so start sections at `##` and never add a second `#` heading.
+- Keep heading levels in order (`##`, then `###`), so the table of contents finds every section.
+- Link to a page by its URL path, such as `[Install](/docs/install/)`. Check the link with `slipway check`.
+- Give each image alt text: `![A chart of build times](/assets/build-times.png)`.
+- Give every code block a language (` ```yaml `), so it highlights and reads left to right on a right-to-left page.
 
-Examples that pass the schemas:
+### Directives
 
-- [examples/doc-page.md](examples/doc-page.md): a `doc` page.
-- [examples/post.md](examples/post.md): a post with tags.
-- [examples/post-fa.md](examples/post-fa.md): the same post in Persian.
+The engine turns these into theme components. A name the theme does not ship renders as an unknown-component warning, so use only the names below.
 
-The first comment in each says where the file goes.
+| Write | Component | Options |
+| --- | --- | --- |
+| `:::callout{type=tip}` … `:::` | `callout` | `type`: `note` (default), `tip`, `important`, `warning`, `caution`. `title="…"` replaces the default heading. |
+| `> [!WARNING]` followed by a quote | `callout` | GitHub alert: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`. |
+| `:::details{summary="…"}` … `:::` | `details` | `summary` is the visible label. Add `open` to start expanded. |
+| `:::steps` … `:::` | `steps` | The body is one ordered list. |
+| `:::file-tree{label="…"}` … `:::` | `file-tree` | The body is a nested list. A name ending in `/` is a folder; text after ` # ` is a note on that row; `**name**` highlights it. |
+| `:badge[New]{variant=tip}` | `badge` | Inline. `variant`: `note` (default), `tip`, `important`, `warning`, `caution`. |
+| `::badge{label=new}` | `badge` | Block form, with `label` as the text. |
+
+Example, from [examples/doc-page.md](examples/doc-page.md):
+
+```markdown
+:::callout{type=tip}
+The binary has no dependencies. Copying it to another machine is enough.
+:::
+```
+
+Use a callout for a note the reader must not miss, not for decoration.
+
+[examples/doc-page.md](examples/doc-page.md) is a template for a doc page: its first comment says where the file goes.
 
 ## 5. Add a translation
 
-1. The language must be in `slipway.languages` in `_config.yml`, with a `code`, a `name`, and a `prefix` such as `/fa`. If it is missing, ask before you add a language: it changes every page's switcher.
-2. Give the original a `translation_key` if it has none, such as `plain-markdown`, and its `lang` (`lang: en`) if it has none: the switcher finds a translation by both. Give the translation the same `translation_key`. That links the two in the language switcher and the sitemap.
-3. Set `lang` to the language code, and `permalink` to an address under the prefix: `/fa/plain-markdown/`.
-4. Where the file goes: a page goes in the prefix folder (`fa/about.md`); a post stays in `_posts/` with its own slug (`_posts/2026-10-20-plain-markdown-fa.md`).
-5. Translate `title`, `description`, `tags`, and the body. Keep `layout`, the date, code, commands, and URLs as they are.
-6. If the site has a header menu for that language (`main_fa` in `_data/navigation.yml`), add the page there too.
+1. The language must be in `languages` in `slipway.yml`, with a `code`, a `name`, and a `prefix` such as `/fa`. If it is missing, ask the owner before you add it: it changes every page's language switcher.
+2. Give the original page a `translation_key` (such as `install`) if it has none, and a `lang` if it does not inherit one from its folder. The switcher links a page and its translations by `translation_key`.
+3. Give the translation the same `translation_key`, and `lang` set to its language code. Its URL comes from its path under the prefix folder: `fa/install.md` becomes `/fa/install/`.
+4. Translate `title`, `description`, and the body. Keep the `translation_key`, the code, the commands, the file names, and the URLs as they are.
+5. Do not set `dir` on a translation. The direction comes from `lang`: `fa`, `ar`, `he`, and `ur` are right to left.
+6. In Persian text, use Persian `ی` and `ک` (not the Arabic `ي` and `ك`), a zero-width non-joiner in words such as `می‌شود`, and Persian punctuation (`،` and `؟`). Put commands, file names, and code in backticks: they stay left to right inside the sentence.
 
-Right-to-left languages (`fa`, `ar`, `he`, `ur`) get a right-to-left layout from `lang`; do not set `direction` or `dir`. In Persian text, use Persian `ی` and `ک` (not the Arabic `ي` and `ك`), a zero-width non-joiner in words such as `می‌شود`, and Persian punctuation (`،` and `؟`). Put commands, file names, and code in backticks: they stay left to right inside the sentence.
+Change `translation_key` on every page that shares it, or on none. Changing it on one translation only breaks the link.
 
 ## 6. Check the edit
 
-From the site folder, check the config and the front matter of every page against the schemas:
+From the site folder:
 
 ```sh
-node "$HOME/.slipway/tools/theme/validate.ts" .
+slipway check .
 ```
 
-Each problem is printed as `file:line key: message (allowed: ...)`. Fix it at that line, using the allowed values, and run it again. Then build the site, if it has a `Gemfile`:
+Each finding is printed with its file and line. Fix it at that line and run the check again. To get a machine-readable report, add `--format json` or `--format sarif`.
+
+Build the site before you finish a change to navigation, languages, or directives:
 
 ```sh
-bundle exec jekyll build
+slipway build . --out dist
 ```
 
-Read every error and warning and fix it at the file it names. Then run the doctor on the source and the build. It checks the site against the agent-editable spec: `AGENTS.md`, `content-schemas.json` (when the site has one, it validates your front matter against the schemas it names), the source map, and the edit prompts:
-
-```sh
-node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
-```
-
-Compare its findings with your baseline. A finding that names your file is yours to fix. Without a `Gemfile`, run the doctor without `--build` and read the log of the Pages build after you push.
+Read every error and warning and fix it at the file it names. Then compare the result with your baseline: a finding that names your file is yours to fix.
 
 ## Never
 
-- Never put Liquid (`{{ }}` or `{% %}`) in a page.
-- Never add a front matter key that [reference/front-matter.md](reference/front-matter.md) does not list.
-- Never change `translation_key` on one translation only; change every page that shares it, or none.
-- Never rename or move a published page or post to change its title; set `title`. Its address is its file name or `permalink`, and links to it would break.
-- Never edit `_site/`, and never delete a page that has front matter and no text.
-- Never edit theme layouts or includes to change how one page looks.
+- Never invent a front matter key that [reference/front-matter.md](reference/front-matter.md) does not list.
+- Never write a second `#` heading in the body.
+- Never edit the output folder (`dist/` or the folder you passed to `--out`); the build replaces it.
+- Never create `_posts/` pages. Posts are not part of the engine.
+- Never rename or move a published page to change its title; set `title`.
+- Never change `translation_key` on one translation only.
+- Never change theme layouts or components to change how one page looks.

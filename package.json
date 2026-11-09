@@ -28,7 +28,7 @@
     "check:logical": "node tools/theme/logical-css.ts",
     "check:js": "node tools/theme/js-budget.ts",
     "check:css": "node tools/theme/css-budget.ts",
-    "build:skills": "node tools/skills/config-reference.ts && node tools/skills/front-matter-reference.ts",
+    "build:skills": "node tools/skills/config-reference.ts",
     "build:docs": "node tools/theme/config-doc.ts && node tools/theme/front-matter-doc.ts"
   },
   "devDependencies": {
