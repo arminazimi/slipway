@@ -6,7 +6,7 @@ import type { ChromeProps, Page, Pager, RepositoryConfig, Site, SiteConfig, Sour
 import pageFooter, { isoDate } from "../chrome/page-footer/index.ts";
 import { activate, copy, RESET_MS, type Clipboard, type CopyButton, type CopyEnv } from "../chrome/page-footer/client.ts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const repository: RepositoryConfig = { url: "https://github.com/arminazimi/slipway/", branch: "main", dir: "docs" };
 
@@ -110,7 +110,7 @@ test("the edit link points at the source file on the repository's branch, with t
 });
 
 test("the edit link uses the configured branch and encodes each path segment", () => {
-  const page = pageWith({}, { file: "docs/my guide/install #2.md", line: 1, column: 1, endLine: 1 });
+  const page = pageWith({}, { file: "docs/my guide/install #2.md", line: 1, column: 1, endLine: 1, endColumn: 1 });
   const out = html(pageFooter(props(page, { url: "https://github.com/o/r", branch: "trunk" })));
 
   assert.match(out, /href="https:\/\/github\.com\/o\/r\/edit\/trunk\/docs\/my%20guide\/install%20%232\.md"/);

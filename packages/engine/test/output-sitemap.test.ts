@@ -11,7 +11,7 @@ import type { OutputContext, OutputFile } from "../src/contracts/output.ts";
 import { buildModel } from "../src/model/build.ts";
 import { sitemap } from "../src/outputs/sitemap.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 /** The sitemap protocol's schema, sitemaps.org `sitemap/0.9/sitemap.xsd` (last modified 2008-03-26). */
 const SITEMAP_XSD = `<?xml version="1.0" encoding="UTF-8"?>

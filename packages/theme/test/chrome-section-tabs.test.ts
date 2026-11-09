@@ -8,7 +8,7 @@ import sectionTabs from "../chrome/section-tabs/index.ts";
 /** Navigation items as navigation.yml carries them: the contract fields plus authoring marks like `tab`. */
 type NavSource = NavItem & { readonly tab?: unknown };
 
-const pos: SourcePos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

@@ -5,6 +5,7 @@ import type { Diagnostic } from "../contracts/diagnostic.ts";
 import type { Pager, Trail } from "../contracts/nav.ts";
 import type { Component, Head, Island, Layout } from "../contracts/render.ts";
 import type { SourcePos } from "../contracts/source.ts";
+import { parseSpan } from "../source/spans.ts";
 
 /** A theme component the render host can call, with the CSS and island it ships. */
 export interface ThemeComponent {
@@ -70,14 +71,9 @@ function decodeAttr(value: string): string {
     .replace(/&amp;/g, "&");
 }
 
-/** Parses `path:line` (or `path:line:column`) from a `data-src` value into a {@link SourcePos}. */
+/** Parses a `data-src` value, a full span or a point, into a {@link SourcePos}. */
 function parseDataSrc(value: string | undefined): SourcePos | undefined {
-  if (!value) return undefined;
-  const match = /^(.*):(\d+)(?::(\d+))?$/.exec(value);
-  if (!match) return undefined;
-  const line = Number(match[2]);
-  const column = match[3] ? Number(match[3]) : 1;
-  return { file: match[1]!, line, column, endLine: line };
+  return value ? parseSpan(value) : undefined;
 }
 
 /** Puts `data-src` on the first opening tag of a rendered fragment, unless it already has one. */

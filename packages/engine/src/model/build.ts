@@ -44,7 +44,7 @@ function withDefaults(
 
 /** The file position (repository-root-relative: here, site-root-relative) a path under `source` has. */
 function posOf(file: string, line: number, endLine = line): SourcePos {
-  return { file, line, column: 1, endLine };
+  return { file, line, column: 1, endLine, endColumn: 1 };
 }
 
 /** Headings with their positions, taken from the top-level `h` nodes in document order. */
@@ -57,11 +57,16 @@ function headingsOf(
   return collected.map((h, i) => {
     const start = nodes[i]?.position?.start;
     const end = nodes[i]?.position?.end;
+    const line = start?.line ?? 1;
+    const column = start?.column ?? 1;
+    const endLine = end?.line ?? line;
+    const endColumn =
+      endLine === line ? Math.max(column, (end?.column ?? column) - 1) : Math.max(1, (end?.column ?? 1) - 1);
     return {
       depth: h.depth as Heading["depth"],
       id: h.id,
       text: h.text,
-      pos: { file, line: start?.line ?? 1, column: start?.column ?? 1, endLine: end?.line ?? start?.line ?? 1 },
+      pos: { file, line, column, endLine, endColumn },
     };
   });
 }

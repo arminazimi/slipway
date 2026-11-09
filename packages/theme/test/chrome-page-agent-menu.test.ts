@@ -13,7 +13,7 @@ import {
   type CopyStatus,
 } from "../chrome/page-agent-menu/client.ts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 function siteConfig(options: Readonly<Record<string, unknown>> = {}, url?: string): SiteConfig {
   return {

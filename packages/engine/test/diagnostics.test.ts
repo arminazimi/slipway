@@ -5,14 +5,14 @@ import { Ajv } from "ajv";
 import type { Diagnostic } from "../src/contracts/index.ts";
 import { createDiagnostics, formatJson, formatSarif, formatText, sortDiagnostics } from "../src/pipeline/diagnostics.ts";
 
-const pos = { file: "docs/guide/install.md", line: 3, column: 5, endLine: 4 };
+const pos = { file: "docs/guide/install.md", line: 3, column: 5, endLine: 4, endColumn: 5 };
 
 function sample() {
   const d = createDiagnostics();
-  d.warn("link.broken", "No page at /missing/.", { pos: { file: "docs/index.md", line: 1, column: 1, endLine: 1 }, help: "Fix the link." });
+  d.warn("link.broken", "No page at /missing/.", { pos: { file: "docs/index.md", line: 1, column: 1, endLine: 1, endColumn: 1 }, help: "Fix the link." });
   d.error("config.unknown-key", "Unknown key `titel`.", { pos });
   d.info("build.note", "Built without a search index.");
-  d.error("md.فارسی", "نام فایل فارسی.", { pos: { file: "docs/فارسی/نصب 1.md", line: 2, column: 1, endLine: 2 } });
+  d.error("md.فارسی", "نام فایل فارسی.", { pos: { file: "docs/فارسی/نصب 1.md", line: 2, column: 1, endLine: 2, endColumn: 1 } });
   return d;
 }
 
@@ -46,7 +46,7 @@ test("sorting is by file, line, column, id; unplaced findings come last; the inp
 test("text: path:line:col  id  message, a code frame, help, and a count", () => {
   const files: Record<string, string> = { "docs/guide/install.md": "# Install\n\nbad\ttitel: x\nnext\n" };
   const text = formatText(
-    [{ id: "config.unknown-key", severity: "error", message: "Unknown key.", pos: { file: "docs/guide/install.md", line: 3, column: 5, endLine: 3 }, help: "Rename it." }],
+    [{ id: "config.unknown-key", severity: "error", message: "Unknown key.", pos: { file: "docs/guide/install.md", line: 3, column: 5, endLine: 3, endColumn: 5 }, help: "Rename it." }],
     { source: (f) => files[f] },
   );
   assert.equal(
@@ -73,7 +73,7 @@ test("text: no code frame without a source, and a finding without a position has
 });
 
 test("text: a line number outside the file prints no frame instead of throwing", () => {
-  const d: Diagnostic = { id: "a.b", severity: "warning", message: "m", pos: { file: "f.md", line: 99, column: 1, endLine: 99 } };
+  const d: Diagnostic = { id: "a.b", severity: "warning", message: "m", pos: { file: "f.md", line: 99, column: 1, endLine: 99, endColumn: 1 } };
   assert.equal(formatText([d], { source: () => "one line" }), "f.md:99:1  a.b  m\n0 errors, 1 warning\n");
 });
 

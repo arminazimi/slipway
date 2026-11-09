@@ -40,10 +40,10 @@ interface Context {
 
 function posOf(ctx: Context, node: Node | null | undefined): SourcePos {
   const range = node?.range;
-  if (!range) return { file: ctx.file, line: 1, column: 1, endLine: 1 };
+  if (!range) return { file: ctx.file, line: 1, column: 1, endLine: 1, endColumn: 1 };
   const start = ctx.lineCounter.linePos(range[0]);
   const end = ctx.lineCounter.linePos(Math.max(range[0], (range[2] ?? range[1]) - 1));
-  return { file: ctx.file, line: start.line, column: start.col, endLine: end.line };
+  return { file: ctx.file, line: start.line, column: start.col, endLine: end.line, endColumn: end.col };
 }
 
 function textOf(node: unknown): string | undefined {
@@ -177,7 +177,13 @@ export function navFromYaml(text: string, file: string, options: NavFromYamlOpti
       const start = error.linePos?.[0];
       const end = error.linePos?.[1] ?? start;
       ctx.diagnostics.error("nav.invalid-yaml", `Invalid YAML in ${file}: ${error.message.split("\n")[0]}`, {
-        pos: { file, line: start?.line ?? 1, column: start?.col ?? 1, endLine: end?.line ?? start?.line ?? 1 },
+        pos: {
+          file,
+          line: start?.line ?? 1,
+          column: start?.col ?? 1,
+          endLine: end?.line ?? start?.line ?? 1,
+          endColumn: end?.col ?? start?.col ?? 1,
+        },
       });
     }
     return { nav: {}, diagnostics: ctx.diagnostics.all };

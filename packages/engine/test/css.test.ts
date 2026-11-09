@@ -47,7 +47,7 @@ const site: Site = {
 
 const head: Head = { title: "Page", meta: [], links: [], jsonLd: [] };
 
-const pos = { file: "guide.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function page(html: string): Page {
   return {

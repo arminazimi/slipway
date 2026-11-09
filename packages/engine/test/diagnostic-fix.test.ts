@@ -14,12 +14,12 @@ const fix: DiagnosticFix = {
   text: "/guide/setup/",
   description: "Add a trailing slash",
 };
-const pos = { file: "docs/guide/install.md", line: 3, column: 5, endLine: 3 };
+const pos = { file: "docs/guide/install.md", line: 3, column: 5, endLine: 3, endColumn: 5 };
 
 function sample() {
   const d = createDiagnostics();
   d.warn("link.no-slash", "Link lacks a trailing slash.", { pos, help: "Add `/`.", fix });
-  d.error("config.unknown-key", "Unknown key `titel`.", { pos: { file: "slipway.yml", line: 1, column: 1, endLine: 1 } });
+  d.error("config.unknown-key", "Unknown key `titel`.", { pos: { file: "slipway.yml", line: 1, column: 1, endLine: 1, endColumn: 1 } });
   return d;
 }
 

@@ -4,7 +4,7 @@ import type { Heading, Root } from "mdast";
 import { parseMarkdown } from "../src/markdown/parse.ts";
 import { markdownToHtml } from "../src/markdown/to-html.ts";
 
-/** Every element that carries `data-src`, in document order, as `tag` and `path:line`. */
+/** Every element that carries `data-src`, in document order, as `tag` and its full span. */
 function sourced(html: string): { tag: string; src: string }[] {
   const out: { tag: string; src: string }[] = [];
   for (const match of html.matchAll(/<([a-z][a-z0-9]*)\b[^>]*?\sdata-src="([^"]*)"/g)) {
@@ -40,29 +40,29 @@ const SAMPLE = [
   "Last line.", // 27
 ];
 
-test("every block element in a sample page carries its source line", async () => {
+test("every block element in a sample page carries its full source span", async () => {
   const tree = await parseMarkdown(SAMPLE.join("\n"), 4);
   const { html } = await markdownToHtml(tree, "guide/install.md");
   assert.deepEqual(sourced(html), [
-    { tag: "h1", src: "guide/install.md:4" },
-    { tag: "p", src: "guide/install.md:6" },
-    { tag: "h2", src: "guide/install.md:8" },
-    { tag: "ul", src: "guide/install.md:10" },
-    { tag: "ol", src: "guide/install.md:13" },
-    { tag: "table", src: "guide/install.md:15" },
-    { tag: "blockquote", src: "guide/install.md:19" },
-    { tag: "p", src: "guide/install.md:19" },
-    { tag: "pre", src: "guide/install.md:21" },
-    { tag: "p", src: "guide/install.md:27" },
+    { tag: "h1", src: "guide/install.md:4:1-4:9" },
+    { tag: "p", src: "guide/install.md:6:1-6:18" },
+    { tag: "h2", src: "guide/install.md:8:1-8:8" },
+    { tag: "ul", src: "guide/install.md:10:1-11:8" },
+    { tag: "ol", src: "guide/install.md:13:1-13:6" },
+    { tag: "table", src: "guide/install.md:15:1-17:9" },
+    { tag: "blockquote", src: "guide/install.md:19:1-19:8" },
+    { tag: "p", src: "guide/install.md:19:3-19:8" },
+    { tag: "pre", src: "guide/install.md:21:1-23:3" },
+    { tag: "p", src: "guide/install.md:27:1-27:10" },
   ]);
 });
 
-test("a page parsed from line 1 stamps lines as remark reports them", async () => {
+test("a page parsed from line 1 stamps spans as remark reports them", async () => {
   const tree = await parseMarkdown("# A\n\nText.\n", 1);
   const { html } = await markdownToHtml(tree, "a.md");
   assert.deepEqual(sourced(html), [
-    { tag: "h1", src: "a.md:1" },
-    { tag: "p", src: "a.md:3" },
+    { tag: "h1", src: "a.md:1:1-1:3" },
+    { tag: "p", src: "a.md:3:1-3:5" },
   ]);
 });
 
@@ -91,8 +91,8 @@ test("directive components carry data-src", async () => {
   } as unknown as Root;
   const { html } = await markdownToHtml(tree, "guide/tips.md");
   assert.deepEqual(sourced(html), [
-    { tag: "div", src: "guide/tips.md:7" },
-    { tag: "p", src: "guide/tips.md:8" },
+    { tag: "div", src: "guide/tips.md:7:1-9:1" },
+    { tag: "p", src: "guide/tips.md:8:1-8:1" },
   ]);
 });
 
@@ -111,14 +111,14 @@ test("headings are collected with depth, text, and id", async () => {
     { depth: 3, text: "Code x", id: "custom" },
     { depth: 2, text: "Install", id: "install-1" },
   ]);
-  assert.match(html, /<h1 id="install" data-src="a\.md:1">Install<\/h1>/);
+  assert.match(html, /<h1 id="install" data-src="a\.md:1:1-1:9">Install<\/h1>/);
 });
 
 test("a custom heading id is collected and rendered, with the custom id stripped from the text", async () => {
   const tree = await parseMarkdown("## نصب {#install}\n", 1);
   const { headings, html } = await markdownToHtml(tree, "a.md");
   assert.deepEqual(headings, [{ depth: 2, text: "نصب", id: "install" }]);
-  assert.match(html, /<h2 id="install" data-src="a\.md:1">نصب<\/h2>/);
+  assert.match(html, /<h2 id="install" data-src="a\.md:1:1-1:17">نصب<\/h2>/);
 });
 
 test("the input tree is not modified", async () => {

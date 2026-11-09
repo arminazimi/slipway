@@ -7,7 +7,7 @@ import { navState } from "../src/nav/tree.ts";
 import { buildModel } from "../src/model/build.ts";
 import { headMeta } from "../src/outputs/head-meta.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function config(overrides: Partial<SiteConfig> = {}): SiteConfig {
   return {

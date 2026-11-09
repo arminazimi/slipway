@@ -6,7 +6,7 @@ import type { Page, Site } from "../src/contracts/index.ts";
 import { agentsMd } from "../src/outputs/agents-md.ts";
 import { buildModel } from "../src/model/build.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function site(overrides: Partial<Site["config"]> = {}, pages: readonly Page[] = [], nav: Site["nav"] = {}): Site {
   return {

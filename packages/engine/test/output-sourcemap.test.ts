@@ -25,7 +25,7 @@ const Ajv2020 = createRequire(import.meta.url)("ajv/dist/2020.js") as typeof Ajv
 const ajv = new Ajv2020({ strict: true, allErrors: true });
 const validate = ajv.compile(schema);
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 /** A site config with the defaults a build fills in, plus the given overrides. */
 function config(overrides: Partial<SiteConfig> = {}): SiteConfig {
@@ -77,12 +77,18 @@ interface Section {
   readonly id: string;
   readonly level: number;
   readonly line: number;
+  readonly column: number;
+  readonly endLine: number;
+  readonly endColumn: number;
   readonly text: string;
 }
 
 interface LinkEntry {
   readonly href: string;
   readonly line: number;
+  readonly column: number;
+  readonly endLine: number;
+  readonly endColumn: number;
 }
 
 interface PageEntry {
@@ -177,11 +183,19 @@ test("every section's line and level equal the heading's data-src and tag in the
       assert.equal(section.text, heading.text, `${entry.url} section ${index} text`);
       assert.equal(section.line, heading.pos.line, `${entry.url} section ${index} line`);
 
+      assert.equal(section.column, heading.pos.column, `${entry.url} section ${index} column`);
+      assert.equal(section.endLine, heading.pos.endLine, `${entry.url} section ${index} end line`);
+      assert.equal(section.endColumn, heading.pos.endColumn, `${entry.url} section ${index} end column`);
+
       const tag = headingTag(pageModel.html, section.id);
       assert.ok(tag, `${entry.url} builds a heading with id ${section.id}`);
       assert.equal(tag.level, section.level, `${entry.url} section ${section.id} is an h${section.level}`);
       const dataSrc = /\bdata-src="([^"]*)"/.exec(tag.attrs)?.[1];
-      assert.equal(dataSrc, `${entry.source}:${section.line}`, `${entry.url} section ${section.id} data-src`);
+      assert.equal(
+        dataSrc,
+        `${entry.source}:${section.line}:${section.column}-${section.endLine}:${section.endColumn}`,
+        `${entry.url} section ${section.id} data-src`,
+      );
     }
   }
 });
@@ -268,7 +282,7 @@ test("the schema rejects a source map a tool must not accept", () => {
     ["a heading level of 7", { version: 0, pages: [{ ...page, sections: [{ ...section, level: 7 }] }] }],
     ["a section line of 0", { version: 0, pages: [{ ...page, sections: [{ ...section, line: 0 }] }] }],
     ["a section without text", { version: 0, pages: [{ ...page, sections: [{ ...section, text: undefined }] }] }],
-    ["a section with an unknown key", { version: 0, pages: [{ ...page, sections: [{ ...section, column: 1 }] }] }],
+    ["a section with an unknown key", { version: 0, pages: [{ ...page, sections: [{ ...section, endColumns: 1 }] }] }],
     ["an empty link href", { version: 0, pages: [{ ...page, links: [{ ...link, href: "" }] }] }],
     ["a link line of 0", { version: 0, pages: [{ ...page, links: [{ ...link, line: 0 }] }] }],
     ["a link without an href", { version: 0, pages: [{ ...page, links: [{ line: 1 }] }] }],

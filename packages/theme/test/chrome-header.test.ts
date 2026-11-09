@@ -5,7 +5,7 @@ import { Fragment } from "preact";
 import type { ChromeProps, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
 import header from "../chrome/header/index.ts";
 
-const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function configWith(overrides: Partial<SiteConfig> = {}): SiteConfig {
   return {

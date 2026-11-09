@@ -6,7 +6,7 @@ import type { OutputContext } from "../src/contracts/output.ts";
 import { buildModel } from "../src/model/build.ts";
 import { llms } from "../src/outputs/llms.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 /** A site config with the defaults a build fills in, plus the given overrides. */
 function config(overrides: Partial<SiteConfig> = {}): SiteConfig {

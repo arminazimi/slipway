@@ -63,7 +63,7 @@ function detailOf(err: unknown): string {
 
 /** An error about the code file itself; the file is the whole problem, so its position is its first line. */
 function fileDiagnostic(file: string, id: string, message: string, help: string): Diagnostic {
-  return { id, severity: "error", message, pos: { file, line: 1, column: 1, endLine: 1 }, help };
+  return { id, severity: "error", message, pos: { file, line: 1, column: 1, endLine: 1, endColumn: 1 }, help };
 }
 
 /** An error about one plugin's hook, naming the plugin so the site owner knows which one to fix. */

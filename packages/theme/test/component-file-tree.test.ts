@@ -5,7 +5,7 @@ import { Fragment } from "preact";
 import fileTree, { directive, parseEntries } from "../components/file-tree/index.ts";
 import type { ComponentProps, Page, Site, SourcePos, SiteConfig } from "@velella/mizzen/contracts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

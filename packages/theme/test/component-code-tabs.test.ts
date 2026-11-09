@@ -24,7 +24,7 @@ import {
   type TabsGroup,
 } from "../components/code-tabs/client.ts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 4, column: 1, endLine: 20 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 4, column: 1, endLine: 20, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",
