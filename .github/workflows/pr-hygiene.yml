@@ -1,7 +1,7 @@
 name: pr-hygiene
 
-# Every pull request says `Closes #<issue>`, and a change to files a site owner sees (`_layouts/`,
-# `_includes/`, `assets/`, `schema/`, `skills/`) adds `changelog.d/<issue>.md`; the label
+# Every pull request says `Closes #<issue>`, and a change to files a site owner sees (`packages/theme/`
+# layouts, chrome, components, styles, and tokens, `schema/`, `skills/`) adds `changelog.d/<issue>.md`; the label
 # `no-changelog` skips the second rule. The check lives in tools/pr-hygiene/check.mjs.
 #
 # `pull_request_target` gives a fork's pull request a token that can comment. The job checks out the

@@ -11,7 +11,7 @@ import { pathToFileURL } from "node:url";
 export const MARKER = "<!-- slipway-pr-hygiene -->";
 
 /** Folders a site owner sees; a change under one needs a changelog fragment. */
-const SITE_OWNER = /^(_layouts|_includes|assets|schema|skills)\//;
+const SITE_OWNER = /^(packages\/theme\/(layouts|chrome|components|styles|tokens)|schema|skills)\//;
 
 /** `Closes #12`, `fixes #12`, `Resolved #12` (any case) and the numbers they name. */
 export function closedIssues(body) {
