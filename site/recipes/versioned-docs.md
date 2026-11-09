@@ -1,30 +1,33 @@
 ---
-title: Versioned documentation on GitHub Pages (folders per version)
-description: Publish /v1/, /v2/, and /latest/ from one repository, with a version switcher using navigation data.
+title: Versioned documentation with folders per version
+description: Publish /v1/, /v2/, and /latest/ from one repository, with a version switcher in navigation.
 layout: doc
+permalink: /recipes/versioned-docs/
 ---
 
-This recipe shows how to host multiple versions of your documentation (like `/v1/`, `/v2/`, and `/latest/`) from a single repository using GitHub Pages.
+This recipe shows how to host several versions of your documentation (`/v1/`, `/v2/`, and `/latest/`) from one repository. A version is a folder of pages; the engine publishes each folder at its path, so `v1/index.md` is `/v1/` and `v2/guide.md` is `/v2/guide/`.
 
-**Mode needed:** Classic mode or Actions mode.
+## Keep latest as a redirect
 
-## Approach
+Write each version under its own folder, then make `latest` an old path that redirects to the current version in `mizzen.yml`:
 
-1. Create a folder for each version of your documentation (e.g., `v1`, `v2`).
-2. Inside each folder, place the corresponding Markdown files.
-3. Configure `_data/navigation.yml` with version items or use separate navigation files per version if needed.
-4. Update links in your `_config.yml` or navigation to point to the desired versions.
+```yaml
+redirects:
+  /latest/: /v2/
+```
 
-## Example Configuration
+Alternatively, add `latest/index.md` with `redirect_to: /v2/` in its front matter.
+
+## Add a version switcher
+
+List the versions in `_data/navigation.yml`. URLs are written without `base`; the engine adds it.
 
 ```yaml
 main:
-  - title: Latest Docs (v2)
-    url: /latest/
+  - title: Latest (v2)
+    url: /v2/
   - title: Version 1 (v1)
     url: /v1/
 ```
 
-You can read the official [GitHub Pages documentation](https://docs.github.com/en/pages) for details on how the file system maps to URLs.
-
-By organizing your files into version-specific subdirectories, Jekyll will output them exactly in that structure, and you can build a standard Slipway navigation layout to let users jump between `/v1/` and `/latest/`.
+When the site is published under a project path, set `base` once in `mizzen.yml`, such as `/my-project`; do not repeat it in navigation URLs. A build fails when two pages write the same URL, so keep the version folders and their `index.md` files distinct.

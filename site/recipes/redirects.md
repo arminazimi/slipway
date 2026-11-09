@@ -1,6 +1,6 @@
 ---
 title: Redirects
-description: Keep old URLs working when pages move, with jekyll-redirect-from.
+description: Keep old URLs working when pages move, with the engine's redirects and redirect_from.
 layout: doc
 permalink: /recipes/redirects/
 date: 2024-03-20
@@ -9,29 +9,34 @@ author: Slipway
 
 ## Keep old URLs working
 
-When you move or rename a page, you can use the `jekyll-redirect-from` plugin to automatically redirect visitors from the old URL to the new one.
+When a page moves, give the old address a redirect. The engine writes a small HTML page at each old path that sends the reader to the new one; no plugin or server rule is needed.
 
-This plugin is supported in both **Classic mode** (GitHub Pages without a build step) and **Actions mode**.
+## Redirects in the config
 
-### Configuration
-
-If you are running outside of GitHub Pages (or to ensure it runs correctly locally), make sure the plugin is added to your `_config.yml`:
+List old paths and where they go in `mizzen.yml`:
 
 ```yaml
-plugins:
-  - jekyll-redirect-from
+redirects:
+  /old-url/: /new-url/
+  /install: https://example.com/docs/install/
 ```
 
-### Usage
+Each key is an old path under `base`; do not include `base` itself. Each value is a path on the site or an `https` URL. A redirect that claims a path a real page already owns, or the same old path twice, is a build error.
 
-To set up a redirect, add the `redirect_from` array to the front matter of the **new** page (the destination you want visitors to end up at). Include all the old URLs that should redirect here.
+## Redirects in front matter
 
-For example, if you moved a page from `/old-url/` to this page, you would configure it like this:
+On the new page, list the old paths that should reach it:
 
 ```yaml
 redirect_from:
-  - /old-url/
+  - /older-url/
   - /another-old-url/
 ```
 
-For more details on how the redirects are generated, read the [official jekyll-redirect-from documentation](https://github.com/jekyll/jekyll-redirect-from).
+A single old path may be a string instead of a list. A page that only redirects sets `redirect_to` and has no body:
+
+```yaml
+redirect_to: /new-url/
+```
+
+Use a `redirect_to` page or a `redirects` entry for a fixed old URL; use `redirect_from` on the destination when the page itself keeps moving.

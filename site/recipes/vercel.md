@@ -1,6 +1,6 @@
 ---
 title: Deploy to Vercel
-description: How to deploy your Slipway site to Vercel.
+description: Build a Slipway site with the engine and publish the output to Vercel.
 layout: doc
 permalink: /recipes/vercel/
 date: 2024-03-20
@@ -9,38 +9,31 @@ author: Slipway
 
 ## Deploy to Vercel
 
-You can easily deploy a Slipway site to Vercel. Since Vercel runs a build step outside GitHub Pages, this deployment runs in Actions mode.
+Vercel runs a build step, so it can build a Slipway site with the engine rather than Jekyll.
 
 ### Prerequisites
 
-Since Slipway uses the `remote_theme` feature of Jekyll by default, deploying to Vercel requires setting up a standard Jekyll build.
+Keep the engine and the theme in the site's `package.json`:
 
-1. Create a `Gemfile` in your repository:
-   ```ruby
-   source "https://rubygems.org"
-   gem "jekyll"
-   gem "slipway-theme"
-   ```
+```sh
+npm install --save-dev @velella/mizzen @velella/lateen
+```
 
-2. In your `_config.yml`, use `theme` instead of `remote_theme`:
-   ```yaml
-   theme: slipway-theme
-   ```
-
-3. Ensure you have a `.ruby-version` file at the root of your project specifying the Ruby version (e.g., `3.3.0`), as Vercel requires it to install dependencies correctly.
+Set `url` in `mizzen.yml` to the site's address, such as `https://docs.example.com`. Vercel needs Node 24 or later; declare it in `package.json` with `"engines": { "node": ">=24" }` or in a `.node-version` file.
 
 ### Setup on Vercel
 
-For full instructions, refer to the [official Vercel Jekyll documentation](https://vercel.com/docs/frameworks/jekyll).
+When importing the repository, use these settings:
 
-When configuring your project on Vercel, use the following settings:
-- **Framework Preset:** Jekyll
-- **Build Command:** `bundle exec jekyll build`
-- **Output Directory:** `_site`
+- **Framework Preset:** Other
+- **Build Command:** `npx mizzen build . --out dist`
+- **Output Directory:** `dist`
 
-### Markdown Twins Headers
+To catch a diagnostic before Vercel publishes, make the build command `npx mizzen check . && npx mizzen build . --out dist`.
 
-To ensure that the Markdown twins are served with the correct `Content-Type`, create a `vercel.json` file in the root of your repository with the following headers configuration:
+### Markdown twins headers
+
+The engine writes a Markdown twin next to every page, such as `guide/install/index.md`. To serve it as Markdown, add a `vercel.json` file at the repository root:
 
 ```json
 {

@@ -17,8 +17,6 @@ main:
         url: /guides/
       - title: Migrate from Jekyll
         url: /guides/migration/
-      - title: Move from a GitHub Pages theme
-        url: /recipes/from-pages-themes/
       - title: Documentation from a docs/ folder
         url: /recipes/docs-folder/
       - title: Versioned documentation
@@ -67,28 +65,14 @@ main:
         url: /guides/customize/
       - title: Social cards
         url: /guides/social-cards/
-      - title: Analytics
-        url: /recipes/analytics/
-      - title: Comments
-        url: /recipes/comments/
-      - title: Contact forms
-        url: /recipes/forms/
-      - title: Pagefind search
-        url: /recipes/pagefind/
       - title: Redirects
         url: /recipes/redirects/
-      - title: rel="me" links
-        url: /recipes/rel-me/
-      - title: Content negotiation
-        url: /recipes/content-negotiation/
   - title: Deploy
     children:
       - title: Recipes
         url: /recipes/
       - title: Deploy to Cloudflare Pages
         url: /recipes/cloudflare-pages/
-      - title: Deploy to Codeberg Pages
-        url: /recipes/codeberg-pages/
       - title: Deploy to GitLab Pages
         url: /recipes/gitlab-pages/
       - title: Deploy to Netlify
@@ -97,8 +81,6 @@ main:
         url: /recipes/vercel/
       - title: Custom domain
         url: /recipes/custom-domain/
-      - title: Keep dependencies alive
-        url: /recipes/lifecycle/
   - title: Reference
     tab: true
     children:
