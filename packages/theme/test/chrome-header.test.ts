@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { Fragment } from "preact";
 import type { ChromeProps, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
-import header from "../chrome/header/index.tsx";
+import header from "../chrome/header/index.ts";
 
 const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1 };
 
