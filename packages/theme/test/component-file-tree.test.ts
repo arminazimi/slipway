@@ -209,3 +209,9 @@ test("style.css uses logical properties only", () => {
   assert.doesNotMatch(css, /\b(margin|padding|border)-(left|right)\b/);
   assert.doesNotMatch(css, /\b(left|right):/);
 });
+
+test("a folder whose slash sits inside a closing tag is still a folder", () => {
+  const out = render("<ul><li><code>dist/</code></li><li><code>app.js</code></li></ul>");
+  assert.equal(out.match(/is-folder-icon/g)?.length, 1);
+  assert.equal(out.match(/is-file-icon/g)?.length, 1);
+});

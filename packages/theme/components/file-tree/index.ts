@@ -76,14 +76,9 @@ function finish({ entry, label }: Open): void {
   }
 }
 
-/** Text of an HTML fragment, without its tags. */
-function textOf(html: string): string {
-  return html.replace(/<[^>]*>/g, "");
-}
-
-/** A folder has nested rows, or a name that ends in `/`. */
+/** A folder has nested rows, or a name that ends in `/` (also when the slash is inside a closing tag such as `</code>`). */
 function isFolder(entry: FileTreeEntry): boolean {
-  return entry.children.length > 0 || textOf(entry.name).trim().endsWith("/");
+  return entry.children.length > 0 || /\/(\s|<\/[a-zA-Z][\w-]*>)*$/.test(entry.name);
 }
 
 /** A name in bold (`**name**`) or `<mark>` marks the entry as highlighted. */
