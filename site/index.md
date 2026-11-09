@@ -66,9 +66,6 @@ sections:
       - title: Configuration
         url: config/
         meta: reference
-      - title: Languages
-        url: languages/
-        meta: reference
   - title: Deploy
     url: recipes/
     description: Build once and host the output anywhere, with its own search.
@@ -95,6 +92,6 @@ sections:
         url: spec/
         meta: spec
       - title: Roadmap
-        url: roadmap/
-        meta: plan
+        url: https://github.com/arminazimi/slipway/blob/main/ROADMAP.md
+        meta: repo
 ---

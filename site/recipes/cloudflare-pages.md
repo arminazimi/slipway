@@ -1,6 +1,6 @@
 ---
 title: Deploy to Cloudflare Pages
-description: How to deploy your Slipway site to Cloudflare Pages.
+description: Build a Slipway site with the engine and publish the output to Cloudflare Pages.
 layout: doc
 permalink: /recipes/cloudflare-pages/
 date: 2024-03-20
@@ -9,33 +9,26 @@ author: Slipway
 
 ## Deploy to Cloudflare Pages
 
-You can easily deploy a Slipway site to Cloudflare Pages.
+Cloudflare Pages runs a build command on Node, so it can build a Slipway site with the engine. There is no Gemfile and no Jekyll build step.
 
 ### Prerequisites
 
-Since Slipway uses the `remote_theme` feature of Jekyll by default, it requires the GitHub Pages gem. If you want to deploy to Cloudflare Pages, you'll need to set up a standard Jekyll build.
+Keep the engine and the theme in the site's `package.json`:
 
-1. Ensure you have a `Gemfile` in your repository:
-   ```ruby
-   source "https://rubygems.org"
-   gem "jekyll"
-   gem "slipway-theme"
-   ```
+```sh
+npm install --save-dev @velella/mizzen @velella/lateen
+```
 
-2. In your `_config.yml`, use `theme` instead of `remote_theme`:
-   ```yaml
-   theme: slipway-theme
-   ```
+Set `url` in `mizzen.yml` to the site's address, such as `https://docs.example.com`, so canonical links and the sitemap use the published domain. Set the `NODE_VERSION` environment variable to `24` or later in the Pages project; the default Node version may be older than the engine allows.
 
 ### Setup on Cloudflare Pages
 
-1. Log in to the Cloudflare dashboard and go to "Pages".
-2. Click "Create a project" and select "Connect to Git".
-3. Connect your GitHub or GitLab account and select your repository.
-4. Configure the build settings:
-   - **Framework preset:** Jekyll
-   - **Build command:** `bundle exec jekyll build`
-   - **Build output directory:** `_site`
-5. Click "Save and Deploy".
+1. In the Cloudflare dashboard, open **Workers & Pages** and choose **Create → Pages → Connect to Git**.
+2. Select the repository.
+3. Configure the build:
+   - **Framework preset:** None
+   - **Build command:** `npx mizzen build . --out dist`
+   - **Build output directory:** `dist`
+4. Save and deploy.
 
-Cloudflare Pages will now build and deploy your site automatically whenever you push changes to your repository.
+To catch a diagnostic before Pages publishes, make the build command `npx mizzen check . && npx mizzen build . --out dist`. Cloudflare Pages rebuilds on every push.
