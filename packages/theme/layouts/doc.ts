@@ -9,6 +9,7 @@ import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
+import pageStatus, { type PageStatusProps } from "../components/page-status/index.ts";
 
 /**
  * True when the body already supplies the page's `h1`, by the same rule as the engine's
@@ -19,13 +20,24 @@ function titleFromBody(props: LayoutProps): boolean {
   return props.page.headings.some((heading) => heading.depth === 1);
 }
 
-/** The page itself: breadcrumb, title, body, page footer, and pager, marked for Pagefind. */
+/** The banner's props from front matter: a key is passed only when it holds a usable value. */
+function statusProps(page: LayoutProps["page"]): PageStatusProps {
+  const { status, since, replaced_by } = page.frontMatter;
+  return {
+    ...(status === undefined ? {} : { status }),
+    ...(typeof since === "string" ? { since } : {}),
+    ...(typeof replaced_by === "string" ? { replaced_by } : {}),
+  };
+}
+
+/** The page itself: breadcrumb, status banner, title, body, page footer, and pager, marked for Pagefind. */
 function article(props: LayoutProps): ComponentChildren {
   const { page } = props;
   return h(
     "article",
     { class: "doc", "data-pagefind-body": true },
     breadcrumb(props) as ComponentChildren,
+    pageStatus({ props: statusProps(page), page, site: props.site, html: "" }) as ComponentChildren,
     titleFromBody(props) ? null : h("h1", null, page.title),
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
     pageFooter(props) as ComponentChildren,
