@@ -20,6 +20,9 @@
   "default": "پیش‌فرض",
   "deprecated": "Deprecated",
   "description": "Description",
+  "diff": "تفاوت",
+  "diff_added": "افزوده:",
+  "diff_removed": "حذف‌شده:",
   "docs_nav": "مستندات",
   "edit_label": "ویرایش با دستیار",
   "edit_prompt": "فایل {source} را ویرایش کن. متن فعلی: «{text}». تغییر:",
@@ -75,6 +78,9 @@
   "translation_key": "کلید ترجمه",
   "translation_missing": "This page hasn't been translated yet. Read it in:",
   "type": "Type",
+  "version_added": "افزوده شد در نسخهٔ {version}",
+  "version_changed": "تغییر کرد در نسخهٔ {version}",
+  "version_removed": "حذف شد در نسخهٔ {version}",
   "versions": "Versions",
   "yes": "بله"
 }

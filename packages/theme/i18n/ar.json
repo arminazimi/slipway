@@ -20,6 +20,9 @@
   "default": "الافتراضي",
   "deprecated": "Deprecated",
   "description": "Description",
+  "diff": "فرق",
+  "diff_added": "مضاف:",
+  "diff_removed": "محذوف:",
   "docs_nav": "التوثيق",
   "edit_label": "التحرير مع وكيلك",
   "edit_prompt": "حرّر الملف {source}. النص الحالي: «{text}». التغيير:",
@@ -75,6 +78,9 @@
   "translation_key": "مفتاح الترجمة",
   "translation_missing": "This page hasn't been translated yet. Read it in:",
   "type": "Type",
+  "version_added": "أُضيف في الإصدار {version}",
+  "version_changed": "تغيّر في الإصدار {version}",
+  "version_removed": "أُزيل في الإصدار {version}",
   "versions": "Versions",
   "yes": "نعم"
 }
