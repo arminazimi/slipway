@@ -15,7 +15,7 @@
 // an optional tool, never a dependency of the repository (CI runs Node only, `.github/workflows/ci.yml`), so
 // when it or its browsers are missing the gate prints SKIP and exits 0, like every other browser gate.
 import { createReadStream, existsSync, statSync } from "node:fs";
-import { readFile, readdir, stat } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { createServer } from "node:http";
 import type { Server } from "node:http";
 import { extname, join, posix, relative, resolve, sep } from "node:path";
@@ -88,8 +88,8 @@ function region(html: string, tag: string, name: string): string | undefined {
 /** The text a reader sees: scripts, styles, and tags removed. */
 function textOf(html: string): string {
   return html
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script\b[\s\S]*?<\/script\s*>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style\s*>/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&[a-z#0-9]+;/gi, " ")
     .replace(/\s+/g, " ")
@@ -233,7 +233,7 @@ export function sample(site: Site): string[] {
 }
 
 /** A file server for the build folder, so root-absolute links (`/install/`) work as they do on a site. */
-export function serve(dir: string): Promise<{ url: string; close: () => Promise<void> }> {
+export async function serve(dir: string): Promise<{ url: string; close: () => Promise<void> }> {
   const types: Record<string, string> = {
     ".css": "text/css; charset=utf-8",
     ".html": "text/html; charset=utf-8",
@@ -247,30 +247,40 @@ export function serve(dir: string): Promise<{ url: string; close: () => Promise<
     ".woff2": "font/woff2",
     ".xml": "application/xml; charset=utf-8",
   };
+  // The routes are fixed before the server starts, so a request path is only a map key: it never reaches the
+  // file system itself. A folder is served as its `index.html`, with and without the trailing slash.
+  const routes = new Map<string, string>();
+  async function walk(folder: string): Promise<void> {
+    for (const entry of await readdir(folder, { withFileTypes: true })) {
+      const path = join(folder, entry.name);
+      if (entry.isDirectory()) await walk(path);
+      else if (entry.isFile()) {
+        const name = relative(dir, path).split(sep).join("/");
+        routes.set(`/${name}`, path);
+        if (entry.name === "index.html") {
+          const parent = name.slice(0, -"index.html".length);
+          routes.set(parent === "" ? "/" : `/${parent}`, path);
+          if (parent !== "") routes.set(`/${parent.slice(0, -1)}`, path);
+        }
+      }
+    }
+  }
+  await walk(dir);
   const server: Server = createServer((request, response) => {
-    void (async () => {
-      let pathname: string;
-      try {
-        pathname = decodeURIComponent((request.url ?? "/").split("?")[0] ?? "/");
-      } catch {
-        response.writeHead(400).end("bad request");
-        return;
-      }
-      let file = resolve(dir, `.${pathname}`);
-      if (file !== dir && !file.startsWith(dir + sep)) {
-        response.writeHead(403).end("forbidden");
-        return;
-      }
-      try {
-        if ((await stat(file)).isDirectory()) file = join(file, "index.html");
-        if (!(await stat(file)).isFile()) throw new Error("not a file");
-      } catch {
-        response.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("not found");
-        return;
-      }
-      response.writeHead(200, { "content-type": types[extname(file).toLowerCase()] ?? "application/octet-stream" });
-      createReadStream(file).pipe(response);
-    })();
+    let pathname: string;
+    try {
+      pathname = decodeURIComponent((request.url ?? "/").split("?")[0] ?? "/");
+    } catch {
+      response.writeHead(400, { "content-type": "text/plain; charset=utf-8" }).end("bad request");
+      return;
+    }
+    const file = routes.get(pathname);
+    if (file === undefined) {
+      response.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("not found");
+      return;
+    }
+    response.writeHead(200, { "content-type": types[extname(file).toLowerCase()] ?? "application/octet-stream" });
+    createReadStream(file).pipe(response);
   });
   return new Promise((resolveServe, rejectServe) => {
     server.once("error", rejectServe);
