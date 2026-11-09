@@ -2,7 +2,7 @@
 import { Ajv2020 } from "ajv/dist/2020.js";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 const schema = JSON.parse(readFileSync(join(root, "schema/sourcemap.schema.json"), "utf8"));
 const validate = new Ajv2020({ allErrors: true }).compile<any>(schema);

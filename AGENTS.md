@@ -9,12 +9,12 @@ Instructions for coding agents working on Slipway itself. Every site built with 
 ## Commands
 
 - `npm ci`: installs the dev dependencies (ajv, typescript, yaml).
-- `npm run check` (`tools/check.ts`): the gate. It runs every `*.test.ts` and `*.test.mjs`, type-checks every workspace with a `typecheck` script, runs the fixed checks (brand, tokens, contrast, logical CSS, JS and CSS budgets, schemas, docs), and then every `tools/<name>/run.ts` (or legacy `run.mjs`). A new tool needs no script in `package.json` and no step in `ci.yml`; generators are excluded (see `notChecks`). Node 24 is the only requirement. Run it before you say a change is done.
+- `npm run check` (`tools/check.ts`): the gate. It runs every `*.test.ts` and `*.test.mjs`, type-checks every workspace with a `typecheck` script, runs the fixed checks (brand, logical CSS, JS and CSS budgets, schemas, docs), and then every `tools/<name>/run.ts` (or legacy `run.mjs`). A new tool needs no script in `package.json` and no step in `ci.yml`; generators are excluded (see `notChecks`). Node 24 is the only requirement. Run it before you say a change is done.
 - `npm run check:tools`: runs only the `tools/*/run.ts` and `run.mjs` checks.
 - `npm run check:schemas`: validates the example sites' config and front matter against their schemas.
 - `npm run check:docs`: fails when a generated doc is stale (see [Generated files](#generated-files)).
-- `npm run check:tokens`, `npm run check:brand`, `npm run check:contrast`, `npm run check:logical`, `npm run check:js`, `npm run check:css`: the individual fixed checks. `check:logical` fails on physical CSS properties in `assets/css/`; use logical ones (`margin-inline-start`, not `margin-left`).
-- `npm run build:docs`, `npm run build:skills`, `npm run build:tokens`, `npm run build:brand`: regenerate the files listed under [Generated files](#generated-files). Run them and commit the output; do not edit those files by hand.
+- `npm run check:brand`, `npm run check:logical`, `npm run check:js`, `npm run check:css`: the individual fixed checks. `check:logical` fails on physical CSS properties in `assets/css/`; use logical ones (`margin-inline-start`, not `margin-left`).
+- `npm run build:docs`, `npm run build:skills`, `npm run build:brand`: regenerate the files listed under [Generated files](#generated-files). Run them and commit the output; do not edit those files by hand.
 - `npm run export:brand`: writes the PNG brand exports. It needs a browser and is not part of `npm run check`.
 - `npm run roadmap:build`: writes the issue preview to `planning/roadmap/out/` (generated, not committed).
 - `npm run roadmap:apply`: a dry run of the GitHub sync. `-- --apply` writes to GitHub and is for maintainers only. `--rebuild-state` rebuilds `planning/roadmap/out/state.json` from the issues on GitHub when it is missing (for example on a new machine).
@@ -32,7 +32,6 @@ Releases are tagged by maintainers (CONTRIBUTING.md, "Releasing"). Mizzen and La
 
 - `packages/engine/` (`@velella/mizzen`, Apache-2.0): config, content model, Markdown, navigation, the pipeline, the render host, outputs, diagnostics, and the CLI. Entry point `src/index.ts`; frozen types in `src/contracts/`; the config and front matter schemas in `schema/`.
 - `packages/theme/` (`@velella/lateen`, MIT): layouts, chrome, components, design tokens, styles, and translations (`i18n/`). Entry point `src/index.ts` exports the theme manifest only.
-- `packages/tokens/` (`@slipway/tokens`): the design tokens and core CSS for other frameworks.
 
 The engine runs a build as eight stages, each a function from typed input to typed output: config, discover, front matter, Markdown (remark, with positions kept), HTML (rehype), site model, render (the theme's layouts and components through Preact's `renderToString`), and outputs. Stages talk only through the contract types.
 
@@ -75,7 +74,7 @@ These rules come from [ADR 0023](docs/adr/0023-engine-theme-boundary.md) and are
 - `starter-files/`: files a new site copies as they are. `starter-files/AGENTS.md` is the site's guide for agents.
 - `examples/product-docs/`: the Evergreen-shaped example that `evergreen.example` turns into an engine site. The legacy example sites live on only as test input in `packages/doctor/test/fixtures/examples/` until doctor is ported to the engine.
 - `site/`: the documentation site. `site/config.md` and `site/front-matter.md` are generated.
-- `assets/`: the old theme's CSS, fonts, and client scripts. `packages/tokens` builds from them until `cleanup.old-tokens`.
+- `assets/`: the old theme's CSS, fonts, client scripts, and images. The docs site no longer reads them.
 - `brand/`: brand assets, generated from `brand/tokens.json` and `tools/brand/`.
 - `docs/`: architecture decisions in `docs/adr/` (add one for every decision that is hard to reverse), `docs/modes.md`, and the rest of the documentation.
 - `planning/roadmap/`: the roadmap parser, issue builder, GitHub sync, labels, and tests.
@@ -105,7 +104,6 @@ Do not edit these by hand. Run the command, then commit the output.
 | `site/front-matter.md` | `npm run build:docs` (`tools/front-matter-ref/run.ts`), from `packages/engine/schema/front-matter.schema.json` | `tools/front-matter-ref/run.ts`, run by `npm run check` |
 | `skills/slipway-site/reference/config.md` | `npm run build:skills` (`tools/skills/config-reference.ts`) | `tools/skills/skills.test.ts` |
 | `skills/slipway-content/reference/front-matter.md` | `npm run build:skills` (`tools/skills/front-matter-reference.ts`) | `tools/skills/content.test.ts` |
-| `assets/css/tokens.css`, `docs/tokens.md` | `npm run build:tokens` (`tools/theme/tokens-build.ts`) | `npm run check:tokens` |
 | `packages/theme/styles/tokens.css` | `packages/theme/scripts/tokens.ts`, from `packages/theme/tokens/*.json` | its `--check` mode, run by the theme's tests |
 | `brand/` SVG assets, favicon, templates, logo sheet, export presets | `npm run build:brand` (`tools/brand/build.ts`) | `npm run check:brand` |
 | PNG brand exports | `npm run export:brand` (`tools/brand/export.ts`) | none (needs a browser) |

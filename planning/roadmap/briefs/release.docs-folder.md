@@ -1,12 +1,11 @@
 ## Goal
-Rewrite or delete `docs/modes.md`, `overrides.md`, `tokens.md`, `runtimes.md`, `site-files.md`, `editor.md`, `blocks.md`, and `source-maps.md` for the engine.
+Rewrite or delete `docs/modes.md`, `overrides.md`, `runtimes.md`, `site-files.md`, `editor.md`, `blocks.md`, and `source-maps.md` for the engine. `docs/tokens.md` went with the old token files (`cleanup.old-tokens`).
 
 ## Files
 
 **Edit**
 - `docs/modes.md`
 - `docs/overrides.md`
-- `docs/tokens.md`
 - `docs/runtimes.md`
 - `docs/site-files.md`
 - `docs/editor.md`

@@ -13,7 +13,7 @@ import {
   validateFrontMatter,
   validatePaths,
 } from "./front-matter.ts";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 const base = JSON.parse(readFileSync(join(schemaDir, "base.schema.json"), "utf8"));
 

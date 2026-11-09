@@ -5,7 +5,7 @@
 //     has run, so a visitor without JavaScript sees a plain page. See budgetProblems for the page rules.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 export const budgetBytes = 12 * 1024;
 
