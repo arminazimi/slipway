@@ -127,6 +127,7 @@ Inside the repository, each stage is a function with typed input and output:
 | --- | --- | --- |
 | `build(options)` | `src/pipeline/build.ts` | `BuildResult`: the output folder, every file written (sorted), and every diagnostic. |
 | `buildModel(root)` | `src/model/build.ts` | `ModelResult`: the complete site model plus diagnostics. It parses, renders Markdown, and builds navigation, but writes nothing. |
+| `applyFacts({ site, root, sourceDir, dir? })` | `src/model/facts.ts` | `ApplyFactsResult`: the site with each derived fact's value at `data[fact.name]`, plus diagnostics. `buildModel` calls it. |
 | `loadConfig(root, options?)` | `src/config/load.ts` | `LoadConfigResult`: a complete `SiteConfig` after defaults, plus diagnostics. |
 | `loadRegistry(themeRoot)` | `src/render/registry.ts` | `ThemeRegistry`: the theme manifest, layouts, chrome, and components. |
 | `loadCodeConfig(root, options?)` | `src/plugins/hooks.ts` | `LoadedCode`: the site's plugins and diagnostics. See [Plugins](#plugins). |
@@ -253,6 +254,7 @@ The loader and the hook runners are `loadCodeConfig()`, `runContentHooks()`, `ru
 - `src/index.ts`: the public entry. It exports only `version` for now.
 - `src/contracts/`: the frozen types every stage shares; types only, nothing runs.
 - `src/config/`, `src/content/`, `src/markdown/`, `src/model/`, `src/nav/`, `src/pipeline/`, `src/plugins/`, `src/render/`, `src/outputs/`, `src/source/`: the pipeline's stages and units.
+- `src/model/facts/`: one file per derived fact, merged into `Site.data` at the end of the model stage; see its [README](src/model/facts/README.md) and [ADR 0028](../../docs/adr/0028-derived-facts.md).
 - `src/outputs/`: one file per output; see its [README](src/outputs/README.md).
 - `bin/slipway.ts`: the `mizzen` command.
 - `schema/config.schema.json`: the site config schema.

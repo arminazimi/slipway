@@ -33,18 +33,22 @@ The engine turns a directive into the component whose folder has the same name u
 | [Code](./code/) | Code highlighted at build time, with a copy button when JavaScript runs. |
 | [Code tabs](./code-tabs/) | The same example in several languages or package managers, as tabs. |
 | [Details](./details/) | A native disclosure that the reader can open and close. |
+| [Diff block](./diff-block/) | Added, removed, and context lines, with a copy of the new file. |
 | [Embed](./embed/) | A video or another page in a lazy iframe. |
 | [Endpoint](./endpoint/) | An HTTP method, path, parameters, and body for API reference pages. |
 | [Figure](./figure/) | An image with alt text, a caption, and a credit, in light and dark. |
 | [File tree](./file-tree/) | A folder structure with a note per entry. |
 | [Heading anchor](./heading-anchor/) | A link icon on every h2 to h4, added automatically. |
 | [Kbd](./kbd/) | A keyboard key or key combination. |
+| [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
+| [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
+| [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 
 ## Moving from the old blocks
 

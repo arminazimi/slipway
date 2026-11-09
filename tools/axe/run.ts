@@ -109,18 +109,22 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   code: "<pre",
   "code-tabs": "code-tabs",
   details: "<details",
+  "diff-block": 'class="diff-block',
   embed: 'class="embed',
   endpoint: 'class="endpoint',
   figure: "<figure",
   "file-tree": 'class="file-tree',
   "heading-anchor": 'class="heading-anchor',
   kbd: "<kbd",
+  "key-value": 'class="key-value',
   mermaid: 'class="mermaid',
   "page-status": 'class="page-status',
   "schema-table": 'class="schema-table',
   steps: 'class="steps"',
   table: "<table",
+  tags: 'class="tags"',
   terminal: 'class="terminal',
+  "version-badge": 'class="version-badge',
 };
 
 /** Compares by code point, never by locale (ADR 0022, rule 5). */
