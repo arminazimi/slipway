@@ -17,6 +17,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "lightningcss": "^1.33.0",
     "preact": "^10.29.8",
     "preact-render-to-string": "^6.8.2",
     "remark-gfm": "^4.0.1",
