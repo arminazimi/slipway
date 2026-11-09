@@ -1,33 +1,26 @@
-import { readFileSync } from "node:fs";
-import { parse } from "yaml";
-import { validateConfig } from "../../../../tools/theme/config.ts";
+import { realpathSync } from "node:fs";
 import { insideSite } from "../tools.ts";
+import { CONFIG_FILE, loadConfig } from "../../../engine/src/config/load.ts";
 
 export const definition = {
   name: "read_config",
-  description: "Read the site's _config.yml (or another YAML config inside the site) and validate it against Slipway's config schema.",
+  description: "Read the site's mizzen.yml (or another YAML config inside the site) and validate it with the engine's config loader, which names the line of every problem.",
   inputSchema: {
     type: "object",
     properties: {
-      file: { type: "string", description: "Config file, relative to the site directory.", default: "_config.yml" },
+      file: { type: "string", description: "Config file, relative to the site directory.", default: CONFIG_FILE },
     },
     additionalProperties: false,
   },
   annotations: { readOnlyHint: true },
 };
 
-/** The site's config file parsed and checked against schema/slipway-config.schema.json. */
-export function readConfig(site, file = "_config.yml") {
+/** The site's config file, loaded and validated the way `slipway build` loads it (ADR 0024). */
+export function readConfig(site, file = CONFIG_FILE) {
   if (!/\.ya?ml$/.test(file)) throw new Error(`${file} is not a YAML config file`);
   const path = insideSite(site, file);
-  let config;
-  try {
-    config = parse(readFileSync(path, "utf8")) ?? {};
-  } catch (error) {
-    throw new Error(`${file} is not valid YAML: ${error.message}`);
-  }
-  const { ok, errors } = validateConfig(config);
-  return { file, valid: ok, errors, config };
+  const { config, diagnostics } = loadConfig(realpathSync(site), { path });
+  return { file, valid: diagnostics.length === 0, diagnostics, config };
 }
 
-export const handler = (site, args) => readConfig(site, args.file ?? "_config.yml");
+export const handler = (site, args) => readConfig(site, args.file ?? CONFIG_FILE);
