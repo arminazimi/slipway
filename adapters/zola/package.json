@@ -7,7 +7,7 @@
   "scripts": {
     "postbuild": "node src/index.mjs"
   },
-  "main": "index.js",
+  "main": "src/index.mjs",
   "directories": {
     "test": "test"
   },
