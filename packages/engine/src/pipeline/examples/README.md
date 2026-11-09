@@ -1,10 +1,34 @@
 # Examples
 
-Each `*.ts` file in this folder is one helper for checking the executable examples a page shows in fenced code blocks. A runner that executes the fences reports its findings through these helpers, so the runner and the diagnostic never share a shape by accident. Adding a helper needs no edit to a shared index; deleting one is deleting its file.
+Units that run a site's recorded code examples and report whether they passed. A runner executes the fences; a
+diagnostic turns a failed run into a finding. The engine runs them while it builds so a page can say its examples
+were tested.
 
-## Diagnostic
+This folder is not a registry: nothing lists its files, so a unit is added or deleted on its own and no shared index
+changes.
 
-`diagnostic.ts` exports `exampleFailed`, which builds the `example-failed` finding:
+| Unit | What it does |
+| --- | --- |
+| `run-node.ts` | Runs one `js`, `mjs`, or `ts` snippet in a child process and returns `{ ok, exitCode, stdout, stderr, durationMs, timedOut }`. |
+| `diagnostic.ts` | Builds the `example-failed` finding, with the fence's source span and a bounded expected-vs-actual window. |
+
+## `run-node.ts`
+
+`runNodeExample({ code, lang, timeoutMs?, env?, cwd? })` writes the snippet into a new `mkdtemp` folder — with a
+`package.json` marking `js`/`mjs` as ES modules, and with `ts` relying on Node's native type stripping — and spawns
+`process.execPath` there. `HOME` and `TMPDIR` point inside the same folder; the environment is otherwise only `PATH`,
+`LANG=C.UTF-8`, and `NO_COLOR=1`, plus whatever the caller passes in `env`. Output is captured up to 64 KiB per
+stream. When `timeoutMs` expires (10 seconds by default) the whole process group is killed with `SIGKILL`. The temp
+folder is removed before the function returns, in every outcome. A failing, noisy, or hanging example is a result;
+the function throws only for a caller's mistake (an unknown `lang` or a non-positive `timeoutMs`).
+
+The runner is a **process sandbox, not an OS sandbox**. The example runs as the engine's user with the engine's file
+permissions, so an absolute path, the network, or a process that leaves the group is still reachable. It promises a
+clean start, a bounded run, and cleanup — not isolation from the host.
+
+## `diagnostic.ts`
+
+`exampleFailed` builds the `example-failed` finding:
 
 ```ts
 import { exampleFailed } from "./diagnostic.ts";
@@ -22,6 +46,17 @@ exampleFailed({
 - `expected` and `actual` are the example's wanted and observed output.
 - `exitCode` is optional; when the runner knows it, the message names it.
 
-The severity is **warning**. A failing example means the documentation has gone stale, not that the site is broken, so the finding is reported and carried by the trust model without failing every build.
+The severity is **warning**. A failing example means the documentation has gone stale, not that the site is broken,
+so the finding is reported and carried by the trust model without failing every build.
 
-`firstDifference` is the small helper behind the message. It compares by Unicode code point and returns `offset` (the code point where the two strings first differ, or the shorter length when one is a prefix of the other) plus a bounded window of each side of at most 72 code points, starting up to 16 code points before the difference, with `…` marking a cut. Newlines, tabs, backslashes, and control characters are escaped, so an example that prints several lines or binary-ish text still yields one message line. The result depends only on its two arguments.
+`firstDifference` is the small helper behind the message. It compares by Unicode code point and returns `offset` (the
+code point where the two strings first differ, or the shorter length when one is a prefix of the other) plus a
+bounded window of each side of at most 72 code points, starting up to 16 code points before the difference, with `…`
+marking a cut. Newlines, tabs, backslashes, and control characters are escaped, so an example that prints several
+lines or binary-ish text still yields one message line. The result depends only on its two arguments.
+
+## Adding a unit
+
+Add `run-<tool>.ts` beside this file that exports one function taking the snippet and options and returning the same
+result shape, and add its tests in `packages/engine/test/run-<tool>.test.ts`. Units here do not register anywhere; the
+output or page that uses them imports them directly.

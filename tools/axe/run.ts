@@ -106,6 +106,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   badge: 'class="badge',
   callout: 'class="callout',
   cards: 'class="cards"',
+  "changelog-entry": 'class="changelog-entry',
   code: "<pre",
   "code-tabs": "code-tabs",
   details: "<details",
