@@ -1,4 +1,4 @@
-/** `mizzen build` and `mizzen check`: build a site or only report diagnostics (ADR 0025). */
+/** `mizzen build`, `mizzen check`, and `mizzen verify`: build a site, report diagnostics, or check a build (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -8,6 +8,7 @@ import { loadConfig } from "../config/load.ts";
 import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
+import { verify, verifyMessage } from "./verify.ts";
 
 /** The command name on the PATH (ADR 0025). */
 export const NAME = "mizzen";
@@ -26,11 +27,13 @@ export const usage = `Usage: ${NAME} <command> [dir] [options]
 Commands:
   build [dir]   Build the site into --out (default: dist)
   check [dir]   Build to a temp folder and print diagnostics only
+  verify [dir]  Check a built folder against the hash in its manifest
 
 Options:
   --out <dir>          Output folder for build (default: dist)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
+  --hash <hex>         Expected build hash for verify (default: the manifest's)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.`;
@@ -54,10 +57,16 @@ type CheckOpts = {
   readonly theme?: string;
 };
 
+type VerifyOpts = {
+  readonly command: "verify";
+  readonly root: string;
+  readonly hash?: string;
+};
+
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts };
+  | { readonly options: BuildOpts | CheckOpts | VerifyOpts };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -114,7 +123,7 @@ export function parseArgs(args: readonly string[]): Parsed {
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command !== "build" && command !== "check") {
+  if (command !== "build" && command !== "check" && command !== "verify") {
     return { error: `unknown command: ${command}` };
   }
 
@@ -122,6 +131,7 @@ export function parseArgs(args: readonly string[]): Parsed {
   let out: string | undefined;
   let theme: string | undefined;
   let format: Format = "text";
+  let hash: string | undefined;
 
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i]!;
@@ -136,6 +146,7 @@ export function parseArgs(args: readonly string[]): Parsed {
         if (command !== "build") return { error: "--out is only valid for build" };
         out = value();
       } else if (arg === "--theme") {
+        if (command === "verify") return { error: "--theme is only valid for build and check" };
         theme = value();
       } else if (arg === "--format") {
         if (command !== "check") return { error: "--format is only valid for check" };
@@ -144,6 +155,13 @@ export function parseArgs(args: readonly string[]): Parsed {
           return { error: `--format must be text, json, or sarif, not ${raw}` };
         }
         format = raw as Format;
+      } else if (arg === "--hash") {
+        if (command !== "verify") return { error: "--hash is only valid for verify" };
+        const raw = value();
+        if (!/^[0-9a-f]{64}$/.test(raw)) {
+          return { error: `--hash must be 64 lowercase hexadecimal characters, not ${raw}` };
+        }
+        hash = raw;
       } else if (arg.startsWith("-")) {
         return { error: `unknown option: ${arg}` };
       } else if (root === undefined) {
@@ -164,6 +182,15 @@ export function parseArgs(args: readonly string[]): Parsed {
         root: dir,
         out: out ?? "dist",
         ...(theme === undefined ? {} : { theme }),
+      },
+    };
+  }
+  if (command === "verify") {
+    return {
+      options: {
+        command: "verify",
+        root: dir,
+        ...(hash === undefined ? {} : { hash }),
       },
     };
   }
@@ -208,6 +235,25 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
   }
 
   const { options } = parsed;
+
+  if (options.command === "verify") {
+    try {
+      const result = await verify({
+        dir: options.root,
+        ...(options.hash === undefined ? {} : { hash: options.hash }),
+      });
+      if (result.ok) {
+        log(verifyMessage(result));
+        return 0;
+      }
+      error(`${NAME}: ${verifyMessage(result)}`);
+      return 1;
+    } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
   const root = resolve(options.root);
   const themeRoot = await resolveThemeRoot(root, options.theme);
   if (themeRoot === undefined) {

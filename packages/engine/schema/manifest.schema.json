@@ -8,6 +8,9 @@
     "version"
   ],
   "properties": {
+    "build": {
+      "$ref": "#/$defs/build"
+    },
     "pages": {
       "type": "array",
       "description": "Every page the build renders, sorted by URL comparing code points.",
@@ -22,6 +25,31 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "build": {
+      "type": "object",
+      "description": "One SHA-256 for the whole build: every file in the output folder except this manifest, hashed in path order. The build writes it after every other file, so `mizzen verify` can check a folder against it.",
+      "required": [
+        "files",
+        "hash"
+      ],
+      "properties": {
+        "files": {
+          "type": "object",
+          "description": "SHA-256 of each file's bytes, keyed by its path relative to the output folder. The manifest is not listed: it records the hash.",
+          "additionalProperties": {
+            "$ref": "#/$defs/hash"
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/path"
+          }
+        },
+        "hash": {
+          "$ref": "#/$defs/hash",
+          "description": "SHA-256 of one line per file: the path, a NUL, the file's hash, and a line feed, with paths sorted by code point."
+        }
+      },
+      "additionalProperties": false
+    },
     "hash": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$",
