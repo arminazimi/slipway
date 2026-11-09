@@ -1,0 +1,35 @@
+name: deploy-preview
+
+# Deploys `fixtures/docs-site` with `action/deploy`, so the deploy Action is tested end to end on a
+# real Pages deployment. It is manual because the destination is this repository's Pages site (the
+# live docs until `site.config` switches it) and because the `github-pages` environment allows
+# deployments from `main` only, which a pull request branch is not.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    name: preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: deploy
+        uses: ./action/deploy
+        with:
+          path: fixtures/docs-site
