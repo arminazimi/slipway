@@ -2,9 +2,9 @@
 
 Version `1.0.0` · English-only · Dark-first
 
-This guide turns the Slipway identity into reusable rules for the template, documentation, repository, and social surfaces. Every SVG and PNG here is generated; see [Generated files](#generated-files). The decision behind the mark and the palette is [ADR 0005](../docs/adr/0005-brand-mark-and-palette.md).
+This guide turns the Slipway identity into reusable rules for the template, documentation, repository, and social surfaces. Every SVG and PNG here is generated; see [Generated files](#generated-files). The decision behind the mark is [ADR 0005](../docs/adr/0005-brand-mark-and-palette.md); the palette follows the Lateen theme tokens ([`packages/theme/tokens/`](../packages/theme/tokens/)).
 
-Slipway is one of a family of products that share a visual language (rings on a 256 px canvas, dark-first, flat), each in its own color: Evergreen in green, Seaworthy in desert rose, a third product in blue, and Slipway in bronze.
+Slipway is one of a family of products that share a visual language (rings on a 256 px canvas, dark-first, flat), each in its own color: Evergreen in green, Seaworthy in desert rose, a third product in blue, and Slipway in the blue accent of its documentation theme. The mark and the theme now share one palette, so the logo, the site, and the social art match.
 
 ## Core identity
 
@@ -22,7 +22,7 @@ A slipway is the ramp a ship is built on and launched down into the water. A Sli
 The mark is two concentric rings cut by one diagonal slip, with a gap between the halves.
 
 - The part **above the slip** (light) is what you write: the source.
-- The part **below the slip** (bronze) is what ships: the site that goes into the water.
+- The part **below the slip** (the accent, token `bronze`) is what ships: the site that goes into the water.
 - The **slip** slopes at 35 degrees, the way a ramp does, and cuts both rings in one line so they read as one object.
 
 ### Approved variants
@@ -84,41 +84,43 @@ For browser tabs, app icons, and anything between 16 and 48 px, use the simplifi
 
 ## Color
 
-The canonical values are in [`tokens.json`](tokens.json), with CSS custom properties in [`tokens.css`](tokens.css). The palette is called quiet bronze: calm, low in saturation, and easy on the eyes.
+The theme is the source of truth. [`packages/theme/tokens/color.json`](../packages/theme/tokens/color.json) and [`color.light.json`](../packages/theme/tokens/color.light.json) define the night (Kanagawa) and day (Nord) palettes; [`tokens.json`](tokens.json) mirrors the values the brand needs, with CSS custom properties generated into [`tokens.css`](tokens.css). When a theme token changes, update `tokens.json` to match it and run `npm run build:brand`.
+
+The brand takes the night surfaces (`canvas`, `surface`), the night text and muted colors (`text`, `tint`, `mist`), the accent from both modes (`bronze` for dark surfaces, `bronzeSoft` for light), the day canvas (`light`), and the day text (`inkBronze`). The token names `bronze`, `bronzeSoft`, and `inkBronze` are kept so the generated assets and their tests keep working; their values are now the theme's blue accent and ink.
 
 | Token | Value | Role |
 | --- | --- | --- |
-| Canvas | `#17130F` | Primary dark canvas |
-| Surface | `#26201A` | Elevated dark surface |
-| Bronze | `#B8975A` | Main accent on dark surfaces; the lower half of the mark |
-| Bronze Soft | `#8C7648` | Accent on light surfaces, for graphics and borders only |
-| Ink Bronze | `#5E4A26` | Text and thin lines on light surfaces |
-| Tint | `#D9C9A3` | Soft highlight on dark surfaces |
-| Light | `#F4EFE4` | Primary light canvas; the upper half of the mark on dark surfaces |
-| Text | `#E6DFD0` | Body text on dark surfaces |
-| Mist | `#A39880` | Secondary text on dark surfaces |
+| Canvas | `#1F1F28` | Primary dark canvas; theme night canvas |
+| Surface | `#2A2A37` | Elevated dark surface; theme night surface |
+| Bronze | `#7E9CD8` | Main accent on dark surfaces; the lower half of the mark; theme night accent |
+| Bronze Soft | `#5E81AC` | Accent on light surfaces, for graphics and borders only; theme day accent |
+| Ink Bronze | `#2E3440` | Text and thin lines on light surfaces; theme day text |
+| Tint | `#DCD7BA` | Soft highlight on dark surfaces; theme night text |
+| Light | `#ECEFF4` | Primary light canvas; the upper half of the mark on dark surfaces; theme day canvas |
+| Text | `#DCD7BA` | Body text on dark surfaces; theme night text |
+| Mist | `#96938E` | Secondary text on dark surfaces; theme night muted |
 
 Slipway has no status colors of its own. Verification results belong to Seaworthy, and its pass, warning, and error colors are not part of this palette.
 
 ### Accessible color pairs
 
-Ratios use WCAG relative luminance. Normal text needs 4.5:1; large text and meaningful graphics need 3:1. The pairs below stay well above that, and the dark pairs stay below pure white on black on purpose: they are easier on the eyes.
+Ratios use WCAG relative luminance. Normal text needs 4.5:1; large text and meaningful graphics need 3:1. The pairs below stay above that, and the dark pairs stay below pure white on black on purpose: they are easier on the eyes.
 
 | Foreground | Background | Ratio | Approved use |
 | --- | --- | ---: | --- |
-| Text | Canvas | 13.93:1 | Text and UI |
-| Text | Surface | 12.14:1 | Text and UI |
-| Light | Canvas | 16.11:1 | Text and UI; the light half of the mark |
-| Tint | Canvas | 11.29:1 | Text and UI |
-| Bronze | Canvas | 6.70:1 | Text and UI; the lower half of the mark |
-| Bronze | Surface | 5.84:1 | Text and UI |
-| Mist | Canvas | 6.48:1 | Secondary text |
-| Mist | Surface | 5.64:1 | Secondary text |
-| Canvas | Light | 16.11:1 | Text and UI; the mark on light surfaces |
-| Ink Bronze | Light | 7.37:1 | Text and UI on light surfaces |
-| Canvas | Bronze | 6.70:1 | Badge: the word slipway |
+| Text | Canvas | 11.26:1 | Text and UI |
+| Text | Surface | 9.75:1 | Text and UI |
+| Light | Canvas | 14.18:1 | Text and UI; the light half of the mark |
+| Tint | Canvas | 11.26:1 | Text and UI |
+| Bronze | Canvas | 5.94:1 | Text and UI; the lower half of the mark |
+| Bronze | Surface | 5.14:1 | Text and UI |
+| Mist | Canvas | 5.34:1 | Secondary text |
+| Mist | Surface | 4.62:1 | Secondary text |
+| Canvas | Light | 14.18:1 | Text and UI; the mark on light surfaces |
+| Ink Bronze | Light | 10.84:1 | Text and UI on light surfaces |
+| Canvas | Bronze | 5.94:1 | Badge: the word slipway |
 
-**Not approved for text:** Bronze Soft on Light (3.82:1, graphics and borders only), Bronze on Light (2.41:1), and Ink Bronze on Canvas (2.19:1). Use Ink Bronze on light surfaces and Bronze on dark ones.
+**Not approved for text:** Bronze Soft on Light (3.50:1, graphics and borders only), Bronze on Light (2.39:1), and Ink Bronze on Canvas (1.31:1). Use Ink Bronze on light surfaces and Bronze on dark ones.
 
 ## Typography
 
@@ -130,7 +132,7 @@ The generated sources use common fallbacks so they stay editable without bundled
 
 ## Built-with badge
 
-Every Slipway site may show a badge that says it was built with Slipway. It has a Surface left segment with the one-color mark and the words `built with`, and a Bronze right segment with the word `slipway`. The words carry the meaning, not the color.
+Every Slipway site may show a badge that says it was built with Slipway. It has a Surface left segment with the one-color mark and the words `built with`, and a Bronze (the accent) right segment with the word `slipway`. The words carry the meaning, not the color.
 
 ```markdown
 ![built with slipway](https://raw.githubusercontent.com/arminazimi/slipway/main/brand/assets/badge-built-with.svg)
