@@ -53,6 +53,7 @@
   --motion-base: 200ms;
   --motion-slow: 400ms;
   --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --state-hover-bg: light-dark(#eeeeee, #262626);
   --state-active-bg: light-dark(#e0e0e0, #303030);
   --state-selected-bg: light-dark(#e5efff, #1e3a66);
@@ -70,6 +71,16 @@
   --code-function: light-dark(#8250df, #d2a8ff);
   --code-tag: light-dark(#116329, #7ee787);
   --code-punctuation: light-dark(#57606a, #8b949e);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+    --motion-slow: 0ms;
+    --motion-ease: linear;
+    --motion-ease-in-out: linear;
+  }
 }
 
 :root[data-theme="light"] {

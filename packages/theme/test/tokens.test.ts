@@ -38,6 +38,13 @@ test("a group file overrides values by name, and adding one needs no other edit"
   assert.match(css, /--color-canvas: light-dark\(#fff, #000\);/);
 });
 
+test("a reduced value goes in a prefers-reduced-motion block", () => {
+  const dir = folder({ motion: { fast: { $value: "150ms", $extensions: { lateen: { reduced: "0ms" } } } } }, { ...names, motion: { fast: "100ms" } });
+  const css = buildCss(loadTokens(dir));
+  assert.match(css, /--motion-fast: 150ms;/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\n {2}:root \{\n {4}--motion-fast: 0ms;\n {2}\}\n\}\n/);
+});
+
 test("a name missing from names.json is an error", () => {
   assert.throws(() => loadTokens(folder({ space: { "99": "1px" } })), /"space\.99" is not in names\.json/);
   assert.throws(() => loadTokens(folder({ elevation: { a: "1" } })), /"elevation" is not a group/);
