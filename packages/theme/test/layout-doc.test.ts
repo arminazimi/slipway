@@ -117,6 +117,16 @@ test("the body, page footer, and pager follow the title inside the article", () 
   );
 });
 
+test("the copy-Markdown control follows the page footer and stays before the pager", () => {
+  const page = out(pageWith());
+  const article = /<article class="doc"[^>]*>(.*?)<\/article>/s.exec(page);
+  assert.ok(article, "article present");
+  assert.match(
+    article[1] ?? "",
+    /<div class="page-footer">[\s\S]*<\/div><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
+  );
+});
+
 test("the breadcrumb leads the article and repeats the trail, end at the current page", () => {
   const trail = [
     { title: "Guides", url: "/guide/" },

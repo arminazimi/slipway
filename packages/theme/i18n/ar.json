@@ -25,6 +25,7 @@
   "copy": "نسخ",
   "copy_failed": "اضغط Ctrl+C",
   "copy_failed_select": "تعذّر النسخ. حدّد النص وانسخه يدويًا.",
+  "copy_markdown_hint": "اضغط M للنسخ",
   "copy_page_md": "نسخ الصفحة كماركداون",
   "default": "الافتراضي",
   "deprecated": "Deprecated",
@@ -92,5 +93,6 @@
   "version_changed": "تغيّر في الإصدار {version}",
   "version_removed": "أُزيل في الإصدار {version}",
   "versions": "Versions",
+  "view_markdown": "عرض ماركداون",
   "yes": "نعم"
 }
