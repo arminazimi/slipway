@@ -2,7 +2,7 @@
 name: slipway-doctor
 description: Check a static site with slipway doctor after you edit it, read the findings, and fix them until the site reaches its conformance level. Use for any Slipway site or any site that follows the agent-editable site spec.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Check a site with slipway doctor
@@ -13,22 +13,22 @@ Run it after every edit, before you say the edit is done.
 
 ## 1. Run it
 
-Use the `doctor` tool when the Slipway MCP server is registered for the site (`packages/mcp/README.md` in the theme repository says how). It takes two optional inputs:
+Use the `doctor` tool when the Slipway MCP server is registered for the site (the Slipway repository's `packages/mcp/README.md` says how). It takes two optional inputs:
 
 | Input | Meaning |
 | --- | --- |
-| `build` | The built output folder, relative to the site, such as `_site`. Without it, the tests on the output fail. |
+| `build` | The built output folder, relative to the site, such as `dist`. Without it, the tests on the output fail. |
 | `level` | The level the site must reach, `L0` to `L3`. Without it, `ok` is true when every MUST test passes. |
 
-Otherwise run the command line from a clone of the theme repository, after `npm ci`:
+Otherwise run the command line from a clone of this repository, after `npm ci`:
 
 ```sh
-node packages/doctor/bin/slipway.ts doctor <site> --build <site>/_site --format json
+node packages/doctor/bin/slipway.ts doctor <site> --build <site>/dist --format json
 ```
 
 Add `--level L2` (or the level the site's `AGENTS.md` names) to fail below that level. In CI, `--format sarif` writes the findings for GitHub code scanning. Exit code `0` means the target is reached, `1` means findings, and `2` a usage error or a missing folder.
 
-Build the site first when you pass `build`, so the doctor checks the output of your edit and not an old one. Leave `--network` off unless the owner asks: it fetches remote schemas, and no other test needs it.
+Build the site first with the engine (`slipway build <site> --out <site>/dist`) when you pass `build`, so the doctor checks the output of your edit and not an old one. The deploy Action runs this check on its build when its `doctor` input is true. Leave `--network` off unless the owner asks: it fetches remote schemas, and no other test needs it.
 
 ## 2. Read the report
 
@@ -39,7 +39,7 @@ The tool returns the JSON report; the command prints it with `--format json`. Re
 - `findings`: what to fix. Each has the test `id`, `severity`, `message`, and when known `in` (`source` or `output`), `file` (relative to that folder), `line`, `column`, `key`, `allowed`, and `fix`. A finding on a built page already names its source file and line when the site has a source map; `output.file` keeps the built file.
 - `notRun`: tests the doctor did not run. Two are decided by a person; tell the owner, do not mark them as passed.
 
-An `error` is a failed MUST: it keeps the site below the level. A `warning` is a failed SHOULD, or a generator check such as `jekyll.stubs`: fix it when the fix is clear, but it never lowers the level.
+An `error` is a failed MUST: it keeps the site below the level. A `warning` is a failed SHOULD or a generator advisory: fix it when the fix is clear, but it never lowers the level.
 
 ## 3. Fix and run it again
 
