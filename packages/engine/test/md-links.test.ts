@@ -119,7 +119,7 @@ test("an existing rel gains external instead of being replaced", () => {
       url: "https://example.com",
       title: null,
       children: [{ type: "text", value: "a" }],
-      data: { hProperties: { rel: "nofollow" } },
+      data: { hProperties: { rel: "nofollow" } } as unknown as Link["data"],
     }],
   };
   const tree = unified().use(plugin).runSync(prepared);

@@ -165,12 +165,33 @@ function buildGroup(open: RootContent, codes: Code[], close: RootContent): CodeG
 }
 
 /** Replaces each `:::code-group` run among `parent`'s children with one group, then recurses. */
-function groupTabs(parent: Parent): void {
+function groupTabs(parent: Parent, source: string): void {
   const out: RootContent[] = [];
   const siblings = parent.children;
   for (let i = 0; i < siblings.length; i++) {
     const node = siblings[i];
     if (node === undefined) continue;
+    // With remark-directive active at parse time, `:::code-group … :::` arrives as a container directive.
+    if (node.type === "containerDirective" && node.name === "code-group") {
+      const kids = node.children;
+      // The parser closes a directive left open at the end of the file; only a real `:::` closes a group.
+      const end = node.position?.end.offset;
+      const closed = end !== undefined && source.slice(0, end).trimEnd().endsWith(":::");
+      if (closed && kids.length > 0 && kids.every((k) => k.type === "code")) {
+        const group: CodeGroup = {
+          type: "codeGroup",
+          children: kids as Code[],
+          data: { codeGroup: { labels: (kids as Code[]).map((code, n) => codeMetaOf(code)?.title ?? code.lang ?? String(n + 1)) } },
+        };
+        if (node.position) group.position = node.position;
+        out.push(group);
+      } else {
+        // Not a pure run of fences: it is no group, so the markers go back to being text.
+        const marker = (value: string): RootContent => ({ type: "paragraph", children: [{ type: "text", value }] });
+        out.push(marker(":::code-group"), ...kids, marker(":::"));
+      }
+      continue;
+    }
     const end = isMarker(node, OPEN) ? closeIndex(siblings, i + 1) : -1;
     if (end !== -1) {
       const codes = siblings.slice(i + 1, end) as Code[];
@@ -185,13 +206,13 @@ function groupTabs(parent: Parent): void {
   }
   parent.children = out;
   for (const child of out) {
-    if ("children" in child) groupTabs(child as Parent);
+    if ("children" in child) groupTabs(child as Parent, source);
   }
 }
 
 export const name = "code";
 export const order = 10;
-export const plugin: Plugin<[], Root> = () => (tree) => {
+export const plugin: Plugin<[], Root> = () => (tree, file) => {
   attachMeta(tree);
-  groupTabs(tree);
+  groupTabs(tree, String(file.value));
 };
