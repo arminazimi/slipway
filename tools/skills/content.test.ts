@@ -4,11 +4,14 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { parse } from "yaml";
 import { frontMatter, schemaFor, validateFrontMatter } from "../theme/front-matter.ts";
-import { buildFrontMatterReference, listKeys, loadSchemas, referencePath, root } from "./front-matter-reference.ts";
+import { root } from "./config-reference.ts";
 
 const skillDir = join(root, "skills/slipway-content");
 const skill = readFileSync(join(skillDir, "SKILL.md"), "utf8");
 const [, , body] = skill.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/) ?? [];
+const referencePath = join(skillDir, "reference/front-matter.md");
+const adr = readFileSync(join(root, "docs/adr/0024-site-config.md"), "utf8");
+
 function example(name) {
   const text = readFileSync(join(skillDir, "examples", name), "utf8");
   const source = frontMatter(text);
@@ -16,30 +19,43 @@ function example(name) {
   return { text, data: parse(source), target, content: text.slice(text.indexOf("\n---\n", 4) + 5) };
 }
 
-test("the front matter reference is generated from the schemas and in sync", () => {
-  const schemas = loadSchemas();
-  const reference = buildFrontMatterReference(schemas);
-  assert.equal(readFileSync(referencePath, "utf8"), reference, "run node tools/skills/front-matter-reference.ts");
-  for (const name of Object.keys(schemas)) {
-    for (const row of listKeys(schemas, name)) assert.ok(reference.includes(`| \`${row.key}\` |`), `${name}: ${row.key}`);
-  }
+test("the front matter reference lists every key the engine reads (ADR 0024, rule 3)", () => {
+  // Rule 3's table names the keys the engine gives meaning to; the other keys in the rule are listed by hand.
+  const rule = adr.slice(adr.indexOf("3. **Front matter the engine reads.**"), adr.indexOf("4. **Compatibility"));
+  const keys = [
+    ...[...rule.matchAll(/^ {3}\| `([a-z_]+)` \|/gm)].map((m) => m[1]),
+    "image",
+    "translation_key",
+    "search",
+    "published",
+    "nav_order",
+    "direction",
+  ];
+  assert.ok(keys.length >= 16, `found ${keys.length} keys`);
+  const reference = readFileSync(referencePath, "utf8");
+  for (const key of keys) assert.ok(reference.includes(`| \`${key}\` |`), key);
 });
 
-test("the three examples pass the front matter schema for the file they name", () => {
+test("the examples pass the front matter schema for the file they name", () => {
   for (const name of ["doc-page.md", "post.md", "post-fa.md"]) {
     const { data, target } = example(name);
     assert.ok(target, `${name} says where it goes`);
     assert.deepEqual(validateFrontMatter(data, target), [], name);
-    assert.equal(schemaFor(data, target), data.layout, name);
+    if (data.layout !== undefined) assert.equal(schemaFor(data, target), data.layout, name);
   }
 });
 
-test("the examples are a doc page, a post with tags, and its Persian translation", () => {
+test("the doc page takes its URL from its path and its layout from the theme", () => {
   const doc = example("doc-page.md");
+  assert.match(doc.target, /^docs\/[a-z-]+\.md$/);
+  assert.equal(doc.data.layout, undefined, "the theme's default layout");
+  assert.equal(doc.data.permalink, undefined, "the URL comes from the path");
+  assert.equal(typeof doc.data.order, "number");
+});
+
+test("the Persian post is the translation of the English post", () => {
   const post = example("post.md");
   const fa = example("post-fa.md");
-  assert.equal(doc.data.layout, "doc");
-  assert.match(doc.data.permalink, /^\//);
   for (const { target, data } of [post, fa]) {
     assert.equal(data.layout, "post");
     assert.match(target, /^_posts\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+\.md$/);
@@ -64,11 +80,11 @@ test("no example uses Liquid or a second h1", () => {
   }
 });
 
-test("the skill checks its work with the doctor and the schema check", () => {
+test("the skill checks its work with slipway check", () => {
   const commands = [...body.matchAll(/```sh\n([\s\S]*?)```/g)].flatMap((m) => m[1].trim().split("\n"));
-  assert.ok(commands.some((c) => c.includes("packages/doctor/") && c.includes(" doctor . ")), "runs the doctor");
-  assert.ok(commands.some((c) => c.includes("tools/theme/validate.ts")), "runs the schema check");
+  assert.ok(commands.includes("slipway check ."), "runs the check");
 });
+
 test("the translation recipe exists and has valid paths and commands", () => {
   const recipePath = join(skillDir, "reference/translate-page.md");
   assert.ok(existsSync(recipePath), "translate-page.md exists");
