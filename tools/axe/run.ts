@@ -124,6 +124,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   table: "<table",
   tags: 'class="tags"',
   terminal: 'class="terminal',
+  "version-badge": 'class="version-badge',
 };
 
 /** Compares by code point, never by locale (ADR 0022, rule 5). */

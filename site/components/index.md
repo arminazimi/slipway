@@ -48,6 +48,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
+| [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 
 ## Moving from the old blocks
 

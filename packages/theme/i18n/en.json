@@ -76,6 +76,9 @@
   "translation_key": "Translation key",
   "translation_missing": "This page hasn't been translated yet. Read it in:",
   "type": "Type",
+  "version_added": "Added in version {version}",
+  "version_changed": "Changed in version {version}",
+  "version_removed": "Removed in version {version}",
   "versions": "Versions",
   "yes": "Yes"
 }
