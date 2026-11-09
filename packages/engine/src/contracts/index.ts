@@ -1,5 +1,5 @@
 export type { SourcePos } from "./source.ts";
-export type { Diagnostic, Severity } from "./diagnostic.ts";
+export type { Diagnostic, DiagnosticFix, Severity } from "./diagnostic.ts";
 export type { DefaultsEntry, Direction, LanguageConfig, RepositoryConfig, SearchConfig, SiteConfig, ThemeConfig } from "./config.ts";
 export type { AgentInstructions, FrontMatter, Heading, Page, PageKind, PageStatus, Site } from "./content.ts";
 export type { NavGroup, NavItem, NavLink, NavTree, Pager, Trail } from "./nav.ts";
