@@ -42,6 +42,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Heading anchor](./heading-anchor/) | A link icon on every h2 to h4, added automatically. |
 | [Kbd](./kbd/) | A keyboard key or key combination. |
 | [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
+| [Link card](./link-card/) | One link that reads as a card, for next steps and related pages. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
 | [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
