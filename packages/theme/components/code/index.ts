@@ -117,7 +117,8 @@ export default function code({ props, html, page }: ComponentProps<CodeProps>) {
   const known = hl.getLoadedLanguages().includes(lang);
   const out = hl.codeToHtml(text, { lang: known ? lang : "text", themes: { light: "lateen-light", dark: "lateen-dark" }, defaultColor: false });
   const inner = /<code[^>]*>([\s\S]*)<\/code>/.exec(out)?.[1] ?? "";
-  const src = props.src ?? (page as { source?: string } | undefined)?.source;
+  const pos = page?.source;
+  const src = props.src ?? (pos ? `${pos.file}:${pos.line}` : undefined);
   return h(
     "pre",
     { class: CODE_CLASS, tabindex: 0, "data-lang": lang, ...(src ? { "data-src": src } : {}) },
