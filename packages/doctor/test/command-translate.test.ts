@@ -1,10 +1,25 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, existsSync, cpSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { main, parseArgs } from "../src/commands/translate.ts";
 import { splitFrontMatter } from "../src/yaml.ts";
+
+const docsSite = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
+
+/** A copy of fixtures/docs-site with English and Persian configured and `install.md` translated. */
+function engineSite(t) {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-translate-engine-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(docsSite, dir, { recursive: true });
+  const configPath = join(dir, "slipway.yml");
+  writeFileSync(configPath, `${readFileSync(configPath, "utf8")}\nlanguages:\n  - { code: en, name: English, prefix: "" }\n  - { code: fa, name: Farsi, prefix: /fa }\n`);
+  const install = join(dir, "install.md");
+  writeFileSync(install, readFileSync(install, "utf8").replace("---\n", "---\ntranslation_key: install\n"));
+  return dir;
+}
 
 function getContext() {
   let stdout = "";
@@ -137,4 +152,53 @@ test("translate fails if translation_key is missing", async (t) => {
 
   assert.equal(code, 1);
   assert.match(ctx.stderr, /source page is missing translation_key/);
+});
+
+test("translate follows the engine's language prefixes on fixtures/docs-site", async (t) => {
+  const dir = engineSite(t);
+
+  const ctx = getContext();
+  const code = await main(["translate", join(dir, "install.md"), "--to", "fa", "--json"], ctx);
+  assert.equal(code, 0);
+
+  const out = JSON.parse(ctx.stdout);
+  assert.equal(out.source, "install.md");
+  assert.equal(out.target, "fa/install.md");
+  assert.equal(out.lang, "fa");
+  assert.equal(out.translation_key, "install");
+
+  const target = readFileSync(join(dir, "fa", "install.md"), "utf8");
+  const block = splitFrontMatter(target);
+  assert.ok(block);
+  assert.ok(block.text.includes("lang: fa"));
+  assert.ok(block.text.includes("translation_key: install"));
+  assert.ok(target.includes("# Install"));
+});
+
+test("translate reads lang from a language prefix and moves a permalink with it", async (t) => {
+  const dir = engineSite(t);
+  mkdirSync(join(dir, "fa"));
+  writeFileSync(join(dir, "fa", "guide.md"), `---\ntitle: Guide\ntranslation_key: guide\npermalink: /fa/guide/\n---\n\nBody.\n`);
+
+  const ctx = getContext();
+  const code = await main(["translate", join(dir, "fa", "guide.md"), "--to", "en"], ctx);
+  assert.equal(code, 0);
+  assert.match(ctx.stdout, /Translated fa\/guide\.md to guide\.md for language en/);
+
+  const target = readFileSync(join(dir, "guide.md"), "utf8");
+  const block = splitFrontMatter(target);
+  assert.ok(block);
+  assert.ok(block.text.includes("lang: en"));
+  assert.ok(block.text.includes("permalink: /guide/"));
+  assert.ok(!block.text.includes("lang: fa"));
+});
+
+test("translate rejects a language the engine config does not list", async (t) => {
+  const dir = engineSite(t);
+
+  const ctx = getContext();
+  const code = await main(["translate", join(dir, "install.md"), "--to", "de"], ctx);
+  assert.equal(code, 1);
+  assert.match(ctx.stderr, /de is not in languages in slipway\.yml/);
+  assert.ok(!existsSync(join(dir, "de")));
 });
