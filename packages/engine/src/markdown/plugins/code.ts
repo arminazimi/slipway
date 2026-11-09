@@ -1,5 +1,4 @@
-import type { Code, Parent, Root, RootContent } from "mdast";
-import type { Data } from "unist";
+import type { Code, Data, Parent, Root, RootContent } from "mdast";
 import type { Plugin } from "unified";
 
 /** Inclusive run of 1-based line numbers inside a code block: `3-5` is `{ from: 3, to: 5 }`. */
@@ -28,7 +27,7 @@ export interface CodeMeta {
 export interface CodeGroup extends Parent {
   readonly type: "codeGroup";
   readonly children: Code[];
-  readonly data?: CodeGroupData;
+  data?: CodeGroupData;
 }
 
 /** `labels[i]` names the tab for `children[i]`: its title, else its language, else its position. */
@@ -118,7 +117,8 @@ export function codeMetaOf(node: Code): CodeMeta | undefined {
 /** Puts `data.code` on every code node, in every container. */
 function attachMeta(node: RootContent | Root): void {
   if (node.type === "code") {
-    node.data = { ...node.data, code: parseCodeMeta(node.meta ?? "") } satisfies CodeData;
+    const data: CodeData = { ...node.data, code: parseCodeMeta(node.meta ?? "") };
+    node.data = data;
   }
   if ("children" in node) {
     for (const child of node.children) attachMeta(child);
