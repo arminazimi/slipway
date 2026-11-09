@@ -4,7 +4,7 @@ import { Fragment, h } from "preact";
 import type { LayoutProps, Page, Site, SiteConfig, SourcePos } from "@velella/mizzen/contracts";
 import home from "../layouts/home.ts";
 
-const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function configWith(overrides: Partial<SiteConfig> = {}): SiteConfig {
   return {

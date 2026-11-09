@@ -65,6 +65,7 @@ function yamlDiagnostic(error: { message: string; linePos?: readonly { line: num
       line: start?.line ?? 1,
       column: start?.col ?? 1,
       endLine: end?.line ?? start?.line ?? 1,
+      endColumn: end?.col ?? start?.col ?? 1,
     },
   };
 }
@@ -89,7 +90,7 @@ function jsonDiagnostic(cause: unknown, text: string, rel: string): Diagnostic {
     id: "data.invalid-json",
     severity: "error",
     message: `Invalid JSON in data file: ${message}`,
-    pos: { file: rel, line, column, endLine: line },
+    pos: { file: rel, line, column, endLine: line, endColumn: column },
   };
 }
 

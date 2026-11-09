@@ -4,7 +4,7 @@ import { test } from "node:test";
 import type { Page, Site, SiteConfig, SourcePos } from "@velella/mizzen/contracts";
 import details, { BODY_CLASS, DEFAULT_SUMMARY, DETAILS_CLASS, SUMMARY_CLASS, type DetailsProps } from "../components/details/index.ts";
 
-const pos: SourcePos = { file: "docs/guide/setup.md", line: 4, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/setup.md", line: 4, column: 1, endLine: 9, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

@@ -14,7 +14,7 @@ import {
   type HookName,
 } from "../src/plugins/hooks.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 /** A site config with the defaults a build fills in. */
 function config(): SiteConfig {
@@ -122,7 +122,7 @@ test("a code file Node cannot import is one error naming the file", async () => 
     assert.equal(diagnostic?.id, "plugin.load-failed");
     assert.equal(diagnostic?.severity, "error");
     assert.ok(diagnostic?.message.includes(CODE_CONFIG_FILE), `the file is named: ${diagnostic?.message}`);
-    assert.deepEqual(diagnostic?.pos, { file: CODE_CONFIG_FILE, line: 1, column: 1, endLine: 1 });
+    assert.deepEqual(diagnostic?.pos, { file: CODE_CONFIG_FILE, line: 1, column: 1, endLine: 1, endColumn: 1 });
   } finally {
     rmSync(root, { recursive: true });
   }

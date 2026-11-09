@@ -5,7 +5,7 @@ import { Fragment } from "preact";
 import type { ChromeProps, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
 import siteFooter from "../chrome/site-footer/index.ts";
 
-const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function configWith(options: Readonly<Record<string, unknown>>): SiteConfig {
   return {

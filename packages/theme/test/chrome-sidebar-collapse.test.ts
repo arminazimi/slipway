@@ -12,7 +12,7 @@ import {
   type SidebarStorage,
 } from "../chrome/sidebar/client.ts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

@@ -9,7 +9,7 @@ import type { OutputContext, OutputFile } from "../src/contracts/output.ts";
 import { buildModel } from "../src/model/build.ts";
 import { search } from "../src/outputs/search.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function site(pages: readonly Page[], config: false | SearchConfig = {}): Site {
   return {

@@ -4,7 +4,7 @@ import { Fragment, h } from "preact";
 import type { LayoutProps, Page, Site, SiteConfig, SourcePos } from "@velella/mizzen/contracts";
 import base, { MAIN_ID, THEME_KEY, THEME_SCRIPT } from "../layouts/base.ts";
 
-const pos: SourcePos = { file: "docs/index.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "docs/index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

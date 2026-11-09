@@ -97,6 +97,7 @@ export function loadConfigText(source: string, file: string, folderTitle: string
           line: start?.line ?? 1,
           column: start?.col ?? 1,
           endLine: end?.line ?? start?.line ?? 1,
+          endColumn: end?.col ?? start?.col ?? 1,
         },
       });
     }
@@ -234,11 +235,11 @@ function getMapPair(doc: Document.Parsed, path: Array<string | number>): Pair | 
 
 function posFromNode(file: string, lineCounter: LineCounter, node: Node | null | undefined): SourcePos {
   const range = node?.range;
-  if (!range) return { file, line: 1, column: 1, endLine: 1 };
+  if (!range) return { file, line: 1, column: 1, endLine: 1, endColumn: 1 };
   const start = lineCounter.linePos(range[0]);
   const endOffset = Math.max(range[0], (range[2] ?? range[1]) - 1);
   const end = lineCounter.linePos(endOffset);
-  return { file, line: start.line, column: start.col, endLine: end.line };
+  return { file, line: start.line, column: start.col, endLine: end.line, endColumn: end.col };
 }
 
 function isNode(value: unknown): value is Node {

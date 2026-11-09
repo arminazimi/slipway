@@ -3,15 +3,17 @@ import type { Heading, Nodes, Root } from "mdast";
 import rehypeStringify from "rehype-stringify";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { formatSpan, spanFromPosition } from "../source/spans.ts";
 
 /**
  * Turns a parsed page (mdast, from `parseMarkdown`) into HTML, and stamps every block element with
- * the source file and line it came from.
+ * the source span it came from.
  *
  * Each block element (heading, paragraph, list, table, code block, blockquote, and directive
- * component) gets `data-src="<path>:<line>"`, where `<line>` is the 1-based line its mdast node
- * starts on in the source file. That attribute is the base of source maps and edit prompts. Raw
- * HTML in the Markdown is passed through unchanged (`allowDangerousHtml`).
+ * component) gets `data-src="<path>:<line>:<column>-<endLine>:<endColumn>"`, the block's full span
+ * from the first character to the last (ADR 0026). That attribute is the base of source maps and
+ * edit prompts, and its start is the block's ID. Raw HTML in the Markdown is passed through
+ * unchanged (`allowDangerousHtml`).
  *
  * The page's headings are collected in document order from its top-level children (the same
  * scope the slug plugin gives ids to): depth, plain text, and the anchor id.
@@ -61,7 +63,7 @@ function stampSources(tree: Root, sourcePath: string): void {
     const data = (node.data ??= {}) as { hProperties?: Record<string, unknown> };
     data.hProperties = {
       ...data.hProperties,
-      "data-src": `${sourcePath}:${node.position.start.line}`,
+      "data-src": formatSpan(spanFromPosition(sourcePath, node.position)),
     };
   });
 }

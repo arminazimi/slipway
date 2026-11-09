@@ -7,7 +7,7 @@ import { discover } from "../src/content/discover.ts";
 import { permalink } from "../src/content/permalink.ts";
 import { isAppPage } from "../src/outputs/app-pages.ts";
 
-const pos = { file: "dashboard/index.html", line: 1, column: 1, endLine: 1 };
+const pos = { file: "dashboard/index.html", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function page(url: string, kind: Page["kind"] = "doc"): Page {
   return {

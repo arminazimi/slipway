@@ -5,7 +5,7 @@ import { Fragment } from "preact";
 import type { ChromeProps, NavLink, Page, Pager, Site, SiteConfig, SourcePos, Trail } from "@velella/mizzen/contracts";
 import pager from "../chrome/pager/index.ts";
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

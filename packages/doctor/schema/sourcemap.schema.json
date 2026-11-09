@@ -22,6 +22,11 @@
   },
   "additionalProperties": false,
   "$defs": {
+    "column": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based column in the source file, counting Unicode code points; a tab is one column."
+    },
     "line": {
       "type": "integer",
       "minimum": 1,
@@ -73,6 +78,18 @@
         "text"
       ],
       "properties": {
+        "column": {
+          "$ref": "#/$defs/column",
+          "description": "1-based column where the heading starts. Absent at the level-0 and level-1 maps of ADR 0007."
+        },
+        "endColumn": {
+          "$ref": "#/$defs/column",
+          "description": "Column of the heading's last character (inclusive). Absent when the map has no end (ADR 0026)."
+        },
+        "endLine": {
+          "$ref": "#/$defs/line",
+          "description": "1-based line where the heading ends; the same as `line` for a one-line heading. Absent when the map has no end (ADR 0026)."
+        },
         "id": {
           "type": "string",
           "minLength": 1,
@@ -100,6 +117,18 @@
         "line"
       ],
       "properties": {
+        "column": {
+          "$ref": "#/$defs/column",
+          "description": "1-based column where the link starts. Absent at the level-0 and level-1 maps of ADR 0007."
+        },
+        "endColumn": {
+          "$ref": "#/$defs/column",
+          "description": "Column of the link's last character (inclusive). Absent when the map has no end (ADR 0026)."
+        },
+        "endLine": {
+          "$ref": "#/$defs/line",
+          "description": "1-based line where the link ends; the same as `line` for a one-line link. Absent when the map has no end (ADR 0026)."
+        },
         "href": {
           "type": "string",
           "minLength": 1,

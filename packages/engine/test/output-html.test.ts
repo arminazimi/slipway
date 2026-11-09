@@ -6,7 +6,7 @@ import type { OutputContext, OutputFile } from "../src/contracts/output.ts";
 import { buildModel } from "../src/model/build.ts";
 import { html } from "../src/outputs/html.ts";
 
-const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1 };
+const pos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 function site(base: string, pages: readonly Page[]): Site {
   return {

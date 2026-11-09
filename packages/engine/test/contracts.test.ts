@@ -6,7 +6,7 @@ import type {
 
 // These values only have to type-check (`npm run typecheck`); the runtime assertions keep the test from being empty.
 
-const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos: SourcePos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Example",

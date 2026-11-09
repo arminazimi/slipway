@@ -41,7 +41,7 @@ export function parseFrontMatter(source: string, file: string): FrontMatterResul
         id: "frontmatter.unclosed",
         severity: "error",
         message: "Front matter starts with `---` but is never closed.",
-        pos: { file, line: 1, column: 1, endLine: lines.length },
+        pos: { file, line: 1, column: 1, endLine: lines.length, endColumn: 1 },
         help: "Add a closing `---` line after the front matter.",
       }],
     };
@@ -67,6 +67,7 @@ export function parseFrontMatter(source: string, file: string): FrontMatterResul
           line: 1 + (start?.line ?? 1),
           column: start?.col ?? 1,
           endLine: 1 + (end?.line ?? start?.line ?? 1),
+          endColumn: end?.col ?? start?.col ?? 1,
         },
       });
     }
@@ -81,7 +82,7 @@ export function parseFrontMatter(source: string, file: string): FrontMatterResul
         id: "frontmatter.not-a-mapping",
         severity: "error",
         message: "Front matter must be a YAML mapping of keys to values.",
-        pos: { file, line: 2, column: 1, endLine: Math.max(2, close) },
+        pos: { file, line: 2, column: 1, endLine: Math.max(2, close), endColumn: 1 },
       });
     }
   }

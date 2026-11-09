@@ -2,12 +2,13 @@ import type { Nodes, Root } from "mdast";
 import type { Page, Site } from "../contracts/content.ts";
 import type { Output, OutputFile } from "../contracts/output.ts";
 import { parseMarkdown } from "../markdown/parse.ts";
+import { spanFromPosition } from "../source/spans.ts";
 import { isAppPage } from "./app-pages.ts";
 
 /** Where the map lands, relative to the output folder. */
 const FILE = "sourcemap.json";
 
-/** One heading of a page, as the source map records it (spec/sourcemap/v0.md). */
+/** One heading of a page, as the source map records it (spec/sourcemap/v0.md, ADR 0026). */
 interface Section {
   /** The `id` the heading has in the built HTML. */
   readonly id: string;
@@ -15,16 +16,28 @@ interface Section {
   readonly level: number;
   /** 1-based line in the source file, front matter included. */
   readonly line: number;
+  /** 1-based column where the heading starts. */
+  readonly column: number;
+  /** 1-based line where the heading ends (the same as `line` for a one-line heading). */
+  readonly endLine: number;
+  /** Column of the heading's last character (inclusive). */
+  readonly endColumn: number;
   /** The heading's plain text, as the built page shows it. */
   readonly text: string;
 }
 
-/** One link of a page: the target as written in the source, and its 1-based source line. */
+/** One link of a page: the target as written in the source, and the span it occupies. */
 interface LinkEntry {
   /** The link target as written in the source. */
   readonly href: string;
   /** 1-based line in the source file, front matter included. */
   readonly line: number;
+  /** 1-based column where the link starts. */
+  readonly column: number;
+  /** 1-based line where the link ends (the same as `line` for a one-line link). */
+  readonly endLine: number;
+  /** Column of the link's last character (inclusive). */
+  readonly endColumn: number;
 }
 
 /** One page of the map. `sections` and `links` are always present, in document order. */
@@ -47,12 +60,21 @@ function visit(node: Nodes, visitFn: (n: Nodes) => void): void {
   }
 }
 
-/** Every Markdown link in the page body, in document order, with its 1-based line in the source file. */
-function linksOf(tree: Root, fallbackLine: number): LinkEntry[] {
+/** Every Markdown link in the page body, in document order, with its span in the source file. */
+function linksOf(tree: Root, fallbackLine: number, file: string): LinkEntry[] {
   const links: LinkEntry[] = [];
   visit(tree, (node) => {
     if (node.type !== "link" || node.url === "") return;
-    links.push({ href: node.url, line: node.position?.start.line ?? fallbackLine });
+    const span = node.position
+      ? spanFromPosition(file, node.position)
+      : { file, line: fallbackLine, column: 1, endLine: fallbackLine, endColumn: 1 };
+    links.push({
+      href: node.url,
+      line: span.line,
+      column: span.column,
+      endLine: span.endLine,
+      endColumn: span.endColumn,
+    });
   });
   return links;
 }
@@ -92,11 +114,14 @@ export const sourcemap: Output = {
         id: heading.id,
         level: heading.depth,
         line: heading.pos.line,
+        column: heading.pos.column,
+        endLine: heading.pos.endLine,
+        endColumn: heading.pos.endColumn,
         text: heading.text,
       }));
 
       const links = isMarkdown(page)
-        ? linksOf(await parseMarkdown(page.markdown, page.source.line), page.source.line)
+        ? linksOf(await parseMarkdown(page.markdown, page.source.line), page.source.line, sourcePath(page))
         : [];
 
       pages.push({ url: page.url, source: sourcePath(page), sections, links });

@@ -5,7 +5,7 @@ import type { Head, Layout, Page, Site } from "../src/contracts/index.ts";
 import { renderPage } from "../src/render/render.ts";
 import type { ThemeComponent } from "../src/render/render.ts";
 
-const pos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9 };
+const pos = { file: "docs/guide/install.md", line: 3, column: 1, endLine: 9, endColumn: 1 };
 
 const site: Site = {
   config: {

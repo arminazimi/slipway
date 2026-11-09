@@ -7,7 +7,7 @@ import sidebar from "../chrome/sidebar/index.ts";
 // The 550 generated rule pages of the docs-site fixture: one folder, one navigation group.
 const rulesDir = new URL("../../../fixtures/docs-site/rules/", import.meta.url);
 
-const pos: SourcePos = { file: "rules/index.md", line: 1, column: 1, endLine: 1 };
+const pos: SourcePos = { file: "rules/index.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
 
 const config: SiteConfig = {
   title: "Beacon",

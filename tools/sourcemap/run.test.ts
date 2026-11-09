@@ -30,12 +30,18 @@ interface Section {
   readonly id: string;
   readonly level: number;
   readonly line: number;
+  readonly column: number;
+  readonly endLine: number;
+  readonly endColumn: number;
   readonly text: string;
 }
 
 interface LinkEntry {
   readonly href: string;
   readonly line: number;
+  readonly column: number;
+  readonly endLine: number;
+  readonly endColumn: number;
 }
 
 interface PageEntry {
@@ -61,15 +67,15 @@ test("the map names each page's source and keeps the headings' and links' lines"
   assert.ok(quickstart, "the fixture has /quickstart/");
   assert.equal(quickstart.source, "quickstart.md");
   assert.deepEqual(quickstart.sections, [
-    { id: "quickstart", level: 1, line: 1, text: "Quickstart" },
-    { id: "the-first-deploy", level: 2, line: 5, text: "The first deploy" },
-    { id: "what-happens-next", level: 2, line: 17, text: "What happens next" },
+    { id: "quickstart", level: 1, line: 1, column: 1, endLine: 1, endColumn: 12, text: "Quickstart" },
+    { id: "the-first-deploy", level: 2, line: 5, column: 1, endLine: 5, endColumn: 19, text: "The first deploy" },
+    { id: "what-happens-next", level: 2, line: 17, column: 1, endLine: 17, endColumn: 20, text: "What happens next" },
   ]);
   assert.deepEqual(quickstart.links, [
-    { href: "configuration.md", line: 13 },
-    { href: "commands.md", line: 15 },
-    { href: "output.md", line: 19 },
-    { href: "dashboard/", line: 20 },
+    { href: "configuration.md", line: 13, column: 23, endLine: 13, endColumn: 52 },
+    { href: "commands.md", line: 15, column: 1, endLine: 15, endColumn: 23 },
+    { href: "output.md", line: 19, column: 31, endLine: 19, endColumn: 49 },
+    { href: "dashboard/", line: 20, column: 1, endLine: 20, endColumn: 23 },
   ]);
 });
 
