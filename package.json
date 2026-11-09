@@ -16,7 +16,6 @@
     "check": "node tools/check.mjs",
     "check:tools": "node tools/check.mjs --tools",
     "seaworthy:setup": "node tools/seaworthy/setup.mjs",
-    "check:site": "node tools/theme/check.mjs",
     "check:schemas": "node tools/theme/validate.mjs",
     "check:docs": "node tools/theme/config-doc.mjs --check && node tools/theme/front-matter-doc.mjs --check",
     "sourcemap": "node tools/sourcemap/run.mjs",

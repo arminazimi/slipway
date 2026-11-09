@@ -7,11 +7,12 @@
 // Tests: every `*.test.mjs` in tools/, tools/<name>/, planning/roadmap/, packages/*/test/ and adapters/*/test/, plus every
 // `*.test.ts` there (Node strips the types; packages/engine is TypeScript). A tool folder
 // with a playwright.config.js holds Playwright tests that its run.mjs starts, so node --test skips that folder.
+// Anything that builds a site with Jekyll is left out of both lists.
 // Tools: every tools/<name>/run.mjs except the generators below. A run.mjs prints SKIP and exits 0 when its optional
 // dependency (Playwright, Ruby, Seaworthy) is missing. SLIPWAY_SKIP_TOOLS=screenshots,nojs leaves the named tools out.
 // Type check: every workspace with a `typecheck` script (`tsc --noEmit`) runs it after the tests.
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { root } from "./theme/tokens.mjs";
 
@@ -19,10 +20,13 @@ import { root } from "./theme/tokens.mjs";
 export const notChecks = new Set(["html-validate", "sourcemap", "twins"]);
 
 /** Checks without a run.mjs, in the order they run after the tests. */
-export const fixedChecks = ["brand", "tokens", "contrast", "logical", "js", "css", "schemas", "site", "docs"];
+export const fixedChecks = ["brand", "tokens", "contrast", "logical", "js", "css", "schemas", "docs"];
 
 const dirs = (path) => (existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []);
-const testsIn = (path) => (existsSync(path) ? readdirSync(path).filter((f) => /\.test\.(mjs|ts)$/.test(f)).sort().map((f) => join(path, f)) : []);
+/** Jekyll is being removed (cleanup.jekyll-theme): nothing that builds a site with it belongs in `npm run check`. */
+const JEKYLL = /bundleAvailable|buildExample|jekyll build|bundle exec|SLIPWAY_REQUIRE_BUILD/;
+const usesJekyll = (file) => JEKYLL.test(readFileSync(file, "utf8"));
+const testsIn = (path) => (existsSync(path) ? readdirSync(path).filter((f) => /\.test\.(mjs|ts)$/.test(f)).sort().map((f) => join(path, f)).filter((f) => !usesJekyll(f)) : []);
 
 export function testFiles(dir = root) {
   const folders = [
@@ -35,7 +39,7 @@ export function testFiles(dir = root) {
 }
 
 export function toolChecks(dir = root, skip = (process.env.SLIPWAY_SKIP_TOOLS ?? "").split(",")) {
-  return dirs(join(dir, "tools")).filter((n) => !notChecks.has(n) && !skip.includes(n) && existsSync(join(dir, "tools", n, "run.mjs"))).map((n) => `tools/${n}/run.mjs`);
+  return dirs(join(dir, "tools")).filter((n) => !notChecks.has(n) && !skip.includes(n) && existsSync(join(dir, "tools", n, "run.mjs")) && !usesJekyll(join(dir, "tools", n, "run.mjs"))).map((n) => `tools/${n}/run.mjs`);
 }
 
 function run(label, command, args, dir) {

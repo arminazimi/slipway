@@ -14,7 +14,7 @@ test("Closes, fixes and resolves all name an issue", () => {
 });
 
 test("a theme change without changelog.d/<n>.md is a problem", () => {
-  for (const file of ["_layouts/base.html", "_includes/a.html", "assets/css/x.css", "schema/a.json", "skills/a/SKILL.md"]) {
+  for (const file of ["packages/theme/layouts/base.ts", "packages/theme/chrome/a/index.ts", "packages/theme/styles/x.css", "schema/a.json", "skills/a/SKILL.md"]) {
     const problems = check({ body: "Closes #5", files: [file] });
     assert.equal(problems.length, 1, file);
     assert.match(problems[0], /changelog\.d\/5\.md/);
@@ -22,11 +22,11 @@ test("a theme change without changelog.d/<n>.md is a problem", () => {
 });
 
 test("the fragment for the closed issue satisfies the rule", () => {
-  assert.deepEqual(check({ body: "Closes #5", files: ["_layouts/base.html", { filename: "changelog.d/5.md" }] }), []);
+  assert.deepEqual(check({ body: "Closes #5", files: ["packages/theme/layouts/base.ts", { filename: "changelog.d/5.md" }] }), []);
 });
 
 test("a fragment for another issue does not", () => {
-  assert.equal(check({ body: "Closes #5", files: ["assets/js/a.js", "changelog.d/6.md"] }).length, 1);
+  assert.equal(check({ body: "Closes #5", files: ["packages/theme/styles/a.css", "changelog.d/6.md"] }).length, 1);
 });
 
 test("the no-changelog label skips the fragment rule, not the Closes rule", () => {
