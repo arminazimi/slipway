@@ -42,7 +42,8 @@ export interface RenderResult {
   readonly diagnostics: readonly Diagnostic[];
 }
 
-const OPEN = /<sl-component\b([^>]*)>/gi;
+/** An open tag, where quoted attribute values may contain `>` (a Mermaid arrow, for one). */
+const OPEN = /<sl-component\b((?:"[^"]*"|'[^']*'|[^"'>])*)>/gi;
 const ATTR = /([^\s=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
 
 /** Escapes a value for use inside a double-quoted HTML attribute. */

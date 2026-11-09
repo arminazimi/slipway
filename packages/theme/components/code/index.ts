@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { h } from "preact";
 import type { ComponentProps } from "@velella/mizzen/contracts";
+import mermaid from "../mermaid/index.ts";
 import { createHighlighterCoreSync } from "shiki/core";
 import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
 import { bundledLanguages } from "shiki/langs";
@@ -110,15 +111,20 @@ export type CodeProps = {
  * token, and `style.css` picks one with `light-dark()`, so the theme switch needs no rebuild and no
  * highlighting runs in the browser.
  */
-export default function code({ props, html, page }: ComponentProps<CodeProps>) {
+export default function code({ props, html, page, site }: ComponentProps<CodeProps>) {
   const lang = props.lang?.trim() || langFromBody(html) || "text";
   const text = sourceText(html);
+  const pos = page?.source;
+  const src = props.src ?? (pos ? `${pos.file}:${pos.line}` : undefined);
+  // A fence marked `mermaid` is a diagram, not text; `mermaidComponents` in the engine sends fences
+  // straight to the mermaid component, and this keeps `:::code{lang=mermaid}` working too.
+  if (lang === "mermaid") {
+    return mermaid({ props: { source: text, ...(src ? { src } : {}) }, page, site, html });
+  }
   const hl = get();
   const known = hl.getLoadedLanguages().includes(lang);
   const out = hl.codeToHtml(text, { lang: known ? lang : "text", themes: { light: "lateen-light", dark: "lateen-dark" }, defaultColor: false });
   const inner = /<code[^>]*>([\s\S]*)<\/code>/.exec(out)?.[1] ?? "";
-  const pos = page?.source;
-  const src = props.src ?? (pos ? `${pos.file}:${pos.line}` : undefined);
   return h(
     "pre",
     { class: CODE_CLASS, tabindex: 0, "data-lang": lang, ...(src ? { "data-src": src } : {}) },

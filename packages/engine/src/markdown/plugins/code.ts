@@ -125,6 +125,34 @@ function attachMeta(node: RootContent | Root): void {
   }
 }
 
+/** `alt="…"` from a fence's meta, or an empty string. A leading `%% alt:` comment is the component's fallback. */
+function altOf(meta: string | null): string {
+  if (!meta) return "";
+  const match = /(?:^|\s)alt\s*=\s*(?:"([^"]*)"|'([^']*)'|(\S+))/.exec(meta);
+  return (match?.[1] ?? match?.[2] ?? match?.[3] ?? "").trim();
+}
+
+/**
+ * A ```mermaid fence becomes the theme's `mermaid` component, with its source and alt text as props.
+ * The component renders the diagram at build time; no Mermaid script reaches the page. This runs
+ * before the directive plugin (order 20), which turns the node into `<sl-component name="mermaid">`.
+ */
+function mermaidComponents(parent: Parent): void {
+  parent.children = parent.children.map((child): RootContent => {
+    if (child.type === "code" && child.lang === "mermaid") {
+      return {
+        type: "containerDirective",
+        name: "mermaid",
+        attributes: { source: child.value, alt: altOf(child.meta ?? null) },
+        children: [],
+        ...(child.position ? { position: child.position } : {}),
+      };
+    }
+    if ("children" in child) mermaidComponents(child as Parent);
+    return child;
+  });
+}
+
 /** True for a paragraph whose only text matches `pattern`: the `:::code-group` and `:::` markers. */
 function isMarker(node: RootContent, pattern: RegExp): boolean {
   if (node.type !== "paragraph" || node.children.length !== 1) return false;
@@ -214,5 +242,6 @@ export const name = "code";
 export const order = 10;
 export const plugin: Plugin<[], Root> = () => (tree, file) => {
   attachMeta(tree);
+  mermaidComponents(tree);
   groupTabs(tree, String(file.value));
 };

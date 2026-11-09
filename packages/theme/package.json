@@ -19,12 +19,15 @@
   },
   "dependencies": {
     "@velella/mizzen": "0.3.0-dev",
+    "jsdom": "^31.0.0",
+    "mermaid": "^12.3.0",
     "shiki": "^4.6.0"
   },
   "peerDependencies": {
     "preact": "^11.2.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^30.0.0",
     "@types/node": "^26.6.6"
   }
 }
