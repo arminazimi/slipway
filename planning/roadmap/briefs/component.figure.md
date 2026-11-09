@@ -4,9 +4,9 @@ Images with captions, and an image pair that switches with the theme.
 ## Files
 
 **Create**
-- `packages/theme/components/figure/index.tsx`
+- `packages/theme/components/figure/index.ts`
 - `packages/theme/components/figure/style.css`
-- `packages/theme/test/component-figure.test.tsx`
+- `packages/theme/test/component-figure.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

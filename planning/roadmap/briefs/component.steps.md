@@ -4,9 +4,9 @@
 ## Files
 
 **Create**
-- `packages/theme/components/steps/index.tsx`
+- `packages/theme/components/steps/index.ts`
 - `packages/theme/components/steps/style.css`
-- `packages/theme/test/component-steps.test.tsx`
+- `packages/theme/test/component-steps.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

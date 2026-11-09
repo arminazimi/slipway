@@ -4,10 +4,10 @@ A page menu to copy or view the page's Markdown and open it in Claude, ChatGPT, 
 ## Files
 
 **Create**
-- `packages/theme/chrome/page-agent-menu/index.tsx`
+- `packages/theme/chrome/page-agent-menu/index.ts`
 - `packages/theme/chrome/page-agent-menu/style.css`
 - `packages/theme/chrome/page-agent-menu/client.ts`
-- `packages/theme/test/chrome-page-agent-menu.test.tsx`
+- `packages/theme/test/chrome-page-agent-menu.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

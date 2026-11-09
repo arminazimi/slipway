@@ -22,13 +22,14 @@ Comment on the issue to claim it. If you go quiet for a week, someone else may p
 1. Read [AGENTS.md](AGENTS.md).
 2. Follow the issue's agent brief, if it has one. If not, comment with a short plan first.
 3. Keep the PR to that one issue.
-4. Add tests for what users or agents can observe.
-5. Run `npm run check`.
-6. Open the PR with `Closes #<issue>`.
+4. Write all new code in TypeScript (`.ts`, Preact with `h()`, no `.tsx`), even when the brief names a `.js`, `.mjs`, or `.tsx` file. See "TypeScript only" in [AGENTS.md](AGENTS.md).
+5. Add tests for what users or agents can observe.
+6. Run `npm run check`.
+7. Open the PR with `Closes #<issue>`.
 
 For anything a site owner would notice, add a fragment: `changelog.d/<issue>.md` with one line (see [changelog.d/README.md](changelog.d/README.md)). Do not edit `CHANGELOG.md`, so parallel PRs never conflict.
 
-A new check needs no wiring: `npm run check` runs every `tools/<name>/run.mjs` and every `*.test.mjs` it finds (`tools/check.mjs`), and CI runs the browser-based `run.mjs` tools in one step. Put an optional tool's dependency in `devDependencies` as one line in alphabetical order, and make `run.mjs` print `SKIP` and exit 0 when it is missing.
+A new check needs no wiring: `npm run check` runs every `tools/<name>/run.ts` (or legacy `run.mjs`) and every `*.test.ts` or `*.test.mjs` it finds (`tools/check.mjs`), and CI runs the browser-based tools in one step. Put an optional tool's dependency in `devDependencies` as one line in alphabetical order, and make `run.ts` print `SKIP` and exit 0 when it is missing.
 
 ## Working in parallel
 

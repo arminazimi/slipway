@@ -8,7 +8,7 @@ import table, {
   WRAPPER_CLASS,
   rehype,
   type HastNode,
-} from "../components/table/index.tsx";
+} from "../components/table/index.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const stylePath = join(root, "components/table/style.css");

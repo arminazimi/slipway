@@ -4,9 +4,9 @@ Cards at the end of the article linking to the previous and next pages in readin
 ## Files
 
 **Create**
-- `packages/theme/chrome/pager/index.tsx`
+- `packages/theme/chrome/pager/index.ts`
 - `packages/theme/chrome/pager/style.css`
-- `packages/theme/test/chrome-pager.test.tsx`
+- `packages/theme/test/chrome-pager.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

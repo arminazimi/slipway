@@ -4,9 +4,9 @@ A banner from front matter `status`, with `since` and a replacement link for dep
 ## Files
 
 **Create**
-- `packages/theme/components/page-status/index.tsx`
+- `packages/theme/components/page-status/index.ts`
 - `packages/theme/components/page-status/style.css`
-- `packages/theme/test/component-page-status.test.tsx`
+- `packages/theme/test/component-page-status.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

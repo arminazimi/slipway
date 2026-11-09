@@ -68,6 +68,7 @@ Up to 20 tasks run at once and merge in any order ([ADR 0023](docs/adr/0023-engi
 ## Rules
 
 - One issue = one pull request, with `Closes #<issue>`.
+- **TypeScript only.** All new code is TypeScript (`.ts`) run by Node's type stripping, with erasable syntax only (no `enum`, `namespace`, parameter properties, or decorators), checked by `tsc --noEmit` ([ADR 0022](docs/adr/0022-engine.md)). Write Preact with `h()`, never JSX, so there are no `.tsx` files. This covers packages, tools (`tools/<name>/run.ts`), tests (`*.test.ts`), and scripts. Legacy `.js` and `.mjs` files are not converted for their own sake: code that is out of scope is deleted, not converted; a legacy file that stays and needs a substantial change is converted to `.ts` in the same pull request. If a brief or issue names a `.js`, `.mjs`, or `.tsx` file, write `.ts` instead. Only client scripts under `assets/js/` are exempt until the engine replaces them. `tools/ts-only/run.ts` fails on any new JavaScript or `.tsx` file; never add a line to `tools/ts-only/legacy.txt`.
 - Nothing a Slipway site needs may depend on Seaworthy before 1.0; Slipway's own CI runs it only as a regression net. Keep the dependency one-way and use only its public contracts: the CLI, the Action, the report format, and the specs. Never copy its code.
 - A task whose issue has `needs: seaworthy` waits on a Seaworthy deliverable; check it is released before you start.
 - Content and config must not depend on Jekyll, so other adapters can follow (principle 6 in the roadmap).

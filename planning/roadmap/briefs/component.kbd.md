@@ -4,9 +4,9 @@ Style `<kbd>` and `:kbd[Ctrl+K]`, with ⌘ and Ctrl shown per platform when aske
 ## Files
 
 **Create**
-- `packages/theme/components/kbd/index.tsx`
+- `packages/theme/components/kbd/index.ts`
 - `packages/theme/components/kbd/style.css`
-- `packages/theme/test/component-kbd.test.tsx`
+- `packages/theme/test/component-kbd.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

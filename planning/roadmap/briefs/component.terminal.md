@@ -4,10 +4,10 @@ Show shell sessions with prompts and output; copy takes only the commands.
 ## Files
 
 **Create**
-- `packages/theme/components/terminal/index.tsx`
+- `packages/theme/components/terminal/index.ts`
 - `packages/theme/components/terminal/style.css`
 - `packages/theme/components/terminal/client.ts`
-- `packages/theme/test/component-terminal.test.tsx`
+- `packages/theme/test/component-terminal.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

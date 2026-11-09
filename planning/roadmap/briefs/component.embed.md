@@ -4,9 +4,9 @@
 ## Files
 
 **Create**
-- `packages/theme/components/embed/index.tsx`
+- `packages/theme/components/embed/index.ts`
 - `packages/theme/components/embed/style.css`
-- `packages/theme/test/component-embed.test.tsx`
+- `packages/theme/test/component-embed.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

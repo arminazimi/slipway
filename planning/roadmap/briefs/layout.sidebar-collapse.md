@@ -5,7 +5,7 @@ Groups open and close with `<details>`; the group with the current page is open;
 
 **Create**
 - `packages/theme/chrome/sidebar/client.ts`
-- `packages/theme/test/chrome-sidebar-collapse.test.tsx`
+- `packages/theme/test/chrome-sidebar-collapse.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

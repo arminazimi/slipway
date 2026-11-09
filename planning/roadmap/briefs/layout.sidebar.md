@@ -4,9 +4,9 @@ The left column: groups and links from the navigation tree, current page and act
 ## Files
 
 **Create**
-- `packages/theme/chrome/sidebar/index.tsx`
+- `packages/theme/chrome/sidebar/index.ts`
 - `packages/theme/chrome/sidebar/style.css`
-- `packages/theme/test/chrome-sidebar.test.tsx`
+- `packages/theme/test/chrome-sidebar.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

@@ -4,10 +4,10 @@ General tabs for any content (for example per operating system), synced by label
 ## Files
 
 **Create**
-- `packages/theme/components/tabs/index.tsx`
+- `packages/theme/components/tabs/index.ts`
 - `packages/theme/components/tabs/style.css`
 - `packages/theme/components/tabs/client.ts`
-- `packages/theme/test/component-tabs.test.tsx`
+- `packages/theme/test/component-tabs.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 

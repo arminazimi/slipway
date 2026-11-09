@@ -4,10 +4,10 @@ A three-state switch that sets `data-theme` and remembers the choice.
 ## Files
 
 **Create**
-- `packages/theme/chrome/theme-toggle/index.tsx`
+- `packages/theme/chrome/theme-toggle/index.ts`
 - `packages/theme/chrome/theme-toggle/style.css`
 - `packages/theme/chrome/theme-toggle/client.ts`
-- `packages/theme/test/chrome-theme-toggle.test.tsx`
+- `packages/theme/test/chrome-theme-toggle.test.ts`
 
 Touch no other file. If one must change, stop and say why in the issue.
 
