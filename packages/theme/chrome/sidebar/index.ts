@@ -90,8 +90,35 @@ function collapsedNode(group: NavGroup, pages: readonly NavLink[], url: string) 
   );
 }
 
-/** The `<li>` entries of one list: links, and small groups nested as a heading with their own list. */
-function entries(items: readonly NavItem[], url: string, depth: number): ComponentChildren[] {
+/**
+ * A group as a native `<details>`, so it opens and closes without JavaScript. The group that holds the
+ * page is open; the others start closed. `data-sidebar-group` is the key the client remembers the state under.
+ */
+function groupNode(group: NavGroup, key: string, url: string, depth: number) {
+  const current = marks(group, url);
+  return h(
+    "details",
+    {
+      class: "sidebar-group",
+      "data-sidebar-group": key,
+      ...(current ? { "data-current": "true", open: true } : {}),
+    },
+    h(
+      "summary",
+      null,
+      h(`h${Math.min(depth, 6)}`, current ? { "aria-current": "true" } : {}, group.title),
+    ),
+    h("ul", null, entries(group.children, url, depth + 1, key)),
+  );
+}
+
+/** The `<li>` entries of one list: links, and small groups nested as a disclosure with their own list. */
+function entries(
+  items: readonly NavItem[],
+  url: string,
+  depth: number,
+  parent: string | undefined,
+): ComponentChildren[] {
   const nodes = [];
   for (const item of items) {
     if (!isGroup(item)) {
@@ -104,23 +131,13 @@ function entries(items: readonly NavItem[], url: string, depth: number): Compone
       nodes.push(h("li", null, collapsedNode(item, pages, url)));
       continue;
     }
-    nodes.push(
-      h(
-        "li",
-        { class: "sidebar-group" },
-        h(
-          `h${Math.min(depth, 6)}`,
-          marks(item, url) ? { "aria-current": "true" } : {},
-          item.title,
-        ),
-        h("ul", null, entries(item.children, url, depth + 1)),
-      ),
-    );
+    const key = parent === undefined ? item.title : `${parent}/${item.title}`;
+    nodes.push(h("li", null, groupNode(item, key, url, depth)));
   }
   return nodes;
 }
 
-/** The blocks of the top level: the leading links first, then each group as a heading with its list. */
+/** The blocks of the top level: the leading links first, then each group as a disclosure with its list. */
 function blocks(items: readonly NavItem[], url: string): ComponentChildren[] {
   const out = [];
   let leading = [];
@@ -139,8 +156,7 @@ function blocks(items: readonly NavItem[], url: string): ComponentChildren[] {
       out.push(h("ul", null, h("li", null, collapsedNode(item, pages, url))));
       continue;
     }
-    out.push(h("h2", marks(item, url) ? { "aria-current": "true" } : {}, item.title));
-    out.push(h("ul", null, entries(item.children, url, 3)));
+    out.push(groupNode(item, item.title, url, 2));
   }
   if (leading.length > 0) out.push(h("ul", null, leading));
   return out;

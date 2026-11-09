@@ -76,3 +76,32 @@
 .sidebar-nav ul ul a {
   padding-inline-start: var(--space-6);
 }
+
+/* A group is a <details>: its title is the summary, with a marker that shows the state. */
+
+.sidebar-nav summary {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  list-style: none;
+}
+
+.sidebar-nav summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-nav summary::after {
+  content: "+";
+  margin-inline-start: auto;
+  padding-inline-end: var(--space-3);
+  color: var(--color-muted);
+}
+
+.sidebar-nav details[open] > summary::after {
+  content: "\2212";
+}
+
+.sidebar-nav summary:focus-visible {
+  outline: 2px solid var(--state-focus-ring);
+  outline-offset: 2px;
+}

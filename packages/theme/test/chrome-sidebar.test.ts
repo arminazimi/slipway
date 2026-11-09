@@ -97,10 +97,13 @@ test("renders the main list: leading links, groups as headings, nested groups ne
 
   assert.match(out, /<nav class="sidebar-nav" aria-label="Site navigation">/);
   assert.match(out, /<ul><li><a href="\/home\/" aria-current="page">Home<\/a><\/li><\/ul>/);
-  assert.match(out, /<h2>Guide<\/h2><ul>/);
   assert.match(
     out,
-    /<li class="sidebar-group"><h3>Setup<\/h3><ul><li><a href="\/guide\/setup\/config\/">Config<\/a><\/li><\/ul><\/li>/,
+    /<details class="sidebar-group" data-sidebar-group="Guide"><summary><h2>Guide<\/h2><\/summary><ul>/,
+  );
+  assert.match(
+    out,
+    /<li><details class="sidebar-group" data-sidebar-group="Guide\/Setup"><summary><h3>Setup<\/h3><\/summary><ul><li><a href="\/guide\/setup\/config\/">Config<\/a><\/li><\/ul><\/details><\/li>/,
   );
   assert.match(out, /<a href="\/rules\/">Rules<\/a>/);
   assert.doesNotMatch(out, /Docs home/);
