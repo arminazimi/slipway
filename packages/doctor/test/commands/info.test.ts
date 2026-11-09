@@ -3,7 +3,10 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, cpSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { main, parseArgs } from "../../src/commands/info.ts";
+
+const docsSite = fileURLToPath(new URL("../../../../fixtures/docs-site", import.meta.url));
 
 function getContext() {
   let stdout = "";
@@ -48,6 +51,29 @@ test("info with json format", async (t) => {
   assert.equal(info.mode, "gem");
   assert.equal(info.themePin, null);
   assert.ok(info.versions.node);
+});
+
+test("info reads an engine site's config, theme pin, and package versions", async (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "slipway-info-engine-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  cpSync(docsSite, dir, { recursive: true });
+  writeFileSync(join(dir, "package.json"), JSON.stringify({
+    devDependencies: { "@velella/mizzen": "0.3.0", "@velella/lateen": "0.3.0" },
+  }));
+
+  const ctx = getContext();
+  const code = await main(["info", dir, "--format", "json"], ctx);
+  assert.equal(code, 0);
+
+  const info = JSON.parse(ctx.stdout);
+  assert.equal(info.mode, "engine");
+  assert.equal(info.config, "slipway.yml");
+  assert.equal(info.themePin, "@velella/lateen@0.3.0");
+  assert.equal(info.versions.engine, "0.3.0");
+  assert.equal(info.versions.theme, "0.3.0");
+  assert.ok(info.versions.node);
+  assert.ok(!("ruby" in info.versions), "an engine site does not probe Ruby");
+  assert.ok(!("jekyll" in info.versions), "an engine site does not probe Jekyll");
 });
 
 test("info with invalid dir", async () => {

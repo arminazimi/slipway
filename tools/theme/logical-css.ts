@@ -3,7 +3,7 @@
 // overflow-x/y stay: overflow-inline has no Safari support yet.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 const physical = [
   /\b(margin|padding|border|scroll-margin|scroll-padding)-(left|right|top|bottom)\b/,

@@ -1,107 +1,79 @@
 ---
 name: slipway-translate
-description: Add a language to a Slipway site, translate pages and posts, and keep every translation linked through lang, translation_key, the language switcher, and hreflang.
+description: Add a language to a Slipway site, translate pages, and keep every translation linked through lang and translation_key, then check it with slipway check.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Translate a Slipway site
 
-A Slipway site joins translations with two front matter keys: `lang` says which language a page is in, and `translation_key` is the same on every translation of one page. The theme builds the language switcher, the `hreflang` alternates, and the sitemap entries from those keys. You translate the words and set the language; you never build the links yourself. If the site has an `AGENTS.md`, read it first; it wins where it differs from this skill.
+A Slipway site joins translations with two front matter keys: `lang` says which language a page is in, and `translation_key` is the same on every translation of one page. The engine reads both and the theme uses `lang` for the interface strings and the text direction. You translate the words and set the language; you never build the links by hand. If the site has an `AGENTS.md`, read it first; it wins where it differs from this Skill.
 
 ## 1. Take a baseline
 
-Get the theme's checks once, in a folder outside the site:
+From the site folder, run the check before you change anything, and keep its output:
 
 ```sh
-git clone --depth 1 https://github.com/arminazimi/slipway "$HOME/.slipway"
-cd "$HOME/.slipway" && npm ci && cd -
+slipway check .
 ```
 
-From the site folder, run the schema check and the doctor before you change anything, and keep the output:
-
-```sh
-node "$HOME/.slipway/tools/theme/validate.ts" .
-node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
-```
-
-Your edit is done when it adds no problem and no finding to that output, apart from the translation-coverage warnings that step 5 explains.
+Your edit is done when it adds no finding that names your file. `slipway` is the engine's command line, released with the engine (`engine.cli`). Until it is installed, say so in your report and do not invent a result.
 
 ## 2. List the language in the config
 
-`slipway.languages` in the site's `_config.yml` lists every language, in switcher order. Each entry needs a `code` (the `lang` value, such as `de` or `pt-BR`), a `name` in that language, and a `prefix` (the URL folder, or `""` for the default language):
+`languages` in `slipway.yml` lists every language, in switcher order. Each entry needs a `code` (the `lang` value, such as `de` or `pt-BR`), a `name` in that language, and a `prefix` (the URL folder, or `""` for the default language):
 
 ```yaml
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: de, name: Deutsch, prefix: /de }
+# slipway.yml
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: de, name: Deutsch, prefix: /de }
 ```
 
-Each language needs a home page under its prefix (such as `de/index.md`, with `lang: de`, `permalink: /de/`, and the same `translation_key` as the default home), plus, when the site has them in its other languages, its own `search.json` and `feed.xml` with `lang` and a `permalink` under the prefix; `examples/minimal/fa/` has both, and `examples/minimal/_data/navigation.yml` shows the per-language `main_fa` menu. Without the home page the switcher points at a missing page; without the stubs the language has no search index and no feed link.
+Pages in the second language live under its prefix folder: `de/index.md`, `de/install.md`. A page's `lang` comes from its front matter, then from the prefix of its folder, then from `lang` in `slipway.yml`. Its URL comes from its path, so `de/install.md` is `/de/install/`.
 
-Text direction follows `lang`: the codes listed in `_includes/dir.html` render right to left, so never set `direction` or `dir` for them. A right-to-left language that is not in that list needs `direction: rtl` in the front matter of its pages, or in `_config.yml` when the whole site is that language.
+Each language needs a home page under its prefix (such as `de/index.md`, with `lang: de`, and the same `translation_key` as the default home). Without it the language has no landing page. Do not add a language without its home page, and do not add one only to translate a single page unless the owner asks: it changes the language list for the whole site.
 
-## 3. Add the interface strings
+## 3. Interface strings
 
-The theme's own labels (Search, Next, Language, and the rest) come from English until the language supplies them. A site adds one file, `_data/i18n/<code>.yml`, with a key for every key in `_includes/i18n/en.html`, in the same alphabetical order; a key it leaves out falls back to English. `examples/minimal/_data/i18n/de.yml` is a short example, and the doctor warns when one configured language has a key another lacks.
+The theme ships its labels (Search, Next, Language, and the rest) in English, Persian, and Arabic. A page in another language falls back to English; a site cannot add or override interface strings in 0.3. Do not create `_data/i18n/` or edit theme files to translate a label: report the missing label to the owner instead.
 
-```yaml
-# _data/i18n/de.yml
-search: Suche
-series: Serie
-```
+Text direction follows `lang`: `fa`, `ar`, `he`, and `ur` are right to left, and the engine knows the other right-to-left languages. Never set `dir` for a language the engine already marks right to left. Set `dir: rtl` in the front matter, or in `slipway.yml` when the whole site is that language, only for a right-to-left language the engine does not know.
 
-Quote `yes` and `no` (Ruby reads them as booleans), and keep the placeholders in `search_count`, `series_part`, and `edit_prompt` (`{n}`, `{total}`, `{source}`, `{text}`). Never invent a key; a key the theme does not use is dead text.
+## 4. Translate a page
 
-A site language stops here: `_includes/t.html` reads `_data/i18n/` before the built-in strings. To make a language built in for every site instead, add `_includes/i18n/<code>.html` with one `case` branch per key, in the same order as `_includes/i18n/en.html`, and add the code to the `sl_supported` list in `_includes/i18n-builtin.html`; every code in that list needs its file, or the include fails. A right-to-left language also goes in `_includes/dir.html`. `tools/theme/i18n.test.mjs` compares a built-in language's keys with English; add its code to that test's list.
+1. On the original, set `lang` (even for the default language) and a `translation_key` such as `about`.
+2. Create the translation under the language prefix, such as `de/about.md`, with the same `translation_key` and `lang: de`. It keeps the original's address only when the original sets `permalink`; then set a `permalink` under the prefix, such as `/de/about/`, or the two pages collide.
+3. Front matter: keep `translation_key`, the `layout`, the `order`, and the `agent` value; translate `title` and `description`.
+4. Body: translate the prose. Keep code, commands, file names, and URLs as they are.
+5. A link to a page that already has a translation points at the translated address (`/de/docs/`); every other link keeps the default-language address.
+6. Add the page to `main_de` or `docs_de` in `_data/navigation.yml` when the language has those lists.
 
-## 4. Translate a page or post
-
-1. On the original, set `lang` (even for the default language: the switcher matches on it) and a `translation_key` such as `about`. The switcher cannot pair a page that lacks either.
-2. Create the translation from the site folder:
-
-   ```sh
-   node "$HOME/.slipway/packages/doctor/bin/slipway.ts" translate about.md --to de
-   ```
-
-   It writes the copy under `de/` with the front matter kept and `lang: de`, and it stops when the source has no `translation_key`. For a post, copy the file by hand into `_posts/` with the language in the slug, `_posts/<date>-<slug>-<code>.md`: Jekyll reads posts only from `_posts/` at the site root.
-3. Front matter: keep `translation_key` exactly as the original; translate `title`, `description`, and `tags`; keep `layout`, `date`, and `author`. When the original sets a `permalink`, change it to the address under the prefix, because the copy keeps the original's and the two would collide; otherwise the file's place under the prefix sets the address:
-
-   ```yaml
-   title: Über Slipway
-   description: Die deutsche Fassung der Über-Seite.
-   layout: page
-   lang: de
-   permalink: /de/about.html
-   translation_key: about
-   ```
-
-4. Body: translate the prose. Keep code, commands, file names, and URLs as they are. A link to a page that already has a translation points at the translated address (`/de/docs/`); every other link keeps the default-language address.
-5. Add the page to `main_de` or `docs_de` in `_data/navigation.yml` when the language has those lists.
+A page without a `lang` key inherits its language from its folder prefix, then from the site language. A different `translation_key` still keeps the page out of its translation group.
 
 ## 5. Keep the translations linked
 
-- The switcher in `_includes/lang-switcher.html` finds a translation by `translation_key` and `lang`; when there is no match it links the language home from `prefix`. Both keys are what make it work, so a translation with a missing or different key falls back to the home page.
-- `_includes/seo.html` writes an alternate `hreflang` link for every page that shares the key, plus `x-default` for the page in the site's default language. Two pages with the same key and the same `lang` are a duplicate; a page without `lang` is treated as the default language.
-- The sitemap links translations too. A `translation-status` page (`examples/minimal/status.md`) lists every key and the languages that have it; link one from navigation to see the gaps.
-- The doctor's `jekyll.translation-pair` warning names a key and a missing language. It is coverage, not an error: work through it for the pages in scope, and never silence it by removing a key.
+- `translation_key` and `lang` are the pair that links translations. Two pages with the same key and the same language are a duplicate; a page with a key but no other language is an untranslated page.
+- Never change a key on one translation only. Change every page that shares it, or none. A key changed on one page separates it from its translations.
+- The doctor's `translation-pair` warning names a key and a missing language in `languages`. It is coverage, not an error: work through it for the pages in scope, and never silence it by removing a key or a language.
+- `sourcemap.json` and the Markdown twins in the build carry each page's own text, so a translation is read and checked as its own page.
 
 ## 6. Check the edit
 
+Build the site, then compare the result with the baseline:
+
 ```sh
-node "$HOME/.slipway/tools/theme/validate.ts" .
-bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
+slipway check .
+slipway build . --out dist
 ```
 
-Open the built home page and the translated page: the switcher should link the two, the translated page should carry `dir="rtl"` only for a right-to-left language, and its source should have one alternate `hreflang` link per translation. Compare the doctor's output with the baseline; a finding that names your file is yours to fix. Without a `Gemfile`, skip the build, run the doctor without `--build`, and read the Pages build log after you push.
+Open the built home page and the translated page: the translated page should carry `dir="rtl"` only for a right-to-left language, its `lang` should be the language code, and its links should point at the translated addresses where they exist. A finding that names your file is yours to fix.
 
 ## Never
 
 - Never change `translation_key` on one translation only; change every page that shares it, or none.
 - Never leave `lang` off a page that has a translation; the default language needs it too.
-- Never add a language without its home page, or without the per-language `search.json` and `feed.xml` its other languages have.
-- Never set `direction` or `dir` for a language that `_includes/dir.html` already marks right to left.
-- Never add a UI key that `_includes/i18n/en.html` does not have, and never drop a placeholder from its text.
-- Never put Liquid in a page, and never edit `_site/`.
+- Never add a language without its home page.
+- Never set `dir` for a language the engine already marks right to left.
+- Never add `_data/i18n/` or edit a theme file to translate an interface label.
+- Never put template syntax in a page, and never edit the output folder (`dist/`).

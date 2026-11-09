@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { configMap, renderOverrides } from "./config-map.ts";
 import { propertiesWithoutDescription, validateConfig, validateExampleConfigs } from "./config.ts";
-import { root } from "./tokens.ts";
+import { root } from "../root.ts";
 
 const tokens = (value) => ({ slipway: { tokens: value } });
 

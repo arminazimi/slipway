@@ -9,6 +9,7 @@ export const DONE = {
   "cleanup.ruby": "Done in one pull request that removed Ruby and Jekyll from the repository (2026-11-09). The legacy Jekyll sites that doctor and mcp test against moved to packages/doctor/test/fixtures/examples/.",
   "cleanup.jekyll-tests": "Done in one pull request that removed Ruby and Jekyll from the repository (2026-11-09). The legacy Jekyll sites that doctor and mcp test against moved to packages/doctor/test/fixtures/examples/.",
   "cleanup.jekyll-gates": "Done in one pull request that removed Ruby and Jekyll from the repository (2026-11-09). The legacy Jekyll sites that doctor and mcp test against moved to packages/doctor/test/fixtures/examples/.",
+  "cleanup.old-tokens": "Done in the pull request that removed the old token source, the @slipway/tokens package, and the tools that generated them (2026-11-09). Lateen's tokens in packages/theme/tokens/ are the only ones left.",
 };
 
 /**
