@@ -51,12 +51,21 @@ export function flatten(group: string, node: unknown, file: string, prefix: stri
   return out;
 }
 
-/** Group files by file name, sorted; `names.json` is the registry, not a group. */
+/**
+ * Group files by file name, sorted; `names.json` is the registry, not a group.
+ * `<group>.json` sets the values of a group. `<group>.light.json` sets only the light values of a group whose
+ * dark values come from elsewhere; it is applied after the plain group file.
+ */
 export function groupFiles(dir = paths.tokens) {
   return readdirSync(dir)
     .filter((f) => f.endsWith(".json") && f !== "names.json")
     .sort()
-    .map((f) => ({ group: f.slice(0, -5), file: join(dir, f) }));
+    .map((f) => {
+      const match = /^([a-z0-9]+(?:-[a-z0-9]+)*)(\.light)?\.json$/.exec(f);
+      if (!match) throw new Error(`${join(dir, f)}: a group file is <group>.json or <group>.light.json, with a lowercase kebab-case group`);
+      return { group: match[1] ?? "", light: match[2] !== undefined, file: join(dir, f) };
+    })
+    .sort((a, b) => Number(a.light) - Number(b.light));
 }
 
 /** Returns Map("<group>-<name>" -> { light, dark? }) in `names.json` order, with group-file overrides applied. */
@@ -68,12 +77,18 @@ export function loadTokens(dir = paths.tokens): Tokens {
     if (!NAME.test(group)) throw new Error(`${namesFile}: group "${group}" is not lowercase kebab-case`);
     for (const [name, value] of flatten(group, node, namesFile)) tokens.set(`${group}-${name}`, value);
   }
-  for (const { group, file } of groupFiles(dir)) {
+  for (const { group, light, file } of groupFiles(dir)) {
     if (!(group in names)) throw new Error(`${file}: "${group}" is not a group in names.json`);
     const known = flatten(group, names[group], namesFile);
     for (const [name, value] of flatten(group, readJson(file), file)) {
       if (!known.has(name)) throw new Error(`${file}: "${group}.${name}" is not in names.json; add the name there first`);
-      tokens.set(`${group}-${name}`, value);
+      const key = `${group}-${name}`;
+      if (!light) {
+        tokens.set(key, value);
+        continue;
+      }
+      if (value.dark !== undefined || value.reduced !== undefined) throw new Error(`${file}: "${group}.${name}" is in a light file, which sets only the light value`);
+      tokens.set(key, { ...(tokens.get(key) as TokenValue), light: value.light });
     }
   }
   return tokens;
