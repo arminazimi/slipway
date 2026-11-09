@@ -3,7 +3,7 @@
 Beacon is a deploy CLI: it builds a site or a service, uploads the artifact, and records the release.
 This example site has the shape of a real product's documentation: hand-written pages with no front
 matter, a generated reference section, a dashboard written by the product's own tooling, and its own
-`sitemap.xml` and `llms.txt`.
+`llms.txt`, while the engine writes the sitemap and the source map.
 
 ## Get started
 
