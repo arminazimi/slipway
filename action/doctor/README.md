@@ -42,7 +42,7 @@ steps:
 | `format` | `text` | The log output, `text` or `json`. Annotations are written either way. |
 | `sarif` | `false` | Also write a SARIF 2.1.0 file. |
 | `sarif-file` | `slipway.sarif` | Where to write it. |
-| `setup-node` | `true` | Install Node 22 with `actions/setup-node`; set to `false` when the job already has Node 22 or later. |
+| `setup-node` | `true` | Install Node 24 with `actions/setup-node`; set to `false` when the job already has Node 24 or later. |
 
 Outputs: `level` (`L0` to `L3`, or `none`) and `sarif-file`.
 

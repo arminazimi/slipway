@@ -44,7 +44,7 @@ function runAction(t, env) {
   const dir = mkdtempSync(join(tmpdir(), "slipway-action-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   const output = join(dir, "output");
-  const result = spawnSync(process.execPath, [join(action, "run.mjs")], {
+  const result = spawnSync(process.execPath, [join(action, "run.ts")], {
     cwd: dir,
     encoding: "utf8",
     env: { ...process.env, GITHUB_OUTPUT: output, ...env },

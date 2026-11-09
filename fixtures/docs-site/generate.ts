@@ -1,6 +1,6 @@
 // Writes fixtures/docs-site/rules/: about 550 rule pages, the shape of a linter's generated reference.
 // The output is committed. The generator is deterministic (fixed seed, no clock), so running it twice
-// gives no diff, and `node fixtures/docs-site/generate.mjs --check` fails when the folder is stale.
+// gives no diff, and `node fixtures/docs-site/generate.ts --check` fails when the folder is stale.
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,7 +53,7 @@ function index() {
   return `# Rules\n\n${rules.length} rules, one page each, written by \`generate.mjs\`. This section stands in for a large generated reference: pages in a folder, a table of contents that lists them all, and a navigation entry that matches the folder by prefix.\n\n| Rule | Category | Severity |\n| --- | --- | --- |\n${rows}\n`;
 }
 
-const files = new Map([["index.md", index()], ...rules.map((rule) => [`${rule.id}.md`, page(rule)])]);
+const files = new Map<string, string>([["index.md", index()], ...rules.map((rule) => [`${rule.id}.md`, page(rule)] as [string, string])]);
 
 if (process.argv.includes("--check")) {
   const onDisk = readdirSync(dir).filter((name) => name.endsWith(".md")).sort();
@@ -61,7 +61,7 @@ if (process.argv.includes("--check")) {
   const stale = wanted.filter((name) => !onDisk.includes(name) || readFileSync(join(dir, name), "utf8") !== files.get(name));
   const extra = onDisk.filter((name) => !wanted.includes(name));
   if (stale.length || extra.length) {
-    console.error(`rules/ is stale: ${[...stale, ...extra.map((n) => `${n} (left over)`)].slice(0, 5).join(", ")}. Run node fixtures/docs-site/generate.mjs.`);
+    console.error(`rules/ is stale: ${[...stale, ...extra.map((n) => `${n} (left over)`)].slice(0, 5).join(", ")}. Run node fixtures/docs-site/generate.ts.`);
     process.exit(1);
   }
   console.log(`rules/ is current (${files.size} pages)`);

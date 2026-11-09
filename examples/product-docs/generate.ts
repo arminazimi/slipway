@@ -1,5 +1,5 @@
 // Writes examples/product-docs/reference/: one page per command, in the shape a generator produces.
-// A generator's output is committed, so `node examples/product-docs/generate.mjs --check` is what CI runs.
+// A generator's output is committed, so `node examples/product-docs/generate.ts --check` is what CI runs.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -40,7 +40,7 @@ const commands = [
 ];
 
 /** One page of Markdown, written the same way every time. */
-function page([name, summary, usage, flags]) {
+function page([name, summary, usage, flags]: any[]) {
   const slug = name.replace(/ /g, "-");
   const rows = flags.length
     ? `\n\n## Flags\n\n| Flag | What it does |\n| --- | --- |\n${flags.map(([flag, text]) => `| \`${flag}\` | ${text} |`).join("\n")}`
@@ -49,11 +49,11 @@ function page([name, summary, usage, flags]) {
 }
 
 function index() {
-  const rows = commands.map(([name, summary]) => `| [beacon ${name}](./${name.replace(/ /g, "-")}.md) | ${summary} |`).join("\n");
+  const rows = commands.map(([name, summary]: any[]) => `| [beacon ${name}](./${name.replace(/ /g, "-")}.md) | ${summary} |`).join("\n");
   return `# Reference\n\nOne page per command, written by \`generate.mjs\`. This section stands in for a\nreal product's generated reference: a page each, no front matter, and a table of contents\nthat stays in step with the pages.\n\n| Command | What it does |\n| --- | --- |\n${rows}\n`;
 }
 
-const files = new Map([["index.md", index()], ...commands.map(([name, ...rest]) => [`${name.replace(/ /g, "-")}.md`, page([name, ...rest])])]);
+const files = new Map<string, string>([["index.md", index()], ...commands.map(([name, ...rest]: any[]) => [`${name.replace(/ /g, "-")}.md`, page([name, ...rest])] as [string, string])]);
 
 if (process.argv.includes("--check")) {
   const onDisk = readdirSync(dir).filter((name) => name.endsWith(".md")).sort();

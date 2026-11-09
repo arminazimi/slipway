@@ -1,6 +1,3 @@
-action/doctor/run.mjs
-action/doctor/src/summary.mjs
-action/doctor/src/summary.test.mjs
 adapters/docusaurus/src/index.mjs
 adapters/docusaurus/src/markdown.mjs
 adapters/docusaurus/test/docusaurus.test.mjs
@@ -33,9 +30,7 @@ adapters/zola/src/index.mjs
 adapters/zola/src/markdown.mjs
 adapters/zola/test/zola.test.mjs
 examples/product-docs/dashboard/dashboard.js
-examples/product-docs/generate.mjs
 fixtures/docs-site/dashboard/dashboard.js
-fixtures/docs-site/generate.mjs
 packages/create-slipway/bin/create-slipway.mjs
 packages/create-slipway/scripts/bundle.mjs
 packages/create-slipway/src/cli.mjs
@@ -47,7 +42,4 @@ packages/doctor/test/fixtures/detect/astro/astro.config.mjs
 packages/doctor/test/fixtures/detect/docusaurus/docusaurus.config.js
 packages/doctor/test/fixtures/detect/eleventy/.eleventy.js
 packages/doctor/test/fixtures/detect/eleventy/eleventy.config.js
-packages/theme/scripts/tokens.mjs
-packages/tokens/build.mjs
-packages/tokens/test/package.test.mjs
 tools/theme/fixtures/app-page/dashboard/dashboard.js

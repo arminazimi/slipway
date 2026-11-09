@@ -10,5 +10,5 @@ Shared inputs for tests, benchmarks, and screenshots. Every epic builds against 
 ## Rules
 
 - **Fixtures are read-only.** A task does not edit a fixture file to suit itself, because every other task reads the same file. A task that needs new content adds a new fixture folder next to these and says why in its pull request.
-- **Generated output is committed.** `node fixtures/docs-site/generate.mjs` rewrites `docs-site/rules/` deterministically (a fixed seed, no clock), so running it twice gives no diff. `--check` fails when the folder is stale.
+- **Generated output is committed.** `node fixtures/docs-site/generate.ts` rewrites `docs-site/rules/` deterministically (a fixed seed, no clock), so running it twice gives no diff. `--check` fails when the folder is stale.
 - **Each site has its own `slipway.yml`** (ADR 0024) and builds on its own: `slipway build fixtures/docs-site`.

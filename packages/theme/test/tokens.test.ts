@@ -3,8 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-// @ts-expect-error the pipeline script is plain JavaScript without declarations
-import { buildCss, loadTokens, main, paths } from "../scripts/tokens.mjs";
+import { buildCss, loadTokens, main, paths } from "../scripts/tokens.ts";
 
 const names = { color: { canvas: { $value: "#fff", $extensions: { lateen: { dark: "#000" } } }, text: "#222" }, space: { "1": "0.25rem" } };
 
