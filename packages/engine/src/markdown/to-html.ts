@@ -29,6 +29,7 @@ const SOURCED = new Set([
   "blockquote",
   "containerDirective",
   "leafDirective",
+  "tabsBlock",
 ]);
 
 /** A heading of the page, for the table of contents. */

@@ -5,6 +5,7 @@ import { loadConfig } from "../config/load.ts";
 import { loadData } from "../content/data.ts";
 import { discover, type DiscoveredFile } from "../content/discover.ts";
 import { parseFrontMatter } from "../content/frontmatter.ts";
+import { expandIncludes } from "../content/includes.ts";
 import { pageLang } from "../content/lang.ts";
 import { permalink } from "../content/permalink.ts";
 import { resolveTitle } from "../content/title.ts";
@@ -169,7 +170,21 @@ export async function buildModel(root: string): Promise<ModelResult> {
     if (frontMatter.published === false) continue;
 
     const isMarkdown = /\.(md|markdown)$/i.test(file.path);
-    const tree = isMarkdown ? await parseMarkdown(fm.body, fm.bodyLine) : { type: "root" as const, children: [] };
+    // Includes expand before the Markdown stage: only here is the site root known, so a Markdown plugin cannot read
+    // the included file. The expanded body is the page's Markdown from then on, so twins, search, and links see it.
+    let body = fm.body;
+    if (isMarkdown) {
+      const included = await expandIncludes({
+        body: fm.body,
+        bodyLine: fm.bodyLine,
+        file: file.path,
+        sourceDir,
+        displayFile: rel,
+      });
+      for (const d of included.diagnostics) diagnostics.report(d);
+      body = included.body;
+    }
+    const tree = isMarkdown ? await parseMarkdown(body, fm.bodyLine) : { type: "root" as const, children: [] };
     const { title } = resolveTitle({ frontMatter, tree, file: file.path });
     const lang = pageLang(file.path, { config, frontMatter });
     const url = permalink(file.path, {
@@ -177,7 +192,7 @@ export async function buildModel(root: string): Promise<ModelResult> {
       ...(typeof frontMatter.permalink === "string" ? { permalink: frontMatter.permalink } : {}),
     });
 
-    let html = fm.body;
+    let html = body;
     let headings: Heading[] = [];
     if (isMarkdown) {
       const out = await markdownToHtml(tree, rel);
@@ -195,7 +210,7 @@ export async function buildModel(root: string): Promise<ModelResult> {
         dir: lang.dir,
         headings,
         html,
-        markdown: fm.body,
+        markdown: body,
         kind: "doc",
       },
       file.path,

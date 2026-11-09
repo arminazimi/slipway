@@ -42,16 +42,19 @@ The engine turns a directive into the component whose folder has the same name u
 | [Heading anchor](./heading-anchor/) | A link icon on every h2 to h4, added automatically. |
 | [Kbd](./kbd/) | A keyboard key or key combination. |
 | [Key-value list](./key-value/) | Properties, options, or metadata as a two-column list of keys and values. |
+| [Link card](./link-card/) | One link that reads as a card, for next steps and related pages. |
 | [Mermaid](./mermaid/) | A Mermaid diagram rendered to inline SVG at build time, with its source kept. |
 | [OS tabs](./os-tabs/) | Install instructions grouped by operating system, defaulting to the reader's system. |
 | [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
+| [Status banner](./status-banner/) | A page-level deprecated, experimental, or old-version banner, with a replacement link. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
 | [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
+| [Video](./video/) | A click-to-load video with a poster and a link that works without JavaScript. |
 
 ## Moving from the old blocks
 

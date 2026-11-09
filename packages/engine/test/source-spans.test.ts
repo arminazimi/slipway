@@ -30,6 +30,7 @@ const BLOCKS = new Set([
   "blockquote",
   "containerDirective",
   "leafDirective",
+  "tabsBlock",
 ]);
 
 function visit(node: Nodes, visitFn: (n: Nodes) => void): void {

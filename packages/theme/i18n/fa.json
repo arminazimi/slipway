@@ -93,6 +93,7 @@
   "status_beta": "Beta",
   "status_deprecated": "Deprecated",
   "status_experimental": "Experimental",
+  "status_old_version": "Old version",
   "status_replaced_by": "Replaced by",
   "status_since": "Since",
   "superseded": "Superseded",
@@ -105,6 +106,9 @@
   "version_changed": "تغییر کرد در نسخهٔ {version}",
   "version_removed": "حذف شد در نسخهٔ {version}",
   "versions": "Versions",
+  "video_missing_title": "ویدیو عنوان ندارد. برای دسترس‌پذیری، title=\"…\" را به دستور ::video اضافه کنید.",
+  "video_play": "پخش ویدیو",
+  "video_watch": "تماشا در {provider}",
   "view_markdown": "مشاهده مارک‌داون",
   "yes": "بله"
 }
