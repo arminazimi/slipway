@@ -29,8 +29,6 @@ main:
     children:
       - title: Customization guide
         url: /guides/customize/
-      - title: Languages
-        url: /languages/
       - title: Social cards
         url: /guides/social-cards/
       - title: Analytics

@@ -3,7 +3,7 @@ title: Audio block
 description: A native audio player for podcast episodes, with optional chapters and a transcript.
 layout: doc
 audio:
-  src: audio/podcast-episode-12.mp3
+  src: https://example.com/podcast-episode-12.mp3
   title: Building with blocks, episode 12
   chapters:
     - time: "00:00"
@@ -18,7 +18,7 @@ audio:
 
     **Guest:** And how a transcript opens the episode to search engines and to people who read instead of listen.
 audio_rtl:
-  src: audio/podcast-episode-12.mp3
+  src: https://example.com/podcast-episode-12.mp3
   title: ساخت با بلوک‌ها، قسمت دوازدهم
   chapters:
     - time: "۰۰:۰۰"
@@ -34,7 +34,7 @@ audio_rtl:
     **مهمان:** و اینکه متن گفتار چگونه قسمت را برای موتورهای جستجو و کسانی که به‌جای شنیدن می‌خوانند باز می‌کند.
 ---
 
-The sample points at `audio/podcast-episode-12.mp3`, a second of silence that stands in for your own episode; replace the file at that path. The player needs no JavaScript, and the transcript works with the native disclosure.
+The sample points at a placeholder URL; set `src` to your own episode's file. The player needs no JavaScript, and the transcript works with the native disclosure.
 
 ## Left-to-right
 
