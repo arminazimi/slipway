@@ -78,9 +78,10 @@ test("a config redirect is one complete HTML page with a meta refresh, a canonic
     site({ url: "https://example.com", base: "/docs", redirects: { "/old/": "/new/" } }),
   );
   assert.deepEqual(reported, [], "a valid redirect reports nothing");
-  assert.deepEqual(files.map((f) => f.path), ["old/index.html"]);
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "old/index.html"]);
+  assert.equal(byPath(files).get("_redirects")?.contents, "/old/ https://example.com/docs/new/ 301\n");
   assert.equal(
-    files[0]?.contents,
+    byPath(files).get("old/index.html")?.contents,
     [
       "<!doctype html>",
       '<html lang="en" dir="ltr">',
@@ -114,11 +115,21 @@ test("config redirects use the base and the site url, an https target is kept as
     }),
   );
   assert.deepEqual(reported, []);
-  assert.deepEqual(files.map((f) => f.path), ["a-first/index.html", "old.html", "z-last/index.html"]);
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "a-first/index.html", "old.html", "z-last/index.html"]);
   const contents = byPath(files);
   assert.match(String(contents.get("a-first/index.html")?.contents), /content="0; url=https:\/\/example\.com\/docs\/new\/"/);
   assert.match(String(contents.get("z-last/index.html")?.contents), /content="0; url=https:\/\/example\.com\/docs\/"/);
   assert.match(String(contents.get("old.html")?.contents), /content="0; url=https:\/\/elsewhere\.example\/other\/"/);
+  assert.equal(
+    contents.get("_redirects")?.contents,
+    [
+      "/a-first https://example.com/docs/new/ 301",
+      "/old.html https://elsewhere.example/other/ 301",
+      "/z-last/ https://example.com/docs/ 301",
+      "",
+    ].join("\n"),
+    "one sorted line per entry, and an absolute target keeps the base it was given",
+  );
 });
 
 test("redirect_from takes a string or a list, and without a site url the target stays site-relative with the base", async () => {
@@ -132,7 +143,7 @@ test("redirect_from takes a string or a list, and without a site url the target 
     }),
   );
   assert.deepEqual(reported, []);
-  assert.deepEqual(files.map((f) => f.path), ["one/index.html", "two-a/index.html", "two-b/index.html"]);
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "one/index.html", "two-a/index.html", "two-b/index.html"]);
   const contents = byPath(files);
   assert.match(String(contents.get("one/index.html")?.contents), /content="0; url=\/docs\/new\/"/);
   assert.match(String(contents.get("two-a/index.html")?.contents), /content="0; url=\/docs\/two\/"/);
@@ -141,6 +152,11 @@ test("redirect_from takes a string or a list, and without a site url the target 
     !String(contents.get("one/index.html")?.contents).includes("https://"),
     "no site url means no absolute target",
   );
+  assert.equal(
+    contents.get("_redirects")?.contents,
+    ["/one/ /new/ 301", "/two-a/ /two/ 301", "/two-b /two/ 301", ""].join("\n"),
+    "_redirects is relative to the output folder, so base is stripped from both ends",
+  );
 });
 
 test("a trailing slash and no trailing slash name the same pretty file", async () => {
@@ -148,7 +164,11 @@ test("a trailing slash and no trailing slash name the same pretty file", async (
     site({ redirects: { "/with-slash/": "/new/", "/without-slash": "/new/" } }),
   );
   assert.deepEqual(reported, []);
-  assert.deepEqual(files.map((f) => f.path), ["with-slash/index.html", "without-slash/index.html"]);
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "with-slash/index.html", "without-slash/index.html"]);
+  assert.equal(
+    byPath(files).get("_redirects")?.contents,
+    ["/with-slash/ /new/ 301", "/without-slash /new/ 301", ""].join("\n"),
+  );
 });
 
 test("a redirect that hides a real page is an error and writes nothing", async () => {
@@ -173,8 +193,9 @@ test("an old path claimed twice is an error, and the config claim wins over fron
       redirects: { "/old/": "/from-config/" },
     }),
   );
-  assert.deepEqual(files.map((f) => f.path), ["old/index.html"]);
-  assert.match(String(files[0]?.contents), /url=\/from-config\//, "the first claim, the config, sets the target");
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "old/index.html"]);
+  assert.match(String(files[1]?.contents), /url=\/from-config\//, "the first claim, the config, sets the target");
+  assert.equal(byPath(files).get("_redirects")?.contents, "/old/ /from-config/ 301\n");
   assert.equal(reported.length, 2);
   assert.deepEqual(
     reported.map((d) => d.id),
@@ -187,7 +208,7 @@ test("every value is escaped for its place in the document, and a script cannot 
   const target = `/a&b/"quote"/'apos'/</script><script>alert(1)</script>/`;
   const { files, reported } = await run(site({ redirects: { "/old/": target } }));
   assert.deepEqual(reported, []);
-  const html = String(files[0]?.contents);
+  const html = String(byPath(files).get("old/index.html")?.contents);
   assert.ok(html.includes('href="/a&amp;b/&quot;quote&quot;/&#39;apos&#39;/&lt;/script&gt;&lt;script&gt;alert(1)&lt;/script&gt;/"'));
   assert.ok(html.includes("url=/a&amp;b/&quot;quote&quot;/&#39;apos&#39;/&lt;/script&gt;"), "the meta refresh is escaped");
   assert.ok(html.includes("\\u0026"), "the script escapes & as a Unicode escape");
@@ -206,7 +227,19 @@ test("entries come back sorted by path, whatever order the model and the config 
     }),
   );
   assert.deepEqual(reported, []);
-  assert.deepEqual(files.map((f) => f.path), ["b/index.html", "m/index.html", "x/index.html", "y/index.html"]);
+  assert.deepEqual(files.map((f) => f.path), [
+    "_redirects",
+    "b/index.html",
+    "m/index.html",
+    "x/index.html",
+    "y/index.html",
+  ]);
+  assert.equal(new Set(files.map((f) => f.path)).size, files.length, "no output path is written twice");
+  assert.equal(
+    byPath(files).get("_redirects")?.contents,
+    ["/b/ /a/ 301", "/m/ /z/ 301", "/x/ / 301", "/y/ / 301", ""].join("\n"),
+    "_redirects sorts by old path across the config and the front matter",
+  );
 });
 
 test("an unsafe old path or a target that is neither a site path nor an https URL is an error, not a throw", async () => {
@@ -226,4 +259,88 @@ test("an unsafe old path or a target that is neither a site path nor an https UR
     ],
   );
   assert.ok(reported.every((d) => d.severity === "error"));
+});
+
+test("a site with no redirects writes no empty _redirects file", async () => {
+  const { files, reported } = await run(site({}));
+  assert.deepEqual(reported, []);
+  assert.deepEqual(files, []);
+});
+
+test("a redirect that points at itself is a loop, reported once, with its HTML page kept and no _redirects line", async () => {
+  const { files, reported } = await run(site({ redirects: { "/loop/": "/loop/" } }));
+  assert.deepEqual(files.map((f) => f.path), ["loop/index.html"]);
+  assert.equal(reported.length, 1);
+  assert.equal(reported[0]?.id, "redirects.loop");
+  assert.equal(reported[0]?.severity, "error");
+  assert.match(reported[0]?.message ?? "", /"\/loop\/" points to itself/);
+  assert.match(String(files[0]?.contents), /url=\/loop\//, "the HTML page is unchanged");
+});
+
+test("two redirects that point at each other are one loop, and neither gets a _redirects line", async () => {
+  const { files, reported } = await run(site({ redirects: { "/a/": "/b/", "/b/": "/a/" } }));
+  assert.deepEqual(files.map((f) => f.path), ["a/index.html", "b/index.html"]);
+  assert.deepEqual(
+    reported.map((d) => d.id),
+    ["redirects.loop"],
+  );
+  assert.equal(reported[0]?.severity, "error");
+  assert.match(reported[0]?.message ?? "", /"\/a\/" -> "\/b\/" -> "\/a\/"/);
+});
+
+test("a chain is a warning and _redirects points at the final target while the HTML pages keep their first hop", async () => {
+  const { files, reported } = await run(site({ redirects: { "/a/": "/b/", "/b/": "/c/" } }));
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "a/index.html", "b/index.html"]);
+  assert.equal(reported.length, 1);
+  assert.equal(reported[0]?.id, "redirects.chain");
+  assert.equal(reported[0]?.severity, "warning");
+  assert.match(reported[0]?.message ?? "", /"\/a\/" passes through "\/b\/" and ends at "\/c\/"/);
+  assert.equal(
+    byPath(files).get("_redirects")?.contents,
+    ["/a/ /c/ 301", "/b/ /c/ 301", ""].join("\n"),
+  );
+  assert.match(
+    String(byPath(files).get("a/index.html")?.contents),
+    /url=\/b\//,
+    "the HTML page still sends readers to the next old path",
+  );
+});
+
+test("a chain can pass through a redirect_from old path, and reports the config entry that starts it", async () => {
+  const { files, reported } = await run(
+    site({
+      base: "/docs",
+      pages: [page("/docs/new/", "doc", { redirect_from: "/b/" })],
+      redirects: { "/a/": "/b/" },
+    }),
+  );
+  assert.deepEqual(files.map((f) => f.path), ["_redirects", "a/index.html", "b/index.html"]);
+  assert.deepEqual(
+    reported.map((d) => d.id),
+    ["redirects.chain"],
+  );
+  assert.match(reported[0]?.message ?? "", /"\/b\/" and ends at "\/docs\/new\/"/);
+  assert.equal(
+    byPath(files).get("_redirects")?.contents,
+    ["/a/ /new/ 301", "/b/ /new/ 301", ""].join("\n"),
+  );
+});
+
+test("a chain of several hops flattens to an external target and warns for each hop that is still a redirect", async () => {
+  const { files, reported } = await run(
+    site({ redirects: { "/a/": "/b/", "/b/": "/c/", "/c/": "https://elsewhere.example/" } }),
+  );
+  assert.deepEqual(
+    reported.map((d) => d.id),
+    ["redirects.chain", "redirects.chain"],
+  );
+  assert.equal(
+    byPath(files).get("_redirects")?.contents,
+    [
+      "/a/ https://elsewhere.example/ 301",
+      "/b/ https://elsewhere.example/ 301",
+      "/c/ https://elsewhere.example/ 301",
+      "",
+    ].join("\n"),
+  );
 });
