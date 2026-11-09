@@ -44,7 +44,8 @@ export function applyFixes(report, sourceDir, options = { dryRun: false }) {
     }
   }
 
-  const deprecations = findings.filter(f => f.id === "jekyll.deprecated");
+  // Reports name the check `config.deprecated`; `jekyll.deprecated` is the id it had before 0.3.
+  const deprecations = findings.filter(f => f.id === "config.deprecated" || f.id === "jekyll.deprecated");
   // Group deprecations by file
   const depsByFile = new Map();
   for (const finding of deprecations) {

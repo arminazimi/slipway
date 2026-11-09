@@ -104,16 +104,22 @@ const notContent = /^(_layouts|_includes|_sass|_data|_site|_drafts|vendor|node_m
 const isMarkdown = (path) => /\.(md|markdown)$/i.test(path);
 
 /**
- * Whether the checks apply: `detect()` says Jekyll, or the config names a Slipway theme. A site on the
- * remote theme has neither a Gemfile nor `_layouts/`, so detection alone would miss it.
+ * Whether the checks apply: the site is an engine site, `detect()` says Jekyll, or the config names a Slipway
+ * theme. A site on the remote theme has neither a Gemfile nor `_layouts/`, so detection alone would miss it.
  */
 export function applies(site) {
+  if (site.config()) return true;
   if (detect(site.source).generator === "jekyll") return true;
   const { data } = config(site);
   return [data.theme, data.remote_theme].some((name) => typeof name === "string" && /slipway/i.test(name));
 }
 
+/** The site's config: the engine's `slipway.yml` when there is one, else Jekyll's `_config.yml`. */
 function config(site) {
+  const engine = site.config();
+  if (engine?.data && typeof engine.data === "object") {
+    return { name: engine.file, data: engine.data, lineOf: engine.lineOf ?? (() => 1) };
+  }
   for (const name of ["_config.yml", "_config.yaml"]) {
     if (site.isFile(site.source, name)) {
       const parsed = site.dataOf(name);
@@ -123,11 +129,36 @@ function config(site) {
   return { name: "_config.yml", data: {}, lineOf: () => 1 };
 }
 
-/** The language codes the site publishes: `slipway.languages`, else `lang`, else English. */
+/** The language codes the site publishes: the engine's `languages`, `slipway.languages`, else `lang`, else English. */
 function languages(site) {
   const { data } = config(site);
-  const listed = (data.slipway?.languages ?? []).map((language) => language?.code).filter((code) => typeof code === "string");
+  const listed = (data.languages ?? data.slipway?.languages ?? [])
+    .map((language) => language?.code)
+    .filter((code) => typeof code === "string");
   return listed.length ? listed : [typeof data.lang === "string" ? data.lang : "en"];
+}
+
+/** Deprecated config keys an engine site sets in `slipway.yml`, with the line of each key. */
+function engineDeprecations(site, deprecations) {
+  const parsed = site.config();
+  if (!parsed?.data || typeof parsed.data !== "object") return [];
+  const found = [];
+  for (const entry of deprecations) {
+    if (entry.kind !== "config") continue;
+    const path = entry.old.split(".");
+    let value = parsed.data;
+    for (const key of path) {
+      if (!value || typeof value !== "object" || !(key in value)) {
+        value = undefined;
+        break;
+      }
+      value = value[key];
+    }
+    if (value === undefined) continue;
+    const line = parsed.lineOf ? parsed.lineOf(path) : 1;
+    found.push({ file: parsed.file, line, ...entry, message: `${parsed.file}:${line} ${entry.old} is deprecated since ${entry.since}, use ${entry.new}` });
+  }
+  return found;
 }
 
 /** Content files with front matter Jekyll renders, with their parsed front matter. */
@@ -140,6 +171,12 @@ function pages(site) {
 }
 
 const result = (findings) => ({ status: findings.length ? "fail" : "pass", findings });
+
+/**
+ * The ids this module renamed, as `{ new: old }`. The alias below makes the old id resolve to the same check;
+ * the check runs once, and the old id keeps working in reports and `--fix`.
+ */
+export const renamedChecks = { "config.deprecated": "jekyll.deprecated" };
 
 export const checks = {
   [docsDescription.id]: docsDescription.run,
@@ -154,19 +191,24 @@ export const checks = {
         .map((path) => ({ in: "source", file: path, message: "is missing", fix: `copy starter-files/${path} from the Slipway repository, or write your own ${path}` })),
     ),
 
-  "jekyll.deprecated": (site, { deprecations = packagedDeprecations() } = {}) =>
-    result(
-      findDeprecations(site.source, deprecations).map((found) => ({
+  "config.deprecated": (site, { deprecations = packagedDeprecations() } = {}) => {
+    const engine = site.config();
+    const found = findDeprecations(site.source, deprecations).filter((deprecation) => !engine || deprecation.file !== "_config.yml");
+    if (engine) found.push(...engineDeprecations(site, deprecations));
+    found.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
+    return result(
+      found.map((deprecated) => ({
         in: "source",
-        file: found.file,
-        line: found.line,
-        key: found.old,
-        message: `is deprecated since ${found.since} and removed in ${found.removed_in}`,
-        fix: `rename ${found.old} to ${found.new}`,
-        old: found.old,
-        new: found.new,
+        file: deprecated.file,
+        line: deprecated.line,
+        key: deprecated.old,
+        message: `is deprecated since ${deprecated.since} and removed in ${deprecated.removed_in}`,
+        fix: `rename ${deprecated.old} to ${deprecated.new}`,
+        old: deprecated.old,
+        new: deprecated.new,
       })),
-    ),
+    );
+  },
 
   "jekyll.liquid-in-content": (site) => {
     const findings = [];
@@ -258,3 +300,8 @@ export const checks = {
     return result(findings);
   },
 };
+
+// The old ids resolve to the check under its new id, but do not run twice: `Object.entries` lists only the new id.
+for (const [id, previous] of Object.entries(renamedChecks)) {
+  Object.defineProperty(checks, previous, { value: checks[id], enumerable: false });
+}

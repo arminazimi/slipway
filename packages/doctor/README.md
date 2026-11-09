@@ -49,7 +49,7 @@ A finding with no file, such as a missing output folder, has no location in SARI
 
 ## Jekyll and Slipway checks
 
-When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote_theme` (a site on the remote theme needs no Gemfile or `_layouts/`), doctor also runs the checks in `src/checks/jekyll.mjs`. They are not spec tests: a finding is a `warning` with a `fix`, it never changes the level or the exit code, and in the report the test has `level: null` and `scope: "jekyll"`.
+When `detect()` says Jekyll, a config names a Slipway `theme` or `remote_theme` (a site on the remote theme needs no Gemfile or `_layouts/`), or the site is an engine site (`slipway.yml`), doctor also runs the checks in `src/checks/jekyll.ts`. They are not spec tests: a finding is a `warning` with a `fix`, it never changes the level or the exit code, and in the report the test has `level: null` and `scope: "jekyll"`. The config checks read the engine site's `slipway.yml` when there is one.
 
 | Check id | What it finds |
 | --- | --- |
@@ -58,7 +58,7 @@ When `detect()` says Jekyll, or `_config.yml` names a Slipway `theme` or `remote
 | `docs.heading-order` | A docs page whose heading levels jump, like an `h2` followed by an `h4`. |
 | `docs.orphan` | A docs page that neither the docs navigation nor another page links to. |
 | `jekyll.stubs` | A file from `starter-files/` (except its README) that the site has not copied. A site that writes its own `sitemap.xml`, `llms.txt`, `llms-full.txt`, or `robots.txt` is never asked for it; see [docs/site-files.md](../../docs/site-files.md). |
-| `jekyll.deprecated` | A deprecated config key or front-matter field from `schema/deprecations.json` (ADR 0012), with its replacement. |
+| `config.deprecated` | A deprecated config key in `slipway.yml` or `_config.yml`, or a front-matter field, from `schema/deprecations.json` (ADR 0012), with its replacement. The old id `jekyll.deprecated` still resolves. |
 | `jekyll.liquid-in-content` | `{{` or `{%` in the body of a Markdown page, outside code spans and code blocks: content that only Jekyll can render. |
 | `jekyll.translation-pair` | A `translation_key` with no page in one of the languages in `slipway.languages`. |
 | `jekyll.ui-strings` | A UI string key a site adds in `_data/i18n/<lang>.yml` that another listed language has no text for. Keys the theme has built in fall back to English and are not reported. |
@@ -84,7 +84,7 @@ It returns `{ generator, sourceDir, outputDir, confidence, candidates }`. `confi
 
 ## What it does not do yet
 
-- `ae.schemas.config` is not run: which files a generator reads as configuration will come from generator detection, which the doctor does not use yet. For the same reason `ae.sourcemap.coverage` also lists drafts and partials.
+- `ae.schemas.config` reads the engine's `slipway.yml` and Jekyll's `_config.yml`; other generators' config files are not reported yet. For the same reason `ae.sourcemap.coverage` also lists drafts and partials.
 - Front matter in TOML is not parsed; files that use it are reported as not checked.
 - The two review tests, `ae.edit-prompt.content` and `ae.edit-prompt.no-send`, are left to a person.
 
