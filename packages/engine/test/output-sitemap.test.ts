@@ -22,9 +22,13 @@ const SITEMAP_XSD = `<?xml version="1.0" encoding="UTF-8"?>
   <xsd:annotation>
     <xsd:documentation>
       XML Schema for Sitemap files.
-      Last Modifed 2008-03-26
+      Last Modifed 2008-03-26.
+      The import is not in the published file: its extension points are strict, so the XHTML schema that declares
+      xhtml:link has to be resolvable for a sitemap with alternates to validate.
     </xsd:documentation>
   </xsd:annotation>
+
+  <xsd:import namespace="http://www.w3.org/1999/xhtml" schemaLocation="xhtml.xsd"/>
 
   <xsd:element name="urlset">
     <xsd:annotation>
@@ -132,7 +136,27 @@ const SITEMAP_XSD = `<?xml version="1.0" encoding="UTF-8"?>
 </xsd:schema>
 `;
 
-function site(pages: readonly Page[], url?: string | null, base = ""): Site {
+/** The part of XHTML that a sitemap's `xhtml:link` alternates use, so the strict extension point can check them. */
+const XHTML_XSD = `<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.w3.org/1999/xhtml"
+            xmlns="http://www.w3.org/1999/xhtml"
+            elementFormDefault="qualified">
+  <xsd:annotation>
+    <xsd:documentation>The link element of XHTML, as a sitemap's hreflang alternates write it.</xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:element name="link">
+    <xsd:complexType>
+      <xsd:attribute name="rel" type="xsd:string" use="required"/>
+      <xsd:attribute name="hreflang" type="xsd:string" use="required"/>
+      <xsd:attribute name="href" type="xsd:anyURI" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
+`;
+
+function site(pages: readonly Page[], url?: string | null, base = "", config: Partial<Site["config"]> = {}): Site {
   return {
     config: {
       title: "Example",
@@ -150,6 +174,7 @@ function site(pages: readonly Page[], url?: string | null, base = ""): Site {
       search: {},
       redirects: {},
       outputs: {},
+      ...config,
     },
     pages,
     nav: {},
@@ -157,13 +182,13 @@ function site(pages: readonly Page[], url?: string | null, base = ""): Site {
   };
 }
 
-function page(url: string, kind: Page["kind"] = "doc", frontMatter: Page["frontMatter"] = {}): Page {
+function page(url: string, kind: Page["kind"] = "doc", frontMatter: Page["frontMatter"] = {}, lang = "en"): Page {
   return {
     url,
     source: pos,
     frontMatter,
     title: url,
-    lang: "en",
+    lang,
     dir: "ltr",
     headings: [],
     html: "",
@@ -171,6 +196,13 @@ function page(url: string, kind: Page["kind"] = "doc", frontMatter: Page["frontM
     kind,
   };
 }
+
+/** A multilingual site: the default language at the root and two prefixed ones. */
+const LANGUAGES = [
+  { code: "en", name: "English", prefix: "" },
+  { code: "fa", name: "فارسی", prefix: "/fa" },
+  { code: "de", name: "Deutsch", prefix: "/de" },
+] as const;
 
 /** A context that keeps every diagnostic, so a test can check what the output reported. */
 function collecting(): { ctx: OutputContext; reported: Diagnostic[] } {
@@ -194,6 +226,16 @@ async function sitemapXml(model: Site): Promise<string> {
 /** The `<loc>` values of a sitemap, in the order they appear. */
 function locs(xml: string): string[] {
   return [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)].map((m) => m[1] ?? "");
+}
+
+/**
+ * A `<loc>` value and an alternate's `[hreflang, href]` pair, in document order, so a test sees both the order of
+ * the entries and where each alternate sits.
+ */
+function addresses(xml: string): string[][] {
+  return [...xml.matchAll(/<loc>([^<]*)<\/loc>|hreflang="([^"]*)" href="([^"]*)"/g)].map((m) =>
+    m[1] === undefined ? [m[2] ?? "", m[3] ?? ""] : ["loc", m[1]],
+  );
 }
 
 test("every doc page of fixtures/docs-site gets an absolute URL, and sitemap: false and app pages are left out", async () => {
@@ -290,10 +332,155 @@ test("entries come back sorted by URL, whatever order the model listed them in",
   assert.deepEqual(locs(await sitemapXml(model)), ["https://x.io/a/", "https://x.io/a/c/", "https://x.io/b/"]);
 });
 
+test("a translated page lists every language plus x-default, in language order", async () => {
+  const model = site(
+    [
+      page("/guide/", "doc", { translation_key: "guide" }),
+      page("/fa/guide/", "doc", { translation_key: "guide" }, "fa"),
+      page("/de/guide/", "doc", { translation_key: "guide" }, "de"),
+      page("/fa/", "doc", {}, "fa"),
+    ],
+    "https://x.io",
+    "",
+    { languages: LANGUAGES },
+  );
+  const xml = await sitemapXml(model);
+  assert.ok(
+    xml.includes(
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ),
+    "the XHTML namespace is declared when alternates exist",
+  );
+  assert.deepEqual(addresses(xml), [
+    ["loc", "https://x.io/de/guide/"],
+    ["de", "https://x.io/de/guide/"],
+    ["en", "https://x.io/guide/"],
+    ["fa", "https://x.io/fa/guide/"],
+    ["x-default", "https://x.io/guide/"],
+    // The untranslated home page has no alternates, even on a multilingual site.
+    ["loc", "https://x.io/fa/"],
+    ["loc", "https://x.io/fa/guide/"],
+    ["de", "https://x.io/de/guide/"],
+    ["en", "https://x.io/guide/"],
+    ["fa", "https://x.io/fa/guide/"],
+    ["x-default", "https://x.io/guide/"],
+    ["loc", "https://x.io/guide/"],
+    ["de", "https://x.io/de/guide/"],
+    ["en", "https://x.io/guide/"],
+    ["fa", "https://x.io/fa/guide/"],
+    ["x-default", "https://x.io/guide/"],
+  ]);
+});
+
+test("x-default points at the site's default language, whatever sorts first", async () => {
+  const model = site(
+    [
+      page("/guide/", "doc", { translation_key: "guide" }),
+      page("/fa/guide/", "doc", { translation_key: "guide" }, "fa"),
+      page("/de/guide/", "doc", { translation_key: "guide" }, "de"),
+    ],
+    "https://x.io",
+    "",
+    { lang: "fa", languages: LANGUAGES },
+  );
+  const xml = await sitemapXml(model);
+  assert.match(xml, /hreflang="x-default" href="https:\/\/x\.io\/fa\/guide\/"/);
+});
+
+test("a translation left out of the sitemap is not advertised as an alternate", async () => {
+  const model = site(
+    [
+      page("/guide/", "doc", { translation_key: "guide" }),
+      page("/fa/guide/", "doc", { translation_key: "guide", sitemap: false }, "fa"),
+    ],
+    "https://x.io",
+    "",
+    { languages: LANGUAGES },
+  );
+  const xml = await sitemapXml(model);
+  assert.deepEqual(locs(xml), ["https://x.io/guide/"]);
+  assert.ok(!xml.includes("xhtml"), "one language left, so no alternates and no XHTML namespace");
+});
+
+test("alternates are escaped like the URLs they point at", async () => {
+  const model = site(
+    [
+      page("/q&a/", "doc", { translation_key: "qa" }),
+      page("/fa/q&a/", "doc", { translation_key: "qa" }, "fa"),
+    ],
+    "https://x.io",
+    "",
+    { languages: LANGUAGES },
+  );
+  assert.deepEqual(addresses(await sitemapXml(model)), [
+    ["loc", "https://x.io/fa/q&amp;a/"],
+    ["en", "https://x.io/q&amp;a/"],
+    ["fa", "https://x.io/fa/q&amp;a/"],
+    ["x-default", "https://x.io/q&amp;a/"],
+    ["loc", "https://x.io/q&amp;a/"],
+    ["en", "https://x.io/q&amp;a/"],
+    ["fa", "https://x.io/fa/q&amp;a/"],
+    ["x-default", "https://x.io/q&amp;a/"],
+  ]);
+});
+
+test("a single-language site keeps today's sitemap byte for byte, even with languages configured", async () => {
+  const model = site([page("/guide/install/", "doc", { updated: "2026-11-01" }), page("/", "doc")], "https://x.io", "", {
+    languages: LANGUAGES,
+  });
+  assert.equal(
+    await sitemapXml(model),
+    [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+      "  <url>",
+      "    <loc>https://x.io/</loc>",
+      "  </url>",
+      "  <url>",
+      "    <loc>https://x.io/guide/install/</loc>",
+      "    <lastmod>2026-11-01</lastmod>",
+      "  </url>",
+      "</urlset>",
+      "",
+    ].join("\n"),
+  );
+});
+
+test("alternates come out the same whatever order the model listed its pages in", async () => {
+  const pages = [
+    page("/guide/", "doc", { translation_key: "guide" }),
+    page("/fa/guide/", "doc", { translation_key: "guide" }, "fa"),
+    page("/de/guide/", "doc", { translation_key: "guide" }, "de"),
+    page("/fa/", "doc", {}, "fa"),
+    page("/de/", "doc", {}, "de"),
+  ];
+  const config = { languages: LANGUAGES };
+  const forward = await sitemapXml(site(pages, "https://x.io", "", config));
+  const backward = await sitemapXml(site([...pages].reverse(), "https://x.io", "", config));
+  assert.equal(forward, backward);
+  assert.match(forward, /x-default/);
+});
+
 test("a site with no doc pages writes an empty urlset, which the protocol allows", async () => {
   const xml = await sitemapXml(site([page("/logo.svg", "asset")], "https://x.io"));
   assert.ok(xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>'));
 });
+
+/** Validate a sitemap with xmllint against the sitemap XSD and the XHTML XSD its alternates use. */
+function assertValidSitemap(xml: string): void {
+  const dir = mkdtempSync(join(tmpdir(), "sitemap-xsd-"));
+  try {
+    const xsd = join(dir, "sitemap.xsd");
+    const file = join(dir, "sitemap.xml");
+    writeFileSync(xsd, SITEMAP_XSD);
+    writeFileSync(join(dir, "xhtml.xsd"), XHTML_XSD);
+    writeFileSync(file, xml);
+    const run = spawnSync("xmllint", ["--noout", "--schema", xsd, file], { encoding: "utf8" });
+    assert.equal(run.status, 0, `${run.stdout}${run.stderr}`);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 const hasXmllint = !spawnSync("xmllint", ["--version"]).error;
 
@@ -311,17 +498,26 @@ test(
       "https://arminazimi.github.io",
       "/evergreen",
     );
-    const xml = await sitemapXml(model);
-    const dir = mkdtempSync(join(tmpdir(), "sitemap-xsd-"));
-    try {
-      const xsd = join(dir, "sitemap.xsd");
-      const file = join(dir, "sitemap.xml");
-      writeFileSync(xsd, SITEMAP_XSD);
-      writeFileSync(file, xml);
-      const run = spawnSync("xmllint", ["--noout", "--schema", xsd, file], { encoding: "utf8" });
-      assert.equal(run.status, 0, `${run.stdout}${run.stderr}`);
-    } finally {
-      rmSync(dir, { recursive: true, force: true });
-    }
+    assertValidSitemap(await sitemapXml(model));
+  },
+);
+
+test(
+  "a sitemap with alternates validates against the sitemap XSD",
+  { skip: hasXmllint ? false : "xmllint is not installed" },
+  async () => {
+    const model = site(
+      [
+        page("/evergreen/guide/", "doc", { translation_key: "guide", updated: "2026-11-01" }),
+        page("/evergreen/fa/guide/", "doc", { translation_key: "guide" }, "fa"),
+        page("/evergreen/de/guide/", "doc", { translation_key: "guide" }, "de"),
+        page("/evergreen/q&a/", "doc", { translation_key: "qa" }),
+        page("/evergreen/fa/q&a/", "doc", { translation_key: "qa" }, "fa"),
+      ],
+      "https://arminazimi.github.io",
+      "/evergreen",
+      { languages: LANGUAGES },
+    );
+    assertValidSitemap(await sitemapXml(model));
   },
 );
