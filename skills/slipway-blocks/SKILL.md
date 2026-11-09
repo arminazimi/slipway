@@ -1,128 +1,175 @@
 ---
 name: slipway-blocks
-description: Choose a Slipway content block for a page and insert it with options that match the block's schema, then check that the page builds, reads without JavaScript, and passes slipway doctor.
+description: Choose a Slipway component for a page, write its Markdown directive with the options it reads, then check that the build reports no new diagnostic.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
-# Insert content blocks
+# Insert a component
 
-A block is one styled piece of a page that the theme ships: a status badge, a stat row, a timeline, an API endpoint. You insert it with a Liquid include and fill its options; the theme supplies the markup, the styles, and the right-to-left layout. If the site has an `AGENTS.md`, read it first and follow it, with the one exception this skill explains: a block's include line is the only Liquid a page may contain.
+A component is one styled piece of a page that the theme ships: a callout, a badge, a collapsible section, numbered steps, a file tree. You write a Markdown directive; the engine turns it into a `<sl-component>` element and the theme renders it. If the site has an `AGENTS.md`, read it first and follow it.
 
-Use a block when a page needs one of those shapes. For prose, a list, a table, or a quotation, plain Markdown is lighter and needs no include.
+Use a component only when a page needs one of these shapes. For prose, a plain list, or a quotation, plain Markdown is lighter.
 
 ## 1. Take a baseline
 
-Get the theme's checks once, into a folder outside the site:
+Get the theme once, into a folder outside the site, and build the site before you change it. Keep the diagnostics the build prints. Your edit is done when it adds no diagnostic.
 
 ```sh
 git clone --depth 1 https://github.com/arminazimi/slipway "$HOME/.slipway"
 cd "$HOME/.slipway" && npm ci && cd -
 ```
 
-Run section 5 on the page before you change it and keep the output. Your edit is done when it adds no problem and no finding except the Liquid warnings a block causes on purpose, which section 5 explains.
+## 2. Choose the component
 
-## 2. Choose the block
+| Component | Use it for | Directive form | Options |
+| --- | --- | --- | --- |
+| callout | A note, tip, important point, warning, or caution | `:::callout{…}` … `:::`, or `> [!KIND]` | `type`, `title` |
+| badge | A short status label on its own line | `::badge{…}` (leaf only) | `label`, `variant` |
+| details | Text the reader can expand | `:::details{…}` … `:::` | `summary`, `open` |
+| steps | A numbered sequence or tutorial | `:::steps` … `:::`, body is an ordered list | none |
+| file-tree | A folder structure with a note per entry | `:::file-tree{…}` … `:::`, body is a nested list | `label` |
+| table | Tabular data | GFM pipe table, no directive | none |
+| cards | Not usable yet, see section 3 | none | none |
 
-| Block | Use it for | Options |
-| --- | --- | --- |
-| badge | A status label next to a feature or a version | `label`; `status` is stable (the default), beta, deprecated, new, or experimental |
-| compare | Pros and cons, or a feature matrix | `pros` and `cons` lists, or `headers` and `features`, each feature with a label and values of yes, no, partial, or an empty string for a blank cell |
-| endpoint | An HTTP API reference | `path`; `method` defaults to GET; `parameters`, `request`, `response` |
-| file-tree | A folder structure with a note per file | `items` (name, note, children) or `list` (a Markdown list) |
-| gallery | A grid of images with captions and credits | `images`, each with a `src` and an `alt`; captions, credits, srcset, an intrinsic width and height, and lazy loading are optional |
-| kbd | A keyboard shortcut with its Mac and non-Mac forms | `mac` and `other` |
-| pull-quote | A quotation set off from the text | `text`; `author`, `source`, and `url` are optional |
-| stats | A row of key numbers | `items`, each with a `label` and a `value`; `unit` and `trend` are optional |
-| steps | A numbered tutorial or sequence | `steps`, each with a `title`; `url` and `description` are optional |
-| terminal | Commands and the output they print | `commands`, one per line; `output` and `prompt` (the default is `$`) are optional |
-| timeline | Dated events, such as a release history | `events`, each with a `date` and a `title`; `url` and `description` are optional |
+If no row fits, write a Markdown list, table, or quote.
 
-If no row fits, do not force a block: write a Markdown list, table, or quote.
+## 3. Write each component
 
-## 3. Read the options
+The names above are the folder names under `packages/theme/components/`. The engine keys a directive by its name, so `:::callout` reaches the `callout` folder and nothing else. A directive name that is not a component folder renders its body as plain content and prints a `render.unknown-component` warning.
 
-- The include `_includes/blocks/timeline.html` is the source of truth: its options are the `include.*` names it reads. Do the same for any block by its file name.
-- Its schema, `schema/blocks/timeline.schema.json`, gives the types, the required options, and the allowed values; the rest are in the [schemas folder](https://github.com/arminazimi/slipway/tree/main/schema/blocks). Ten blocks have one; `steps` does not, so read its include instead.
-- Live examples are in the theme's [block reference](https://github.com/arminazimi/slipway/tree/main/site/blocks): one Markdown page per block under `site/blocks/`, with the front matter that feeds it and the rendered result; the file name is the block name. The `terminal` block has no page, only a schema.
-- With the Slipway MCP server registered for the site, the `list_blocks` tool returns every block with its schema, its file, and an example snippet; `packages/mcp/README.md` says how to register it.
-- Use only the options the schema lists. An include ignores an unknown option silently, and the schema rejects it, so a typo shows up as a block with missing text, not as an error. If the schema and the include disagree, the include wins for what renders; report the mismatch.
+### callout
+
+```markdown
+:::callout{type=warning title="Back up first"}
+Run the migration on a copy of the database.
+:::
+```
+
+- `type`: `note` (the default), `tip`, `important`, `warning`, or `caution`. `danger` is read as `caution`. Any other value, or none, is a note.
+- `title`: replaces the kind's default title (Note, Tip, Important, Warning, Caution). Quote it when it has spaces.
+- The body is Markdown.
+- The GitHub alert form renders the same component and takes no options: `> [!TIP]` on the first line of a blockquote, then the body.
+
+### badge
+
+```markdown
+::badge{label="New" variant=tip}
+```
+
+- Leaf directive only: two colons and no body. It is block-level, so it takes its own line.
+- `label`: the text shown. Without a body, the badge shows only this text.
+- `variant`: `note` (the default), `tip`, `important`, `warning`, or `caution`. An unknown value is a note.
+- The inline form `:badge[New]{variant=tip}` does not render a badge: the engine turns it into a `<div>` with the text. Never write it.
+
+### details
+
+```markdown
+:::details{summary="Install on Windows" open}
+Run the installer, then restart the terminal.
+:::
+```
+
+- `summary`: the text of the disclosure control. Without it, the summary is `Details`.
+- `open`: write it as a bare word. Its presence, with any value, starts the block expanded. Leave it out for a collapsed block.
+- The body is Markdown. The element is native `<details>`, so it works without JavaScript.
+
+### steps
+
+```markdown
+:::steps
+1. Install the package.
+2. Add a `slipway.yml`.
+3. Run the build.
+:::
+```
+
+- The body must be an ordered list; each item is one step. The numbers come from CSS for the page's language.
+- The directive takes no options.
+
+### file-tree
+
+```markdown
+:::file-tree{label="Project layout"}
+- src/ # source code
+  - **index.ts** # entry point
+- README.md
+:::
+```
+
+- `label`: the accessible name of the tree. Without it, the name is `File tree`.
+- The body is a nested bullet list.
+- A name ending in `/` is a folder; an entry with nested items is a folder too.
+- Text after ` # ` (a space before and after the `#`) is a muted note.
+- A name in bold (`**name**`) or inside `<mark>` is highlighted.
+
+### table
+
+Write a GFM pipe table. There is no directive. The theme's table component can wrap a table in a scroll region, but the engine does not apply that wrapper yet, so keep tables narrow.
+
+```markdown
+| Option | Default |
+| --- | --- |
+| `label` | `File tree` |
+```
+
+### cards: do not use
+
+`cards` is not usable from Markdown yet. Its default export reads `children`, which the render host never passes, so `:::cards` renders an empty grid and drops its list. The `card` helper in the same folder has no directive. Use a Markdown list of links until the component is fixed.
 
 ## 4. Insert it
 
-1. Quote every literal string: `label="Beta"`. Liquid reads an unquoted value as a variable name, so `status=beta` passes nothing.
-2. Put lists, maps, and multi-line values in the page's front matter under a key of your own, then pass the key: `events=page.release_events`. Unknown front matter keys are kept and ignored by the layouts. Do not reuse a theme key such as `title`, `description`, `date`, `layout`, or `tags` for block data.
-3. Put a block-level include on its own line, with a blank line before and after, inside the section it belongs to. Wrap it in the nomarkdown markers shown in the examples below, so kramdown does not read the block's markup as text; without them the `kbd` block prints its script as a code sample. A `badge` is a span, so it may sit in a sentence.
-4. Add the block's stylesheet when the include does not load it. `endpoint`, `gallery`, and `terminal` load their own; for the others, put this line once at the top of the page body, with the block's name: `{::nomarkdown}{% include component-css.html name="timeline" %}{:/nomarkdown}`. The file is in `assets/css/components/`. Sites that load it in an override slot do not need the line again.
-5. Set the page's language and let the theme lay the block out. Never add `dir="rtl"`; the wrappers in the theme's own block pages only show both directions on one English page.
-6. An address option (`url` on a step or an event) is a site path such as `/release-history.html`, not a link with a base URL.
+1. A container directive (`:::`) opens and closes on its own lines, and the closing `:::` must match the opening one.
+2. Attribute values with spaces are quoted: `title="Back up first"`. Unquoted words are fine: `type=tip`.
+3. Put a block directive on its own line, with a blank line before and after, and never inside a list item or a table cell.
+4. Never write the `<sl-component>` element by hand; the engine emits it from the directive.
+5. Never add `dir="rtl"`, physical CSS, or a script for a component. The theme handles direction, and every component reads without JavaScript.
 
-A full page with the timeline block:
+A page with a callout, a steps list, and a file tree:
 
 ```markdown
 ---
-title: Release history
-description: What shipped, and when.
-layout: page
-release_events:
-  - date: 2026-11-23
-    title: Phase 3 begins
-    description: The third phase starts.
-  - date: 2026-12-01
-    title: Timeline block implemented
-    url: /release-history.html
+title: Set up a project
+description: Create a site and see its files.
 ---
 
-## Releases
+## Before you start
 
-{::nomarkdown}{% include component-css.html name="timeline" %}{:/nomarkdown}
+:::callout{type=tip title="Check the version first"}
+The engine needs Node 24 or later.
+:::
 
-{::nomarkdown}
-{% include blocks/timeline.html events=page.release_events %}
-{:/nomarkdown}
+## Steps
+
+:::steps
+1. Create the folder.
+2. Add the `slipway.yml` file.
+:::
+
+## Files
+
+:::file-tree{label="Site layout"}
+- content/ # pages and posts
+  - **index.md** # home page
+- slipway.yml # site settings
+:::
 ```
-
-Two short options can stay inline. A badge goes in the text; the keyboard shortcut goes in a wrapper:
-
-```markdown
-This feature is in {% include blocks/badge.html label="Beta" status="beta" %}.
-
-{::nomarkdown}
-{% include blocks/kbd.html mac="⌘K" other="Ctrl+K" %}
-{:/nomarkdown}
-```
-
-A block's data is page content: translate it like the rest of the page, and keep the include line the same.
 
 ## 5. Check the page
 
-Check the front matter, including the lists the blocks read:
+Build the site with the engine, then read the diagnostics it prints. Each one names a file and line; fix it there and build again. The diagnostics that matter for components are:
 
-```sh
-node "$HOME/.slipway/tools/theme/validate.ts" .
-```
+- `render.unknown-component`: the directive name is not a component folder. Fix the name, or use a component from section 2.
+- `render.bad-props`: the `data-props` attribute is not a JSON object. Check the attributes on the directive.
+- `render.unclosed-component`: a container directive has no closing `:::`.
 
-Fix every problem at the file and line it prints, then build the site:
-
-```sh
-bundle exec jekyll build
-```
-
-A misspelled block or include is a build error. A wrong option value usually is not: the block renders with the option ignored or empty, so open the built page and look for the block's root class, `sl-<name>` with the block's name (`sl-timeline`, `sl-stats`, `sl-badge`), and its text. Then run the doctor on the source and the build:
-
-```sh
-node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
-```
-
-In a Jekyll or Slipway site the doctor reports each include line, and the stylesheet line, as jekyll.liquid-in-content: a warning that the content is tied to Jekyll. That is expected for a block and never lowers the level; blocks are the only Liquid a page may contain. Every other finding is yours to fix. Compare with your baseline.
-
-Without a `Gemfile`, run the doctor without `--build`, push, and read the log of the Pages build; the block renders the same way.
+The build must add none of these to your baseline. Then open the page in both light and dark mode and check the component looks right.
 
 ## Never
 
-- Never invent an option name or value; the schema's list is closed. Use the exact case in its enum, such as `beta`, never `Beta`.
-- Never put an include inside a list item, a table cell, or (except a badge) a sentence; its HTML becomes text.
-- Never add Liquid other than the include lines: no `{{ }}`, no variables, no filters. The rest of the page stays plain Markdown.
-- Never edit `_includes/blocks/`, `assets/css/components/`, or the block schemas to make one page work; choose another block or change the data.
-- Never add `dir="rtl"`, physical CSS, or an inline script for a block; language, logical properties, and the theme already handle it.
-- Never remove a block only to clear its expected Liquid warning; that warning does not lower the level.
+- Never invent a directive name or an option. Use only the names in section 2.
+- Never use the inline `:badge[…]` form.
+- Never use `:::cards` or a `card` directive; use a list of links.
+- Never write `<sl-component>` by hand.
+- Never edit `packages/theme/components/` to make one page work; choose another component or change the content.
+- Never add `dir="rtl"`, physical CSS, or a script for a component.
