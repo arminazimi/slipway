@@ -39,9 +39,14 @@ test("an unloaded language renders as plain escaped text", () => {
   assert.match(out, /a (&lt;|&#x3C;) b/);
 });
 
-test("themes come from names.json when code.*.json is absent", () => {
+test("the light theme comes from names.json while code.light.json is absent", () => {
   assert.equal(buildTheme("light").colors?.["editor.background"], "#f5f5f5");
-  assert.equal(buildTheme("dark").colors?.["editor.background"], "#1a1a1a");
+});
+
+test("the dark theme comes from code.dark.json (#1096)", () => {
+  assert.equal(buildTheme("dark").name, "lateen-dark");
+  assert.equal(buildTheme("dark").colors?.["editor.background"], "#2a2a37");
+  assert.ok(buildTheme("dark").settings?.some((s) => s.scope?.includes("keyword")));
 });
 
 test("styles scroll inside the block and use only known tokens", () => {
