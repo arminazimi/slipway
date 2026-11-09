@@ -21,9 +21,9 @@ The core theme works (Phases 0 and 1). The spec, `slipway doctor`, starters, Ski
 
 ## CI
 
-`.github/workflows/release.yml` runs on a `v*` tag: it checks the tag against the gemspec, runs `npm run check`, and creates the GitHub release from `CHANGELOG.md`, then its `publish-gem` job pushes the gem to RubyGems through trusted publishing (the `rubygems` environment). Agents never run it or push a tag; no other package is published.
+Releases are tagged by maintainers (CONTRIBUTING.md, "Releasing"); there is no release workflow while Mizzen and Lateen are unpublished (`tooling.release-tool` adds one). Agents never push a tag; no package is published.
 
-`.github/workflows/ci.yml` runs `npm run check` in the GitHub Pages environment: the Ruby in `.ruby-version`, the `github-pages` gem from `Gemfile.lock` (Jekyll and the whitelisted plugins), and Node 22. It sets `SLIPWAY_REQUIRE_BUILD=1`, so a missing Ruby fails instead of skipping.
+`.github/workflows/ci.yml` runs `npm run check` on Node 24 and nothing else: no Ruby, Jekyll, or browser (`cleanup.ci-ruby`), so the site build and the browser tools print SKIP there until Mizzen builds the examples.
 
 ## Layout
 
