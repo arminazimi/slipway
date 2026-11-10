@@ -186,3 +186,10 @@ th {
 td code {
   white-space: nowrap;
 }
+
+/* A table wider than the article scrolls inside it, so the page never gains a horizontal scrollbar. */
+.doc-body > table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
