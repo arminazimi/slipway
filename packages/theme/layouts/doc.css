@@ -98,3 +98,20 @@
 .edit-page + .doc-actions .page-footer-edit {
   display: none;
 }
+
+/* On a phone the controls are touch targets of at least 44px, and the feedback line sits on its own
+   line at the start of the row instead of floating at the end of whatever line is left over. */
+@media (max-width: 40rem) {
+  .doc-actions :is(.page-footer-copy, .copy-markdown-button, .copy-markdown-link, .page-agent-menu-summary) {
+    min-block-size: calc(var(--space-8) + var(--space-3));
+  }
+
+  .doc-actions .page-footer-copy {
+    flex: 1 1 100%;
+  }
+
+  .doc-actions .page-footer-feedback {
+    flex: 1 1 100%;
+    margin-inline-start: 0;
+  }
+}
