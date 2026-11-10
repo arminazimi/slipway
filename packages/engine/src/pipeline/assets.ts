@@ -58,6 +58,11 @@ function hashedName(path: string, hash: string): string {
   return `${dir}${base}-${hash}${ext}`;
 }
 
+/** Output path of a theme file with these bytes: `assets/theme/<rel>` with the hash in the name. */
+export function themeAssetPath(rel: string, bytes: Uint8Array): string {
+  return `${THEME_OUT}/${hashedName(rel, hashOf(bytes))}`;
+}
+
 async function write(from: string, path: string, abs: string, bytes: Uint8Array): Promise<CopiedFile> {
   await mkdir(dirname(abs), { recursive: true });
   await writeFile(abs, bytes);

@@ -40,7 +40,7 @@
 .sidebar-nav h4[aria-current="true"],
 .sidebar-nav h5[aria-current="true"],
 .sidebar-nav h6[aria-current="true"] {
-  color: var(--color-accent);
+  color: var(--state-selected-fg);
 }
 
 .sidebar-nav a {
@@ -64,12 +64,12 @@
 
 .sidebar-nav a[aria-current="page"] {
   background: var(--state-selected-bg);
-  color: var(--color-accent);
+  color: var(--state-selected-fg);
   font-weight: var(--type-weight-medium);
 }
 
 .sidebar-nav a[aria-current="true"] {
-  color: var(--color-accent);
+  color: var(--state-selected-fg);
   font-weight: var(--type-weight-medium);
 }
 

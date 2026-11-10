@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { posix as path, join } from "node:path";
+import { themeAssetPath } from "../pipeline/assets.ts";
 import { transform } from "lightningcss";
 import type { Targets } from "lightningcss";
 
@@ -29,6 +31,8 @@ export interface CssBundlerOptions {
   readonly base: readonly string[];
   /** Browsers to lower the CSS for. Unset keeps modern syntax, including logical properties. */
   readonly targets?: Targets;
+  /** The site's base path (`/slipway`, or `""`); `url()` references to theme files are rewritten to start with it. */
+  readonly urlBase?: string;
 }
 
 /** Bundles base and per-page CSS. Create one per build so the cache lives as long as the build. */
@@ -38,6 +42,11 @@ export interface CssBundler {
    * (`RenderResult.css`). Paths are sorted before bundling, so the same units always give the same bundle.
    */
   page(used: readonly string[]): Promise<PageCss>;
+  /**
+   * Theme files (relative to the theme root, sorted) that bundled CSS refers to with `url()`, such as fonts.
+   * The caller copies them with `themeFiles`, which gives them the hashed names the bundles point at.
+   */
+  assets(): readonly string[];
 }
 
 /** Folder under the output that bundled CSS goes to, shared with hashed theme assets. */
@@ -59,13 +68,19 @@ function hashOf(text: string): string {
  * Minifies each file with Lightning CSS and joins the results in the order given. Files are minified
  * one at a time so the cascade order is the order of the list, and a file cannot change another's output.
  */
-function minify(paths: readonly string[], sources: readonly string[], targets: Targets | undefined): string {
+function minify(
+  paths: readonly string[],
+  sources: readonly string[],
+  targets: Targets | undefined,
+  url: (from: string, ref: string) => string,
+): string {
   return paths
     .map((rel, i) => {
       const out = transform({
         filename: rel,
         code: Buffer.from(sources[i] ?? ""),
         minify: true,
+        visitor: { Url: (u) => ({ ...u, url: url(rel, u.url) }) },
         ...(targets !== undefined ? { targets } : {}),
       });
       return Buffer.from(out.code).toString("utf8");
@@ -85,19 +100,37 @@ function bundle(kind: string, css: string): CssBundle {
  */
 export function createCssBundler(options: CssBundlerOptions): CssBundler {
   const { themeRoot, base, targets } = options;
+  const urlBase = options.urlBase ?? "";
   const cache = new Map<string, CssBundle>();
+  const referenced = new Set<string>();
+
+  /** Points a relative `url()` at the theme file's hashed copy; anything else is left as written. */
+  function rewrite(from: string, ref: string): string {
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/|#)/i.test(ref)) return ref;
+    const target = path.normalize(path.join(path.dirname(from), ref.split(/[?#]/)[0] ?? ""));
+    if (target.startsWith("..")) return ref;
+    let bytes: Buffer;
+    try {
+      bytes = readFileSync(join(themeRoot, target));
+    } catch {
+      return ref;
+    }
+    referenced.add(target);
+    return `${urlBase}/${themeAssetPath(target, bytes)}`;
+  }
 
   async function cached(kind: string, paths: readonly string[]): Promise<CssBundle> {
     const sources = await Promise.all(paths.map((rel) => readFile(join(themeRoot, rel), "utf8")));
     const key = createHash("sha256").update(JSON.stringify([kind, paths, sources])).digest("hex");
     const hit = cache.get(key);
     if (hit !== undefined) return hit;
-    const made = bundle(kind, minify(paths, sources, targets));
+    const made = bundle(kind, minify(paths, sources, targets, rewrite));
     cache.set(key, made);
     return made;
   }
 
   return {
+    assets: () => [...referenced].sort(byCodePoint),
     async page(used) {
       const units = [...new Set(used)].sort(byCodePoint);
       const [baseOut, pageOut] = await Promise.all([
