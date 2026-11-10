@@ -170,7 +170,9 @@ function assertOutOutsideSource(sourceDir: string, out: string): void {
  *
  * With `cache`, a build whose config, source, navigation, theme, outputs, layout options, and engine version are
  * unchanged restores the previous output instead of building again. Config and navigation are in the same key as the
- * pages, so changing either invalidates every page. The cache is whole-build, not per-page.
+ * pages, so changing either invalidates every page. When that whole-build entry misses, each page's Markdown parse is
+ * kept under `<cache>/pages/` and keyed by its expanded body, body line, plugin names and orders, and the engine
+ * version, so only the pages that changed are parsed again.
  *
  * With `workers` above 1, pages render in worker threads, and the site written is byte for byte the one a single
  * process writes. A worker that fails renders its pages in this process, with a `render.worker-failed` warning.
@@ -222,7 +224,10 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     }
   }
 
-  const model = await buildModel(root);
+  const model = await buildModel(
+    root,
+    cacheRoot === undefined ? undefined : { pageCacheDir: join(cacheRoot, "pages") },
+  );
   for (const d of model.diagnostics) diagnostics.report(d);
   const { site } = model;
 

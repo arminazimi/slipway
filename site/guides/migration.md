@@ -69,7 +69,7 @@ Keep one only when you intend to own that path.
 
 ### Layouts
 
-The theme ships `base`, `doc`, `home`, and `not-found`. The migration tool renames `page` and `default` to `doc`; the others keep their names. Every other 0.2 layout (`post`, `archive`, `author`, `tags`, `feed`, `adr`, `adr-index`, `changelog`, `changelog-feed`, `glossary`, `links`, `translation-status`) is gone: rewrite the page with `doc` or without a layout. The 0.2 layouts that generated `llms.txt`, `llms-full.txt`, `search.json`, `sitemap.xml`, and `sourcemap.json` have no replacement page; remove those pages with step 3.
+The theme ships `base`, `doc`, `home`, `not-found`, and `versions`. The migration tool renames `page` and `default` to `doc`; the others keep their names. Every other 0.2 layout (`post`, `archive`, `author`, `tags`, `feed`, `adr`, `adr-index`, `changelog`, `changelog-feed`, `glossary`, `links`, `translation-status`) is gone: rewrite the page with `doc` or without a layout. The 0.2 layouts that generated `llms.txt`, `llms-full.txt`, `search.json`, `sitemap.xml`, and `sourcemap.json` have no replacement page; remove those pages with step 3.
 
 ### Liquid and blocks
 

@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, check a build, or rebuild on change (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit apply`, `mizzen edit verify`, `mizzen pack`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, apply or verify an agent patch, print a context pack, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { availableParallelism, tmpdir } from "node:os";
@@ -9,6 +9,9 @@ import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
 import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
+import { editApply, EditApplyError } from "./edit-apply.ts";
+import { verifyProof, verifyProofMessage } from "./edit-verify.ts";
+import { pack } from "./pack.ts";
 import { verify, verifyMessage } from "./verify.ts";
 import { DEFAULT_WATCH_OUT, watch as watchSite } from "./watch.ts";
 
@@ -27,20 +30,30 @@ const SIBLING_THEME = fileURLToPath(new URL("../../../theme", import.meta.url));
 export const usage = `Usage: ${NAME} <command> [dir] [options]
 
 Commands:
-  build [dir]   Build the site into --out (default: dist)
-  check [dir]   Build to a temp folder and print diagnostics only
-  dev [dir]     Serve the site, rebuild on change, and reload the browser
-  verify [dir]  Check a built folder against the hash in its manifest
-  watch [dir]   Rebuild the site whenever a source or theme file changes
+  build [dir]               Build the site into --out (default: dist)
+  check [dir]               Build to a temp folder and print diagnostics only
+  dev [dir]                 Serve the site, rebuild on change, and reload the browser
+  edit apply <patch.json> [dir]
+                            Apply a span patch to its source file and record a proof
+  edit verify <proof.json>  Check an edit proof against the site and rerun the doctor
+  pack [dir]                Print one context pack for a topic, to stdout or --out
+  verify [dir]              Check a built folder against the hash in its manifest
+  watch [dir]               Rebuild the site whenever a source or theme file changes
 
 Options:
-  --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
+  --out <path>         Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch); pack writes a file here instead of stdout
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --site <dir>         Site root for edit verify (default: .)
+  --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
   --workers <n|auto>   Render pages in n worker threads; auto is the CPU count minus one (default: 1)
+  --topic <name>       Topic for pack (default: the site's only topic)
+  --budget <tokens>    Token budget for pack, overriding the topic's
+  --dry-run            Print the diff for edit apply without writing
+  --proof <path>       Proof record for edit apply (default: <patch>.proof.json)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.`;
@@ -48,6 +61,8 @@ Exit codes: 0 ok, 1 errors, 2 usage.`;
 export type Io = {
   readonly log?: (message: string) => void;
   readonly error?: (message: string) => void;
+  /** Writes a command's payload, such as a pack, to stdout; defaults to `process.stdout.write`. */
+  readonly write?: (text: string) => void;
 };
 
 type BuildOpts = {
@@ -75,10 +90,25 @@ type DevOpts = {
   readonly theme?: string;
 };
 
+type PackOpts = {
+  readonly command: "pack";
+  readonly root: string;
+  readonly topic?: string;
+  readonly budget?: number;
+  readonly out?: string;
+};
+
 type VerifyOpts = {
   readonly command: "verify";
   readonly root: string;
   readonly hash?: string;
+};
+
+type EditVerifyOpts = {
+  readonly command: "edit-verify";
+  readonly proof: string;
+  readonly site: string;
+  readonly doctor: boolean;
 };
 
 type WatchOpts = {
@@ -88,10 +118,28 @@ type WatchOpts = {
   readonly theme?: string;
 };
 
+type EditApplyOpts = {
+  readonly command: "edit-apply";
+  readonly root: string;
+  readonly patch: string;
+  readonly dryRun: boolean;
+  readonly proof?: string;
+};
+
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts | DevOpts | VerifyOpts | WatchOpts };
+  | {
+      readonly options:
+        | BuildOpts
+        | CheckOpts
+        | DevOpts
+        | EditApplyOpts
+        | EditVerifyOpts
+        | PackOpts
+        | VerifyOpts
+        | WatchOpts;
+    };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -142,13 +190,104 @@ export async function resolveThemeRoot(siteRoot: string, themeFlag: string | und
   return undefined;
 }
 
+/**
+ * Parses `mizzen edit apply ...`. A two-word command keeps room for the other subcommands an
+ * agent workflow needs without changing the shape of every option.
+ */
+function parseEditApply(args: readonly string[]): Parsed {
+  const [subcommand, ...rest] = args;
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
+  if (subcommand === "-h" || subcommand === "--help") return { help: true };
+  if (subcommand !== "apply") return { error: `unknown edit subcommand: ${subcommand}` };
+
+  let patch: string | undefined;
+  let root: string | undefined;
+  let proof: string | undefined;
+  let dryRun = false;
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i]!;
+    const value = (): string => {
+      const next = rest[++i];
+      if (next === undefined || next.startsWith("-")) throw new Error(`${arg} needs a value`);
+      return next;
+    };
+    try {
+      if (arg === "-h" || arg === "--help") return { help: true };
+      if (arg === "--dry-run") dryRun = true;
+      else if (arg === "--proof") proof = value();
+      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
+      else if (patch === undefined) patch = arg;
+      else if (root === undefined) root = arg;
+      else return { error: `unexpected argument: ${arg}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+
+  if (patch === undefined) return { error: "edit apply needs a patch file: edit apply <patch.json> [dir]" };
+  return {
+    options: {
+      command: "edit-apply",
+      root: root ?? ".",
+      patch,
+      dryRun,
+      ...(proof === undefined ? {} : { proof }),
+    },
+  };
+}
+
+/** Parses `edit verify <proof.json> [--site <dir>] [--doctor]`. */
+function parseEditVerify(args: readonly string[]): Parsed {
+  const [subcommand, ...rest] = args;
+  if (subcommand === "-h" || subcommand === "--help" || subcommand === "help") return { help: true };
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
+  if (subcommand !== "verify") return { error: `unknown command: edit ${subcommand}` };
+
+  let proof: string | undefined;
+  let site = ".";
+  let doctor = false;
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i]!;
+    const value = (): string => {
+      const next = rest[++i];
+      if (next === undefined || next.startsWith("-")) throw new Error(`${arg} needs a value`);
+      return next;
+    };
+    try {
+      if (arg === "-h" || arg === "--help") return { help: true };
+      if (arg === "--site") site = value();
+      else if (arg === "--doctor") doctor = true;
+      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
+      else if (proof === undefined) proof = arg;
+      else return { error: `unexpected argument: ${arg}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+
+  if (proof === undefined) return { error: `edit verify needs a proof file: ${NAME} edit verify <proof.json>` };
+  return { options: { command: "edit-verify", proof, site, doctor } };
+}
+
 /** Parses `argv` after the process name. */
 export function parseArgs(args: readonly string[]): Parsed {
   const [command, ...rest] = args;
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify" && command !== "watch") {
+  if (command === "edit") {
+    const subcommand = rest[0];
+    if (subcommand === "verify") return parseEditVerify(rest);
+    return parseEditApply(rest);
+  }
+  if (
+    command !== "build" &&
+    command !== "check" &&
+    command !== "dev" &&
+    command !== "pack" &&
+    command !== "verify" &&
+    command !== "watch"
+  ) {
     return { error: `unknown command: ${command}` };
   }
 
@@ -160,6 +299,8 @@ export function parseArgs(args: readonly string[]): Parsed {
   let port: number = DEFAULT_DEV_PORT;
   let host: string = DEFAULT_DEV_HOST;
   let workers: number | undefined;
+  let topic: string | undefined;
+  let budget: number | undefined;
 
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i]!;
@@ -171,8 +312,8 @@ export function parseArgs(args: readonly string[]): Parsed {
     try {
       if (arg === "-h" || arg === "--help") return { help: true };
       if (arg === "--out") {
-        if (command !== "build" && command !== "dev" && command !== "watch") {
-          return { error: "--out is only valid for build, dev, and watch" };
+        if (command !== "build" && command !== "dev" && command !== "pack" && command !== "watch") {
+          return { error: "--out is only valid for build, dev, pack, and watch" };
         }
         out = value();
       } else if (arg === "--theme") {
@@ -215,6 +356,19 @@ export function parseArgs(args: readonly string[]): Parsed {
           }
           workers = parsed;
         }
+      } else if (arg === "--topic") {
+        if (command !== "pack") return { error: "--topic is only valid for pack" };
+        const raw = value().trim();
+        if (raw === "") return { error: "--topic needs a name" };
+        topic = raw;
+      } else if (arg === "--budget") {
+        if (command !== "pack") return { error: "--budget is only valid for pack" };
+        const raw = value();
+        const parsed = Number(raw);
+        if (!/^\d+$/.test(raw) || !Number.isSafeInteger(parsed) || parsed < 1) {
+          return { error: `--budget must be a positive whole number of tokens, not ${raw}` };
+        }
+        budget = parsed;
       } else if (arg.startsWith("-")) {
         return { error: `unknown option: ${arg}` };
       } else if (root === undefined) {
@@ -248,6 +402,17 @@ export function parseArgs(args: readonly string[]): Parsed {
         port,
         host,
         ...(theme === undefined ? {} : { theme }),
+      },
+    };
+  }
+  if (command === "pack") {
+    return {
+      options: {
+        command: "pack",
+        root: dir,
+        ...(topic === undefined ? {} : { topic }),
+        ...(budget === undefined ? {} : { budget }),
+        ...(out === undefined ? {} : { out }),
       },
     };
   }
@@ -300,6 +465,7 @@ function printDiagnostics(
 export async function main(args: readonly string[], io: Io = {}): Promise<number> {
   const log = io.log ?? console.log;
   const error = io.error ?? console.error;
+  const write = io.write ?? ((text: string): void => void process.stdout.write(text));
 
   const parsed = parseArgs(args);
   if ("help" in parsed) {
@@ -329,6 +495,63 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
       return 2;
     }
+  }
+
+  if (options.command === "pack") {
+    try {
+      return await pack(
+        {
+          root: resolve(options.root),
+          ...(options.topic === undefined ? {} : { topic: options.topic }),
+          ...(options.budget === undefined ? {} : { budget: options.budget }),
+          ...(options.out === undefined ? {} : { out: resolve(options.out) }),
+        },
+        { write, error },
+      );
+    } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
+  if (options.command === "edit-apply") {
+    try {
+      const result = await editApply({
+        siteRoot: options.root,
+        patch: options.patch,
+        ...(options.proof === undefined ? {} : { proof: options.proof }),
+        ...(options.dryRun ? { dryRun: true } : {}),
+      });
+      if (result.dryRun) {
+        if (result.diff !== undefined) log(result.diff.replace(/\n$/, ""));
+        log(`${NAME} edit apply: dry run: ${result.file} would change; nothing was written`);
+        return 0;
+      }
+      log(`${NAME} edit apply: wrote ${result.file}`);
+      log(`${NAME} edit apply: proof ${result.proof ?? ""}`);
+      return 0;
+    } catch (err) {
+      if (err instanceof EditApplyError) {
+        error(`${NAME}: ${err.message}`);
+        return err.usage ? 2 : 1;
+      }
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
+  if (options.command === "edit-verify") {
+    const result = await verifyProof({
+      proof: options.proof,
+      siteRoot: options.site,
+      doctor: options.doctor,
+    });
+    if (result.ok) {
+      log(verifyProofMessage(result));
+      return 0;
+    }
+    error(`${NAME}: ${verifyProofMessage(result)}`);
+    return result.failure?.kind === "proof" || result.failure?.kind === "doctor-unavailable" ? 2 : 1;
   }
 
   const root = resolve(options.root);

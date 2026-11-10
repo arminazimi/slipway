@@ -18,6 +18,7 @@ import type { Pager, Trail } from "../contracts/nav.ts";
 import type { Head } from "../contracts/render.ts";
 import { navState } from "../nav/tree.ts";
 import { hreflangLinks } from "../outputs/hreflang.ts";
+import { opensearchLink } from "../outputs/opensearch.ts";
 import { loadRegistry, type ThemeRegistry } from "../render/registry.ts";
 import { renderPage, type ThemeComponent } from "../render/render.ts";
 
@@ -81,13 +82,14 @@ function placeOf(site: Site, page: Page): { trail: Trail; pager: Pager } {
   return { trail: [], pager: {} };
 }
 
-/** The head of a page: its title and, when it has one, its description, and its `hreflang` alternates. */
+/** The head of a page: its title, description, `hreflang` alternates, and the OpenSearch link when the site has a URL. */
 function headOf(site: Site, page: Page): Head {
   const description = page.frontMatter.description;
+  const search = opensearchLink(site);
   return {
     title: page.title,
     meta: typeof description === "string" ? [{ name: "description", content: description }] : [],
-    links: hreflangLinks(site, page),
+    links: [...hreflangLinks(site, page), ...(search === undefined ? [] : [search])],
     jsonLd: [],
   };
 }
