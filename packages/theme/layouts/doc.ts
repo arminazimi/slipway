@@ -14,6 +14,7 @@ import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
 import driftBanner from "../components/drift-banner/index.ts";
 import pageStatus, { type PageStatusProps } from "../components/page-status/index.ts";
+import readingTime from "../components/reading-time/index.ts";
 
 /**
  * True when the body already supplies the page's `h1`, by the same rule as the engine's
@@ -48,6 +49,7 @@ function article(props: LayoutProps): ComponentChildren {
     driftBanner({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     pageStatus({ props: statusProps(page), page, site: props.site, html: "" }) as ComponentChildren,
     titleFromBody(props) ? null : h("h1", null, page.title),
+    readingTime({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,

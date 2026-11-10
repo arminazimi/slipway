@@ -10,6 +10,7 @@ changes.
 | Unit | What it does |
 | --- | --- |
 | `run-node.ts` | Runs one `js`, `mjs`, or `ts` snippet in a child process and returns `{ ok, exitCode, stdout, stderr, durationMs, timedOut }`. |
+| `cache.ts` | Keeps each runner result under a content hash of the code, language, kind, and runtime, so an unchanged example is not run again. |
 | `diagnostic.ts` | Builds the `example-failed` finding, with the fence's source span and a bounded expected-vs-actual window. |
 
 ## `run-node.ts`
@@ -25,6 +26,21 @@ the function throws only for a caller's mistake (an unknown `lang` or a non-posi
 The runner is a **process sandbox, not an OS sandbox**. The example runs as the engine's user with the engine's file
 permissions, so an absolute path, the network, or a process that leaves the group is still reachable. It promises a
 clean start, a bounded run, and cleanup — not isolation from the host.
+
+## `cache.ts`
+
+`exampleCache({ dir?, root?, runtime? })` opens a result cache. The folder is `dir` when given, otherwise
+`<root>/.slipway/examples` (with the working directory as the default root). It is created on the first write, is safe
+to delete, and needs no config key.
+
+`cachedRun(cache, { code, lang, kind }, runner)` looks up the key `exampleCacheKey` makes from the code, language,
+kind, and runtime — by default Node's `process.version` and the engine's version — and runs the example only on a miss.
+A hit reports `durationMs: 0`, because nothing ran. Changing any of those inputs misses the entry.
+
+Each result is one JSON file named after its key. The entry is written to a temporary folder and renamed into place, so
+a reader never sees half an entry and no temporary file is left behind. `durationMs` is removed before writing, so the
+same result always has the same bytes. A missing, unreadable, or corrupt entry is a miss, never a throw: the cache is a
+speed-up, and a build that cannot use it only runs cold.
 
 ## `diagnostic.ts`
 
