@@ -4,18 +4,18 @@ Slipway supports multilingual sites and right-to-left (RTL) text natively. This 
 
 ## 1. Set up a multilingual site
 
-To set up a multilingual site, configure the languages in your `_config.yml`. Under the `slipway.languages` key, list each language your site supports:
+Configure the languages in `mizzen.yml` (or `slipway.yml`). Under the `languages` key, list each language your site supports, with the URL prefix of its pages:
 
 ```yaml
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: فارسی, prefix: "/fa" }
+lang: en
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: فارسی, prefix: "/fa" }
 ```
 
 Organize your content by creating one folder per language that has a prefix (for example, `/fa/` for Persian).
 
-In the front matter of every page and post, set the `lang` field to match its language:
+In the front matter of every page, set the `lang` field to match its language:
 
 ```yaml
 ---
@@ -34,52 +34,33 @@ translation_key: my_page
 ---
 ```
 
-The theme automatically adds a language switcher to the navigation bar. If a translation for the current page exists (matched by `translation_key`), the switcher links directly to it. If the translation is missing, it links to that language's home page instead.
+The theme adds a language switcher to the navigation bar. If a translation for the current page exists (matched by `translation_key`), the switcher links directly to it. If it is missing, the switcher links to that language's home page instead.
 
 ## 2. Set up a right-to-left site
 
-In Slipway, the text direction follows the `lang` automatically (as defined in [ADR 0010](../adr/0010-ui-strings-and-language-urls.md)). If a page has `lang: fa` (Persian), `ar` (Arabic), `he` (Hebrew), or another known RTL language, the theme sets its direction to right-to-left.
+The text direction follows `lang` automatically (as defined in [ADR 0010](../adr/0010-ui-strings-and-language-urls.md)). A page with `lang: fa` (Persian), `ar` (Arabic), `he` (Hebrew), or another known RTL language is right-to-left.
 
-You can override the direction for a specific page or the whole site by setting the `direction` field to `rtl` or `ltr` in the front matter or `_config.yml`:
+Override the direction for a page with `dir` in the front matter, or for the whole site with `dir` in the config:
 
 ```yaml
 ---
 title: "Special Page"
 lang: en
-direction: rtl
+dir: rtl
 ---
 ```
 
-Here is a complete minimal example of a Persian configuration (`_config.yml`), taken from the `persian` example site:
+A minimal Persian site config, as in `fixtures/rtl-site`:
 
 ```yaml
-title: اسلیپ‌وی فارسی
+title: راهنمای بیکن
 lang: fa
-theme: slipway-theme
-plugins:
-  - jekyll-remote-theme
-
-slipway:
-  persian:
-    digits: true
-    jalali: true
-  languages:
-    - { code: fa, name: فارسی, prefix: "" }
+dir: rtl
 ```
 
 ## 3. Translate the UI text
 
-Slipway has built-in UI strings for English (`en`) and Persian (`fa`).
-
-To add a new language, or to override the built-in text, create a YAML file in `_data/i18n/` named after the language code (for example, `_data/i18n/es.yml` for Spanish). Provide translations for the keys the theme uses, such as `search`, `main_nav`, or `next`:
-
-```yaml
-search: Buscar
-main_nav: Menú
-next: Siguiente
-```
-
-If a translation is missing in your YAML file, or if the language is unknown to the theme, the interface falls back to the built-in English strings.
+The theme has built-in UI strings for English (`en`), Persian (`fa`), and Arabic (`ar`), in `packages/theme/i18n/`. A language the theme does not know falls back to the English strings.
 
 ## 4. Write RTL-safe custom CSS
 
@@ -105,7 +86,7 @@ Write this logical rule:
 }
 ```
 
-The theme enforces this convention. Run `npm run check:logical` to find any physical properties in your CSS files; the check will fail if they are present.
+The theme's own CSS follows this convention; hold your stylesheet to the same rule.
 
 If you are styling components, review the available tokens in the [theme's token registry](../../packages/theme/tokens/README.md) rather than repeating colors or spacing manually.
 
@@ -121,39 +102,32 @@ For now, you must add standard HTML attributes manually to keep mixed content re
 
 ## 6. Directional icons
 
-Arrows, chevrons, and "next" icons must flip in RTL; logos, check marks, and media controls must not.
-
-When adding a directional icon in your components, add the `sl-mirror` class to the SVG and include its CSS dynamically:
+Arrows, chevrons, and "next" icons must flip in RTL; logos, check marks, and media controls must not. The theme's `styles/rtl.css` flips the icons it ships; in your own markup, add the `sl-mirror` class to an SVG that must flip:
 
 ```html
-{% include component-css.html name="mirror" %}
 <svg class="sl-mirror" ...>...</svg>
 ```
 
 ## 7. Test a site in both directions
 
-You can build and test an example site locally to verify its direction and language behavior.
-
-Run this command to build the `persian` example site:
+Build the site and inspect the output:
 
 ```bash
-node tools/theme/build.mjs template out_persian persian
+npx slipway build
+npx slipway doctor . --build dist
 ```
 
-*(Note: The command accepts `gem`, `template`, or `remote` mode. Use what works in your environment. See [The two modes](../modes.md) for more details.)*
-
-Open the generated HTML files in `out_persian/` in your browser. Inspect the page source to check two things:
+Open the generated HTML files in `dist/` in your browser. Inspect the page source to check two things:
 1. The `<html>` tag should have `dir="rtl"` (or the appropriate direction).
-2. The language switcher in the header or menu should correctly link to the available languages.
+2. The language switcher in the header or menu should link to the available languages.
 
 ## 8. Checklist
 
 Before launching your multilingual or RTL site, tick off these steps:
 
-- [ ] `slipway.languages` is configured in `_config.yml`.
-- [ ] Every page and post has `lang` defined in its front matter.
+- [ ] `languages` is configured in `mizzen.yml`.
+- [ ] Every page has `lang` defined in its front matter.
 - [ ] Translated pages share the same `translation_key`.
-- [ ] Custom UI text is added in `_data/i18n/<lang>.yml`.
-- [ ] All custom CSS uses logical properties (`npm run check:logical` passes).
+- [ ] All custom CSS uses logical properties.
 - [ ] Mixed-direction content (URLs, English names) is wrapped in `<bdi>` where necessary.
 - [ ] The language switcher routes correctly to translated pages or language home pages.
