@@ -27,8 +27,8 @@ Slipway's speed is enforced, not claimed. Four gates in `npm run check` build th
 
 | Fixture | Stylesheets | Compressed bytes |
 | --- | --- | --- |
-| `docs-site` | 7 | 19,088 |
-| `rtl-site` | 5 | 17,701 |
+| `docs-site` | 7 | 19,118 |
+| `rtl-site` | 5 | 17,731 |
 
 [The CSS gate](https://github.com/arminazimi/slipway/blob/main/tools/css-budget-engine/run.ts) fails a build over the budget.
 
