@@ -135,6 +135,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   "tested-chip": 'class="tested-chip',
   "trust-panel": 'class="trust-panel',
   "version-badge": 'class="version-badge',
+  "version-diff": 'class="version-diff',
   video: 'class="video',
 };
 
