@@ -1,6 +1,7 @@
-// Tests for the deterministic gate (issue #1148): two builds of the same fixture must write the same bytes, both see
-// the fixed SOURCE_DATE_EPOCH, and the first differing file is named. The engine is deterministic, so most tests use a
-// recording builder to stand in for a broken build; one test builds the real `fixtures/docs-site`.
+// Tests for the deterministic gate (issues #1148, #1572): two builds of the same fixture must write the same bytes,
+// both see the fixed SOURCE_DATE_EPOCH, the first differing file is named with its byte offset, and every allowance is
+// printed while a stale one fails. The engine is deterministic, so most tests use a recording builder to stand in for a
+// broken build; one test builds the real `fixtures/docs-site`.
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -8,9 +9,18 @@ import { dirname, join } from "node:path";
 import { test } from "node:test";
 import type { BuildOptions, BuildResult } from "../../packages/engine/src/pipeline/build.ts";
 import { resetFixtureBuilds, type FixtureBuilder, type FixtureName } from "../fixture-build/build.ts";
-import { deterministic, differenceMessage, firstDifference, SOURCE_DATE_EPOCH } from "./run.ts";
+import {
+  allowedMessages,
+  DEFAULT_ALLOW_FILE,
+  deterministic,
+  differenceMessage,
+  firstDifference,
+  parseArguments,
+  SOURCE_DATE_EPOCH,
+  staleMessages,
+} from "./run.ts";
 
-/** A stand-in repository: the fixture, the engine, the theme, and the lockfile the shared helper hashes. */
+/** A stand-in repository: the fixtures, the engine, the theme, and the lockfile the shared helper hashes. */
 function fixtureRoot(t: { after: (fn: () => void) => void }, files: Record<string, string> = {}): string {
   const repo = mkdtempSync(join(tmpdir(), "slipway-deterministic-"));
   t.after(() => {
@@ -61,7 +71,12 @@ test("passes when two builds write the same bytes and both see the fixed epoch",
 
   const result = await deterministic({ root, fixtures: ["docs-site"], workDir: join(root, "work"), build });
 
-  assert.deepEqual(result, { kind: "identical", fixtures: ["docs-site"] });
+  assert.deepEqual(result, {
+    kind: "identical",
+    fixtures: ["docs-site"],
+    allowed: [],
+    stale: [],
+  });
   assert.equal(calls.length, 2, "one build per output folder");
   assert.notEqual(calls[0]!.out, calls[1]!.out, "the two builds write in different folders");
   assert.deepEqual(epochs, [SOURCE_DATE_EPOCH, SOURCE_DATE_EPOCH], "the second build gets the fixed epoch too");
@@ -69,11 +84,11 @@ test("passes when two builds write the same bytes and both see the fixed epoch",
   assert.deepEqual(readdirSync(join(root, "work")), [], "the two scratch folders are removed");
 });
 
-test("fails on a build that depends on its output folder and names the first differing file", async (t) => {
+test("fails on a build whose content differs and names the first file and byte offset", async (t) => {
   const root = fixtureRoot(t);
-  const { build } = writer((options) => ({
-    "about/index.html": `${options.out}\n`,
-    "index.html": `${options.out}\n`,
+  const { build } = writer((_options, call) => ({
+    "about/index.html": call === 1 ? "first\n" : "second\n",
+    "index.html": call === 1 ? "first\n" : "second\n",
   }));
 
   const result = await deterministic({ root, fixtures: ["docs-site"], workDir: join(root, "work"), build });
@@ -81,10 +96,14 @@ test("fails on a build that depends on its output folder and names the first dif
   assert.equal(result.kind, "differs");
   if (result.kind !== "differs") return;
   assert.equal(result.fixture, "docs-site");
-  assert.deepEqual(result.difference, { path: "about/index.html", kind: "changed" }, "the first path, not the first written");
+  assert.deepEqual(
+    result.difference,
+    { path: "about/index.html", kind: "changed", offset: 0 },
+    "the first path, not the first written",
+  );
   assert.equal(
     differenceMessage(result.fixture, result.difference),
-    "deterministic: fixtures/docs-site: about/index.html differs between two builds (first differing file by path).",
+    "deterministic: fixtures/docs-site/about/index.html: differs between two builds at byte offset 0 (zero-based).",
   );
 });
 
@@ -98,7 +117,15 @@ test("names a file that only one build writes", async (t) => {
 
   assert.equal(result.kind, "differs");
   if (result.kind !== "differs") return;
-  assert.deepEqual(result.difference, { path: "extra.txt", kind: "only-in-second" });
+  assert.deepEqual(
+    result.difference,
+    { path: "extra.txt", kind: "only-in-second" },
+    "a file only one build writes has no byte offset",
+  );
+  assert.equal(
+    differenceMessage(result.fixture, result.difference),
+    "deterministic: fixtures/docs-site/extra.txt: is written by the second build only.",
+  );
 });
 
 test("firstDifference compares nested files in path order", async (t) => {
@@ -114,7 +141,7 @@ test("firstDifference compares nested files in path order", async (t) => {
 
   writeFileSync(join(second, "a/b.html"), "different\n");
   writeFileSync(join(second, "z.html"), "different too\n");
-  assert.deepEqual(await firstDifference(first, second), { path: "a/b.html", kind: "changed" });
+  assert.deepEqual(await firstDifference(first, second), { path: "a/b.html", kind: "changed", offset: 0 });
 
   rmSync(join(second, "a/b.html"));
   assert.deepEqual(await firstDifference(first, second), { path: "a/b.html", kind: "only-in-first" });
@@ -122,6 +149,112 @@ test("firstDifference compares nested files in path order", async (t) => {
   writeFileSync(join(second, "a/b.html"), "same\n");
   writeFileSync(join(second, "new.txt"), "new\n");
   assert.deepEqual(await firstDifference(first, second), { path: "new.txt", kind: "only-in-second" });
+});
+
+test("firstDifference reports the zero-based byte offset of the first differing byte", async (t) => {
+  const root = fixtureRoot(t);
+  const first = join(root, "first");
+  const second = join(root, "second");
+  mkdirSync(first);
+  mkdirSync(second);
+  writeFileSync(join(first, "index.html"), "abcdef\n");
+  writeFileSync(join(second, "index.html"), "abcXef\n");
+  assert.deepEqual(await firstDifference(first, second), { path: "index.html", kind: "changed", offset: 3 });
+
+  writeFileSync(join(second, "index.html"), "abc");
+  assert.deepEqual(
+    await firstDifference(first, second),
+    { path: "index.html", kind: "changed", offset: 3 },
+    "a prefix differs at the shorter length",
+  );
+
+  rmSync(join(first, "index.html"));
+  rmSync(join(second, "index.html"));
+  writeFileSync(join(first, "utf8.html"), "é\n");
+  writeFileSync(join(second, "utf8.html"), "è\n");
+  assert.deepEqual(
+    await firstDifference(first, second),
+    { path: "utf8.html", kind: "changed", offset: 1 },
+    "the offset counts bytes, not characters",
+  );
+});
+
+test("a difference an allow entry covers is printed, never silently ignored", async (t) => {
+  const root = fixtureRoot(t, {
+    [DEFAULT_ALLOW_FILE]: "# a known gap\n\nfixtures/docs-site/index.html\n",
+  });
+  const { build } = writer((_options, call) => ({ "index.html": call === 1 ? "one\n" : "two\n" }));
+
+  const result = await deterministic({ root, fixtures: ["docs-site"], workDir: join(root, "work"), build });
+
+  assert.equal(result.kind, "identical");
+  assert.equal(result.allowFile, DEFAULT_ALLOW_FILE);
+  assert.deepEqual(result.allowed, [
+    { fixture: "docs-site", difference: { path: "index.html", kind: "changed", offset: 0 } },
+  ]);
+  assert.deepEqual(result.stale, [], "an entry that matched is not stale");
+
+  const lines = allowedMessages(result.allowed, result.allowFile);
+  assert.deepEqual(lines, [
+    `deterministic: allowed by ${DEFAULT_ALLOW_FILE}: fixtures/docs-site/index.html ` +
+      "differs between two builds at byte offset 0 (zero-based).",
+  ]);
+});
+
+test("an allow entry that matches no difference is reported as stale", async (t) => {
+  const root = fixtureRoot(t, {
+    [DEFAULT_ALLOW_FILE]: [
+      "# no longer true",
+      "fixtures/docs-site/gone.html",
+      "fixtures/rtl-site/gone.html",
+      "",
+    ].join("\n"),
+  });
+  const { build } = writer(() => ({ "index.html": "same\n" }));
+
+  const result = await deterministic({ root, fixtures: ["docs-site"], workDir: join(root, "work"), build });
+
+  assert.equal(result.kind, "stale");
+  assert.deepEqual(
+    result.stale,
+    ["fixtures/docs-site/gone.html"],
+    "an entry for a fixture this run did not check is not called stale",
+  );
+  assert.deepEqual(result.allowed, []);
+  assert.deepEqual(staleMessages(result.stale, result.allowFile), [
+    `deterministic: stale allow entry in ${DEFAULT_ALLOW_FILE}: fixtures/docs-site/gone.html matches no difference; remove it.`,
+  ]);
+});
+
+test("an explicitly named allow file must exist", async (t) => {
+  const root = fixtureRoot(t);
+  await assert.rejects(
+    deterministic({
+      root,
+      fixtures: ["docs-site"],
+      workDir: join(root, "work"),
+      allowFile: "missing-allow.txt",
+    }),
+    /allow file not found/,
+  );
+});
+
+test("the command line reads --allow <file> and --allow=<file>", () => {
+  assert.deepEqual(parseArguments([]), { kind: "run", fixtures: ["docs-site", "rtl-site"] });
+  assert.deepEqual(parseArguments(["--allow", "list.txt", "docs-site"]), {
+    kind: "run",
+    fixtures: ["docs-site"],
+    allowFile: "list.txt",
+  });
+  assert.deepEqual(parseArguments(["--allow=list.txt"]), {
+    kind: "run",
+    fixtures: ["docs-site", "rtl-site"],
+    allowFile: "list.txt",
+  });
+  assert.equal(parseArguments(["--allow"]).kind, "error");
+  assert.equal(parseArguments(["--allow", "--help"]).kind, "error");
+  assert.equal(parseArguments(["--allow=a.txt", "--allow=b.txt"]).kind, "error");
+  assert.equal(parseArguments(["--unknown"]).kind, "error");
 });
 
 test("rejects a fixture the shared helper does not know", async () => {
@@ -137,5 +270,8 @@ test("passes on fixtures/docs-site", async (t) => {
   t.after(() => rmSync(work, { recursive: true, force: true }));
 
   const result = await deterministic({ fixtures: ["docs-site"], workDir: work });
-  assert.deepEqual(result, { kind: "identical", fixtures: ["docs-site"] });
+  assert.equal(result.kind, "identical");
+  assert.deepEqual(result.fixtures, ["docs-site"]);
+  assert.deepEqual(result.allowed, []);
+  assert.deepEqual(result.stale, []);
 });

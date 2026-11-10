@@ -57,10 +57,10 @@ test("allows the engine's own name and flags Lateen everywhere, README.md and pa
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
-test("does not flag words that merely contain a deny-listed name", () => {
+test("does not flag words that merely contain a deny-listed name, or names the engine uses itself", () => {
   const dir = copy();
   try {
-    writeFileSync(join(dir, "src/ok.ts"), 'export const northern = 1;\nexport const landings = 2;\n');
+    writeFileSync(join(dir, "src/ok.ts"), 'export const northern = 1;\nexport const landings = 2;\nexport const api = "API";\n');
     assert.deepEqual(scan(dir), []);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
