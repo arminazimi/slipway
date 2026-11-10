@@ -31,8 +31,8 @@ function walk(dir, out = []) {
   return out.sort();
 }
 
-/** Layout folder names that are ordinary words the engine uses itself (`base` is a config key, `doc` is the engine's PageKind and the layout its own tests default to, `home` names the home page), so they are not deny-listed. */
-const GENERIC_LAYOUTS = new Set(["base", "doc", "home"]);
+/** Layout folder names that are ordinary words the engine uses itself (`base` is a config key, `doc` is the engine's PageKind and the layout its own tests default to, `home` names the home page, `changelog` names the engine's changelog-feed output and its content, `api` is the subject of the engine's own reference docs, `versions` names the engine's own version discovery), so they are not deny-listed. */
+const GENERIC_LAYOUTS = new Set(["api", "base", "changelog", "doc", "home", "versions"]);
 
 export function layoutNames(repo = root) {
   const dir = join(repo, "packages/theme/layouts");

@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, `mizzen dev`, and `mizzen verify`: build a site, report diagnostics, serve it while developing, or check a build (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit verify`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, check an edit proof against the site, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -9,7 +9,9 @@ import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
 import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
+import { verifyProof, verifyProofMessage } from "./edit-verify.ts";
 import { verify, verifyMessage } from "./verify.ts";
+import { DEFAULT_WATCH_OUT, watch as watchSite } from "./watch.ts";
 
 /** The command name on the PATH (ADR 0025). */
 export const NAME = "mizzen";
@@ -26,16 +28,20 @@ const SIBLING_THEME = fileURLToPath(new URL("../../../theme", import.meta.url));
 export const usage = `Usage: ${NAME} <command> [dir] [options]
 
 Commands:
-  build [dir]   Build the site into --out (default: dist)
-  check [dir]   Build to a temp folder and print diagnostics only
-  dev [dir]     Serve the site, rebuild on change, and reload the browser
-  verify [dir]  Check a built folder against the hash in its manifest
+  build [dir]               Build the site into --out (default: dist)
+  check [dir]               Build to a temp folder and print diagnostics only
+  dev [dir]                 Serve the site, rebuild on change, and reload the browser
+  edit verify <proof.json>  Check an edit proof against the site and rerun the doctor
+  verify [dir]              Check a built folder against the hash in its manifest
+  watch [dir]               Rebuild the site whenever a source or theme file changes
 
 Options:
-  --out <dir>          Output folder for build (default: dist) or dev (default: .slipway/dev)
+  --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --site <dir>         Site root for edit verify (default: .)
+  --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
   -h, --help           Show this help
@@ -76,10 +82,24 @@ type VerifyOpts = {
   readonly hash?: string;
 };
 
+type EditVerifyOpts = {
+  readonly command: "edit-verify";
+  readonly proof: string;
+  readonly site: string;
+  readonly doctor: boolean;
+};
+
+type WatchOpts = {
+  readonly command: "watch";
+  readonly root: string;
+  readonly out?: string;
+  readonly theme?: string;
+};
+
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts | DevOpts | VerifyOpts };
+  | { readonly options: BuildOpts | CheckOpts | DevOpts | EditVerifyOpts | VerifyOpts | WatchOpts };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -130,13 +150,46 @@ export async function resolveThemeRoot(siteRoot: string, themeFlag: string | und
   return undefined;
 }
 
+/** Parses `edit verify <proof.json> [--site <dir>] [--doctor]`; `edit` has one subcommand for now. */
+function parseEdit(args: readonly string[]): Parsed {
+  const [subcommand, ...rest] = args;
+  if (subcommand === "-h" || subcommand === "--help" || subcommand === "help") return { help: true };
+  if (subcommand === undefined) return { error: "edit needs a subcommand: verify" };
+  if (subcommand !== "verify") return { error: `unknown command: edit ${subcommand}` };
+
+  let proof: string | undefined;
+  let site = ".";
+  let doctor = false;
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i]!;
+    const value = (): string => {
+      const next = rest[++i];
+      if (next === undefined || next.startsWith("-")) throw new Error(`${arg} needs a value`);
+      return next;
+    };
+    try {
+      if (arg === "-h" || arg === "--help") return { help: true };
+      if (arg === "--site") site = value();
+      else if (arg === "--doctor") doctor = true;
+      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
+      else if (proof === undefined) proof = arg;
+      else return { error: `unexpected argument: ${arg}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+  if (proof === undefined) return { error: `edit verify needs a proof file: ${NAME} edit verify <proof.json>` };
+  return { options: { command: "edit-verify", proof, site, doctor } };
+}
+
 /** Parses `argv` after the process name. */
 export function parseArgs(args: readonly string[]): Parsed {
   const [command, ...rest] = args;
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify") {
+  if (command === "edit") return parseEdit(rest);
+  if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify" && command !== "watch") {
     return { error: `unknown command: ${command}` };
   }
 
@@ -158,10 +211,12 @@ export function parseArgs(args: readonly string[]): Parsed {
     try {
       if (arg === "-h" || arg === "--help") return { help: true };
       if (arg === "--out") {
-        if (command !== "build" && command !== "dev") return { error: "--out is only valid for build and dev" };
+        if (command !== "build" && command !== "dev" && command !== "watch") {
+          return { error: "--out is only valid for build, dev, and watch" };
+        }
         out = value();
       } else if (arg === "--theme") {
-        if (command === "verify") return { error: "--theme is only valid for build, check, and dev" };
+        if (command === "verify") return { error: "--theme is only valid for build, check, dev, and watch" };
         theme = value();
       } else if (arg === "--format") {
         if (command !== "check") return { error: "--format is only valid for check" };
@@ -232,6 +287,16 @@ export function parseArgs(args: readonly string[]): Parsed {
       },
     };
   }
+  if (command === "watch") {
+    return {
+      options: {
+        command: "watch",
+        root: dir,
+        ...(out === undefined ? {} : { out }),
+        ...(theme === undefined ? {} : { theme }),
+      },
+    };
+  }
   return {
     options: {
       command: "check",
@@ -292,6 +357,20 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
     }
   }
 
+  if (options.command === "edit-verify") {
+    const result = await verifyProof({
+      proof: options.proof,
+      siteRoot: options.site,
+      doctor: options.doctor,
+    });
+    if (result.ok) {
+      log(verifyProofMessage(result));
+      return 0;
+    }
+    error(`${NAME}: ${verifyProofMessage(result)}`);
+    return result.failure?.kind === "proof" || result.failure?.kind === "doctor-unavailable" ? 2 : 1;
+  }
+
   const root = resolve(options.root);
   const themeRoot = await resolveThemeRoot(root, options.theme);
   if (themeRoot === undefined) {
@@ -322,6 +401,38 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       process.once("SIGTERM", stop);
       try {
         await server.closed;
+      } finally {
+        process.off("SIGINT", stop);
+        process.off("SIGTERM", stop);
+      }
+      return 0;
+    } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
+  if (options.command === "watch") {
+    // A default --out stays inside the site (and hidden, so discovery skips it); an explicit one is from the cwd.
+    const out = options.out === undefined ? join(root, DEFAULT_WATCH_OUT) : resolve(options.out);
+    try {
+      const watcher = await watchSite({
+        root,
+        out,
+        themeRoot,
+        defaultLayout: DEFAULT_LAYOUT,
+        cache: true,
+        log,
+      });
+      log(`mizzen watch: watching ${root} and ${themeRoot}; press Ctrl-C to stop`);
+      // SIGINT is process-level; stopping twice is safe, so a second signal while a build is in flight still exits.
+      const stop = (): void => {
+        void watcher.stop();
+      };
+      process.once("SIGINT", stop);
+      process.once("SIGTERM", stop);
+      try {
+        await watcher.closed;
       } finally {
         process.off("SIGINT", stop);
         process.off("SIGTERM", stop);

@@ -26,16 +26,20 @@ The package installs one command, `mizzen`, from `bin/slipway.ts`. Its help is t
 Usage: mizzen <command> [dir] [options]
 
 Commands:
-  build [dir]   Build the site into --out (default: dist)
-  check [dir]   Build to a temp folder and print diagnostics only
-  dev [dir]     Serve the site, rebuild on change, and reload the browser
-  verify [dir]  Check a built folder against the hash in its manifest
+  build [dir]               Build the site into --out (default: dist)
+  check [dir]               Build to a temp folder and print diagnostics only
+  dev [dir]                 Serve the site, rebuild on change, and reload the browser
+  edit verify <proof.json>  Check an edit proof against the site and rerun the doctor
+  verify [dir]              Check a built folder against the hash in its manifest
+  watch [dir]               Rebuild the site whenever a source or theme file changes
 
 Options:
-  --out <dir>          Output folder for build (default: dist) or dev (default: .slipway/dev)
+  --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --site <dir>         Site root for edit verify (default: .)
+  --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
   -h, --help           Show this help
@@ -50,9 +54,11 @@ From this repository, run it as `node packages/engine/bin/slipway.ts`; from a si
 | `mizzen build [dir] --out <dir> --theme <dir>` | Builds `dir` (default `.`) into `--out` (default `dist`). Prints diagnostics as text. A build with an error still writes the site and exits `1`. |
 | `mizzen check [dir] --format text\|json\|sarif --theme <dir>` | Builds into a temporary folder, prints only the diagnostics in the chosen format, and removes the folder. Exits `1` on an error. |
 | `mizzen dev [dir] --port <number> --host <host> --theme <dir>` | Builds `dir`, serves the output with pretty URLs, watches the source and theme, rebuilds on change, and reloads the browser over Server-Sent Events. The reload script is added to HTML responses only; the files on disk stay as `build` wrote them. Ctrl-C stops the server. |
+| `mizzen edit verify <proof.json> --site <dir> --doctor` | Re-hashes every file the edit's proof record names, under `--site` (default `.`), and compares each with its after-edit hash. The first mismatch is named, and the command exits `1`; a proof that cannot be read exits `2`. With `--doctor` it also runs `slipway doctor --format json` and compares the level with the recorded one; without it, the hashes are checked and the command says the doctor check did not run. |
 | `mizzen verify [dir] --hash <hex>` | Hashes a built folder by the same rule the build used and compares it with `.slipway/manifest.json` (or `--hash`). Exits `1` on a mismatch. |
+| `mizzen watch [dir] --out <dir> --theme <dir>` | Builds `dir` once, then rebuilds whenever a source or theme file changes. Changes are debounced and builds run one at a time, in order; an unchanged build is restored from `.slipway/cache`. Ctrl-C stops the watcher. |
 
-`--out` is resolved from the current working directory, not from the site root, for `build` and `dev`; `dev`'s default is `<site>/.slipway/dev`. `check` is the command to use in CI: it never touches `dist`.
+`--out` is resolved from the current working directory, not from the site root, for `build`, `dev`, and `watch`; `dev`'s default is `<site>/.slipway/dev` and `watch`'s is `<site>/.slipway/watch`. `check` is the command to use in CI: it never touches `dist`.
 
 The theme root is picked in this order:
 
@@ -162,10 +168,13 @@ Each `*.ts` file in an outputs folder is one unit. The pipeline finds them by li
 | Name | Writes |
 | --- | --- |
 | `agents-md` | `AGENTS.md`, a guide to the built site for agents. |
+| `context-pack` | `pack/<topic>.md` for each topic in `_data/context-packs.yml`: the best pages for the topic, trimmed to its token budget, with each page's URL and source path. |
 | `html` | One HTML file per document page, at the page's pretty URL. |
 | `llms` | `llms.txt`, following llmstxt.org. |
 | `llms-full` | `llms-full.txt`, every page's Markdown in one file. |
 | `manifest` | `.slipway/manifest.json`, the page list and per-page source and HTML hashes. |
+| `opensearch` | `opensearch.xml`, the site's search as an OpenSearch provider, when the config has `url`. |
+| `page-agent` | One JSON file per document page with an `agent:` block (`agent.json` for a pretty URL): URL, source, and the page's instructions. |
 | `page-json` | One JSON file per document page (`index.json` for a pretty URL): URL, title, description, headings, source, last change, and estimated tokens. |
 | `robots` | `robots.txt`, with the sitemap address when the config has `url`. |
 | `search` | `pagefind/`, a static search index. |
