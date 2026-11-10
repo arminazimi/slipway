@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit apply`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, apply an agent patch, check a build, or rebuild on change (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit apply`, `mizzen edit verify`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, apply an agent patch, check an edit proof, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -10,6 +10,7 @@ import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
 import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
 import { editApply, EditApplyError } from "./edit-apply.ts";
+import { verifyProof, verifyProofMessage } from "./edit-verify.ts";
 import { verify, verifyMessage } from "./verify.ts";
 import { DEFAULT_WATCH_OUT, watch as watchSite } from "./watch.ts";
 
@@ -28,19 +29,22 @@ const SIBLING_THEME = fileURLToPath(new URL("../../../theme", import.meta.url));
 export const usage = `Usage: ${NAME} <command> [dir] [options]
 
 Commands:
-  build [dir]   Build the site into --out (default: dist)
-  check [dir]   Build to a temp folder and print diagnostics only
-  dev [dir]     Serve the site, rebuild on change, and reload the browser
+  build [dir]               Build the site into --out (default: dist)
+  check [dir]               Build to a temp folder and print diagnostics only
+  dev [dir]                 Serve the site, rebuild on change, and reload the browser
   edit apply <patch.json> [dir]
-                Apply a span patch to its source file and record a proof
-  verify [dir]  Check a built folder against the hash in its manifest
-  watch [dir]   Rebuild the site whenever a source or theme file changes
+                            Apply a span patch to its source file and record a proof
+  edit verify <proof.json>  Check an edit proof against the site and rerun the doctor
+  verify [dir]              Check a built folder against the hash in its manifest
+  watch [dir]               Rebuild the site whenever a source or theme file changes
 
 Options:
   --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
+  --site <dir>         Site root for edit verify (default: .)
+  --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
   --dry-run            Print the diff for edit apply without writing
@@ -83,6 +87,13 @@ type VerifyOpts = {
   readonly hash?: string;
 };
 
+type EditVerifyOpts = {
+  readonly command: "edit-verify";
+  readonly proof: string;
+  readonly site: string;
+  readonly doctor: boolean;
+};
+
 type WatchOpts = {
   readonly command: "watch";
   readonly root: string;
@@ -102,7 +113,14 @@ type Parsed =
   | { readonly help: true }
   | { readonly error: string }
   | {
-      readonly options: BuildOpts | CheckOpts | DevOpts | EditApplyOpts | VerifyOpts | WatchOpts;
+      readonly options:
+        | BuildOpts
+        | CheckOpts
+        | DevOpts
+        | EditApplyOpts
+        | EditVerifyOpts
+        | VerifyOpts
+        | WatchOpts;
     };
 
 async function exists(path: string): Promise<boolean> {
@@ -155,12 +173,12 @@ export async function resolveThemeRoot(siteRoot: string, themeFlag: string | und
 }
 
 /**
- * Parses the rest of `mizzen edit ...`. `apply` is the only subcommand; a two-word command keeps
- * room for the others an agent workflow needs without changing the shape of every option.
+ * Parses `mizzen edit apply ...`. A two-word command keeps room for the other subcommands an
+ * agent workflow needs without changing the shape of every option.
  */
 function parseEditApply(args: readonly string[]): Parsed {
   const [subcommand, ...rest] = args;
-  if (subcommand === undefined) return { error: "edit needs a subcommand: apply" };
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
   if (subcommand === "-h" || subcommand === "--help") return { help: true };
   if (subcommand !== "apply") return { error: `unknown edit subcommand: ${subcommand}` };
 
@@ -168,7 +186,6 @@ function parseEditApply(args: readonly string[]): Parsed {
   let root: string | undefined;
   let proof: string | undefined;
   let dryRun = false;
-
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i]!;
     const value = (): string => {
@@ -201,13 +218,50 @@ function parseEditApply(args: readonly string[]): Parsed {
   };
 }
 
+/** Parses `edit verify <proof.json> [--site <dir>] [--doctor]`. */
+function parseEditVerify(args: readonly string[]): Parsed {
+  const [subcommand, ...rest] = args;
+  if (subcommand === "-h" || subcommand === "--help" || subcommand === "help") return { help: true };
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
+  if (subcommand !== "verify") return { error: `unknown command: edit ${subcommand}` };
+
+  let proof: string | undefined;
+  let site = ".";
+  let doctor = false;
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i]!;
+    const value = (): string => {
+      const next = rest[++i];
+      if (next === undefined || next.startsWith("-")) throw new Error(`${arg} needs a value`);
+      return next;
+    };
+    try {
+      if (arg === "-h" || arg === "--help") return { help: true };
+      if (arg === "--site") site = value();
+      else if (arg === "--doctor") doctor = true;
+      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
+      else if (proof === undefined) proof = arg;
+      else return { error: `unexpected argument: ${arg}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+
+  if (proof === undefined) return { error: `edit verify needs a proof file: ${NAME} edit verify <proof.json>` };
+  return { options: { command: "edit-verify", proof, site, doctor } };
+}
+
 /** Parses `argv` after the process name. */
 export function parseArgs(args: readonly string[]): Parsed {
   const [command, ...rest] = args;
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command === "edit") return parseEditApply(rest);
+  if (command === "edit") {
+    const subcommand = rest[0];
+    if (subcommand === "verify") return parseEditVerify(rest);
+    return parseEditApply(rest);
+  }
   if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify" && command !== "watch") {
     return { error: `unknown command: ${command}` };
   }
@@ -400,6 +454,20 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
       return 2;
     }
+  }
+
+  if (options.command === "edit-verify") {
+    const result = await verifyProof({
+      proof: options.proof,
+      siteRoot: options.site,
+      doctor: options.doctor,
+    });
+    if (result.ok) {
+      log(verifyProofMessage(result));
+      return 0;
+    }
+    error(`${NAME}: ${verifyProofMessage(result)}`);
+    return result.failure?.kind === "proof" || result.failure?.kind === "doctor-unavailable" ? 2 : 1;
   }
 
   const root = resolve(options.root);
