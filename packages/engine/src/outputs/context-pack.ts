@@ -56,8 +56,8 @@ const KEBAB_DATA_KEY = "context-packs";
 /** The token budget a topic gets when it names none. */
 export const DEFAULT_BUDGET = 6000;
 
-/** One topic after its value has been read and validated. */
-interface TopicConfig {
+/** One topic after its value has been read and validated. The CLI's `pack` command reads the same shape. */
+export interface PackTopic {
   /** The display name, collapsed to one line. */
   readonly topic: string;
   /** The trimmed token budget of the whole pack. */
@@ -172,7 +172,7 @@ function matchesReference(page: Page, reference: string, base: string): boolean 
 }
 
 /** Reads `topic`, `budget`, `query`, and `pages` from one entry, reporting what it cannot use. */
-function readTopic(entry: unknown, position: number, ctx: OutputContext): TopicConfig | undefined {
+export function readPackTopic(entry: unknown, position: number, ctx: OutputContext): PackTopic | undefined {
   if (!isMapping(entry)) {
     ctx.report({
       id: "context-pack.invalid-topic",
@@ -227,8 +227,8 @@ function readTopic(entry: unknown, position: number, ctx: OutputContext): TopicC
   return { topic, budget, query, pages };
 }
 
-/** The topic list from `site.data`, or `undefined` when the key is absent. */
-function topicsOf(site: Site, ctx: OutputContext): readonly unknown[] | undefined {
+/** The topic list from `site.data`, or `undefined` when the key is absent or unusable. */
+export function readPackTopics(site: Site, ctx: OutputContext): readonly unknown[] | undefined {
   const raw = site.data[DATA_KEY] !== undefined ? site.data[DATA_KEY] : site.data[KEBAB_DATA_KEY];
   if (raw === undefined || raw === null) return undefined;
   if (!Array.isArray(raw)) {
@@ -244,7 +244,7 @@ function topicsOf(site: Site, ctx: OutputContext): readonly unknown[] | undefine
 }
 
 /** The candidates for a topic, in ranking order. */
-function candidatesOf(site: Site, topic: TopicConfig): readonly Page[] {
+function candidatesOf(site: Site, topic: PackTopic): readonly Page[] {
   const docs = site.pages.filter((page) => page.kind === "doc");
   const ranked = rankPages(docs, topic.query, { base: site.config.base });
   const named = topic.pages;
@@ -265,7 +265,7 @@ async function mandatoryTokensOf(pages: readonly Page[]): Promise<ReadonlyMap<st
 }
 
 /** A topic with no pages is reported, not written. */
-function noPagesDiagnostic(topic: TopicConfig): Diagnostic {
+function noPagesDiagnostic(topic: PackTopic): Diagnostic {
   return {
     id: "context-pack.no-pages",
     severity: "warning",
@@ -278,13 +278,15 @@ function noPagesDiagnostic(topic: TopicConfig): Diagnostic {
 }
 
 /** One topic's finished pack. */
-interface BuiltPack {
+export interface PackContents {
+  /** The topic's file name, without `.md`. */
   readonly slug: string;
+  /** The pack's Markdown. */
   readonly contents: string;
 }
 
 /** Builds one pack, or `undefined` when the topic has no pages. */
-async function buildPack(site: Site, topic: TopicConfig, ctx: OutputContext): Promise<BuiltPack | undefined> {
+export async function buildPack(site: Site, topic: PackTopic, ctx: OutputContext): Promise<PackContents | undefined> {
   const candidates = candidatesOf(site, topic);
   if (candidates.length === 0) {
     ctx.report(noPagesDiagnostic(topic));
@@ -361,13 +363,13 @@ async function buildPack(site: Site, topic: TopicConfig, ctx: OutputContext): Pr
 export const contextPack: Output = {
   name: "context-pack",
   async run(site: Site, ctx: OutputContext): Promise<readonly OutputFile[]> {
-    const raw = topicsOf(site, ctx);
+    const raw = readPackTopics(site, ctx);
     if (raw === undefined) return [];
 
     const used = new Set<string>();
     const files: OutputFile[] = [];
     for (let index = 0; index < raw.length; index += 1) {
-      const topic = readTopic(raw[index], index + 1, ctx);
+      const topic = readPackTopic(raw[index], index + 1, ctx);
       if (topic === undefined) continue;
       const pack = await buildPack(site, topic, ctx);
       if (pack === undefined) continue;
