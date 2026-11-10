@@ -55,6 +55,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
+| [Tested chip](./tested-chip/) | The pass or fail result of a page's examples, next to a code block. |
 | [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 | [Video](./video/) | A click-to-load video with a poster and a link that works without JavaScript. |
 
