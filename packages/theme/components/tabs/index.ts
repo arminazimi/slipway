@@ -48,8 +48,14 @@ function decodeEntity(match: string, hex: string | undefined, decimal: string | 
 
 /** A heading's inner HTML as plain text: tags removed and character references decoded. */
 export function labelOf(html: string): string {
-  return html
-    .replace(TAG, "")
+  let text = html;
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(TAG, "");
+  } while (text !== previous);
+
+  return text
     .replace(ENTITY, decodeEntity)
     .replace(/\s+/g, " ")
     .trim();
