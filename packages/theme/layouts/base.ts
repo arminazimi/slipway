@@ -3,6 +3,7 @@ import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
 import announcement from "../chrome/announcement/index.ts";
 import footnotePopover from "../chrome/footnote-popover/index.ts";
+import siteFooter from "../chrome/site-footer/index.ts";
 import shortcuts from "../chrome/shortcuts/index.ts";
 import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
 
@@ -31,7 +32,7 @@ export interface BaseSlots {
   readonly main?: ComponentChildren;
   /** Aside beside the main column, such as the table of contents. */
   readonly aside?: ComponentChildren;
-  /** Site footer. */
+  /** Site footer; the theme's own footer (from the `footer` theme options) when none is given. */
   readonly footer?: ComponentChildren;
 }
 
@@ -74,6 +75,7 @@ function headNodes(head: Head) {
  */
 export default function base(props: BaseProps) {
   const { page, head, islands, header, sidebar, main, aside, footer } = props;
+  const footerNode = footer ?? (siteFooter(props) as ComponentChildren);
   return h(
     "html",
     { lang: page.lang, dir: page.dir, "data-theme": "dark" },
@@ -98,7 +100,7 @@ export default function base(props: BaseProps) {
         aside == null ? null : h("aside", { class: "aside", "aria-label": "On this page" }, aside),
       ),
       footnotePopover(props) as ComponentChildren,
-      footer == null ? null : h("footer", null, footer),
+      footerNode == null ? null : h("footer", null, footerNode),
       shortcuts(props) as ComponentChildren,
       ...islands.map((island) => h("script", { type: "module", src: island.src })),
     ),

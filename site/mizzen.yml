@@ -7,6 +7,20 @@ description: An editorial, RTL-ready, agent-native site template, verified by Se
 lang: en
 url: https://arminazimi.github.io
 base: /slipway
+repository:
+  url: https://github.com/arminazimi/slipway
+theme:
+  options:
+    footer:
+      copyright: "© Slipway contributors"
+      license: "Released under the MIT license."
+      links:
+        - title: GitHub
+          url: https://github.com/arminazimi/slipway
+        - title: Install
+          url: /install/
+        - title: Accessibility
+          url: /accessibility/
 # Pages removed from the docs site; their old addresses lead to the home page.
 redirects:
   "/audio/": "/"
