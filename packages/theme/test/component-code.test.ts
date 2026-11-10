@@ -43,6 +43,14 @@ test("loads the default grammars with the module, and others only when asked", a
 
 test("sourceText decodes numeric entities as well as named ones", () => {
   assert.equal(sourceText("Record&#x3C;string, string&#62; &amp; x"), "Record<string, string> & x");
+  assert.equal(sourceText("a&#x110000;b&#99999999;c"), "a&#x110000;b&#99999999;c");
+});
+
+test("sourceText drops tags until none is left, and its text is escaped again when highlighted", () => {
+  assert.equal(sourceText('<span class="line"><span>a</span> <span>b</span></span>'), "a b");
+  assert.doesNotMatch(sourceText("<scr<b>ipt>alert(1)</scr</b>ipt>"), /<[^>]*>/);
+  const out = highlightFences("<pre><code>&lt;script&gt;alert(1)&lt;/script&gt;\n</code></pre>");
+  assert.doesNotMatch(out, /<script/);
 });
 
 test("highlightFences highlights a plain fence, keeps data-src, and leaves mermaid alone", () => {

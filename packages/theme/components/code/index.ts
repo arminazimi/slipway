@@ -102,13 +102,29 @@ await loadGrammars(DEFAULT_LANGUAGES);
 
 const ENTITIES: Record<string, string> = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
 
-/** The code text inside a rendered body: tags dropped, entities decoded (named, decimal, and hexadecimal). */
+const TAG = /<[^>]*>/g;
+
+/** `html` with every tag dropped. It repeats until nothing is left to drop, so removing one tag cannot join the pieces of another. */
+function stripTags(html: string): string {
+  let text = html;
+  for (;;) {
+    const next = text.replace(TAG, "");
+    if (next === text) return text;
+    text = next;
+  }
+}
+
+/**
+ * The code text inside a rendered body: tags dropped, entities decoded (named, decimal, and hexadecimal).
+ * The result is plain text, not HTML: it may hold `<` again after decoding, and every caller hands it to the
+ * highlighter, which escapes it. A number that is no code point is left as written.
+ */
 export function sourceText(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, "")
+  return stripTags(html)
     .replace(/&(?:(amp|lt|gt|quot|apos)|#x([0-9a-f]+)|#(\d+));/gi, (m, name?: string, hex?: string, dec?: string) => {
       if (name) return ENTITIES[name.toLowerCase()] ?? m;
-      return String.fromCodePoint(hex ? parseInt(hex, 16) : Number(dec));
+      const point = hex ? parseInt(hex, 16) : Number(dec);
+      return point <= 0x10ffff ? String.fromCodePoint(point) : m;
     })
     .replace(/\n$/, "");
 }
