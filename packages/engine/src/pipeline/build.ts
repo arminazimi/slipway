@@ -6,6 +6,7 @@ import { discover } from "../content/discover.ts";
 import type { Diagnostic, Output, OutputContext, OutputFile, Page } from "../contracts/index.ts";
 import { buildModel } from "../model/build.ts";
 import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
+import { createCssBundler, type CssBundle } from "../render/css.ts";
 import { loadRegistry } from "../render/registry.ts";
 import { copyAssets } from "./assets.ts";
 import { cacheKey, cacheRootOf, restoreCache, writeCache } from "./cache.ts";
@@ -236,10 +237,32 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   const registry = await loadRegistry(themeRoot);
   for (const d of registry.diagnostics) diagnostics.report(d);
 
-  const renderOne = (page: Page): string => {
+  // Shared CSS, in cascade order: the theme's `styles/`, then every chrome part's `style.css`. A page adds its layout's
+  // and its components' CSS. Bundles are collected here and written with the site.
+  const bundler = createCssBundler({
+    themeRoot,
+    base: [
+      ...registry.styles,
+      ...Object.values(registry.chrome).flatMap((unit) => (unit.css === undefined ? [] : [unit.css])),
+    ],
+    urlBase: site.config.base,
+  });
+  const bundles = new Map<string, CssBundle>();
+
+  /** Links the page's stylesheets just before `</head>`; the render stage is synchronous, so this happens after it. */
+  const withCss = async (rendered: { html: string; css: readonly string[] }): Promise<string> => {
+    const { base, page } = await bundler.page(rendered.css);
+    const used = [base, page].filter((b): b is CssBundle => b !== undefined && b.css !== "");
+    for (const b of used) bundles.set(b.path, b);
+    if (used.length === 0) return rendered.html;
+    const links = used.map((b) => `<link rel="stylesheet" href="${site.config.base}/${b.path}">`).join("");
+    return rendered.html.replace(/<\/head>/i, () => `${links}</head>`);
+  };
+
+  const renderOne = async (page: Page): Promise<string> => {
     const rendered = renderOnePage(registry, site, page, options.defaultLayout);
     for (const d of rendered.diagnostics) diagnostics.report(d);
-    return rendered.html;
+    return withCss(rendered);
   };
 
   const files = await discover(sourceDir, { include: site.config.include, exclude: site.config.exclude });
@@ -265,7 +288,7 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     if (pool === undefined) return renderOne(page);
     const rendered = await pool.render(page);
     for (const d of rendered.diagnostics) diagnostics.report(d);
-    return rendered.html;
+    return withCss(rendered);
   };
 
   const ctx: OutputContext = {
@@ -310,10 +333,18 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
       out: staging,
       files,
       themeRoot,
-      themeFiles: options.themeFiles ?? [],
+      themeFiles: [...new Set([...(options.themeFiles ?? []), ...bundler.assets()])],
     });
     const assetPaths = new Set(assets.files.map((f) => f.path));
     const written = assets.files.map((f) => f.path);
+
+    for (const bundle of bundles.values()) {
+      const abs = join(staging, bundle.path);
+      await mkdir(dirname(abs), { recursive: true });
+      await writeFile(abs, bundle.css);
+      assetPaths.add(bundle.path);
+      written.push(bundle.path);
+    }
 
     for (const { output, file } of pending) {
       // A site's own file wins over a generated one at the same path, silently: a site `llms.txt` replaces the output's.

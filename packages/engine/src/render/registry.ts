@@ -16,6 +16,8 @@ export interface RegisteredLayout {
   readonly layout: Layout;
   /** Path relative to the theme root. */
   readonly file: string;
+  /** Relative path of `layouts/<name>.css`, when present. */
+  readonly css?: string;
 }
 
 /** A chrome part loaded from `chrome/<name>/index.ts`. */
@@ -50,6 +52,8 @@ export interface ThemeRegistry {
   readonly layouts: Readonly<Record<string, RegisteredLayout>>;
   readonly chrome: Readonly<Record<string, RegisteredChrome>>;
   readonly components: Readonly<Record<string, RegisteredComponent>>;
+  /** Shared stylesheets: `styles/*.css` when the manifest lists `styles`, as paths relative to the theme root, in path order. */
+  readonly styles: readonly string[];
   readonly diagnostics: readonly Diagnostic[];
 }
 
@@ -124,13 +128,14 @@ export async function loadRegistry(themeRoot: string): Promise<ThemeRegistry> {
       layouts,
       chrome,
       components,
+      styles: [],
       diagnostics: [diagnostic("registry.missing-manifest", `Theme manifest not found at "${manifestRel}".`, "Export `theme` with `name` and `folders` from src/index.ts.")],
     };
   }
 
   const loaded = await importUnit(manifestPath, manifestRel);
   if ("diagnostic" in loaded) {
-    return { theme: { name: "", folders: [] }, layouts, chrome, components, diagnostics: [loaded.diagnostic] };
+    return { theme: { name: "", folders: [] }, layouts, chrome, components, styles: [], diagnostics: [loaded.diagnostic] };
   }
 
   const raw = loaded.mod.theme;
@@ -140,6 +145,7 @@ export async function loadRegistry(themeRoot: string): Promise<ThemeRegistry> {
       layouts,
       chrome,
       components,
+      styles: [],
       diagnostics: [diagnostic("registry.invalid-manifest", `Theme manifest in "${manifestRel}" must export \`theme\`.`, "Export `theme` with `name` and `folders`.")],
     };
   }
@@ -187,7 +193,13 @@ export async function loadRegistry(themeRoot: string): Promise<ThemeRegistry> {
           );
           continue;
         }
-        layouts[unitName] = { name: unitName, layout: imported.mod.default as Layout, file: rel };
+        const cssRel = `${folder}/${unitName}.css`;
+        layouts[unitName] = {
+          name: unitName,
+          layout: imported.mod.default as Layout,
+          file: rel,
+          ...((await exists(join(themeRoot, cssRel))) ? { css: cssRel } : {}),
+        };
       }
       continue;
     }
@@ -269,5 +281,12 @@ export async function loadRegistry(themeRoot: string): Promise<ThemeRegistry> {
     }
   }
 
-  return { theme, layouts, chrome, components, diagnostics };
+  const styles: string[] = [];
+  if (folders.includes("styles") && (await exists(join(themeRoot, "styles")))) {
+    const entries = await readdir(join(themeRoot, "styles"), { withFileTypes: true });
+    for (const e of entries) if (e.isFile() && e.name.endsWith(".css")) styles.push(`styles/${e.name}`);
+    styles.sort(byCodePoint);
+  }
+
+  return { theme, layouts, chrome, components, styles, diagnostics };
 }

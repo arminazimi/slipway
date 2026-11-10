@@ -28,6 +28,8 @@ export interface RenderedPage {
   readonly url: string;
   /** The complete HTML document, starting with `<!DOCTYPE html>`. */
   readonly html: string;
+  /** Theme-relative CSS files the page needs besides the shared ones: its layout's and its components'. */
+  readonly css: readonly string[];
   /** Findings from rendering the page; an empty list when it rendered cleanly. */
   readonly diagnostics: readonly Diagnostic[];
 }
@@ -121,6 +123,7 @@ export function renderOnePage(
     return {
       url: page.url,
       html: fallbackHtml(page),
+      css: [],
       diagnostics: [
         {
           id: "render.no-layout",
@@ -136,6 +139,7 @@ export function renderOnePage(
     return {
       url: page.url,
       html: fallbackHtml(page),
+      css: [],
       diagnostics: [
         {
           id: "render.unknown-layout",
@@ -148,16 +152,18 @@ export function renderOnePage(
     };
   }
   const { trail, pager } = placeOf(site, page);
+  const registered = registry.layouts[name]!;
   const result = renderPage({
     site,
     page,
-    layout: registry.layouts[name]!.layout,
+    layout: registered.layout,
     components: componentsOf(registry),
     trail,
     pager,
     head: headOf(site, page),
   });
-  return { url: page.url, html: result.html, diagnostics: result.diagnostics };
+  const css = registered.css === undefined ? result.css : [registered.css, ...result.css];
+  return { url: page.url, html: result.html, css, diagnostics: result.diagnostics };
 }
 
 /** The message of a thrown value, for a diagnostic. */
@@ -405,7 +411,7 @@ class WorkerPool implements RenderPool {
       message: `Page ${page.url} could not be rendered in a worker thread (${reason}); it was rendered in the main thread.`,
       pos: page.source,
     };
-    return { url: rendered.url, html: rendered.html, diagnostics: [diagnostic, ...rendered.diagnostics] };
+    return { url: rendered.url, html: rendered.html, css: rendered.css, diagnostics: [diagnostic, ...rendered.diagnostics] };
   }
 
   #resolve(entry: Entry, result: RenderedPage): void {
