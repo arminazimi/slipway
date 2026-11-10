@@ -22,9 +22,6 @@
     "build:brand": "node tools/brand/build.ts",
     "export:brand": "node tools/brand/export.ts",
     "check:brand": "node tools/brand/build.ts --check",
-    "check:logical": "node tools/theme/logical-css.ts",
-    "check:js": "node tools/theme/js-budget.ts",
-    "check:css": "node tools/theme/css-budget.ts",
     "build:skills": "node tools/skills/config-reference.ts",
     "build:docs": "node tools/config-ref/run.ts --write && node tools/front-matter-ref/run.ts --write"
   },
