@@ -11,6 +11,7 @@ import feedback from "../chrome/feedback/index.ts";
 import header from "../chrome/header/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
+import share from "../chrome/share/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
 import pageStatus, { type PageStatusProps } from "../components/page-status/index.ts";
@@ -237,6 +238,7 @@ function article(props: LayoutProps): ComponentChildren {
     body(page, steps),
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
+    share(props) as ComponentChildren,
     feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );

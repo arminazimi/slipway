@@ -12,6 +12,7 @@ import header from "../chrome/header/index.ts";
 import lastUpdated from "../chrome/last-updated/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
+import share from "../chrome/share/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
 import driftBanner from "../components/drift-banner/index.ts";
@@ -58,6 +59,7 @@ function article(props: LayoutProps): ComponentChildren {
     editPage(props) as ComponentChildren,
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
+    share(props) as ComponentChildren,
     feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );

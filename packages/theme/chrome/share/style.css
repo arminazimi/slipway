@@ -1,0 +1,68 @@
+/* Share this page: the label, the X and LinkedIn links, and the copy-link button. */
+
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-4);
+}
+
+.share-label {
+  color: var(--color-muted);
+  font-family: var(--type-font-ui);
+  font-size: var(--type-size-sm);
+}
+
+.share-link,
+.share-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding-block: var(--space-1);
+  padding-inline: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--type-font-ui);
+  font-size: var(--type-size-sm);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* A button element has no marker, and its display must not override the hidden attribute. */
+.share-copy[hidden] {
+  display: none;
+}
+
+.share-link:hover,
+.share-copy:hover {
+  border-color: var(--color-accent);
+  color: var(--color-heading);
+  text-decoration: none;
+}
+
+.share-link:focus-visible,
+.share-copy:focus-visible {
+  outline: 2px solid var(--state-focus-ring);
+  outline-offset: 2px;
+}
+
+.share-link svg {
+  inline-size: var(--space-4);
+  block-size: var(--space-4);
+}
+
+.share-link-text {
+  line-height: var(--type-leading-tight);
+}
+
+/* The confirmation is short and quiet, but visible to a reader who asked for the copy. */
+.share-status {
+  min-block-size: 1em;
+  margin: 0;
+  color: var(--color-muted);
+  font-family: var(--type-font-ui);
+  font-size: var(--type-size-xs);
+}
