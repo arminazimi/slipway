@@ -114,7 +114,7 @@ test("times a small site and names every stage", async (t) => {
   const report = await measure({ siteRoot: site, out, budgetMs: 60_000 });
 
   assert.equal(report.ok, true, report.problems.join("\n"));
-  assert.equal(report.pages, 1);
+  assert.equal(report.pages, 2, "the site's page and the 404.html every site gets");
   assert.deepEqual(
     report.stages.map((stage) => stage.stage),
     ["model", "theme", "render + write"],
