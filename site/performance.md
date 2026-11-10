@@ -17,7 +17,7 @@ Slipway's speed is enforced, not claimed. Four gates in `npm run check` build th
 | Fixture | Pages | Largest page | Compressed bytes |
 | --- | --- | --- | --- |
 | `docs-site` | 594 | `404.html` | 150 |
-| `rtl-site` | 5 | `commands/index.html` | 150 |
+| `rtl-site` | 6 | `commands/index.html` | 150 |
 
 [The JavaScript gate](https://github.com/arminazimi/slipway/blob/main/tools/js-budget-engine/run.ts) fails a page over the budget.
 
