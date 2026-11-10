@@ -103,7 +103,8 @@ test("front matter steps win over headings, and an id-less step gets a slug anch
 
   assert.match(page, /href="#setup"><span class="tutorial-step-count">Step 1 of 2<\/span><span class="tutorial-step-title">Set up<\/span>/);
   assert.match(page, /href="#deploy"><span class="tutorial-step-count">Step 2 of 2<\/span><span class="tutorial-step-title">Deploy!<\/span>/);
-  assert.doesNotMatch(page, /Ignored/);
+  // The search dialog lists every section as an action, so the title may appear there; no step takes it.
+  assert.doesNotMatch(page, /tutorial-step-title">Ignored/);
   assert.doesNotMatch(page, /href="#ignored"/);
 });
 

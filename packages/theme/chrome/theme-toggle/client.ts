@@ -1,4 +1,4 @@
-import { THEME_KEY } from "../../layouts/base.ts";
+import { THEME_KEY } from "./key.ts";
 
 /** What the switch can hold: the visitor's choice, stored under `THEME_KEY`. */
 export type ThemeChoice = "light" | "dark" | "system";

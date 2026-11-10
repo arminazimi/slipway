@@ -129,7 +129,12 @@
   display: none;
 }
 
-/* Narrow screens: logo, title, repository link, and the search and menu buttons; the tabs leave. */
+/* A page that will run its scripts (`html[data-js]`, set by the head script) shows these buttons from the first paint, so the header does not change size when the scripts remove `hidden`. */
+html[data-js] .header-search[hidden] {
+  display: inline-flex;
+}
+
+/* Narrow screens: logo, title, repository link, and the search and menu buttons; the tabs and theme switch leave. */
 @media (max-width: 40rem) {
   .header-inner {
     gap: var(--space-4);
@@ -140,7 +145,13 @@
     display: none;
   }
 
-  .header-menu:not([hidden]) {
+  /* The switch is too wide for a phone's header; the search palette still offers the three themes. */
+  .header-actions .theme-toggle {
+    display: none;
+  }
+
+  .header-menu:not([hidden]),
+  html[data-js] .header-menu[hidden] {
     display: inline-flex;
   }
 }

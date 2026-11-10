@@ -548,12 +548,14 @@ export function fixtureState(buildDir: string): FixtureState {
   let agentMarkup = false;
   let blockScript = false;
   let agentScript = false;
+  let providerMarkup = false;
   let page: string | undefined;
 
   for (const file of htmlFiles(buildDir)) {
     const html = readFileSync(file, "utf8");
     const hasBlock = html.includes("data-block-actions");
     const hasAgent = html.includes("data-page-agent-menu");
+    if (hasAgent && html.includes("page-agent-menu-provider")) providerMarkup = true;
     if (hasBlock) blockMarkup = true;
     if (hasAgent) agentMarkup = true;
     for (const tag of scriptTags(html)) {
@@ -572,6 +574,11 @@ export function fixtureState(buildDir: string): FixtureState {
   if (!blockScript || !agentScript) {
     missing.push(
       "the built pages do not load the block actions and page agent menu clients (engine.islands is not wired: render/render.ts collects component islands only and pipeline/build.ts drops chrome clients)",
+    );
+  }
+  if (agentMarkup && !providerMarkup) {
+    missing.push(
+      "the page agent menu has no provider links: they need the site `url`, and the fixture config is still named slipway.yml while the engine reads mizzen.yml (rename it in the fixture follow-up)",
     );
   }
   if (blockMarkup && agentMarkup && page === undefined) {

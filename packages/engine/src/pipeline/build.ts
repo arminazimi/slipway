@@ -9,6 +9,7 @@ import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
 import { createCssBundler, type CssBundle } from "../render/css.ts";
 import { loadRegistry } from "../render/registry.ts";
 import { copyAssets } from "./assets.ts";
+import { buildIslandModules, islandUrl } from "../render/islands.ts";
 import { cacheKey, cacheRootOf, restoreCache, writeCache } from "./cache.ts";
 import { createDiagnostics, sortDiagnostics, type Diagnostics } from "./diagnostics.ts";
 import { createRenderPool, renderOnePage, type RenderPool } from "./parallel.ts";
@@ -250,7 +251,9 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   const bundles = new Map<string, CssBundle>();
 
   /** Links the page's stylesheets just before `</head>`; the render stage is synchronous, so this happens after it. */
-  const withCss = async (rendered: { html: string; css: readonly string[] }): Promise<string> => {
+  const usedIslands = new Set<string>();
+  const withCss = async (rendered: { html: string; css: readonly string[]; islands?: readonly { src: string }[] }): Promise<string> => {
+    for (const island of rendered.islands ?? []) usedIslands.add(island.src);
     const { base, page } = await bundler.page(rendered.css);
     const used = [base, page].filter((b): b is CssBundle => b !== undefined && b.css !== "");
     for (const b of used) bundles.set(b.path, b);
@@ -337,6 +340,18 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     });
     const assetPaths = new Set(assets.files.map((f) => f.path));
     const written = assets.files.map((f) => f.path);
+
+    // Only the islands a page loaded are written, with the files they import.
+    const clients = [...Object.values(registry.chrome), ...Object.values(registry.components)].flatMap((unit) =>
+      unit.client !== undefined && usedIslands.has(islandUrl(site.config.base, unit.client)) ? [unit.client] : [],
+    );
+    for (const [path, js] of await buildIslandModules(themeRoot, clients)) {
+      const abs = join(staging, path);
+      await mkdir(dirname(abs), { recursive: true });
+      await writeFile(abs, js);
+      assetPaths.add(path);
+      written.push(path);
+    }
 
     for (const bundle of bundles.values()) {
       const abs = join(staging, bundle.path);

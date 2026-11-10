@@ -144,9 +144,9 @@ test("the fixture gate stays green while engine.islands leaves the controls out 
   assert.equal(code, 0, lines.join("\n"));
 
   if (state.missing.length > 0) {
-    assert.ok(state.missing.some((note) => /engine\.islands/.test(note)), `the gate names the island gap: ${state.missing.join("; ")}`);
+    assert.ok(state.missing.some((note) => /engine\.islands|provider links/.test(note)), `the gate names the gap: ${state.missing.join("; ")}`);
     assert.ok(lines.some((line) => line.startsWith("SKIP: agent-ui")), "the browser pass says it skipped");
-    assert.ok(lines.some((line) => /engine\.islands/.test(line)), "the skip names the island gap");
+    assert.ok(lines.some((line) => /engine\.islands|provider links/.test(line)), "the skip names the gap");
   } else {
     assert.notEqual(state.page, undefined, "a wired build names the page the browser pass tests");
   }

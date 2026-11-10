@@ -1,8 +1,10 @@
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Chrome, SiteConfig } from "@velella/mizzen/contracts";
 import languageSwitcher from "../language-switcher/index.ts";
+import search from "../search/index.ts";
 import sectionTabs from "../section-tabs/index.ts";
+import themeToggle from "../theme-toggle/index.ts";
 import versionSwitcher from "../version-switcher/index.ts";
 
 type Logo = { readonly light?: string; readonly dark?: string };
@@ -69,7 +71,7 @@ function repositoryLink(config: SiteConfig) {
 const header: Chrome = (props) => {
   const { site } = props;
   const { config } = site;
-  return h(
+  const bar = h(
     "header",
     { class: "header" },
     h(
@@ -92,6 +94,7 @@ const header: Chrome = (props) => {
           ),
         ),
         languageSwitcher(props) as ComponentChildren,
+        themeToggle(props) as ComponentChildren,
         repositoryLink(config),
         h(
           "button",
@@ -101,6 +104,8 @@ const header: Chrome = (props) => {
       ),
     ),
   );
+  // The search dialog sits beside the bar, not inside it: it covers the page when open.
+  return h(Fragment, null, bar, search(props) as ComponentChildren);
 };
 
 export default header;

@@ -10,6 +10,7 @@ import editPage from "../chrome/edit-page/index.ts";
 import feedback from "../chrome/feedback/index.ts";
 import header from "../chrome/header/index.ts";
 import lastUpdated from "../chrome/last-updated/index.ts";
+import pageAgentMenu from "../chrome/page-agent-menu/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
@@ -62,6 +63,7 @@ function article(props: LayoutProps): ComponentChildren {
     editPage(props) as ComponentChildren,
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
+    pageAgentMenu(props) as ComponentChildren,
     feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );
