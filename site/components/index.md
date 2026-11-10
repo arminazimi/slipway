@@ -47,6 +47,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [OS tabs](./os-tabs/) | Install instructions grouped by operating system, defaulting to the reader's system. |
 | [Output block](./output-block/) | The result of a command, apart from the command above it. |
 | [Page status](./page-status/) | An experimental, beta, or deprecated banner from front matter. |
+| [Reading time](./reading-time/) | A chip under the title with the page's reading time and word count. |
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
 | [Status banner](./status-banner/) | A page-level deprecated, experimental, or old-version banner, with a replacement link. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
