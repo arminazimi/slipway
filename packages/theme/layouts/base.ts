@@ -2,6 +2,7 @@ import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
 import announcement from "../chrome/announcement/index.ts";
+import footnotePopover from "../chrome/footnote-popover/index.ts";
 import shortcuts from "../chrome/shortcuts/index.ts";
 import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
 
@@ -67,8 +68,9 @@ function headNodes(head: Head) {
 
 /**
  * The document shell every page uses: `<html lang dir>`, the head, the skip links, and header, main, and
- * footer landmarks, with slots for header, sidebar, main, aside, and footer. Islands load at the end of
- * the body. The navigation skip link is left out when no sidebar slot is given, since its target is not there.
+ * footer landmarks, with slots for header, sidebar, main, aside, and footer. It places the footnote
+ * popover's mount point once per page. Islands load at the end of the body. The navigation skip link is
+ * left out when no sidebar slot is given, since its target is not there.
  */
 export default function base(props: BaseProps) {
   const { page, head, islands, header, sidebar, main, aside, footer } = props;
@@ -95,6 +97,7 @@ export default function base(props: BaseProps) {
         ),
         aside == null ? null : h("aside", { class: "aside", "aria-label": "On this page" }, aside),
       ),
+      footnotePopover(props) as ComponentChildren,
       footer == null ? null : h("footer", null, footer),
       shortcuts(props) as ComponentChildren,
       ...islands.map((island) => h("script", { type: "module", src: island.src })),

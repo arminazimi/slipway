@@ -1,6 +1,8 @@
+import { stringify } from "yaml";
 import { CONFIG_FILE } from "../config/load.ts";
+import { parseAgentInstructions } from "../content/agent-instructions.ts";
 import type { Page, Site } from "../contracts/content.ts";
-import type { Output, OutputFile } from "../contracts/output.ts";
+import type { Output, OutputContext, OutputFile } from "../contracts/output.ts";
 
 /** Compares by code point, never by locale (ADR 0022, rule 5). */
 function byCodePoint(a: string, b: string): number {
@@ -46,14 +48,78 @@ function urlOf(base: string, path: string): string {
   return `${base}${path}`;
 }
 
+/** One page's rule, as the `Page rules` section lists it. */
+interface PageRule {
+  readonly url: string;
+  readonly rule: string;
+}
+
+/**
+ * A rule on one line: a backslash is escaped first, then the control characters a YAML block scalar may hold, so a
+ * rule never breaks the list item it sits in.
+ */
+function oneLine(text: string): string {
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n")
+    .replace(/\t/g, "\\t");
+}
+
+/**
+ * The rules of a page's `agent` block, read with the agent-instructions parser. The model keeps the block as parsed
+ * data, not as raw YAML, so the block is written back out for the parser; a problem it reports points at the page's
+ * file, because the model no longer knows which line of the source held the block.
+ */
+function rulesOf(page: Page, ctx: OutputContext): readonly string[] {
+  const agent = page.frontMatter.agent;
+  if (agent === undefined || agent === null) return [];
+  const parsed = parseAgentInstructions(stringify({ agent }), page.source.file);
+  for (const diagnostic of parsed.diagnostics) {
+    ctx.report({
+      ...diagnostic,
+      pos: { file: page.source.file, line: 1, column: 1, endLine: 1, endColumn: 1 },
+    });
+  }
+  return parsed.agent.rules ?? [];
+}
+
+/**
+ * The `Page rules` section: one `- <page URL> — <rule>` line per pair, sorted by URL and then by rule, with a pair
+ * listed once. Empty when no page has a rule, so a site without page rules writes exactly the file it wrote before.
+ */
+function pageRulesSection(pages: readonly Page[], ctx: OutputContext): string[] {
+  const pairs: PageRule[] = [];
+  for (const page of pages) {
+    for (const rule of rulesOf(page, ctx)) pairs.push({ url: page.url, rule });
+  }
+  pairs.sort((a, b) => byCodePoint(a.url, b.url) || byCodePoint(a.rule, b.rule));
+
+  const lines: string[] = [];
+  for (const pair of pairs) {
+    const line = `- ${oneLine(pair.url)} — ${oneLine(pair.rule)}`;
+    if (lines[lines.length - 1] !== line) lines.push(line);
+  }
+  if (lines.length === 0) return [];
+  return [
+    `## Page rules`,
+    ``,
+    `Rules the authors wrote for particular pages, from each page's \`agent.rules\`:`,
+    ``,
+    ...lines,
+    ``,
+  ];
+}
+
 /** The lines of the file, built from the config and the model; no theme or layout is named. */
-function render(site: Site): string {
+function render(site: Site, ctx: OutputContext): string {
   const { config } = site;
   const base = config.base;
   const folder = sourceFolder(config.source);
   const sourceText = folder === "" ? "the site root" : `\`${folder}/\` under the site root`;
   const docs = site.pages.filter((page: Page) => page.kind === "doc");
   const apps = site.pages.filter((page: Page) => page.kind === "app");
+  const pageRules = pageRulesSection(site.pages, ctx);
   const navLists = Object.keys(site.nav).sort(byCodePoint).map((name) => `\`${name}\``);
   const dataFiles = Object.keys(site.data).sort(byCodePoint).map((name) => `\`${name}\``);
   const languages =
@@ -104,6 +170,7 @@ function render(site: Site): string {
     `- Front matter keys the engine reads: \`title\`, \`description\`, \`permalink\`, \`redirect_from\`, \`redirect_to\`, \`lang\`, \`dir\`, \`order\`, \`status\`, \`agent\`, \`search\`, \`published\`, \`image\`, and \`translation_key\`. Other keys are kept for rendering.`,
     `- A folder named after a language's URL prefix (for example \`fa/\` for the prefix \`/fa\`) holds that language's pages.`,
     ``,
+    ...pageRules,
     `## How to add a page`,
     ``,
     `1. Create \`${folderPrefix}<folder>/<page>.md\`. The file name sets the page's address.`,
@@ -145,15 +212,15 @@ function render(site: Site): string {
 
 /**
  * Writes `AGENTS.md` at the output root: how to edit the site, where its content lives, how to add a page, how to check
- * a change, and which files the build generates. Every line comes from the config and the model, so two builds of the
- * same site write the same file.
+ * a change, and which files the build generates. A page's `agent.rules` become one `Page rules` section. Every line
+ * comes from the config and the model, so two builds of the same site write the same file.
  *
  * A site's own `AGENTS.md` in its source wins: when the model has that page, this output writes nothing.
  */
 export const agentsMd: Output = {
   name: "agents-md",
-  async run(site: Site): Promise<readonly OutputFile[]> {
+  async run(site: Site, ctx: OutputContext): Promise<readonly OutputFile[]> {
     if (ownsAgentsMd(site)) return [];
-    return [{ path: FILE, contents: render(site) }];
+    return [{ path: FILE, contents: render(site, ctx) }];
   },
 };
