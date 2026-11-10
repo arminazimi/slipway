@@ -41,13 +41,6 @@ const generators = [
     outputDir: "_site",
     match: (dir, entries) => (isFile(dir, ".eleventy.js") || stemFile(entries, "eleventy.config") ? 2 : 0),
   },
-  {
-    // `_config.yml` alone is too common to count: it needs a Gemfile or `_layouts` beside it.
-    generator: "jekyll",
-    sourceDir: ".",
-    outputDir: "_site",
-    match: (dir) => (isFile(dir, "_config.yml") && (isFile(dir, "Gemfile") || isDir(dir, "_layouts")) ? 1 : 0),
-  },
   { generator: "nextra", sourceDir: "pages", outputDir: ".next", match: (dir, entries) => (stemFile(entries, "theme.config") ? 2 : 0) },
   { generator: "vitepress", sourceDir: ".", outputDir: ".vitepress/dist", match: (dir) => (isDir(dir, ".vitepress") && stemFile(readdirSync(join(dir, ".vitepress")), "config") ? 2 : 0) },
   { generator: "zola", sourceDir: "content", outputDir: "public", match: (dir) => (isFile(dir, "config.toml") && /^\s*base_url\s*=/im.test(readFileSync(join(dir, "config.toml"), "utf8")) ? 1 : 0) },

@@ -13,21 +13,6 @@ const repo = here("../../../");
 const fixture = (name) => here(`fixtures/${name}`);
 const docsSite = here("../../../fixtures/docs-site");
 
-test("twin-fresh fires on broken fixture", async () => {
-  const site = new Site(fixture("twin-fresh"));
-  const { status, findings } = await run(site);
-
-  assert.equal(status, "fail");
-
-  const orphaned = findings.find(f => f.file === "orphaned.twin.html");
-  assert.ok(orphaned);
-  assert.equal(orphaned.line, 4);
-
-  const missing = findings.find(f => f.file === "missing.md");
-  assert.ok(missing);
-  assert.equal(missing.line, 1);
-});
-
 test("twin-fresh is silent on examples", async () => {
   for (const name of ["bare", "minimal", "docs", "blog", "persian"]) {
     const siteDir = join(repo, "examples", name);

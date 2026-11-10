@@ -16,8 +16,8 @@ const dependencySections = ["dependencies", "devDependencies", "optionalDependen
 
 export const usage = `Usage: slipway pin <version> [source-dir] [options]
 
-Updates the npm package pin of an engine site, or the remote_theme pin of a
-Jekyll site, to the given version and prints upgrade notes.
+Updates the npm package pin of an engine site to the given version and prints
+upgrade notes.
 
 On an engine site it updates the @velella/mizzen and theme versions in
 package.json, adding both pins when the file or the entries are missing.
@@ -213,47 +213,6 @@ function pinEngineSite(sourceDir, source, version, format, { log, error }, upgra
   return 0;
 }
 
-/** Pins the remote_theme a Jekyll site builds with. Returns the exit code. */
-function pinJekyllSite(sourceDir, source, version, format, { log, error }, upgradingPath) {
-  const configPath = join(sourceDir, "_config.yml");
-
-  if (!existsSync(configPath)) {
-    error(`slipway pin: no engine config (mizzen.yml or slipway.yml) and no _config.yml found in ${source}`);
-    return 1;
-  }
-
-  let content = readFileSync(configPath, "utf8");
-  const remoteMatch = content.match(/^(.*remote_theme:\s*arminazimi\/slipway@)(.+)((\s*#.*)?)$/m);
-
-  if (!remoteMatch) {
-    error(`slipway pin: no remote_theme pin found in _config.yml`);
-    return 1;
-  }
-
-  const oldVersion = remoteMatch[2].trim();
-  const prefix = remoteMatch[1];
-  const suffix = remoteMatch[3] || "";
-
-  const newContent = content.replace(remoteMatch[0], `${prefix}${version}${suffix}`);
-  writeFileSync(configPath, newContent, "utf8");
-
-  const notes = parseUpgradingNotes(oldVersion, version, upgradingPath);
-
-  if (format === "json") {
-    log(JSON.stringify({
-      oldVersion,
-      newVersion: version,
-      packages: [{ name: "arminazimi/slipway", from: oldVersion, to: version }],
-      notes
-    }, null, 2));
-  } else {
-    log(`Updated remote_theme from ${oldVersion} to ${version}`);
-    printNotes(notes, oldVersion, version, log);
-  }
-
-  return 0;
-}
-
 function printNotes(notes, oldVersion, version, log) {
   if (notes.length > 0) {
     log(`\nUpgrade notes:`);
@@ -290,5 +249,6 @@ export async function main(args, { log = console.log, error = console.error } = 
   if (new Site(sourceDir).config()) {
     return pinEngineSite(sourceDir, source, version, format, { log, error }, upgradingPath);
   }
-  return pinJekyllSite(sourceDir, source, version, format, { log, error }, upgradingPath);
+  error(`slipway pin: no engine config (mizzen.yml or slipway.yml) found in ${source}`);
+  return 1;
 }

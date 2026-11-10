@@ -19,7 +19,7 @@ lang goes in. Layouts: page, post, doc. A post path without a date in its
 file name gets today's date.
 
 The site root is the nearest folder above the path with an engine config
-(mizzen.yml or slipway.yml), or with Jekyll's _config.yml.
+(mizzen.yml or slipway.yml).
 
 Options:
   --title <title>      the page title (required)
@@ -66,8 +66,8 @@ export function parseArgs(args) {
   return { options };
 }
 
-/** Files that mark a site root: the engine's config first (ADR 0025), then Jekyll's. */
-const siteConfigFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml", "_config.yml"];
+/** Files that mark a site root: the engine's config first (ADR 0025). */
+const siteConfigFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml"];
 
 /** The config file that marks `dir` as a site root, or null. */
 function configFileIn(dir) {
@@ -131,8 +131,8 @@ export async function main(args, { log = console.log, error = console.error } = 
 
   const site = findSiteRoot(target);
   if (site === null) {
-    if (format === "json") log(JSON.stringify({ error: `no site root (no mizzen.yml, slipway.yml, or _config.yml) above ${target}` }));
-    else error(`slipway new: no site root (no mizzen.yml, slipway.yml, or _config.yml) above ${target}`);
+    if (format === "json") log(JSON.stringify({ error: `no site root (no mizzen.yml or slipway.yml) above ${target}` }));
+    else error(`slipway new: no site root (no mizzen.yml or slipway.yml) above ${target}`);
     return 1;
   }
 

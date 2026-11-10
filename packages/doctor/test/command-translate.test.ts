@@ -57,13 +57,12 @@ test("translate copies the file with updated lang and preserves translation_key"
   const dir = mkdtempSync(join(tmpdir(), "slipway-translate-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
-  writeFileSync(join(dir, "_config.yml"), `
+  writeFileSync(join(dir, "mizzen.yml"), `
 title: Test
 lang: en
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: Farsi, prefix: /fa }
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: Farsi, prefix: /fa }
 `);
 
   const sourceFile = join(dir, "about.md");
@@ -90,13 +89,12 @@ test("translate handles json output", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-translate-json-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
-  writeFileSync(join(dir, "_config.yml"), `
+  writeFileSync(join(dir, "mizzen.yml"), `
 title: Test
 lang: en
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: Farsi, prefix: /fa }
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: Farsi, prefix: /fa }
 `);
 
   const sourceFile = join(dir, "about.md");
@@ -117,13 +115,12 @@ test("translate fails if target file already exists", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-translate-exists-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
-  writeFileSync(join(dir, "_config.yml"), `
+  writeFileSync(join(dir, "mizzen.yml"), `
 title: Test
 lang: en
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: Farsi, prefix: /fa }
+languages:
+  - { code: en, name: English, prefix: "" }
+  - { code: fa, name: Farsi, prefix: /fa }
 `);
 
   const sourceFile = join(dir, "about.md");
@@ -143,7 +140,7 @@ test("translate fails if translation_key is missing", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-translate-nokey-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
-  writeFileSync(join(dir, "_config.yml"), `title: Test\n`);
+  writeFileSync(join(dir, "mizzen.yml"), `title: Test\n`);
   const sourceFile = join(dir, "about.md");
   writeFileSync(sourceFile, `---\ntitle: About\n---\n`);
 

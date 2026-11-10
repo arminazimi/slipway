@@ -16,7 +16,6 @@ function tempDir(t) {
 }
 
 const table = [
-  ["jekyll", ".", "_site"],
   ["hugo", "content", "public"],
   ["astro", "src", "dist"],
   ["docusaurus", "docs", "build"],
@@ -46,13 +45,13 @@ test("Jekyll's _config.yml alone is not enough", (t) => {
 
 test("a folder with two markers reports the stronger one with lower confidence", (t) => {
   const dir = tempDir(t);
-  cpSync(fixture("jekyll"), dir, { recursive: true });
+  writeFileSync(join(dir, "config.toml"), 'baseURL = "https://example.com"\n');
   cpSync(fixture("mkdocs"), dir, { recursive: true });
   const result = detect(dir);
   assert.equal(result.generator, "mkdocs");
   assert.equal(result.outputDir, "site");
   assert.equal(result.confidence, "low");
-  assert.deepEqual(result.candidates.sort(), ["jekyll", "mkdocs"]);
+  assert.deepEqual(result.candidates.sort(), ["hugo", "mkdocs"]);
 });
 
 test("an empty or missing folder returns unknown without throwing", (t) => {

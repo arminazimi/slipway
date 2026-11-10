@@ -1,6 +1,6 @@
-// Deprecated config keys and front-matter fields a Jekyll site uses (ADR 0012, rule 4), with file and line.
+// Deprecated config keys and front-matter fields a site uses (ADR 0012, rule 4), with file and line. Config keys are read from the engine config by the doctor's `config.deprecated` check; this file finds front-matter fields.
 // Shared with tools/theme/deprecations.ts, which validates the list and prints the warnings for the examples.
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { LineCounter, isMap, parseDocument } from "yaml";
@@ -10,7 +10,7 @@ export function packagedDeprecations() {
   return JSON.parse(readFileSync(fileURLToPath(new URL("../schema/deprecations.json", import.meta.url)), "utf8")).deprecations;
 }
 
-// Files Jekyll reads front matter from; folders it never builds.
+// Files that can carry front matter; folders that are never content.
 const pageFile = /\.(md|markdown|html|htm|xml|json|txt|css|scss|js)$/;
 const skipDir = (name) => name.startsWith(".") || ["_site", "node_modules", "vendor"].includes(name);
 
@@ -54,32 +54,7 @@ export function findDeprecations(dir, deprecations = packagedDeprecations()) {
   const found = [];
   const add = (file, line, entry) =>
     found.push({ file, line, ...entry, message: `${file}:${line} ${entry.old} is deprecated since ${entry.since}, use ${entry.new}` });
-  const config = deprecations.filter((entry) => entry.kind === "config");
   const fields = deprecations.filter((entry) => entry.kind === "front-matter");
-
-  const configPath = join(dir, "_config.yml");
-  if (existsSync(configPath)) {
-    const { doc, lines } = parseYaml(readFileSync(configPath, "utf8"));
-    const matched = [];
-    for (const entry of config) {
-      const line = keyLine(doc.contents, entry.old.split("."), lines);
-      if (line) matched.push({ line, entry });
-    }
-    // A parent key (`slipway.tokens`) and one of its children (`slipway.tokens.radius`) both match
-    // when the child is set. Report the deepest match, so one setting gives one hint.
-    for (const { line, entry } of matched) {
-      if (matched.some((other) => other.entry.old.startsWith(`${entry.old}.`))) continue;
-      add("_config.yml", line, entry);
-    }
-    // Front-matter defaults: `defaults: [{ scope, values }]`.
-    const defaults: any = doc.get("defaults");
-    for (const item of defaults?.items ?? []) {
-      for (const entry of fields) {
-        const line = keyLine(item, ["values", ...entry.old.split(".")], lines);
-        if (line) add("_config.yml", line, entry);
-      }
-    }
-  }
 
   if (fields.length) {
     for (const file of siteFiles(dir)) {

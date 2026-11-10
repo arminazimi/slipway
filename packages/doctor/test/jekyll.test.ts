@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { doctor } from "../src/doctor.ts";
-import { builtinKeys, checks, stubs } from "../src/checks/jekyll.ts";
+import { checks, stubs } from "../src/checks/jekyll.ts";
 
 const here = (path) => fileURLToPath(new URL(path, import.meta.url));
 const repo = here("../../../");
@@ -28,30 +28,12 @@ test("the passing fixture runs every Jekyll check with no findings", async () =>
   assert.deepEqual(jekyllFindings(report), [], dir);
 });
 
-test("examples/minimal runs every Jekyll check; its 0.2 config keys are migration hints", async () => {
-  const dir = join(repo, "packages/doctor/test/fixtures/examples/minimal");
-  const report = await doctor(dir);
-  const results = report.tests.filter((t) => t.scope === "jekyll");
-  assert.deepEqual(results.map((t) => t.id), ids, dir);
-  assert.deepEqual(
-    jekyllFindings(report).filter((finding) => finding.id !== "config.deprecated"),
-    [],
-    dir,
-  );
-  assert.ok(
-    jekyllFindings(report).some((finding) => finding.id === "config.deprecated"),
-    "a 0.2 site gets a hint per old config key",
-  );
-});
-
 test("each failing fixture gives exactly one warning with file, line, and fix", async () => {
   const deprecations = JSON.parse(readFileSync(join(fixture("jekyll-deprecated"), "deprecations.json"), "utf8")).deprecations;
   const expected = {
     "jekyll-stubs": { id: "jekyll.stubs", file: "AGENTS.md", line: undefined },
     "jekyll-deprecated": { id: "config.deprecated", file: "fa/index.md", line: 5 },
-    "jekyll-liquid": { id: "jekyll.liquid-in-content", file: "index.md", line: 9 },
     "jekyll-translation": { id: "jekyll.translation-pair", file: "index.md", line: 4 },
-    "jekyll-ui-strings": { id: "jekyll.ui-strings", file: "_data/i18n/fa.yml", line: 2 },
   };
   for (const [name, want] of Object.entries(expected)) {
     const report = await doctor(fixture(name), { deprecations });
@@ -66,7 +48,7 @@ test("each failing fixture gives exactly one warning with file, line, and fix", 
 
 test("Jekyll checks are warnings: the level and the exit code do not change", async () => {
   const pass = await doctor(fixture("jekyll-pass"));
-  const fail = await doctor(fixture("jekyll-liquid"));
+  const fail = await doctor(fixture("jekyll-translation"));
   assert.equal(fail.level, pass.level);
   assert.deepEqual(
     fail.tests.filter((t) => t.status === "fail" && t.scope !== "jekyll").map((t) => t.id),
@@ -74,7 +56,7 @@ test("Jekyll checks are warnings: the level and the exit code do not change", as
   );
 });
 
-test("a site without _config.yml gets no Jekyll checks", async () => {
+test("a site without an engine config gets no site checks", async () => {
   const report = await doctor(fixture("conforming"), { build: join(fixture("conforming"), "build") });
   assert.deepEqual(report.tests.filter((t) => t.scope === "jekyll"), []);
 });

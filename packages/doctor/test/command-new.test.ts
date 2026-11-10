@@ -25,6 +25,8 @@ function site(t) {
   const dir = mkdtempSync(join(tmpdir(), "slipway-new-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
   cpSync(example, dir, { recursive: true });
+  rmSync(join(dir, "_config.yml"));
+  writeFileSync(join(dir, "mizzen.yml"), "title: Slipway minimal\nlang: en\n");
   return dir;
 }
 

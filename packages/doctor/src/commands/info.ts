@@ -1,6 +1,5 @@
 import { isAbsolute, resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
 import { doctor } from "../doctor.ts";
 import { Site } from "../site.ts";
 
@@ -12,8 +11,7 @@ export const usage = `Usage: slipway info <source-dir> [options]
 Prints the site's mode, theme pin, versions, and spec level.
 
 An engine site (mizzen.yml or slipway.yml) prints the theme and the engine
-versions pinned in package.json. A Jekyll site prints its remote_theme pin
-and the Ruby and Jekyll versions found.
+versions pinned in package.json.
 
 Options:
   --build <dir>        the built output folder for doctor checks
@@ -47,21 +45,6 @@ export function parseArgs(args) {
   if (options.source === null) return { error: "missing <source-dir>" };
   if (!["text", "json"].includes(options.format)) return { error: `--format must be text or json, not ${options.format}` };
   return { options };
-}
-
-function getVersions() {
-  const versions: any = { node: process.version };
-  try {
-    const ruby = spawnSync("ruby", ["-v"], { encoding: "utf8" });
-    if (ruby.status === 0) versions.ruby = ruby.stdout.split(" ")[1];
-  } catch (e) {}
-
-  try {
-    const jekyll = spawnSync("jekyll", ["-v"], { encoding: "utf8" });
-    if (jekyll.status === 0) versions.jekyll = jekyll.stdout.trim().split(" ")[1];
-  } catch (e) {}
-
-  return versions;
 }
 
 /** The dependency sections a site may pin a package in. */
@@ -117,25 +100,7 @@ function engineInfo(sourceDir, config) {
 function getThemeInfo(sourceDir) {
   const config = new Site(sourceDir).config();
   if (config) return { ...engineInfo(sourceDir, config), engineConfig: config.file };
-  let mode = "unknown";
-  let themePin = null;
-  const configPath = resolve(sourceDir, "_config.yml");
-  if (existsSync(configPath)) {
-    const content = readFileSync(configPath, "utf8");
-    const remoteMatch = content.match(/^remote_theme:\s*(.+)$/m);
-    if (remoteMatch) {
-      mode = "remote";
-      themePin = remoteMatch[1].trim();
-    } else if (content.match(/^theme:\s*(.+)$/m)) {
-      mode = "gem";
-    }
-  }
-  if (mode === "unknown") {
-    if (existsSync(resolve(sourceDir, "slipway-theme.gemspec")) || existsSync(resolve(sourceDir, "_layouts/base.html"))) {
-      mode = "template";
-    }
-  }
-  return { mode, themePin };
+  return { mode: "unknown", themePin: null };
 }
 
 export async function main(args, { log = console.log, error = console.error } = {}) {
@@ -157,7 +122,7 @@ export async function main(args, { log = console.log, error = console.error } = 
   }
 
   const theme: any = getThemeInfo(sourceDir);
-  const versions = theme.mode === "engine" ? theme.versions : getVersions();
+  const versions = theme.mode === "engine" ? theme.versions : { node: process.version };
   let level = "unknown";
   try {
     const report = await doctor(sourceDir, { build: build ? resolve(build) : null });
