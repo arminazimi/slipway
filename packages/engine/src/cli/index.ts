@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, check a build, or rebuild on change (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen pack`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, build one context pack, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -9,6 +9,7 @@ import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
 import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
+import { pack } from "./pack.ts";
 import { verify, verifyMessage } from "./verify.ts";
 import { DEFAULT_WATCH_OUT, watch as watchSite } from "./watch.ts";
 
@@ -30,16 +31,19 @@ Commands:
   build [dir]   Build the site into --out (default: dist)
   check [dir]   Build to a temp folder and print diagnostics only
   dev [dir]     Serve the site, rebuild on change, and reload the browser
+  pack [dir]    Print one context pack for a topic, to stdout or --out
   verify [dir]  Check a built folder against the hash in its manifest
   watch [dir]   Rebuild the site whenever a source or theme file changes
 
 Options:
-  --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
+  --out <path>         Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch); pack writes a file here instead of stdout
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
+  --topic <name>       Topic for pack (default: the site's only topic)
+  --budget <tokens>    Token budget for pack, overriding the topic's
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.`;
@@ -47,6 +51,8 @@ Exit codes: 0 ok, 1 errors, 2 usage.`;
 export type Io = {
   readonly log?: (message: string) => void;
   readonly error?: (message: string) => void;
+  /** Writes a command's payload, such as a pack, to stdout; defaults to `process.stdout.write`. */
+  readonly write?: (text: string) => void;
 };
 
 type BuildOpts = {
@@ -72,6 +78,14 @@ type DevOpts = {
   readonly theme?: string;
 };
 
+type PackOpts = {
+  readonly command: "pack";
+  readonly root: string;
+  readonly topic?: string;
+  readonly budget?: number;
+  readonly out?: string;
+};
+
 type VerifyOpts = {
   readonly command: "verify";
   readonly root: string;
@@ -88,7 +102,7 @@ type WatchOpts = {
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts | DevOpts | VerifyOpts | WatchOpts };
+  | { readonly options: BuildOpts | CheckOpts | DevOpts | PackOpts | VerifyOpts | WatchOpts };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -145,7 +159,14 @@ export function parseArgs(args: readonly string[]): Parsed {
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify" && command !== "watch") {
+  if (
+    command !== "build" &&
+    command !== "check" &&
+    command !== "dev" &&
+    command !== "pack" &&
+    command !== "verify" &&
+    command !== "watch"
+  ) {
     return { error: `unknown command: ${command}` };
   }
 
@@ -156,6 +177,8 @@ export function parseArgs(args: readonly string[]): Parsed {
   let hash: string | undefined;
   let port: number = DEFAULT_DEV_PORT;
   let host: string = DEFAULT_DEV_HOST;
+  let topic: string | undefined;
+  let budget: number | undefined;
 
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i]!;
@@ -167,8 +190,8 @@ export function parseArgs(args: readonly string[]): Parsed {
     try {
       if (arg === "-h" || arg === "--help") return { help: true };
       if (arg === "--out") {
-        if (command !== "build" && command !== "dev" && command !== "watch") {
-          return { error: "--out is only valid for build, dev, and watch" };
+        if (command !== "build" && command !== "dev" && command !== "pack" && command !== "watch") {
+          return { error: "--out is only valid for build, dev, pack, and watch" };
         }
         out = value();
       } else if (arg === "--theme") {
@@ -199,6 +222,19 @@ export function parseArgs(args: readonly string[]): Parsed {
       } else if (arg === "--host") {
         if (command !== "dev") return { error: "--host is only valid for dev" };
         host = value();
+      } else if (arg === "--topic") {
+        if (command !== "pack") return { error: "--topic is only valid for pack" };
+        const raw = value().trim();
+        if (raw === "") return { error: "--topic needs a name" };
+        topic = raw;
+      } else if (arg === "--budget") {
+        if (command !== "pack") return { error: "--budget is only valid for pack" };
+        const raw = value();
+        const parsed = Number(raw);
+        if (!/^\d+$/.test(raw) || !Number.isSafeInteger(parsed) || parsed < 1) {
+          return { error: `--budget must be a positive whole number of tokens, not ${raw}` };
+        }
+        budget = parsed;
       } else if (arg.startsWith("-")) {
         return { error: `unknown option: ${arg}` };
       } else if (root === undefined) {
@@ -231,6 +267,17 @@ export function parseArgs(args: readonly string[]): Parsed {
         port,
         host,
         ...(theme === undefined ? {} : { theme }),
+      },
+    };
+  }
+  if (command === "pack") {
+    return {
+      options: {
+        command: "pack",
+        root: dir,
+        ...(topic === undefined ? {} : { topic }),
+        ...(budget === undefined ? {} : { budget }),
+        ...(out === undefined ? {} : { out }),
       },
     };
   }
@@ -282,6 +329,7 @@ function printDiagnostics(
 export async function main(args: readonly string[], io: Io = {}): Promise<number> {
   const log = io.log ?? console.log;
   const error = io.error ?? console.error;
+  const write = io.write ?? ((text: string): void => void process.stdout.write(text));
 
   const parsed = parseArgs(args);
   if ("help" in parsed) {
@@ -307,6 +355,23 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       }
       error(`${NAME}: ${verifyMessage(result)}`);
       return 1;
+    } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
+  if (options.command === "pack") {
+    try {
+      return await pack(
+        {
+          root: resolve(options.root),
+          ...(options.topic === undefined ? {} : { topic: options.topic }),
+          ...(options.budget === undefined ? {} : { budget: options.budget }),
+          ...(options.out === undefined ? {} : { out: resolve(options.out) }),
+        },
+        { write, error },
+      );
     } catch (err) {
       error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
       return 2;

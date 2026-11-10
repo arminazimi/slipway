@@ -29,16 +29,19 @@ Commands:
   build [dir]   Build the site into --out (default: dist)
   check [dir]   Build to a temp folder and print diagnostics only
   dev [dir]     Serve the site, rebuild on change, and reload the browser
+  pack [dir]    Print one context pack for a topic, to stdout or --out
   verify [dir]  Check a built folder against the hash in its manifest
   watch [dir]   Rebuild the site whenever a source or theme file changes
 
 Options:
-  --out <dir>          Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch)
+  --out <path>         Output folder: build (default: dist), dev (default: .slipway/dev), watch (default: .slipway/watch); pack writes a file here instead of stdout
   --theme <dir>        Theme root folder (layouts/, chrome/, components/)
   --format <format>    text, json, or sarif (check only; default: text)
   --hash <hex>         Expected build hash for verify (default: the manifest's)
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
+  --topic <name>       Topic for pack (default: the site's only topic)
+  --budget <tokens>    Token budget for pack, overriding the topic's
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.
@@ -51,10 +54,11 @@ From this repository, run it as `node packages/engine/bin/slipway.ts`; from a si
 | `mizzen build [dir] --out <dir> --theme <dir>` | Builds `dir` (default `.`) into `--out` (default `dist`). Prints diagnostics as text. A build with an error still writes the site and exits `1`. |
 | `mizzen check [dir] --format text\|json\|sarif --theme <dir>` | Builds into a temporary folder, prints only the diagnostics in the chosen format, and removes the folder. Exits `1` on an error. |
 | `mizzen dev [dir] --port <number> --host <host> --theme <dir>` | Builds `dir`, serves the output with pretty URLs, watches the source and theme, rebuilds on change, and reloads the browser over Server-Sent Events. The reload script is added to HTML responses only; the files on disk stay as `build` wrote them. Ctrl-C stops the server. |
+| `mizzen pack [dir] --topic <name> --budget <tokens> --out <file>` | Prints the context pack for one topic in `_data/context-packs.yml` to stdout, or writes it to `--out`. `--budget` overrides the topic's budget; without `--topic` the site's only topic is used, and a site with several lists them and exits `2`. Diagnostics go to stderr, so stdout stays clean Markdown. |
 | `mizzen verify [dir] --hash <hex>` | Hashes a built folder by the same rule the build used and compares it with `.slipway/manifest.json` (or `--hash`). Exits `1` on a mismatch. |
 | `mizzen watch [dir] --out <dir> --theme <dir>` | Builds `dir` once, then rebuilds whenever a source or theme file changes. Changes are debounced and builds run one at a time, in order; an unchanged build is restored from `.slipway/cache`. Ctrl-C stops the watcher. |
 
-`--out` is resolved from the current working directory, not from the site root, for `build`, `dev`, and `watch`; `dev`'s default is `<site>/.slipway/dev` and `watch`'s is `<site>/.slipway/watch`. `check` is the command to use in CI: it never touches `dist`.
+`--out` is resolved from the current working directory, not from the site root, for `build`, `dev`, `pack`, and `watch`; `dev`'s default is `<site>/.slipway/dev` and `watch`'s is `<site>/.slipway/watch`. `check` is the command to use in CI: it never touches `dist`. `pack` reads the site model and never the theme, so it needs no theme root.
 
 The theme root is picked in this order:
 
