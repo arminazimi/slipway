@@ -119,6 +119,16 @@ body {
   color: var(--code-fg);
 }
 
+/* A plain code block, one without the code-block component around it, gets the same chip colours. */
+:where(pre) {
+  overflow-x: auto;
+  padding: var(--space-4);
+  border: thin solid var(--code-border);
+  border-radius: var(--radius-md);
+  background-color: var(--code-bg);
+  color: var(--code-fg);
+}
+
 :where(blockquote) {
   padding-inline-start: var(--space-4);
   border-inline-start: thin solid var(--color-border);
