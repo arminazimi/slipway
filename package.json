@@ -16,14 +16,14 @@
     "check": "node tools/check.ts",
     "check:tools": "node tools/check.ts --tools",
     "check:schemas": "node tools/theme/validate.ts",
-    "check:docs": "node tools/config-ref/run.ts && node tools/front-matter-ref/run.ts",
+    "check:docs": "node tools/config-ref/run.ts && node tools/a11y-report/run.ts && node tools/front-matter-ref/run.ts",
     "roadmap:build": "node planning/roadmap/build.ts",
     "roadmap:apply": "node planning/roadmap/apply.ts",
     "build:brand": "node tools/brand/build.ts",
     "export:brand": "node tools/brand/export.ts",
     "check:brand": "node tools/brand/build.ts --check",
     "build:skills": "node tools/skills/config-reference.ts",
-    "build:docs": "node tools/config-ref/run.ts --write && node tools/front-matter-ref/run.ts --write"
+    "build:docs": "node tools/config-ref/run.ts --write && node tools/a11y-report/run.ts --write && node tools/front-matter-ref/run.ts --write"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

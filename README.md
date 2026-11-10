@@ -11,14 +11,13 @@
 
 **Build on Slipway. Ship Seaworthy.**
 
-Sites that agents can edit safely, and prove it. Slipway is two things:
+Sites that agents can edit safely, and prove it. Slipway is three things:
 
-- **A theme.** An editorial, right-to-left-ready theme for GitHub Pages that works on its own in any project, with one line of config.
+- **A docs engine, Mizzen** (`@velella/mizzen`). It builds a Markdown folder into a fast static site, with a source map from every block back to its file and line, a Markdown twin of every page, `llms.txt`, search, and a build that fails on a broken link.
+- **A theme, Lateen** (`@velella/lateen`). An editorial, right-to-left-ready theme with design tokens, doc layouts, and content components. Every component works without JavaScript.
 - **An open spec and its checker.** The agent-editable site spec says what a site publishes so an agent can edit it safely; `slipway doctor` checks any static site against it, whatever generator built it.
 
-The theme is the spec's reference implementation: a site built with it reaches the top level.
-
-> **Status: alpha.** The core theme works (layouts, tokens, right-to-left, search, feeds). `1.0.0`, the first stable release, is planned for 2027-02-14; see [ROADMAP.md](ROADMAP.md).
+> **Status: alpha.** The engine, the theme, and the doctor work; `0.3.0` is the first release on the engine. `1.0.0`, the first stable release, is planned for 2027-02-14; see [ROADMAP.md](ROADMAP.md).
 
 ## What makes it different
 
@@ -27,15 +26,21 @@ The theme is the spec's reference implementation: a site built with it reaches t
 - **`slipway doctor`.** Checks any static site against the agent-editable spec, with findings on the source line, as JSON and SARIF, in a GitHub Action, and as an MCP tool.
 - **WebMCP** (experimental). Every site exposes search and page content as tools to browser agents.
 - **Agent-native output.** `llms.txt`, Markdown twins of every page, JSON-LD, and an `AGENTS.md` in every site.
-- **Content schemas.** Front matter and `_config.yml` have JSON Schemas, so agents and editors catch mistakes early.
+- **Content schemas.** Front matter and `mizzen.yml` have JSON Schemas, so agents and editors catch mistakes early.
 - **Agent Skill and MCP server** for common changes: add a post, add a page, change the theme, verify.
 - **Right-to-left done properly.** Persian and Arabic look designed, not mirrored.
 - **Stable by contract.** The public API follows semver; renamed keys warn before they break.
-- **Niche starters and migrations.** Starters for academic sites, docs, portfolios, and more; one-command migration from popular themes.
+- **Migration.** `slipway migrate` moves a 0.2 Jekyll site to the engine.
 
-## Planned use
+## Get started
 
-Add `remote_theme: arminazimi/slipway` to your `_config.yml`, or fork the repository and turn on GitHub Pages: your site is live with no build step. Pinned releases, a gem, and `npx create-slipway` arrive in Phase 2. Power features, such as exact-line source maps, run in GitHub Actions. See [the two modes](docs/modes.md) for what each feature needs. To add a snippet, a footer line, or your own CSS without forking, use the [override slots](docs/overrides.md).
+```sh
+npx create-slipway my-docs
+cd my-docs
+npx slipway build
+```
+
+A site is a folder of Markdown and one `mizzen.yml`. See [examples/docs](examples/docs) for a small site and [examples/product-docs](examples/product-docs) for a large one, the [docs](docs/) for the guides, and [UPGRADING.md](UPGRADING.md) if you have a 0.2 site on `remote_theme`: the Jekyll theme lives on in the `legacy/jekyll` branch and the `v0.2.0` tag.
 
 ## Relationship to Seaworthy
 
