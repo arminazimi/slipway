@@ -58,6 +58,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Terminal](./terminal/) | A shell session with commands and their output. |
 | [Tested chip](./tested-chip/) | The pass or fail result of a page's examples, next to a code block. |
 | [Trust panel](./trust-panel/) | A chip under the title that opens the page's trust level, examples, drift, reviewer, and actions. |
+| [Variables form](./variables-form/) | Inputs that fill a page's code-example variables with the reader's own values. |
 | [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 | [Version diff](./version-diff/) | A section-by-section comparison of two versions, with a text label for every change. |
 | [Video](./video/) | A click-to-load video with a poster and a link that works without JavaScript. |

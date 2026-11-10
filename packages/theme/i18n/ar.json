@@ -162,6 +162,8 @@
   "tutorial_steps": "خطوات الدرس",
   "type": "Type",
   "updated": "حُدِّث",
+  "variables_form_hint": "املأ هذه الحقول لترى قيمك في أمثلة الشيفرة. تبقى القيم في متصفحك.",
+  "variables_form_legend": "المتغيّرات",
   "version_added": "أُضيف في الإصدار {version}",
   "version_changed": "تغيّر في الإصدار {version}",
   "version_current": "الإصدار الحالي",
