@@ -149,3 +149,28 @@ body {
   color: var(--state-disabled-fg);
   cursor: not-allowed;
 }
+
+/* Tables: the header cells start at the reading start, rows are separated by a hairline, and code never breaks inside a cell. */
+table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-size-sm);
+}
+
+th,
+td {
+  padding-block: var(--space-2);
+  padding-inline: var(--space-3);
+  border-block-end: thin solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+th {
+  font-weight: var(--type-weight-medium);
+  color: var(--color-heading);
+}
+
+td code {
+  white-space: nowrap;
+}
