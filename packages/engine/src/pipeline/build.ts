@@ -208,7 +208,9 @@ function assertOutOutsideSource(sourceDir: string, out: string): void {
  *
  * With `cache`, a build whose config, source, navigation, theme, outputs, layout options, and engine version are
  * unchanged restores the previous output instead of building again. Config and navigation are in the same key as the
- * pages, so changing either invalidates every page. The cache is whole-build, not per-page.
+ * pages, so changing either invalidates every page. When that whole-build entry misses, each page's Markdown parse is
+ * kept under `<cache>/pages/` and keyed by its expanded body, body line, plugin names and orders, and the engine
+ * version, so only the pages that changed are parsed again.
  *
  * Problems in the content and the theme come back as diagnostics; a throw means a bug, such as an output or layout
  * that threw, and leaves `out` as it was. `out` must not be the source folder nor sit inside it, unless its name
@@ -253,7 +255,10 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     }
   }
 
-  const model = await buildModel(root);
+  const model = await buildModel(
+    root,
+    cacheRoot === undefined ? undefined : { pageCacheDir: join(cacheRoot, "pages") },
+  );
   for (const d of model.diagnostics) diagnostics.report(d);
   const { site } = model;
 

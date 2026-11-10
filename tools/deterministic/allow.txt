@@ -1,0 +1,5 @@
+# Differences the deterministic gate may tolerate: one repository-relative path per line, as printed in the failure
+# message (`fixtures/<fixture>/<path>`). Blank lines and lines starting with # are ignored.
+#
+# Every allowed difference is printed, and an entry that matches no difference is reported as stale and fails the run,
+# so this file can never hide a difference. Keep it empty unless a gap is known, fixed, and named in an issue.
