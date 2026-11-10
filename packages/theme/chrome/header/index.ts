@@ -2,6 +2,7 @@ import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Chrome, SiteConfig } from "@velella/mizzen/contracts";
 import sectionTabs from "../section-tabs/index.ts";
+import versionSwitcher from "../version-switcher/index.ts";
 
 type Logo = { readonly light?: string; readonly dark?: string };
 
@@ -47,7 +48,7 @@ function repositoryLink(config: SiteConfig) {
   );
 }
 
-/** Header: logo and title, the section tabs, search and menu buttons (enhanced by JavaScript), and the repository link. */
+/** Header: logo and title, the section tabs, the version switcher, search and menu buttons (enhanced by JavaScript), and the repository link. */
 const header: Chrome = (props) => {
   const { site } = props;
   const { config } = site;
@@ -62,6 +63,7 @@ const header: Chrome = (props) => {
       h(
         "div",
         { class: "header-actions" },
+        versionSwitcher(props) as ComponentChildren,
         h(
           "button",
           { type: "button", class: "header-search", "aria-label": "Search", hidden: true, "data-search-open": true },

@@ -134,6 +134,7 @@
   "type": "Type",
   "version_added": "Added in version {version}",
   "version_changed": "Changed in version {version}",
+  "version_current": "Current version",
   "version_removed": "Removed in version {version}",
   "versions": "Versions",
   "video_missing_title": "Video is missing a title. Add title=\"…\" to the ::video directive so the player has an accessible name.",
