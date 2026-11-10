@@ -1,6 +1,8 @@
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Layout, LayoutProps } from "@velella/mizzen/contracts";
+import drawer from "../chrome/drawer/index.ts";
+import header from "../chrome/header/index.ts";
 import base from "./base.ts";
 
 /**
@@ -135,6 +137,11 @@ function content(props: LayoutProps): ComponentChildren {
 }
 
 /** The home page: the base document shell around the hero, the section grids, and the page body. */
-const home: Layout = (props) => base({ ...props, main: content(props) });
+const home: Layout = (props) =>
+  base({
+    ...props,
+    header: h(Fragment, null, header(props) as ComponentChildren, drawer(props) as ComponentChildren),
+    main: content(props),
+  });
 
 export default home;

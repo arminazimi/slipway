@@ -1,6 +1,13 @@
 /* The home layout: hero with action buttons, and card grids for the site's sections.
    Follows docs/design/mockups/home.html; token names and logical properties only. */
 
+/* The page container the doc layout gives its pages: centred, with a gutter. */
+.layout {
+  max-inline-size: 80rem;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
 .home-hero {
   max-inline-size: 46rem;
   padding-block: var(--space-16) var(--space-12);
