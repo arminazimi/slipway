@@ -6,21 +6,23 @@ import footnotePopover from "../chrome/footnote-popover/index.ts";
 import siteFooter from "../chrome/site-footer/index.ts";
 import shortcuts from "../chrome/shortcuts/index.ts";
 import skipLinks, { MAIN_ID, NAVIGATION_ID } from "../chrome/skip-links/index.ts";
+import { THEME_KEY } from "../chrome/theme-toggle/key.ts";
 
 export { MAIN_ID, NAVIGATION_ID };
 
 /** localStorage key that holds the visitor's choice: `light`, `dark`, or `system`. */
-export const THEME_KEY = "slipway-theme";
+export { THEME_KEY };
 
 /**
  * Sets `data-theme` on `<html>` before first paint. A stored `light` or `dark` wins; `system` follows
  * `prefers-color-scheme`; a first visit (nothing stored) is dark. Storage may throw (private mode), so it
- * falls back to dark.
+ * falls back to dark. It also sets `data-js`, so styles can tell a page that will run its scripts from one that will not
+ * and lay out the first paint the way the scripts leave it (the mobile drawer starts closed instead of open).
  */
 export const THEME_SCRIPT =
   `(function(){var d=document.documentElement,t="dark";try{var s=localStorage.getItem("${THEME_KEY}");` +
   `if(s==="light"||s==="dark")t=s;else if(s==="system")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"}` +
-  `catch(e){}d.setAttribute("data-theme",t)})()`;
+  `catch(e){}d.setAttribute("data-theme",t);d.setAttribute("data-js","")})()`;
 
 /** Content for the slots the layout places around the page. Each is optional and renders nothing when empty. */
 export interface BaseSlots {

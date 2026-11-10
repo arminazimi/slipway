@@ -135,7 +135,7 @@ test("the gate passes fixtures/docs-site and fails a deliberately broken copy", 
   try {
     const result = await quiet(() => clean.run());
     assert.deepEqual(result.findings, [], "the docs fixture passes every keyboard flow");
-    assert.ok(result.notes.some((note) => /search dialog/.test(note)), "the gate says it supplied the search dialog");
+    assert.ok(!result.notes.some((note) => /search dialog/.test(note)), "the fixture ships its own search dialog, so the gate supplies none");
     assert.ok(result.notes.some((note) => /code tabs/.test(note)), "the gate says it used a code-tabs probe");
   } finally {
     await clean.close();

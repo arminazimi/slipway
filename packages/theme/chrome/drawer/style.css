@@ -24,6 +24,11 @@
   }
 }
 
+/* The head script marks a page that will run its scripts (`html[data-js]`): the drawer starts closed there, so the first paint is the layout the script leaves and the article does not jump when it runs. */
+html[data-js] .drawer:not([data-enhanced]) {
+  display: none;
+}
+
 /* With JavaScript: a full-height dialog pinned to the start edge, so it opens on the reading-order side in both directions. */
 .drawer[data-enhanced] {
   inset-block: 0;

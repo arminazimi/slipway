@@ -278,10 +278,12 @@ test("style.css uses only token names from tokens/names.json for var(--*) refere
   }
 });
 
-test("style.css hides only the radio and status region, and states the switch in logical properties", () => {
+test("style.css hides only the radio, status region and legend (all kept for screen readers), and states the switch in logical properties", () => {
   const css = readFileSync(new URL("../chrome/theme-toggle/style.css", import.meta.url), "utf8");
 
   assert.match(css, /\.theme-toggle-input,\n\.theme-toggle-status \{/);
+  assert.match(css, /\.theme-toggle-legend \{[^}]*clip-path: inset\(50%\)/);
+  assert.doesNotMatch(css, /display:\s*none/);
   assert.match(css, /\.theme-toggle-option:has\(\.theme-toggle-input:checked\) \{/);
   assert.match(css, /\.theme-toggle-option:has\(\.theme-toggle-input:focus-visible\) \{/);
   assert.doesNotMatch(css, /(^|[;{\s])(left|right|top|bottom)\s*:/);

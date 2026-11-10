@@ -28,6 +28,9 @@ const SKIP_DIRS = new Set(["node_modules", ".git", ".tmp"]);
  *   the rule rejects. Fixing that changes the theme, not the gate; tracked separately.
  * - The theme wraps a `<header class="header">` in the page's `<header>`, which HTML forbids. The override keeps
  *   the rule and the other `header` exclusions, allowing only this nesting.
+ * - `prefer-native-element` rejects `role="listbox"` because a `<select>` exists. The search dialog's result list is
+ *   built at run time from Pagefind hits, holds links and snippets, and sits next to a text field; a `<select>`
+ *   cannot hold that, so the role is the right markup. The rule stays on for every other role.
  * - `sl-*` is the theme's custom-element prefix. html-validate has no metadata for them, so `no-unknown-elements`
  *   must ignore them; every other unknown element still fails.
  */
@@ -46,6 +49,7 @@ export const config: ConfigData = {
   rules: {
     "doctype-style": "off",
     "no-unknown-elements": ["error", { exclude: ["sl-*"] }],
+    "prefer-native-element": ["error", { mapping: { listbox: "" } }],
     "unique-landmark": "off",
     "void-style": "off",
   },

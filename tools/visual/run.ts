@@ -382,7 +382,10 @@ async function serve(buildDir: string, themeRoot: string): Promise<{ server: Ser
     try {
       if (!statSync(file).isFile()) throw new Error("not a file");
       response.setHeader("content-type", CONTENT_TYPES[extname(file).toLowerCase()] ?? "application/octet-stream");
-      response.end(readFileSync(file));
+      const bytes = readFileSync(file);
+      // The theme loads its Latin fonts with `font-display: optional`, so a font that misses the first paint is never used.
+      // A baseline shows the page with its fonts, so the gate serves them as `block`: the shot no longer depends on timing.
+      response.end(extname(file).toLowerCase() === ".css" ? bytes.toString("utf8").replace(/font-display:\s*optional/g, "font-display:block") : bytes);
     } catch {
       response.statusCode = 404;
       try {
