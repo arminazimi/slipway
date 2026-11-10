@@ -111,6 +111,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   "code-tabs": "code-tabs",
   details: "<details",
   "diff-block": 'class="diff-block',
+  "drift-banner": 'class="drift-banner',
   embed: 'class="embed',
   endpoint: 'class="endpoint',
   figure: "<figure",
