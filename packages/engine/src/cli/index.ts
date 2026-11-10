@@ -1,7 +1,7 @@
 /** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit apply`, `mizzen edit verify`, `mizzen pack`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, apply or verify an agent patch, print a context pack, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
+import { availableParallelism, tmpdir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "../config/load.ts";
@@ -49,6 +49,7 @@ Options:
   --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
+  --workers <n|auto>   Render pages in n worker threads; auto is the CPU count minus one (default: 1)
   --topic <name>       Topic for pack (default: the site's only topic)
   --budget <tokens>    Token budget for pack, overriding the topic's
   --dry-run            Print the diff for edit apply without writing
@@ -69,6 +70,7 @@ type BuildOpts = {
   readonly root: string;
   readonly out: string;
   readonly theme?: string;
+  readonly workers?: number;
 };
 
 type CheckOpts = {
@@ -76,6 +78,7 @@ type CheckOpts = {
   readonly root: string;
   readonly format: Format;
   readonly theme?: string;
+  readonly workers?: number;
 };
 
 type DevOpts = {
@@ -295,6 +298,7 @@ export function parseArgs(args: readonly string[]): Parsed {
   let hash: string | undefined;
   let port: number = DEFAULT_DEV_PORT;
   let host: string = DEFAULT_DEV_HOST;
+  let workers: number | undefined;
   let topic: string | undefined;
   let budget: number | undefined;
 
@@ -340,6 +344,18 @@ export function parseArgs(args: readonly string[]): Parsed {
       } else if (arg === "--host") {
         if (command !== "dev") return { error: "--host is only valid for dev" };
         host = value();
+      } else if (arg === "--workers") {
+        if (command !== "build" && command !== "check") return { error: "--workers is only valid for build and check" };
+        const raw = value();
+        if (raw === "auto") {
+          workers = Math.max(1, availableParallelism() - 1);
+        } else {
+          const parsed = Number(raw);
+          if (!/^\d+$/.test(raw) || !Number.isInteger(parsed) || parsed < 1) {
+            return { error: `--workers must be a whole number of at least 1, or auto, not ${raw}` };
+          }
+          workers = parsed;
+        }
       } else if (arg === "--topic") {
         if (command !== "pack") return { error: "--topic is only valid for pack" };
         const raw = value().trim();
@@ -373,6 +389,7 @@ export function parseArgs(args: readonly string[]): Parsed {
         root: dir,
         out: out ?? "dist",
         ...(theme === undefined ? {} : { theme }),
+        ...(workers === undefined ? {} : { workers }),
       },
     };
   }
@@ -424,6 +441,7 @@ export function parseArgs(args: readonly string[]): Parsed {
       root: dir,
       format,
       ...(theme === undefined ? {} : { theme }),
+      ...(workers === undefined ? {} : { workers }),
     },
   };
 }
@@ -619,6 +637,7 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
         themeRoot,
         defaultLayout: DEFAULT_LAYOUT,
         cache: true,
+        ...(options.workers === undefined ? {} : { workers: options.workers }),
       });
       if (result.diagnostics.length > 0) printDiagnostics(result.diagnostics, "text", log);
       return result.diagnostics.some((d) => d.severity === "error") ? 1 : 0;
@@ -636,6 +655,7 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       out,
       themeRoot,
       defaultLayout: DEFAULT_LAYOUT,
+      ...(options.workers === undefined ? {} : { workers: options.workers }),
     });
     printDiagnostics(result.diagnostics, options.format, log);
     return result.diagnostics.some((d) => d.severity === "error") ? 1 : 0;
