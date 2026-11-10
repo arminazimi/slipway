@@ -258,8 +258,9 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
     const used = [base, page].filter((b): b is CssBundle => b !== undefined && b.css !== "");
     for (const b of used) bundles.set(b.path, b);
     if (used.length === 0) return rendered.html;
+    const preloads = base === undefined ? [] : optionalFonts(base.css).map((href) => `<link rel="preload" as="font" type="font/woff2" crossorigin href="${href}">`);
     const links = used.map((b) => `<link rel="stylesheet" href="${site.config.base}/${b.path}">`).join("");
-    return rendered.html.replace(/<\/head>/i, () => `${links}</head>`);
+    return rendered.html.replace(/<\/head>/i, () => `${preloads.join("")}${links}</head>`);
   };
 
   const renderOne = async (page: Page): Promise<string> => {
@@ -383,4 +384,19 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   } finally {
     await rm(staging, { recursive: true, force: true });
   }
+}
+
+/**
+ * The font files a stylesheet declares with `font-display: optional`. A font like that is used only when it is
+ * there at the first paint, so a page preloads them: otherwise a slow connection never shows the font, and a late one
+ * lays the text out twice.
+ */
+export function optionalFonts(css: string): string[] {
+  const found: string[] = [];
+  for (const face of css.match(/@font-face\s*\{[^}]*\}/g) ?? []) {
+    if (!/font-display:\s*optional/.test(face)) continue;
+    const url = /url\(\s*["']?([^"')]+\.woff2)["']?\s*\)/.exec(face)?.[1];
+    if (url !== undefined && !found.includes(url)) found.push(url);
+  }
+  return found;
 }

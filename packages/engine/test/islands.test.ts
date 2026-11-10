@@ -219,3 +219,13 @@ test("islandUrl puts the module under the site's base", () => {
   assert.equal(islandUrl("/slipway", "chrome/drawer/client.ts"), "/slipway/assets/theme/islands/chrome/drawer/client.js");
   assert.equal(islandUrl("", "chrome/drawer/client.ts"), "/assets/theme/islands/chrome/drawer/client.js");
 });
+
+test("optionalFonts lists the woff2 files of faces declared font-display: optional, once each", async () => {
+  const { optionalFonts } = await import("../src/pipeline/build.ts");
+  const css =
+    '@font-face{font-family:A;font-display:optional;src:url(/f/a.woff2)format("woff2")}' +
+    '@font-face{font-family:B;font-display:swap;src:url(/f/b.woff2)format("woff2")}' +
+    '@font-face{font-family:A;font-display: optional;src:url("/f/a.woff2") format("woff2")}';
+  assert.deepEqual(optionalFonts(css), ["/f/a.woff2"]);
+  assert.deepEqual(optionalFonts("body{color:red}"), []);
+});
