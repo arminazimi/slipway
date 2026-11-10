@@ -50,6 +50,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Schema table](./schema-table/) | A JSON Schema from `_data` as a table of properties. |
 | [Status banner](./status-banner/) | A page-level deprecated, experimental, or old-version banner, with a replacement link. |
 | [Steps](./steps/) | A numbered sequence or tutorial. |
+| [Symbol popover](./symbol-popover/) | A symbol whose signature and reference page appear on hover or focus. |
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
