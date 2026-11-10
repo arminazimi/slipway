@@ -11,6 +11,7 @@ import { copyAssets } from "./assets.ts";
 import { cacheKey, cacheRootOf, restoreCache, writeCache } from "./cache.ts";
 import { createDiagnostics, sortDiagnostics, type Diagnostics } from "./diagnostics.ts";
 import { createRenderPool, renderOnePage, type RenderPool } from "./parallel.ts";
+import { placeholderDiagnostics } from "./placeholder-diagnostic.ts";
 
 /** Options of {@link build}. */
 export interface BuildOptions {
@@ -230,6 +231,7 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   );
   for (const d of model.diagnostics) diagnostics.report(d);
   const { site } = model;
+  for (const d of await placeholderDiagnostics(site)) diagnostics.report(d);
 
   const registry = await loadRegistry(themeRoot);
   for (const d of registry.diagnostics) diagnostics.report(d);
