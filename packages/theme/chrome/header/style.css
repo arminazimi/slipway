@@ -114,6 +114,11 @@
   stroke-linejoin: round;
 }
 
+.header-repo .header-repo-mark {
+  fill: currentColor;
+  stroke: none;
+}
+
 /* JavaScript removes `hidden` when it enhances these controls; the display rule must not override it. */
 .header-search[hidden],
 .header-menu[hidden] {
@@ -124,11 +129,14 @@
   display: none;
 }
 
-/* Narrow screens: logo, search icon, and menu button only. */
+/* Narrow screens: logo, title, repository link, and the search and menu buttons; the tabs leave. */
 @media (max-width: 40rem) {
-  .header-title,
-  .header-tabs,
-  .header-repo {
+  .header-inner {
+    gap: var(--space-4);
+    padding-inline: var(--space-4);
+  }
+
+  .header-tabs {
     display: none;
   }
 

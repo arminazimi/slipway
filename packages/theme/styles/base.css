@@ -127,6 +127,8 @@ body {
   border-radius: var(--radius-md);
   background-color: var(--code-bg);
   color: var(--code-fg);
+  line-height: var(--type-leading-body);
+  tab-size: 2;
 }
 
 :where(blockquote) {

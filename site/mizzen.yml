@@ -11,6 +11,9 @@ repository:
   url: https://github.com/arminazimi/slipway
 theme:
   options:
+    logo:
+      light: /brand/mark-light.svg
+      dark: /brand/mark-dark.svg
     footer:
       copyright: "© Slipway contributors"
       license: "Released under the MIT license."
