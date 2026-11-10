@@ -129,6 +129,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   table: "<table",
   tags: 'class="tags"',
   terminal: 'class="terminal',
+  "tested-chip": 'class="tested-chip',
   "version-badge": 'class="version-badge',
   video: 'class="video',
 };
