@@ -2,12 +2,12 @@
 name: slipway-design
 description: Restyle a Slipway site with design tokens and a preset, add CSS through the override slots, and keep light and dark contrast passing.
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Restyle a Slipway site
 
-A Slipway site's look comes from `_config.yml` and four override slots, never from edited theme files. The theme ships an editorial serif, a warm sand palette, and one accent; a preset changes those through tokens and CSS variables that stay public across releases. If the site has an `AGENTS.md`, read it first; it wins where it differs.
+A Slipway site's look comes from the theme's design tokens and your own stylesheet, never from edited theme files. A restyle changes token values; the token names stay public across releases. If the site has an `AGENTS.md`, read it first; it wins where it differs.
 
 ## Token names in the engine theme
 
@@ -28,108 +28,67 @@ Each token is a CSS custom property named `--<group>-<name>`:
 
 A color token has a light and a dark value. The dark value is set in `$extensions.lateen.dark` in `names.json`, and `tokens.css` joins the two with `light-dark()`, so one name works in both modes. Component CSS reads only these names; the component tests fail on a name that is not a token. Write your own CSS with the same names.
 
-The sections below use the `_config.yml` keys and the `--sl-*` variables of the Jekyll theme. Those names are not the engine's: use the token names above in engine sites.
-
 ## 1. Take a baseline
 
-Get the theme's checks once, into a folder outside the site. Run section 6 before you change anything and keep the output: the restyle is done when it adds no finding and no failed pair.
+Build the site and run the doctor before you change anything, and keep the output: the restyle is done when it adds no finding and no failed contrast pair.
 
 ```sh
-git clone --depth 1 https://github.com/arminazimi/slipway "$HOME/.slipway"
-cd "$HOME/.slipway" && npm ci && cd -
+npx slipway build
+npx slipway doctor . --build dist
 ```
 
-In the theme checkout, run the checks the theme ships. Each must print `OK` before and after:
+## 2. Choose the values
 
-```sh
-cd "$HOME/.slipway"
-npm run check:contrast
-npm run check:logical
-npm run check:css
-npm run check:js
-```
+Change a group of tokens as a whole, not one at a time, or the result drifts:
 
-They cover the theme's own tokens and files, so they stay green when the theme is untouched. The site still has to keep the rules they enforce, and the ratios they use are yours to meet (section 4).
+- **Type.** `--type-font-body` for reading, `--type-font-heading` for headings. Name a family the page loads, or a system stack: a family the page does not load falls back silently.
+- **Color.** One accent and a canvas and text pair, each with a light and a dark value.
+- **Shape.** `--radius-sm`, `--radius-md`, `--radius-full`.
+- **Space and motion.** `--space-*` and `--motion-*`.
 
-## 2. Choose the preset
+Every name is in `packages/theme/tokens/names.json`.
 
-Slipway has no `slipway.preset` key. A preset is a complete set of the values below, written into the site and applied together; change it as a whole, not one key at a time, or the result drifts. Start from the theme's defaults in [docs/tokens.md](https://github.com/arminazimi/slipway/blob/main/docs/tokens.md) or the commented values in `examples/minimal/_config.yml`, then decide:
+## 3. Override the tokens
 
-- **Type.** `font_display` for large headings, `font_body` for reading. The page self-hosts Instrument Serif, Source Serif 4, and Vazirmatn, so name those or a system stack: a family the page does not load falls back silently. `slipway.fonts: system` downloads no font at all. A new family means font files and a link in `_includes/head-custom.html`, and it counts toward page weight ([ADR 0004](https://github.com/arminazimi/slipway/blob/main/docs/adr/0004-fonts.md)).
-- **Color.** One accent and a canvas and text pair. Text colors need two values, one per mode, so set them in `assets/css/custom.css` (section 4) rather than `_config.yml`.
-- **Shape.** `radius` rounds cards; `--sl-radius-compact` rounds badges, buttons, and code blocks.
-- **Mark.** `slipway.logo.light` and `slipway.logo.dark` point at a logo in the site; `slipway.logo.favicon_svg` and `slipway.logo.touch_icon` at its icons.
-- **Header.** `slipway.header`: `classic`, `centered`, or `minimal`.
-
-Every key you may set is listed in [reference/config.md](../slipway-site/reference/config.md), and what each token changes is in [docs/tokens.md](https://github.com/arminazimi/slipway/blob/main/docs/tokens.md).
-
-## 3. Set the fonts and shape tokens
-
-```yaml
-slipway:
-  header: centered
-  tokens:
-    font_display: '"Instrument Serif", Georgia, "Times New Roman", serif'
-    font_body: '"Source Serif 4", Georgia, serif'
-    radius: 0.5rem
-```
-
-`slipway.tokens` accepts only `accent`, `canvas`, `text`, `font_body`, `font_display`, and `radius`; the schema rejects anything else, so a typo fails instead of being ignored. Colors are `#rrggbb` or `oklch(...)`; lengths are `rem`, `em`, or `px`.
-
-A color set here applies to light and dark alike. Text must be dark on a light canvas and light on a dark one, so one value cannot pass in both modes: leave `accent`, `canvas`, and `text` unset and do colors in `assets/css/custom.css`.
-
-## 4. Set the colors in `assets/css/custom.css`
-
-The theme sets `color-scheme`, so `light-dark()` works here, and the file loads after the theme styles and the config tokens. This green accent passes AA on both canvases and surfaces:
+Put your values in a stylesheet your site links after the theme's, for example `site.css`. Colors use `light-dark()` so one name works in both modes:
 
 ```css
 :root {
-  --sl-color-rose: light-dark(#4a5c2f, #b9c69b);
-  --sl-color-rose-fill: light-dark(#4a5c2f, #556b3a);
-  --sl-color-on-rose-fill: light-dark(#f6efe8, #efe8e8);
-  --sl-button-bg: var(--sl-color-rose-fill);
-  --sl-button-fg: var(--sl-color-on-rose-fill);
+  --color-accent: light-dark(#4a5c2f, #b9c69b);
+  --color-link: light-dark(#3d4d27, #c5d1a8);
+  --radius-md: 0.5rem;
 }
 ```
 
-`--sl-color-rose` is link and mark text; `--sl-color-rose-fill` is the fill of filled buttons and status badges. The button rules read `--sl-button-bg` and `--sl-button-fg`, which keep the old values until you re-point them as above. `--sl-color-rose-hover` is derived from the accent, so it follows. Check every pair in both modes:
+Link the stylesheet from a theme option or the layout your site uses. The engine theme reads only token names, so a restyle needs no change to theme files.
 
-- `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, and `--sl-color-rose`, each on `--sl-color-canvas` and on `--sl-color-surface`: at least 4.5:1.
-- `--sl-color-on-rose-fill` on `--sl-color-rose-fill`: at least 4.5:1.
+## 4. Check the contrast
 
-The ratio is `(lighter + 0.05) / (darker + 0.05)` on WCAG relative luminance; `contrastRatio` in `tools/theme/contrast.ts` is the function the theme's check uses, and its test pins known values. 4.5:1 covers text, 3:1 large text and interface marks. A palette that changes `--sl-color-canvas`, `--sl-color-surface`, `--sl-color-text`, `--sl-color-heading`, `--sl-color-muted`, or `--sl-color-line` must change and re-check all of them together.
+Check every pair in both modes:
 
-## 5. Add to the theme through the slots
+- `--color-text`, `--color-heading`, `--color-muted`, and `--color-link`, each on `--color-canvas`: at least 4.5:1.
+- Large text and interface marks: at least 3:1.
 
-| Slot | What it does |
-| --- | --- |
-| `assets/css/custom.css` | Your CSS, linked after the theme styles and config tokens, only when the file exists |
-| `_includes/head-custom.html` | End of `<head>` on every page: meta tags, a font stylesheet |
-| `_includes/footer-custom.html` | Inside `<footer>` on every page: a line, a deferred script |
-| `assets/images/social.png` | The `og:image` a shared link shows, 1200 × 630 |
+The ratio is `(lighter + 0.05) / (darker + 0.05)` on WCAG relative luminance; `contrastRatio` in `tools/theme/contrast.ts` is the function the theme's check uses. A palette that changes `--color-canvas`, `--color-text`, `--color-heading`, `--color-muted`, or `--color-border` must change and re-check all of them together.
 
-Prefer the `--sl-*` variables to styling `.sl-*` classes: the variables are public, the class names are internal and may change in a minor release. Write your own classes for your own content. Use logical CSS properties so right-to-left works: `margin-inline-start`, `padding-inline`, `border-inline-start`, `max-inline-size`, never `left`, `right`, or `width` alone. `npm run check:logical` fails on the physical ones in the theme's CSS; hold your file to the same rule. Every page must read without JavaScript: add `defer` to any script. Details are in [docs/overrides.md](https://github.com/arminazimi/slipway/blob/main/docs/overrides.md) and [the customization guide](https://github.com/arminazimi/slipway/blob/main/site/guides/customize.md).
+## 5. Write RTL-safe CSS
+
+Use logical CSS properties so right-to-left works: `margin-inline-start`, `padding-inline`, `border-inline-start`, `max-inline-size`, never `left`, `right`, or `width` alone. Every page must read without JavaScript: add `defer` to any script.
 
 ## 6. Check the restyle
 
-From the site folder, validate the config and every front matter block, build, and run the doctor:
-
 ```sh
-node "$HOME/.slipway/tools/theme/validate.ts" .
-bundle exec jekyll build
-node "$HOME/.slipway/packages/doctor/bin/slipway.ts" doctor . --build _site
+npx slipway build
+npx slipway doctor . --build dist
 ```
 
-Each problem is printed as `file:line key: message`. Fix it at that line and run it again. The doctor must keep the level and finding count of your baseline; a finding that names your file is yours to fix. Without a `Gemfile`, push and read the log of the Pages build.
-
-Look at one page in both modes with `bundle exec jekyll serve`: the theme toggle and the system setting each have to work. Then keep the budgets the theme is tested at: 42 KB of CSS and 10 KB of JS, and a 100 KB home page or 150 KB doc or post page, HTML, CSS, JS, and fonts included. Your `assets/css/custom.css` and any font you add count toward the page weight; keep the file small and the extra requests at zero when the preset allows.
+Each problem is printed as `file:line key: message`. Fix it at that line and run it again. The doctor must keep the level and finding count of your baseline; a finding that names your file is yours to fix. Look at one page in both modes: the theme toggle and the system setting each have to work.
 
 ## Never
 
-- Never edit or copy theme layouts, includes, `assets/css/slipway.css`, or `assets/css/tokens.css`; use tokens and the slots.
-- Never give a changed color one value for both modes; set it with `light-dark()`, check both, or leave the pair as the theme has it.
+- Never edit or copy the theme's layouts or components, or `styles/tokens.css`; override tokens.
+- Never give a changed color one value for both modes; set it with `light-dark()` and check both.
 - Never name a font family the page does not load; it falls back silently.
-- Never style `.sl-*` classes to restyle a component; set the token it reads.
 - Never add a script that blocks rendering, or a control that shows without JavaScript.
 - Never lower the doctor's `level`, drop `--build`, or edit a built folder to make a check pass.
 - Never hard-code a color, space, radius, or duration in an engine component's CSS; read a token name from the table above.

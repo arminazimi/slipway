@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../packages/engine/schema/config.schema.json
+title: Harbor
+description: A small documentation site built with Slipway, the starting point for a new docs site.
+lang: en
+url: https://example.com
+defaults:
+  - path: ""
+    values:
+      layout: doc
