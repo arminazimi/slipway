@@ -54,6 +54,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Steps](./steps/) | A numbered sequence or tutorial. |
 | [Symbol popover](./symbol-popover/) | A symbol whose signature and reference page appear on hover or focus. |
 | [Table](./table/) | Markdown tables in a labelled, keyboard-scrollable region. |
+| [Tabs](./tabs/) | Any sections as tabs, following one chosen label across the page and later pages. |
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
 | [Tested chip](./tested-chip/) | The pass or fail result of a page's examples, next to a code block. |

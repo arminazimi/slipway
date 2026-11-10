@@ -130,6 +130,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   steps: 'class="steps"',
   "symbol-popover": 'class="symbol-popover',
   table: "<table",
+  tabs: 'class="tabs"',
   tags: 'class="tags"',
   terminal: 'class="terminal',
   "tested-chip": 'class="tested-chip',
