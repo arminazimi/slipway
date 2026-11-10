@@ -162,6 +162,8 @@
   "tutorial_steps": "Tutorial steps",
   "type": "Type",
   "updated": "Updated",
+  "variables_form_hint": "Fill these in to see your values in the code examples. They stay in your browser.",
+  "variables_form_legend": "Variables",
   "version_added": "Added in version {version}",
   "version_changed": "Changed in version {version}",
   "version_current": "Current version",

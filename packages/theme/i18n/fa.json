@@ -162,6 +162,8 @@
   "tutorial_steps": "گام‌های آموزش",
   "type": "Type",
   "updated": "به‌روزرسانی شد",
+  "variables_form_hint": "این‌ها را پر کنید تا مقدارهایتان در نمونه‌های کد دیده شود. مقدارها در مرورگر شما می‌مانند.",
+  "variables_form_legend": "متغیرها",
   "version_added": "افزوده شد در نسخهٔ {version}",
   "version_changed": "تغییر کرد در نسخهٔ {version}",
   "version_current": "نسخهٔ کنونی",

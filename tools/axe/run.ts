@@ -134,6 +134,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   terminal: 'class="terminal',
   "tested-chip": 'class="tested-chip',
   "trust-panel": 'class="trust-panel',
+  "variables-form": 'class="variables-form',
   "version-badge": 'class="version-badge',
   "version-diff": 'class="version-diff',
   video: 'class="video',
