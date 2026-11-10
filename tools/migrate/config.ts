@@ -1,4 +1,4 @@
-// Converts the text of a Slipway 0.2 `_config.yml` into the text of a `slipway.yml`, following the
+// Converts the text of a Slipway 0.2 `_config.yml` into the text of a `mizzen.yml`, following the
 // mapping table in ADR 0024 rule 5: every key either moves to its new place, with its comments, or
 // is reported as dropped. The result is checked against the engine's config schema
 // (packages/engine/schema/config.schema.json). The CLI that walks a site and writes files lives in
@@ -20,9 +20,9 @@ import { parseDocument, YAMLMap, type Document, type Pair } from "yaml";
 
 export type MigrateProblem = { key: string | null; note: string };
 export type MigrateResult = {
-  /** The `slipway.yml` text, or null when the source did not parse as a mapping. */
+  /** The `mizzen.yml` text, or null when the source did not parse as a mapping. */
   yaml: string | null;
-  /** Keys with no destination in `slipway.yml`, each with the reason ADR 0024 gives. */
+  /** Keys with no destination in `mizzen.yml`, each with the reason ADR 0024 gives. */
   dropped: MigrateProblem[];
   /** Parse failures and schema violations of the converted file; empty when it is valid. */
   errors: MigrateProblem[];
@@ -140,7 +140,7 @@ export function migrateConfig(source: string): MigrateResult {
 
   const dropped: MigrateProblem[] = [];
   const errors: MigrateProblem[] = [];
-  const drop = (key: string, why?: string) => dropped.push({ key, note: why ?? "has no place in slipway.yml (ADR 0024)" });
+  const drop = (key: string, why?: string) => dropped.push({ key, note: why ?? "has no place in mizzen.yml (ADR 0024)" });
   const out: any[] = [];
   let repository: any = null;
   let theme: any = null;
@@ -211,7 +211,7 @@ export function migrateConfig(source: string): MigrateResult {
   /** `theme` / `remote_theme` name another theme, or the one that ships by default. */
   const setThemeName = (item: any, from: string) => {
     const name = item.value?.value;
-    if (defaultThemeNames.has(name)) return drop(from, "names the theme that ships by default; slipway.yml needs no theme key");
+    if (defaultThemeNames.has(name)) return drop(from, "names the theme that ships by default; mizzen.yml needs no theme key");
     const themeMap = ensureTheme();
     if (findPair(themeMap, "name")) return drop(from, "theme.name is already set");
     themeMap.items.push(carriedPair(doc, "name", item.value, item));

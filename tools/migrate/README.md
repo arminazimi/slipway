@@ -13,10 +13,10 @@ with Node 22.18 or later (Node strips the types; nothing is compiled).
 
 ## What it does
 
-1. **Config** ([`config.ts`](config.ts), issue #1182): converts `_config.yml` to `slipway.yml` with the
+1. **Config** ([`config.ts`](config.ts), issue #1182): converts `_config.yml` to `mizzen.yml` with the
    mapping table in [ADR 0024](../../docs/adr/0024-site-config.md), keeps comments on keys that survive,
    validates the result against the engine's config schema, and reports every dropped key with its reason.
-   It removes `_config.yml` only after a valid `slipway.yml` is written. When `slipway.yml` already exists,
+   It removes `_config.yml` only after a valid `mizzen.yml` is written. When `mizzen.yml` already exists,
    it leaves both files in place and says so.
 2. **Content** ([`content.ts`](content.ts), issue #1183): renames the front-matter keys that changed
    (`layout`, `nav_order`, `direction`) and turns callout includes into `:::callout` directives. Every
@@ -39,14 +39,14 @@ mode: dry run (nothing was written)
 
 Would change (2)
   guide/install.md
-  slipway.yml
+  mizzen.yml
 
 Would remove (1)
   _config.yml
 
 Manual steps (4)
   _config.yml — plugins: Jekyll plugins; optional front matter, README indexes, redirects, the sitemap, and SEO tags are built in
-  _config.yml — remote_theme: names the theme that ships by default; slipway.yml needs no theme key
+  _config.yml — remote_theme: names the theme that ships by default; mizzen.yml needs no theme key
   guide/install.md:10 — Liquid output {{ site.title }} left in place; write it as Markdown or a directive
   _data/navigation.yml:3 — /main/0/url must match pattern "^/"
 
@@ -55,7 +55,7 @@ Errors (0)
 ```
 
 - **Changed files / Would change**: every file the command wrote, or would write.
-- **Removed files / Would remove**: the 0.2 `_config.yml`, after a valid `slipway.yml` is written.
+- **Removed files / Would remove**: the 0.2 `_config.yml`, after a valid `mizzen.yml` is written.
 - **Manual steps**: dropped config keys, Liquid left in place, layouts with no engine name, and navigation
   problems. Each has the file and, when it has one, the line.
 - **Errors**: a file that could not be read or a config that did not parse or validate. When there are

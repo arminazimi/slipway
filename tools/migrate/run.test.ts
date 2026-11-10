@@ -55,13 +55,13 @@ test("both steps run, write the files, and the report lists changes and manual s
     const report = migrateSite(site);
 
     assert.equal(report.dryRun, false);
-    assert.deepEqual(report.changed, ["guide/install.md", "slipway.yml"]);
+    assert.deepEqual(report.changed, ["guide/install.md", "mizzen.yml"]);
     assert.deepEqual(report.removed, ["_config.yml"]);
     assert.deepEqual(report.errors, []);
-    assert.ok(existsSync(join(site, "slipway.yml")), "slipway.yml is written");
+    assert.ok(existsSync(join(site, "mizzen.yml")), "mizzen.yml is written");
     assert.ok(!existsSync(join(site, "_config.yml")), "the 0.2 config is removed after the write");
 
-    const config = readFileSync(join(site, "slipway.yml"), "utf8");
+    const config = readFileSync(join(site, "mizzen.yml"), "utf8");
     assert.match(config, /title: Beacon/);
     assert.match(config, /defaults:/);
     assert.doesNotMatch(config, /remote_theme|plugins/);
@@ -100,10 +100,10 @@ test("--dry-run reports the same changes and writes nothing", () => {
 
     const report = migrateSite(site, { dryRun: true });
 
-    assert.deepEqual(report.changed, ["guide/install.md", "slipway.yml"]);
+    assert.deepEqual(report.changed, ["guide/install.md", "mizzen.yml"]);
     assert.deepEqual(report.removed, ["_config.yml"]);
     assert.ok(existsSync(join(site, "_config.yml")), "_config.yml is still there");
-    assert.ok(!existsSync(join(site, "slipway.yml")), "slipway.yml was not written");
+    assert.ok(!existsSync(join(site, "mizzen.yml")), "mizzen.yml was not written");
     assert.equal(readFileSync(join(site, "guide/install.md"), "utf8"), before, "the page was not rewritten");
     assert.match(formatReport(report), /Would change \(2\)/);
     assert.match(formatReport(report), /Would remove \(1\)/);
@@ -127,13 +127,13 @@ test("a dry run on a copy of the legacy docs example prints a full report and ch
 
     assert.match(output, /Slipway migration report/);
     assert.match(output, /Would change \(\d+\)/);
-    assert.match(output, /slipway\.yml/);
+    assert.match(output, /mizzen\.yml/);
     assert.match(output, /Would remove \(1\)/);
     assert.match(output, /_config\.yml/);
     assert.match(output, /Manual steps \(\d+\)/);
     assert.equal(readFileSync(join(site, "_config.yml"), "utf8"), configBefore, "_config.yml is unchanged");
     assert.equal(readFileSync(join(site, "guide/install.md"), "utf8"), pageBefore, "the page is unchanged");
-    assert.ok(!existsSync(join(site, "slipway.yml")), "slipway.yml was not written");
+    assert.ok(!existsSync(join(site, "mizzen.yml")), "mizzen.yml was not written");
   } finally {
     rmSync(site, { recursive: true, force: true });
   }
@@ -148,10 +148,10 @@ test("a config that cannot be converted is an error, and neither file is touched
     const report = migrateSite(site);
     assert.ok(report.errors.length > 0);
     assert.ok(report.changed.includes("index.md"), "content still migrates");
-    assert.ok(!report.changed.includes("slipway.yml"));
+    assert.ok(!report.changed.includes("mizzen.yml"));
     assert.ok(!report.removed.includes("_config.yml"));
     assert.ok(existsSync(join(site, "_config.yml")), "_config.yml stays for the person to fix");
-    assert.ok(!existsSync(join(site, "slipway.yml")), "no invalid slipway.yml is written");
+    assert.ok(!existsSync(join(site, "mizzen.yml")), "no invalid mizzen.yml is written");
 
     const log = () => {};
     assert.equal(main([site], log, log), 1, "the CLI exits 1 when a conversion failed");

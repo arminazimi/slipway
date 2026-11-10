@@ -1,4 +1,4 @@
-// Tests for the `_config.yml` -> `slipway.yml` mapping (ADR 0024 rule 5): every surviving key lands
+// Tests for the `_config.yml` -> `mizzen.yml` mapping (ADR 0024 rule 5): every surviving key lands
 // in its new place with its comments, every dropped key is reported with a reason, and the result
 // passes the engine's config schema. The last tests convert every `_config.yml` the repository still
 // ships, including the legacy doctor fixtures, which is the issue's "done when".
