@@ -147,7 +147,7 @@
   "version_dev": "تطوير",
   "version_latest": "الأحدث",
   "version_removed": "أُزيل في الإصدار {version}",
-  "versions": "Versions",
+  "versions": "الإصدارات",
   "versions_empty": "لم يُنشر أي إصدار بعد.",
   "video_missing_title": "الفيديو بلا عنوان. أضف title=\"…\" إلى توجيه ::video ليحصل المشغّل على اسم يقرأه قارئ الشاشة.",
   "video_play": "تشغيل الفيديو",

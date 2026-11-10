@@ -147,7 +147,7 @@
   "version_dev": "توسعه",
   "version_latest": "آخرین",
   "version_removed": "حذف شد در نسخهٔ {version}",
-  "versions": "Versions",
+  "versions": "نسخه‌ها",
   "versions_empty": "هنوز نسخه‌ای منتشر نشده است.",
   "video_missing_title": "ویدیو عنوان ندارد. برای دسترس‌پذیری، title=\"…\" را به دستور ::video اضافه کنید.",
   "video_play": "پخش ویدیو",
