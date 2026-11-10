@@ -164,6 +164,7 @@ Each `*.ts` file in an outputs folder is one unit. The pipeline finds them by li
 | Name | Writes |
 | --- | --- |
 | `agents-md` | `AGENTS.md`, a guide to the built site for agents. |
+| `context-pack` | `pack/<topic>.md` for each topic in `_data/context-packs.yml`: the best pages for the topic, trimmed to its token budget, with each page's URL and source path. |
 | `html` | One HTML file per document page, at the page's pretty URL. |
 | `llms` | `llms.txt`, following llmstxt.org. |
 | `llms-full` | `llms-full.txt`, every page's Markdown in one file. |
