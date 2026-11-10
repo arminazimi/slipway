@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join, posix, relative, resolve } from "node:path";
-import type { Heading as MdHeading } from "mdast";
+import type { Heading as MdHeading, Root } from "mdast";
 import { loadConfig } from "../config/load.ts";
 import { loadData } from "../content/data.ts";
 import { discover, type DiscoveredFile } from "../content/discover.ts";
@@ -15,6 +15,7 @@ import { parseMarkdown } from "../markdown/parse.ts";
 import { navFromFolders, type FolderPage } from "../nav/from-folders.ts";
 import { loadNavigation } from "../nav/from-yaml.ts";
 import { createDiagnostics, sortDiagnostics } from "../pipeline/diagnostics.ts";
+import { pageCache, parseMarkdownWithCache, type PageCache } from "../pipeline/page-cache.ts";
 import { applyFacts } from "./facts.ts";
 
 /** What {@link buildModel} returns: the site and every finding made while assembling it. */
@@ -23,6 +24,17 @@ export interface ModelResult {
   readonly site: Site;
   /** Findings from the config, discovery, front matter, Markdown, navigation, data, facts, and duplicate URLs, sorted. */
   readonly diagnostics: readonly Diagnostic[];
+  /** Markdown pages parsed on this run; pages read from the page cache are not counted. */
+  readonly parsedPages: number;
+}
+
+/** Options of {@link buildModel}. */
+export interface BuildModelOptions {
+  /**
+   * Folder of the per-page Markdown cache. When set, each page's parsed tree is read from and written to it, so an
+   * unchanged page is not parsed again. Front matter, includes, and every later stage still run every build.
+   */
+  readonly pageCacheDir?: string;
 }
 
 /** Compares by code point, never by locale (ADR 0022, rule 5). */
@@ -88,10 +100,16 @@ function appUrl(folder: string, base: string): string {
  * Assembles the site model for the site at `root`: loads the config, discovers the files, and takes each page through
  * front matter, Markdown, title, permalink, and language. Pages are sorted by URL; two pages with one URL are an error
  * that names both sources. Navigation comes from the navigation file, or from the folders when the file is missing.
+ *
+ * With `options.pageCacheDir`, the Markdown parse of each page is cached by its expanded body, so a page whose body and
+ * plugins are unchanged is not parsed again. Every other stage runs in full, so the model is the same either way.
  */
-export async function buildModel(root: string): Promise<ModelResult> {
+export async function buildModel(root: string, options: BuildModelOptions = {}): Promise<ModelResult> {
   const siteRoot = resolve(root);
   const diagnostics = createDiagnostics();
+  const cache: PageCache | undefined =
+    options.pageCacheDir === undefined ? undefined : pageCache(options.pageCacheDir);
+  let parsedPages = 0;
 
   const loaded = loadConfig(siteRoot);
   for (const d of loaded.diagnostics) diagnostics.report(d);
@@ -184,7 +202,17 @@ export async function buildModel(root: string): Promise<ModelResult> {
       for (const d of included.diagnostics) diagnostics.report(d);
       body = included.body;
     }
-    const tree = isMarkdown ? await parseMarkdown(body, fm.bodyLine) : { type: "root" as const, children: [] };
+    let tree: Root;
+    if (!isMarkdown) {
+      tree = { type: "root", children: [] };
+    } else if (cache !== undefined) {
+      const result = await parseMarkdownWithCache(body, fm.bodyLine, cache);
+      if (result.parsed) parsedPages += 1;
+      tree = result.tree;
+    } else {
+      tree = await parseMarkdown(body, fm.bodyLine);
+      parsedPages += 1;
+    }
     const { title } = resolveTitle({ frontMatter, tree, file: file.path });
     const lang = pageLang(file.path, { config, frontMatter });
     const url = permalink(file.path, {
@@ -241,5 +269,6 @@ export async function buildModel(root: string): Promise<ModelResult> {
   return {
     site: applied.site,
     diagnostics: sortDiagnostics(diagnostics.all),
+    parsedPages,
   };
 }
