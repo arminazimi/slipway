@@ -124,7 +124,7 @@ test("the body, page footer, and pager follow the title inside the article", () 
   assert.ok(article, "article present");
   assert.match(
     article[1] ?? "",
-    /<div class="doc-body"><p>Run the build.<\/p><\/div><div class="page-footer">[\s\S]*<nav class="pager" aria-label="Previous and next pages"><a class="pager-link pager-prev" href="\/guide\/" rel="prev">/,
+    /<div class="doc-body"><p>Run the build.<\/p><\/div><div class="doc-actions"><div class="page-footer">[\s\S]*<nav class="pager" aria-label="Previous and next pages"><a class="pager-link pager-prev" href="\/guide\/" rel="prev">/,
   );
 });
 
@@ -134,7 +134,7 @@ test("the copy-Markdown control follows the page footer and stays before the pag
   assert.ok(article, "article present");
   assert.match(
     article[1] ?? "",
-    /<div class="page-footer">[\s\S]*<\/div><div class="doc-actions"><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
+    /<div class="page-footer">[\s\S]*<\/div><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
   );
 });
 
@@ -208,7 +208,7 @@ test("the edit link sits between the body and the page footer, and is absent wit
 
   assert.match(
     rendered,
-    /<div class="doc-body"><p>Run the build\.<\/p><\/div><div class="edit-page" data-edit-page><a class="edit-page-link" href="https:\/\/github\.com\/o\/r\/edit\/main\/guide\/install\.md" rel="noopener">Edit this page<\/a><\/div><div class="page-footer">/,
+    /<div class="doc-body"><p>Run the build\.<\/p><\/div><div class="edit-page" data-edit-page><a class="edit-page-link" href="https:\/\/github\.com\/o\/r\/edit\/main\/guide\/install\.md" rel="noopener">Edit this page<\/a><\/div><div class="doc-actions"><div class="page-footer">/,
   );
   assert.doesNotMatch(html(doc(layoutProps(page))), /class="edit-page"/);
 });

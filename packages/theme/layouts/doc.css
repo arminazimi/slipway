@@ -76,15 +76,25 @@
   color: light-dark(var(--shiki-light, inherit), var(--shiki-dark, inherit));
 }
 
-/* The copy, view, and agent controls sit in one row under the page footer. */
+/* The page footer, copy, view, and agent controls share one row under the article. */
 .doc-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  margin-block-start: var(--space-4);
+  gap: var(--space-3) var(--space-2);
+  margin-block-start: var(--space-8);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+  font-family: var(--type-font-ui);
+  font-size: var(--type-size-sm);
+  color: var(--color-muted);
 }
 
 .doc-actions .copy-markdown-status:empty {
+  display: none;
+}
+
+/* The article already ends with an "Edit this page" link, so the footer's own edit link would repeat it. */
+.edit-page + .doc-actions .page-footer-edit {
   display: none;
 }
