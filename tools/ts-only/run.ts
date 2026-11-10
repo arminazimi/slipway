@@ -6,7 +6,6 @@
 // `legacy.txt` lists the JavaScript files that existed when the rule started; it only shrinks.
 // Never add a line to it: write the new file as `.ts`. A deleted or converted file may stay listed
 // (a missing file is ignored), so a pull request that removes code does not have to edit it.
-// Client scripts under `assets/js/` are exempt until the engine replaces them.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -19,7 +18,6 @@ export function violations(files: string[], legacy: Set<string>): string[] {
   return files.filter((f) => {
     if (f.endsWith(".tsx")) return true;
     if (!/\.(js|mjs|cjs)$/.test(f)) return false;
-    if (f.startsWith("assets/js/")) return false;
     return !legacy.has(f);
   });
 }

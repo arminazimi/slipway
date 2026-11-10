@@ -20,7 +20,7 @@ import { root } from "./root.ts";
 export const notChecks = new Set(["html-validate", "sourcemap", "twins"]);
 
 /** Checks without a run.mjs, in the order they run after the tests. */
-export const fixedChecks = ["brand", "logical", "js", "css", "schemas", "docs"];
+export const fixedChecks = ["brand", "schemas", "docs"];
 
 const dirs = (path) => (existsSync(path) ? readdirSync(path, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort() : []);
 /** Jekyll is being removed (cleanup.jekyll-theme): nothing that builds a site with it belongs in `npm run check`. */

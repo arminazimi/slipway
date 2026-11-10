@@ -32,7 +32,6 @@ const allowed = new Set([
   "_plugins",
   "action",
   "adapters",
-  "assets",
   "brand",
   "changelog.d",
   "docs",
