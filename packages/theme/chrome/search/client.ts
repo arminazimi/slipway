@@ -1,8 +1,21 @@
 /*
- * Search dialog: loads the Pagefind index on first open, runs the query, groups results by section,
- * and keeps keyboard focus inside the dialog. No index is fetched until the reader opens search, so a
- * page that never searches downloads no search JavaScript data.
+ * Search dialog and command palette: loads the Pagefind index on first open, runs the query, groups
+ * page results by section, groups the page's actions under "Actions", and keeps keyboard focus inside
+ * the dialog. No index is fetched until the reader opens search, so a page that never searches
+ * downloads no search JavaScript data.
+ *
+ * The action list arrives as inert JSON from `chrome/command-palette/`; this module parses it,
+ * filters it on the same query as the page results, and runs the chosen action. The module stays a
+ * single file (no runtime imports of the theme's server modules), so it is safe to serve as an island.
  */
+
+import type { PaletteAction, PalettePayload, PaletteRun, ThemeChoice } from "../command-palette/actions.ts";
+
+/** localStorage key for the visitor's theme choice; keep in step with `layouts/base.ts`. */
+export const THEME_KEY = "slipway-theme";
+
+/** The group heading when the server sends no label. */
+export const ACTIONS_LABEL = "Actions";
 
 /** The filter the engine writes on every indexed page; its first value is the page's section. */
 export const SECTION_FILTER = "section";
@@ -18,6 +31,8 @@ export const MESSAGES = {
   loading: "Loading search…",
   searching: "Searching…",
   failed: "Search is unavailable right now.",
+  copied: "Copied.",
+  copyFailed: "Copy failed.",
 } as const;
 
 /** One result Pagefind returns, as `data()` gives it. */
@@ -66,6 +81,12 @@ export interface SearchInput {
 export interface SearchLink {
   focus(): void;
   click(): void;
+  getAttribute?(name: string): string | null;
+}
+
+/** The element that currently has focus, for keeping it across an async redraw. */
+export interface SearchActiveElement extends SearchFocusable {
+  getAttribute?(name: string): string | null;
 }
 
 /** Anything in the dialog that can take keyboard focus, for the focus trap. */
@@ -80,23 +101,41 @@ export interface SearchNode {}
 export interface SearchElement extends SearchNode {
   setAttribute(name: string, value: string): void;
   append(...nodes: SearchNode[]): void;
+  /** Only action buttons need a listener; the result renderer never adds one. */
+  addEventListener?(type: "click", listener: () => void): void;
 }
 
 /** The part of `document` the result renderer uses. */
 export interface SearchDocument {
   createElement(tag: string): SearchElement;
   createTextNode(text: string): SearchNode;
+  /** The focused element, when the browser reports one; a redraw keeps keyboard focus on it. */
+  readonly activeElement?: SearchActiveElement | null;
 }
 
 /** The container `client.ts` fills with result nodes. */
 export interface SearchResults {
   replaceChildren(...nodes: SearchNode[]): void;
   querySelectorAll(selector: string): Iterable<SearchLink>;
+  /** Whether `node` is inside the list, so a redraw knows the reader was navigating it. */
+  contains?(node: SearchNode): boolean;
 }
 
 /** The status region results and failures are announced on. */
 export interface SearchStatus {
   textContent: string | null;
+}
+
+/** The inert JSON `chrome/command-palette/` writes into the dialog. */
+export interface SearchPaletteSource {
+  textContent: string | null;
+}
+
+/** What running one action does; the browser supplies working versions, tests inject spies. */
+export interface PaletteHandlers {
+  theme?(choice: ThemeChoice): void;
+  copy?(url: string): void | Promise<void>;
+  section?(id: string): void;
 }
 
 /** A keyboard or dialog event as the dialog reads it. */
@@ -127,12 +166,18 @@ export interface SearchParts {
   input: SearchInput;
   results: SearchResults;
   status: SearchStatus;
+  /** The command palette's JSON script, when the page carries one. */
+  palette?: SearchPaletteSource | undefined;
 }
 
 /** Everything the island reads from the world; tests pass fakes, the browser supplies its own. */
 export interface SearchEnv {
   document: SearchDocument;
   load(url: string): Promise<PagefindApi>;
+  /** The action payload; the island parses it from `parts.palette`, tests pass it directly. */
+  palette?: PalettePayload | undefined;
+  /** How actions run; the island uses `liveHandlers()`, tests inject spies. */
+  handlers?: PaletteHandlers | undefined;
 }
 
 /** What can take keyboard focus inside the dialog. */
@@ -268,6 +313,143 @@ export function renderResults(results: SearchResults, records: readonly SearchRe
   results.replaceChildren(...resultNodes(records, doc));
 }
 
+/** What the palette renders: the matched actions, the Pagefind records, and how to run an action. */
+export interface PaletteRender {
+  readonly actions: readonly PaletteAction[];
+  readonly label: string;
+  readonly records: readonly SearchRecord[];
+  readonly doc: SearchDocument;
+  readonly run: (run: PaletteRun) => void;
+}
+
+/** One action: a button and its optional hint, both built from text nodes. */
+function actionNode(action: PaletteAction, doc: SearchDocument, run: (run: PaletteRun) => void): SearchNode {
+  const button = doc.createElement("button");
+  button.setAttribute("type", "button");
+  button.setAttribute("class", "search-action-button");
+  button.setAttribute("role", "option");
+  button.setAttribute("data-palette-action", action.id);
+  if (action.run !== undefined) {
+    const command = action.run;
+    button.addEventListener?.("click", () => run(command));
+  }
+
+  const label = doc.createElement("span");
+  label.setAttribute("class", "search-action-label");
+  label.append(doc.createTextNode(action.label));
+  button.append(label);
+
+  if (action.hint !== undefined && action.hint !== "") {
+    const hint = doc.createElement("span");
+    hint.setAttribute("class", "search-action-hint");
+    hint.append(doc.createTextNode(action.hint));
+    button.append(hint);
+  }
+
+  const item = doc.createElement("li");
+  item.setAttribute("class", "search-result search-action");
+  item.append(button);
+  return item;
+}
+
+/** The "Actions" group: one heading and one list of action buttons. */
+export function actionNodes(
+  actions: readonly PaletteAction[],
+  label: string,
+  doc: SearchDocument,
+  run: (run: PaletteRun) => void,
+): readonly SearchNode[] {
+  if (actions.length === 0) return [];
+  const heading = doc.createElement("h2");
+  heading.setAttribute("class", "search-group-title");
+  heading.append(doc.createTextNode(label));
+
+  const list = doc.createElement("ul");
+  list.setAttribute("class", "search-list");
+  list.setAttribute("role", "presentation");
+  for (const action of actions) list.append(actionNode(action, doc, run));
+
+  const section = doc.createElement("section");
+  section.setAttribute("class", "search-group search-actions-group");
+  section.append(heading, list);
+  return [section];
+}
+
+/**
+ * Replaces the dialog's list with the page results first, then the matched actions. The empty query
+ * has no page results, so the actions stand alone; once a query finds pages they come first, because
+ * search is still the dialog's main job. An empty set clears the list.
+ */
+export function renderPalette(results: SearchResults, render: PaletteRender): void {
+  const nodes = [
+    ...resultNodes(render.records, render.doc),
+    ...actionNodes(render.actions, render.label, render.doc, render.run),
+  ];
+  results.replaceChildren(...nodes);
+}
+
+/** A whole-word test for a hint, so a single typed letter does not match every hint. */
+function containsWord(text: string, needle: string): boolean {
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}([^\\p{L}\\p{N}]|$)`, "iu").test(text);
+}
+
+/** Whether an action matches `query`; the pure counterpart of `chrome/command-palette/actions.ts`. */
+export function matchesAction(action: PaletteAction, query: string): boolean {
+  const needle = query.trim().toLowerCase();
+  if (needle === "") return true;
+  if (action.label.toLowerCase().includes(needle)) return true;
+  return action.hint !== undefined && containsWord(action.hint, needle);
+}
+
+/** The actions that match `query`, in their original order. */
+export function filterActions(actions: readonly PaletteAction[], query: string): readonly PaletteAction[] {
+  return actions.filter((action) => matchesAction(action, query));
+}
+
+/** Whether `value` is one of the theme choices the palette can apply. */
+function isThemeChoice(value: unknown): value is ThemeChoice {
+  return value === "light" || value === "dark" || value === "system";
+}
+
+/** Whether `value` is an action descriptor this module knows how to run. */
+export function isPaletteRun(value: unknown): value is PaletteRun {
+  if (value === null || typeof value !== "object") return false;
+  const run = value as { kind?: unknown; choice?: unknown; url?: unknown; id?: unknown };
+  if (run.kind === "theme") return isThemeChoice(run.choice);
+  if (run.kind === "copy") return typeof run.url === "string" && run.url !== "";
+  if (run.kind === "section") return typeof run.id === "string" && run.id !== "";
+  return false;
+}
+
+/** Whether `value` is an action this module can show and run. */
+function isPaletteAction(value: unknown): value is PaletteAction {
+  if (value === null || typeof value !== "object") return false;
+  const action = value as { id?: unknown; label?: unknown; hint?: unknown; run?: unknown };
+  if (typeof action.id !== "string" || action.id === "") return false;
+  if (typeof action.label !== "string" || action.label === "") return false;
+  if (action.hint !== undefined && typeof action.hint !== "string") return false;
+  return action.run === undefined || isPaletteRun(action.run);
+}
+
+/**
+ * Reads the server's JSON. Anything missing, malformed, or shaped differently yields an empty
+ * palette, so a bad build cannot stop search from working.
+ */
+export function parsePalette(text: string | null): PalettePayload {
+  if (text === null || text.trim() === "") return { label: ACTIONS_LABEL, actions: [] };
+  try {
+    const value = JSON.parse(text) as unknown;
+    if (value === null || typeof value !== "object") return { label: ACTIONS_LABEL, actions: [] };
+    const payload = value as { label?: unknown; actions?: unknown };
+    const label = typeof payload.label === "string" && payload.label !== "" ? payload.label : ACTIONS_LABEL;
+    const actions = Array.isArray(payload.actions) ? payload.actions.filter(isPaletteAction) : [];
+    return { label, actions };
+  } catch {
+    return { label: ACTIONS_LABEL, actions: [] };
+  }
+}
+
 /** The index URL for a site `base`: `/pagefind/pagefind.js` at the root, `<base>/pagefind/pagefind.js` below it. */
 export function indexUrl(base: string): string {
   const root = base.endsWith("/") ? base.slice(0, -1) : base;
@@ -309,11 +491,15 @@ export function trap(dialog: SearchDialog, event: SearchEvent): void {
 
 /**
  * Reveals the search button and wires the dialog: the button opens it, the index loads on that first
- * open only, typing searches, arrows move between results, Enter opens the first, Escape closes, and
- * Tab stays inside. The DOM is touched only through the small interfaces above, so tests need no browser.
+ * open only, typing filters both groups, arrows move through actions and results as one list, Enter
+ * runs or opens the first item, Escape closes, and Tab stays inside. The DOM is touched only through
+ * the small interfaces above, so tests need no browser.
  */
 export function activate(parts: SearchParts, env: SearchEnv): void {
   const { dialog, button, close, input, results, status } = parts;
+  const palette = env.palette ?? parsePalette(parts.palette?.textContent ?? null);
+  const actions = palette.actions;
+  const handlers = env.handlers ?? liveHandlers();
   let api: PagefindApi | undefined;
   let loading = false;
   let sequence = 0;
@@ -322,25 +508,95 @@ export function activate(parts: SearchParts, env: SearchEnv): void {
   button.hidden = false;
   button.setAttribute("aria-expanded", "false");
 
-  /** Runs the field's current query against the loaded index; an empty field clears the list. */
+  /** Runs one action in the browser; a copy result is announced on the status region. */
+  const execute = (command: PaletteRun): void => {
+    if (command.kind === "theme") {
+      handlers.theme?.(command.choice);
+      return;
+    }
+    if (command.kind === "copy") {
+      const copied = handlers.copy?.(command.url);
+      if (copied !== undefined && typeof copied.then === "function") {
+        copied.then(
+          () => {
+            status.textContent = MESSAGES.copied;
+          },
+          () => {
+            status.textContent = MESSAGES.copyFailed;
+          },
+        );
+      }
+      return;
+    }
+    handlers.section?.(command.id);
+    dialog.close();
+  };
+
+  /** The key that identifies a focused row, so a redraw can put focus back on the same row. */
+  const focusKey = (element: SearchActiveElement): string | undefined => {
+    const action = element.getAttribute?.("data-palette-action");
+    if (action !== undefined && action !== null && action !== "") return `action:${action}`;
+    const href = element.getAttribute?.("href");
+    return href === undefined || href === null || href === "" ? undefined : `href:${href}`;
+  };
+
+  /** Keeps keyboard focus inside the list when a new result set replaces the focused row. */
+  const restoreFocus = (key: string | undefined): void => {
+    if (key === undefined) return;
+    const items = [...results.querySelectorAll("a[href], [data-palette-action]")];
+    const match = items.find((item) => {
+      const action = item.getAttribute?.("data-palette-action");
+      if (action !== undefined && action !== null && action !== "") return `action:${action}` === key;
+      const href = item.getAttribute?.("href");
+      return href !== undefined && href !== null && href !== "" && `href:${href}` === key;
+    });
+    const target = match ?? items[0];
+    if (target !== undefined) target.focus();
+  };
+
+  /** Draws both groups for `query`: matched actions always, page results when they are known. */
+  const draw = (query: string, records: readonly SearchRecord[], matched: readonly PaletteAction[]): void => {
+    const active = env.document.activeElement ?? null;
+    const key = active === null ? undefined : focusKey(active);
+    const inside = key !== undefined && results.contains?.(active as unknown as SearchNode) === true;
+    if (actions.length === 0 && matched.length === 0 && records.length === 0) {
+      results.replaceChildren();
+      return;
+    }
+    renderPalette(results, {
+      actions: matched,
+      label: palette.label,
+      records,
+      doc: env.document,
+      run: execute,
+    });
+    if (inside) restoreFocus(key);
+  };
+
+  /** Runs the field's current query: an empty field shows the actions and clears the status. */
   const run = (): void => {
     const query = input.value.trim();
+    const matched = filterActions(actions, query);
     const current = ++sequence;
-    if (api === undefined) return;
     if (query === "") {
-      results.replaceChildren();
+      draw(query, [], matched);
       status.textContent = "";
       return;
     }
-    status.textContent = MESSAGES.searching;
+    if (api === undefined) {
+      draw(query, [], matched);
+      return;
+    }
+    status.textContent = matched.length === 0 ? MESSAGES.searching : "";
     api
       .search(query)
       .then((page) => Promise.all(page.results.slice(0, RESULT_LIMIT).map((hit) => hit.data())))
       .then(
         (records) => {
           if (current !== sequence) return;
-          renderResults(results, records, env.document);
-          status.textContent = records.length === 0 ? emptyMessage(query) : countMessage(records.length);
+          draw(query, records, matched);
+          status.textContent =
+            records.length === 0 ? (matched.length === 0 ? emptyMessage(query) : "") : countMessage(records.length);
         },
         () => {
           if (current === sequence) status.textContent = MESSAGES.failed;
@@ -353,15 +609,19 @@ export function activate(parts: SearchParts, env: SearchEnv): void {
     if (!dialog.open) dialog.showModal();
     button.setAttribute("aria-expanded", "true");
     input.focus();
-    if (api !== undefined || loading) return;
+    if (input.value.trim() === "") run();
+    if (api !== undefined || loading) {
+      if (input.value.trim() !== "") run();
+      return;
+    }
     loading = true;
-    status.textContent = MESSAGES.loading;
+    if (input.value.trim() !== "") status.textContent = MESSAGES.loading;
     env.load(indexUrl(dialog.getAttribute("data-base") ?? "")).then(
       (loaded) => {
         api = loaded;
         loading = false;
-        status.textContent = "";
-        if (input.value.trim() !== "") run();
+        if (input.value.trim() === "") status.textContent = "";
+        run();
       },
       () => {
         loading = false;
@@ -384,7 +644,7 @@ export function activate(parts: SearchParts, env: SearchEnv): void {
       return;
     }
 
-    const links = [...results.querySelectorAll("a[href]")];
+    const links = [...results.querySelectorAll("a[href], [data-palette-action]")];
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (links.length === 0) return;
       event.preventDefault();
@@ -414,6 +674,65 @@ export function activate(parts: SearchParts, env: SearchEnv): void {
   });
 }
 
+/** What the page's `<html>` needs for a theme change. */
+interface ThemeRoot {
+  setAttribute(name: string, value: string): void;
+}
+
+/** The heading a section action scrolls to and focuses. */
+interface SectionTarget {
+  setAttribute?(name: string, value: string): void;
+  scrollIntoView?(options: { readonly block: "start" }): void;
+  focus?(): void;
+}
+
+/** The browser globals the action handlers use; tests never call these. */
+interface PaletteGlobals {
+  readonly document?: {
+    readonly documentElement?: ThemeRoot;
+    getElementById?(id: string): SectionTarget | null;
+  };
+  readonly localStorage?: { setItem(key: string, value: string): void };
+  readonly navigator?: { readonly clipboard?: { writeText(text: string): Promise<void> } };
+  readonly fetch?: (url: string) => Promise<{ readonly ok: boolean; text(): Promise<string> }>;
+  readonly matchMedia?: (query: string) => { readonly matches: boolean };
+}
+
+/** The theme a choice puts on the page; `system` follows the OS preference. */
+export function resolveTheme(choice: ThemeChoice, prefersLight: boolean): "light" | "dark" {
+  return choice === "system" ? (prefersLight ? "light" : "dark") : choice;
+}
+
+/** The browser's handlers: the theme key, the clipboard and twin fetch, and the heading jump. */
+export function liveHandlers(globals: PaletteGlobals = globalThis as unknown as PaletteGlobals): PaletteHandlers {
+  return {
+    theme(choice) {
+      try {
+        globals.localStorage?.setItem(THEME_KEY, choice);
+      } catch {
+        /* storage is unavailable: apply the choice to this page view only */
+      }
+      const prefersLight = globals.matchMedia?.("(prefers-color-scheme: light)").matches === true;
+      globals.document?.documentElement?.setAttribute("data-theme", resolveTheme(choice, prefersLight));
+    },
+    copy(url) {
+      const clipboard = globals.navigator?.clipboard;
+      const fetchText = globals.fetch;
+      if (clipboard === undefined || fetchText === undefined) return Promise.resolve();
+      return fetchText(url).then((response) =>
+        response.ok ? response.text() : Promise.reject(new Error("The page's Markdown is unavailable.")),
+      ).then((markdown) => clipboard.writeText(markdown));
+    },
+    section(id) {
+      const heading = globals.document?.getElementById?.(id);
+      if (heading === null || heading === undefined) return;
+      heading.setAttribute?.("tabindex", "-1");
+      heading.scrollIntoView?.({ block: "start" });
+      heading.focus?.();
+    },
+  };
+}
+
 // The island runs in a browser; the theme's tsconfig has no DOM lib, so these are the globals it needs.
 declare const document: {
   querySelector(selector: string): unknown;
@@ -434,6 +753,7 @@ if (typeof document !== "undefined") {
   const input = document.querySelector("[data-search-input]");
   const results = document.querySelector("[data-search-results]");
   const status = document.querySelector("[data-search-status]");
+  const palette = document.querySelector("[data-palette-actions]") as SearchPaletteSource | null;
   if (dialog && button && close && input && results && status) {
     activate(
       {
@@ -443,8 +763,9 @@ if (typeof document !== "undefined") {
         input: input as SearchInput,
         results: results as SearchResults,
         status: status as SearchStatus,
+        ...(palette === null ? {} : { palette }),
       },
-      { document, load: loadIndex },
+      { document, load: loadIndex, palette: parsePalette(palette?.textContent ?? null) },
     );
   }
 }

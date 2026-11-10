@@ -116,7 +116,7 @@ test("holds the query field, a close button, the status region, and the result c
   );
   assert.match(out, /<button type="button" class="search-close" aria-label="Close search" data-search-close=""><span aria-hidden="true">×<\/span><\/button>/);
   assert.match(out, /<p class="search-status" role="status" data-search-status=""><\/p>/);
-  assert.match(out, /<div class="search-results" data-search-results=""><\/div>/);
+  assert.match(out, /<div class="search-results" role="listbox" aria-label="Search" data-search-results=""><\/div>/);
 });
 
 test("a visitor without JavaScript sees no dialog and no search control", () => {
