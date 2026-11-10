@@ -12,9 +12,9 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "tokens": "node scripts/tokens.mjs",
-    "tokens:check": "node scripts/tokens.mjs --check",
-    "test": "node scripts/tokens.mjs --check && node --test \"test/**/*.test.ts\"",
+    "tokens": "node scripts/tokens.ts",
+    "tokens:check": "node scripts/tokens.ts --check",
+    "test": "node scripts/tokens.ts --check && node --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
