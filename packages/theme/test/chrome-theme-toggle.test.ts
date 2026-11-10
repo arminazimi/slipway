@@ -281,11 +281,12 @@ test("style.css uses only token names from tokens/names.json for var(--*) refere
 test("style.css hides only the radio, status region and legend (all kept for screen readers), and states the switch in logical properties", () => {
   const css = readFileSync(new URL("../chrome/theme-toggle/style.css", import.meta.url), "utf8");
 
-  assert.match(css, /\.theme-toggle-input,\n\.theme-toggle-status \{/);
-  assert.match(css, /\.theme-toggle-legend \{[^}]*clip-path: inset\(50%\)/);
-  assert.doesNotMatch(css, /display:\s*none/);
-  assert.match(css, /\.theme-toggle-option:has\(\.theme-toggle-input:checked\) \{/);
-  assert.match(css, /\.theme-toggle-option:has\(\.theme-toggle-input:focus-visible\) \{/);
+  assert.match(css, /\.theme-toggle-input,\n\.theme-toggle-option-text \{[^}]*clip-path: inset\(50%\)/);
+  assert.match(css, /\.theme-toggle-legend,/);
+  assert.equal(css.match(/display:\s*none/g)?.length, 1, "only the [hidden] rule uses display: none");
+  assert.match(css, /\.theme-toggle\[hidden\] \{\n  display: none;/);
+  assert.match(css, /\.theme-toggle-option:has\(\.theme-toggle-input:checked\) \+ \.theme-toggle-option/);
+  assert.match(css, /\.theme-toggle:has\(\.theme-toggle-input:focus-visible\) \{/);
   assert.doesNotMatch(css, /(^|[;{\s])(left|right|top|bottom)\s*:/);
   assert.doesNotMatch(css, /(?<![\w-])(min-|max-)?(width|height)\s*:/);
 });

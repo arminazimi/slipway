@@ -134,7 +134,7 @@ test("the copy-Markdown control follows the page footer and stays before the pag
   assert.ok(article, "article present");
   assert.match(
     article[1] ?? "",
-    /<div class="page-footer">[\s\S]*<\/div><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
+    /<div class="page-footer">[\s\S]*<\/div><div class="doc-actions"><div class="copy-markdown" data-copy-markdown>[\s\S]*data-copy-markdown-button[\s\S]*<nav class="pager"/,
   );
 });
 
