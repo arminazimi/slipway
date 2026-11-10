@@ -1,4 +1,4 @@
-/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit verify`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, check an edit proof against the site, check a build, or rebuild on change (ADR 0025). */
+/** `mizzen build`, `mizzen check`, `mizzen dev`, `mizzen edit apply`, `mizzen edit verify`, `mizzen verify`, and `mizzen watch`: build a site, report diagnostics, serve it while developing, apply an agent patch, check an edit proof, check a build, or rebuild on change (ADR 0025). */
 import { access, mkdtemp, rm } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -9,6 +9,7 @@ import { version } from "../index.ts";
 import { build } from "../pipeline/build.ts";
 import { formatJson, formatSarif, formatText } from "../pipeline/diagnostics.ts";
 import { DEFAULT_DEV_HOST, DEFAULT_DEV_OUT, DEFAULT_DEV_PORT, dev } from "./dev.ts";
+import { editApply, EditApplyError } from "./edit-apply.ts";
 import { verifyProof, verifyProofMessage } from "./edit-verify.ts";
 import { verify, verifyMessage } from "./verify.ts";
 import { DEFAULT_WATCH_OUT, watch as watchSite } from "./watch.ts";
@@ -31,6 +32,8 @@ Commands:
   build [dir]               Build the site into --out (default: dist)
   check [dir]               Build to a temp folder and print diagnostics only
   dev [dir]                 Serve the site, rebuild on change, and reload the browser
+  edit apply <patch.json> [dir]
+                            Apply a span patch to its source file and record a proof
   edit verify <proof.json>  Check an edit proof against the site and rerun the doctor
   verify [dir]              Check a built folder against the hash in its manifest
   watch [dir]               Rebuild the site whenever a source or theme file changes
@@ -44,6 +47,8 @@ Options:
   --doctor             Rerun the doctor for edit verify
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
+  --dry-run            Print the diff for edit apply without writing
+  --proof <path>       Proof record for edit apply (default: <patch>.proof.json)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.`;
@@ -96,10 +101,27 @@ type WatchOpts = {
   readonly theme?: string;
 };
 
+type EditApplyOpts = {
+  readonly command: "edit-apply";
+  readonly root: string;
+  readonly patch: string;
+  readonly dryRun: boolean;
+  readonly proof?: string;
+};
+
 type Parsed =
   | { readonly help: true }
   | { readonly error: string }
-  | { readonly options: BuildOpts | CheckOpts | DevOpts | EditVerifyOpts | VerifyOpts | WatchOpts };
+  | {
+      readonly options:
+        | BuildOpts
+        | CheckOpts
+        | DevOpts
+        | EditApplyOpts
+        | EditVerifyOpts
+        | VerifyOpts
+        | WatchOpts;
+    };
 
 async function exists(path: string): Promise<boolean> {
   try {
@@ -150,11 +172,57 @@ export async function resolveThemeRoot(siteRoot: string, themeFlag: string | und
   return undefined;
 }
 
-/** Parses `edit verify <proof.json> [--site <dir>] [--doctor]`; `edit` has one subcommand for now. */
-function parseEdit(args: readonly string[]): Parsed {
+/**
+ * Parses `mizzen edit apply ...`. A two-word command keeps room for the other subcommands an
+ * agent workflow needs without changing the shape of every option.
+ */
+function parseEditApply(args: readonly string[]): Parsed {
+  const [subcommand, ...rest] = args;
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
+  if (subcommand === "-h" || subcommand === "--help") return { help: true };
+  if (subcommand !== "apply") return { error: `unknown edit subcommand: ${subcommand}` };
+
+  let patch: string | undefined;
+  let root: string | undefined;
+  let proof: string | undefined;
+  let dryRun = false;
+  for (let i = 0; i < rest.length; i++) {
+    const arg = rest[i]!;
+    const value = (): string => {
+      const next = rest[++i];
+      if (next === undefined || next.startsWith("-")) throw new Error(`${arg} needs a value`);
+      return next;
+    };
+    try {
+      if (arg === "-h" || arg === "--help") return { help: true };
+      if (arg === "--dry-run") dryRun = true;
+      else if (arg === "--proof") proof = value();
+      else if (arg.startsWith("-")) return { error: `unknown option: ${arg}` };
+      else if (patch === undefined) patch = arg;
+      else if (root === undefined) root = arg;
+      else return { error: `unexpected argument: ${arg}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : String(err) };
+    }
+  }
+
+  if (patch === undefined) return { error: "edit apply needs a patch file: edit apply <patch.json> [dir]" };
+  return {
+    options: {
+      command: "edit-apply",
+      root: root ?? ".",
+      patch,
+      dryRun,
+      ...(proof === undefined ? {} : { proof }),
+    },
+  };
+}
+
+/** Parses `edit verify <proof.json> [--site <dir>] [--doctor]`. */
+function parseEditVerify(args: readonly string[]): Parsed {
   const [subcommand, ...rest] = args;
   if (subcommand === "-h" || subcommand === "--help" || subcommand === "help") return { help: true };
-  if (subcommand === undefined) return { error: "edit needs a subcommand: verify" };
+  if (subcommand === undefined) return { error: "edit needs a subcommand: apply or verify" };
   if (subcommand !== "verify") return { error: `unknown command: edit ${subcommand}` };
 
   let proof: string | undefined;
@@ -178,6 +246,7 @@ function parseEdit(args: readonly string[]): Parsed {
       return { error: err instanceof Error ? err.message : String(err) };
     }
   }
+
   if (proof === undefined) return { error: `edit verify needs a proof file: ${NAME} edit verify <proof.json>` };
   return { options: { command: "edit-verify", proof, site, doctor } };
 }
@@ -188,7 +257,11 @@ export function parseArgs(args: readonly string[]): Parsed {
   if (command === undefined || command === "-h" || command === "--help" || command === "help") {
     return { help: true };
   }
-  if (command === "edit") return parseEdit(rest);
+  if (command === "edit") {
+    const subcommand = rest[0];
+    if (subcommand === "verify") return parseEditVerify(rest);
+    return parseEditApply(rest);
+  }
   if (command !== "build" && command !== "check" && command !== "dev" && command !== "verify" && command !== "watch") {
     return { error: `unknown command: ${command}` };
   }
@@ -352,6 +425,32 @@ export async function main(args: readonly string[], io: Io = {}): Promise<number
       error(`${NAME}: ${verifyMessage(result)}`);
       return 1;
     } catch (err) {
+      error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
+      return 2;
+    }
+  }
+
+  if (options.command === "edit-apply") {
+    try {
+      const result = await editApply({
+        siteRoot: options.root,
+        patch: options.patch,
+        ...(options.proof === undefined ? {} : { proof: options.proof }),
+        ...(options.dryRun ? { dryRun: true } : {}),
+      });
+      if (result.dryRun) {
+        if (result.diff !== undefined) log(result.diff.replace(/\n$/, ""));
+        log(`${NAME} edit apply: dry run: ${result.file} would change; nothing was written`);
+        return 0;
+      }
+      log(`${NAME} edit apply: wrote ${result.file}`);
+      log(`${NAME} edit apply: proof ${result.proof ?? ""}`);
+      return 0;
+    } catch (err) {
+      if (err instanceof EditApplyError) {
+        error(`${NAME}: ${err.message}`);
+        return err.usage ? 2 : 1;
+      }
       error(`${NAME}: ${err instanceof Error ? err.message : String(err)}`);
       return 2;
     }
