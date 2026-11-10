@@ -35,6 +35,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Code tabs](./code-tabs/) | The same example in several languages or package managers, as tabs. |
 | [Details](./details/) | A native disclosure that the reader can open and close. |
 | [Diff block](./diff-block/) | Added, removed, and context lines, with a copy of the new file. |
+| [Drift banner](./drift-banner/) | A warning above a page whose documentation has drifted from the code. |
 | [Embed](./embed/) | A video or another page in a lazy iframe. |
 | [Endpoint](./endpoint/) | An HTTP method, path, parameters, and body for API reference pages. |
 | [Figure](./figure/) | An image with alt text, a caption, and a credit, in light and dark. |
