@@ -166,7 +166,7 @@ test("a page with no steps renders its body whole and no progress list", () => {
 test("the page pager still follows the last step", () => {
   const page = out(threeSteps());
 
-  assert.match(page, /data-step="3"[\s\S]*<\/section><\/div><div class="page-footer">/);
+  assert.match(page, /data-step="3"[\s\S]*<\/section><\/div><div class="doc-actions"><div class="page-footer">/);
   assert.match(page, /<nav class="pager" aria-label="Previous and next pages"><a class="pager-link pager-prev" href="\/guide\/" rel="prev">/);
 });
 
