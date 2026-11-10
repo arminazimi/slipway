@@ -1,9 +1,10 @@
 /**
  * `mizzen dev`: build the site, serve the output with pretty URLs, watch the source and the theme, and reload the
- * browser over Server-Sent Events after every rebuild.
+ * browser over Server-Sent Events after every rebuild. The latest build's diagnostics are served as JSON and drawn
+ * in an overlay, so a failed build is visible without leaving the browser.
  *
- * The reload client is added to HTML responses as they are served. Nothing on disk is changed: the output folder stays
- * exactly what `mizzen build` writes, so it can be published as it is.
+ * The reload and overlay client is added to HTML responses as they are served. Nothing on disk is changed: the output
+ * folder stays exactly what `mizzen build` writes, so it can be published as it is.
  */
 import { watch, type FSWatcher } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
@@ -12,13 +13,19 @@ import { extname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { loadConfig } from "../config/load.ts";
 import type { Diagnostic } from "../contracts/index.ts";
 import { build } from "../pipeline/build.ts";
-import { formatText } from "../pipeline/diagnostics.ts";
+import { formatJson, formatText } from "../pipeline/diagnostics.ts";
 
 /** Where the browser connects for reload events. Outside the site's base path, so it never collides with a page. */
 export const EVENTS_PATH = "/__mizzen/events";
 
+/** Where the browser reads the latest build's diagnostics, as `{ version, diagnostics }`. */
+export const DIAGNOSTICS_PATH = "/__mizzen/diagnostics";
+
 /** The attribute that marks the injected reload client, so a test or a person can tell a dev page from a built one. */
 export const RELOAD_MARKER = "data-mizzen-dev";
+
+/** The attribute that marks the injected diagnostics overlay, so a test knows the client renders one. */
+export const OVERLAY_MARKER = "data-mizzen-overlay";
 
 /** Folder under the site root that `mizzen dev` writes to when `--out` is not given. Hidden, so discovery skips it. */
 export const DEFAULT_DEV_OUT = ".slipway/dev";
@@ -35,10 +42,38 @@ const WATCH_DELAY = 40;
 /** Folders that never affect a build and would otherwise make the watcher rebuild in a loop. */
 const IGNORED = new Set(["node_modules", ".git", ".tmp", ".slipway"]);
 
-/** The inline client: one SSE connection per page, closed before the reload so it does not reconnect first. */
+/**
+ * The inline client: one SSE connection per page, closed before the reload so it does not reconnect first, and an
+ * overlay that fetches the latest diagnostics and redraws on every load. When the list is empty the overlay is hidden,
+ * so a clean build replaces the previous failure with nothing.
+ */
 const RELOAD_CLIENT =
-  `<script ${RELOAD_MARKER}>(()=>{const source=new EventSource(${JSON.stringify(EVENTS_PATH)});` +
-  `source.addEventListener("reload",()=>{source.close();location.reload();});})();</script>`;
+  `<script ${RELOAD_MARKER}>(()=>{` +
+  `const source=new EventSource(${JSON.stringify(EVENTS_PATH)});` +
+  `source.addEventListener("reload",()=>{source.close();location.reload();});` +
+  `const overlay=document.createElement("div");` +
+  `overlay.setAttribute(${JSON.stringify(OVERLAY_MARKER)},"");` +
+  `overlay.hidden=true;` +
+  `overlay.style.cssText="position:fixed;inset-block-end:0;inset-inline:0;z-index:2147483647;max-block-size:50vh;overflow:auto;margin:0;padding:12px 16px;background:#1b1b1f;color:#f5f5f5;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;border-block-start:1px solid #555;";` +
+  `(document.body||document.documentElement).appendChild(overlay);` +
+  `const show=(items)=>{overlay.textContent="";` +
+  `if(!items.length){overlay.hidden=true;return;}` +
+  `const head=document.createElement("strong");` +
+  `head.textContent="mizzen dev: "+items.length+" diagnostic"+(items.length===1?"":"s");` +
+  `overlay.appendChild(head);` +
+  `const list=document.createElement("ul");` +
+  `list.style.cssText="margin:4px 0 0;padding-inline-start:20px;";` +
+  `for(const d of items){` +
+  `const item=document.createElement("li");` +
+  `const where=d.pos?d.pos.file+":"+d.pos.line+":"+d.pos.column+" ":"";` +
+  `item.textContent=where+d.severity+": "+d.message+(d.help?" - "+d.help:"");` +
+  `list.appendChild(item);}` +
+  `overlay.appendChild(list);overlay.hidden=false;};` +
+  `const load=()=>fetch(${JSON.stringify(DIAGNOSTICS_PATH)},{cache:"no-store"})` +
+  `.then((response)=>response.ok?response.json():{diagnostics:[]})` +
+  `.then((report)=>show(report.diagnostics||[]))` +
+  `.catch(()=>{});` +
+  `load();})();</script>`;
 
 /** What one dev rebuild wrote and how long it took. */
 export interface DevBuild {
@@ -169,6 +204,7 @@ export async function dev(options: DevOptions): Promise<DevServer> {
 
   const clients = new Set<ServerResponse>();
   const watchers: FSWatcher[] = [];
+  let latestDiagnostics: readonly Diagnostic[] = [];
   let timer: NodeJS.Timeout | undefined;
   let closing = false;
   let shuttingDown: Promise<void> | undefined;
@@ -191,18 +227,32 @@ export async function dev(options: DevOptions): Promise<DevServer> {
 
   const buildOnce = async (reason: string): Promise<DevBuild> => {
     const started = performance.now();
-    const result = await build({
-      root,
-      out,
-      themeRoot,
-      ...(options.defaultLayout === undefined ? {} : { defaultLayout: options.defaultLayout }),
-      ...(options.cache === true ? { cache: true } : {}),
-    });
-    const milliseconds = performance.now() - started;
-    if (result.diagnostics.length > 0) log(formatText(result.diagnostics).replace(/\n$/, ""));
-    log(`mizzen dev: ${reason} in ${Math.round(milliseconds)} ms`);
-    broadcast();
-    return { milliseconds, files: result.files, diagnostics: result.diagnostics };
+    try {
+      const result = await build({
+        root,
+        out,
+        themeRoot,
+        ...(options.defaultLayout === undefined ? {} : { defaultLayout: options.defaultLayout }),
+        ...(options.cache === true ? { cache: true } : {}),
+      });
+      const milliseconds = performance.now() - started;
+      latestDiagnostics = result.diagnostics;
+      if (result.diagnostics.length > 0) log(formatText(result.diagnostics).replace(/\n$/, ""));
+      log(`mizzen dev: ${reason} in ${Math.round(milliseconds)} ms`);
+      broadcast();
+      return { milliseconds, files: result.files, diagnostics: result.diagnostics };
+    } catch (err) {
+      // A build that throws still has a finding; the overlay shows it instead of an empty page after the reload.
+      latestDiagnostics = [
+        {
+          id: "dev.build-failed",
+          severity: "error",
+          message: err instanceof Error ? err.message : String(err),
+        },
+      ];
+      broadcast();
+      throw err;
+    }
   };
 
   // Builds run one at a time. A change that lands during a build waits for it instead of building twice at once.
@@ -324,6 +374,17 @@ export async function dev(options: DevOptions): Promise<DevServer> {
       if (req.method !== "GET" && req.method !== "HEAD") {
         res.writeHead(405, { Allow: "GET, HEAD" });
         res.end();
+        return;
+      }
+      if (url.pathname === DIAGNOSTICS_PATH) {
+        const body = formatJson(latestDiagnostics);
+        res.writeHead(200, {
+          "Content-Type": "application/json; charset=utf-8",
+          "Content-Length": Buffer.byteLength(body),
+          "Cache-Control": "no-store",
+        });
+        if (req.method === "HEAD") res.end();
+        else res.end(body);
         return;
       }
       const file = await fileFor(url.pathname);
