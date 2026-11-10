@@ -14,6 +14,7 @@ import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
+import { highlightFences } from "../components/code/index.ts";
 import driftBanner from "../components/drift-banner/index.ts";
 import pageStatus, { type PageStatusProps } from "../components/page-status/index.ts";
 import readingTime from "../components/reading-time/index.ts";
@@ -57,7 +58,7 @@ function article(props: LayoutProps): ComponentChildren {
     trustPanel({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     lastUpdated(props) as ComponentChildren,
     readingTime({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
-    h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
+    h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: highlightFences(page.html) } }),
     editPage(props) as ComponentChildren,
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
