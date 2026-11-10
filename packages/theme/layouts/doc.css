@@ -75,3 +75,16 @@
 .doc-body pre span {
   color: light-dark(var(--shiki-light, inherit), var(--shiki-dark, inherit));
 }
+
+/* The copy, view, and agent controls sit in one row under the page footer. */
+.doc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-start: var(--space-4);
+}
+
+.doc-actions .copy-markdown-status:empty {
+  display: none;
+}

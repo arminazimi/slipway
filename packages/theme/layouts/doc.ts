@@ -62,8 +62,7 @@ function article(props: LayoutProps): ComponentChildren {
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: highlightFences(page.html) } }),
     editPage(props) as ComponentChildren,
     pageFooter(props) as ComponentChildren,
-    copyMarkdown(props) as ComponentChildren,
-    pageAgentMenu(props) as ComponentChildren,
+    h("div", { class: "doc-actions" }, copyMarkdown(props) as ComponentChildren, pageAgentMenu(props) as ComponentChildren),
     feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );
