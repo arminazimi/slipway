@@ -3,16 +3,14 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "nod
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadConfig } from "../config/load.ts";
 import { discover } from "../content/discover.ts";
-import type { Diagnostic, Head, Output, OutputContext, OutputFile, Page, Pager, Site, Trail } from "../contracts/index.ts";
+import type { Diagnostic, Output, OutputContext, OutputFile, Page } from "../contracts/index.ts";
 import { buildModel } from "../model/build.ts";
-import { navState } from "../nav/tree.ts";
 import { MANIFEST_PATH, recordBuildHash } from "../outputs/build-hash.ts";
-import { hreflangLinks } from "../outputs/hreflang.ts";
-import { loadRegistry, type ThemeRegistry } from "../render/registry.ts";
-import { renderPage, type ThemeComponent } from "../render/render.ts";
+import { loadRegistry } from "../render/registry.ts";
 import { copyAssets } from "./assets.ts";
 import { cacheKey, cacheRootOf, restoreCache, writeCache } from "./cache.ts";
 import { createDiagnostics, sortDiagnostics, type Diagnostics } from "./diagnostics.ts";
+import { createRenderPool, renderOnePage, type RenderPool } from "./parallel.ts";
 
 /** Options of {@link build}. */
 export interface BuildOptions {
@@ -32,6 +30,13 @@ export interface BuildOptions {
   readonly cache?: boolean;
   /** Folder the cache lives in. Default: `<root>/.slipway/cache`. Only used when `cache` is true. */
   readonly cacheDir?: string;
+  /**
+   * Pages to render at once in worker threads. `1`, the default, renders in this process, byte for byte as before;
+   * `2` or more starts that many workers, each loading the theme, and pages are rendered in batches. A worker that
+   * fails renders its pages in this process with a diagnostic. There is no config key for this: it is a machine
+   * setting, like a make job count, and `mizzen build --workers <n|auto>` is how a person sets it.
+   */
+  readonly workers?: number;
 }
 
 /** What {@link build} wrote and found. */
@@ -126,44 +131,6 @@ async function loadOutputs(dir: string, diagnostics: Diagnostics): Promise<Outpu
   return outputs;
 }
 
-/** The theme's components by name, as the render host takes them. Islands are not wired yet. */
-function componentsOf(registry: ThemeRegistry): Record<string, ThemeComponent> {
-  const out: Record<string, ThemeComponent> = {};
-  for (const [name, unit] of Object.entries(registry.components)) {
-    out[name] = unit.css === undefined ? { component: unit.component } : { component: unit.component, css: unit.css };
-  }
-  return out;
-}
-
-/** The navigation list the page sits in, with its breadcrumb and pager. Lists are tried in name order. */
-function placeOf(site: Site, page: Page): { trail: Trail; pager: Pager } {
-  for (const name of Object.keys(site.nav).sort(byCodePoint)) {
-    const state = navState(site.nav[name] ?? [], page.url);
-    if (state.current !== undefined || state.active !== undefined) return { trail: state.trail, pager: state.pager };
-  }
-  return { trail: [], pager: {} };
-}
-
-/** The head of a page: its title and, when it has one, its description, and its `hreflang` alternates. */
-function headOf(site: Site, page: Page): Head {
-  const description = page.frontMatter.description;
-  return {
-    title: page.title,
-    meta: typeof description === "string" ? [{ name: "description", content: description }] : [],
-    links: hreflangLinks(site, page),
-    jsonLd: [],
-  };
-}
-
-function escapeText(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-/** What a page that cannot be laid out is written as: its own body, so the file exists and the build reports the error. */
-function fallbackHtml(page: Page): string {
-  return `<!DOCTYPE html>\n<html lang="${escapeText(page.lang)}" dir="${escapeText(page.dir)}">\n<head><meta charset="utf-8"><title>${escapeText(page.title)}</title></head>\n<body>\n${page.html}\n</body>\n</html>\n`;
-}
-
 /**
  * Puts `staging` in place of `out`. The old folder is moved aside first and removed only once the new one is in
  * place, so a failed swap puts the old site back.
@@ -205,6 +172,9 @@ function assertOutOutsideSource(sourceDir: string, out: string): void {
  * unchanged restores the previous output instead of building again. Config and navigation are in the same key as the
  * pages, so changing either invalidates every page. The cache is whole-build, not per-page.
  *
+ * With `workers` above 1, pages render in worker threads, and the site written is byte for byte the one a single
+ * process writes. A worker that fails renders its pages in this process, with a `render.worker-failed` warning.
+ *
  * Problems in the content and the theme come back as diagnostics; a throw means a bug, such as an output or layout
  * that threw, and leaves `out` as it was. `out` must not be the source folder nor sit inside it, unless its name
  * starts with `_` or `.`, which discovery skips.
@@ -215,6 +185,10 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
   const out = resolve(options.out);
   const themeRoot = resolve(options.themeRoot);
   const outputsDir = resolve(options.outputsDir ?? OUTPUTS_DIR);
+  const workers = options.workers ?? 1;
+  if (!Number.isInteger(workers) || workers < 1) {
+    throw new TypeError(`build: workers must be a whole number of at least 1, not ${String(options.workers)}.`);
+  }
 
   // The config is read before the cache so the source folder is known without building the model.
   const loaded = loadConfig(root);
@@ -254,67 +228,70 @@ export async function build(options: BuildOptions): Promise<BuildResult> {
 
   const registry = await loadRegistry(themeRoot);
   for (const d of registry.diagnostics) diagnostics.report(d);
-  const components = componentsOf(registry);
 
   const renderOne = (page: Page): string => {
-    const name = page.frontMatter.layout ?? options.defaultLayout;
-    if (name === undefined) {
-      diagnostics.error("render.no-layout", `Page ${page.url} has no layout.`, {
-        pos: page.source,
-        help: "Set `layout` in its front matter or in `defaults`.",
-      });
-      return fallbackHtml(page);
-    }
-    if (!Object.hasOwn(registry.layouts, name)) {
-      diagnostics.error("render.unknown-layout", `Page ${page.url} names the layout "${name}", which the theme does not have.`, {
-        pos: page.source,
-        help: "Use a layout from the theme's layouts/ folder.",
-      });
-      return fallbackHtml(page);
-    }
-    const { trail, pager } = placeOf(site, page);
-    const result = renderPage({
-      site,
-      page,
-      layout: registry.layouts[name]!.layout,
-      components,
-      trail,
-      pager,
-      head: headOf(site, page),
-    });
-    for (const d of result.diagnostics) diagnostics.report(d);
-    return result.html;
-  };
-
-  const ctx: OutputContext = {
-    renderPage: (page) => Promise.resolve(renderOne(page)),
-    report: (d) => diagnostics.report(d),
+    const rendered = renderOnePage(registry, site, page, options.defaultLayout);
+    for (const d of rendered.diagnostics) diagnostics.report(d);
+    return rendered.html;
   };
 
   const files = await discover(sourceDir, { include: site.config.include, exclude: site.config.exclude });
 
+  // With one worker, pages render in this process exactly as before. With more, the pool starts rendering the doc
+  // pages the html output will ask for while the outputs are still being loaded, then serves them from its results.
+  // A pool that renders a page nobody asks for reports nothing: reporting happens when an output asks for the page.
+  const pool: RenderPool | undefined =
+    workers > 1
+      ? createRenderPool({
+          themeRoot,
+          site,
+          registry,
+          ...(options.defaultLayout === undefined ? {} : { defaultLayout: options.defaultLayout }),
+          workers,
+        })
+      : undefined;
+  if (pool !== undefined && site.config.outputs.html !== false) {
+    pool.prefetch(site.pages.filter((page) => page.kind === "doc"));
+  }
+
+  const renderPaged = async (page: Page): Promise<string> => {
+    if (pool === undefined) return renderOne(page);
+    const rendered = await pool.render(page);
+    for (const d of rendered.diagnostics) diagnostics.report(d);
+    return rendered.html;
+  };
+
+  const ctx: OutputContext = {
+    renderPage: renderPaged,
+    report: (d) => diagnostics.report(d),
+  };
+
   // Outputs run in memory, so every path is checked before anything is written.
   const claimed = new Map<string, string>();
   const pending: { readonly output: string; readonly file: OutputFile }[] = [];
-  for (const output of await loadOutputs(outputsDir, diagnostics)) {
-    if (site.config.outputs[output.name] === false) continue;
-    for (const file of await output.run(site, ctx)) {
-      if (!isInside(file.path)) {
-        diagnostics.error("output.bad-path", `Output "${output.name}" writes "${file.path}", which is not inside the output folder.`, {
-          help: "Use a relative path with `/` separators and no `..`.",
-        });
-        continue;
+  try {
+    for (const output of await loadOutputs(outputsDir, diagnostics)) {
+      if (site.config.outputs[output.name] === false) continue;
+      for (const file of await output.run(site, ctx)) {
+        if (!isInside(file.path)) {
+          diagnostics.error("output.bad-path", `Output "${output.name}" writes "${file.path}", which is not inside the output folder.`, {
+            help: "Use a relative path with `/` separators and no `..`.",
+          });
+          continue;
+        }
+        const first = claimed.get(file.path);
+        if (first !== undefined) {
+          diagnostics.error("output.duplicate-path", `Two files write "${file.path}": outputs "${first}" and "${output.name}".`, {
+            help: "Turn one of them off in `outputs`, or rename its file.",
+          });
+          continue;
+        }
+        claimed.set(file.path, output.name);
+        pending.push({ output: output.name, file });
       }
-      const first = claimed.get(file.path);
-      if (first !== undefined) {
-        diagnostics.error("output.duplicate-path", `Two files write "${file.path}": outputs "${first}" and "${output.name}".`, {
-          help: "Turn one of them off in `outputs`, or rename its file.",
-        });
-        continue;
-      }
-      claimed.set(file.path, output.name);
-      pending.push({ output: output.name, file });
     }
+  } finally {
+    await pool?.close();
   }
 
   const parent = dirname(out);

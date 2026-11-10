@@ -39,6 +39,7 @@ Options:
   --hash <hex>         Expected build hash for verify (default: the manifest's)
   --port <number>      Port for dev (default: 3000; 0 picks a free one)
   --host <host>        Host for dev (default: 127.0.0.1)
+  --workers <n|auto>   Render pages in n worker threads; auto is the CPU count minus one (default: 1)
   -h, --help           Show this help
 
 Exit codes: 0 ok, 1 errors, 2 usage.
@@ -55,6 +56,8 @@ From this repository, run it as `node packages/engine/bin/slipway.ts`; from a si
 | `mizzen watch [dir] --out <dir> --theme <dir>` | Builds `dir` once, then rebuilds whenever a source or theme file changes. Changes are debounced and builds run one at a time, in order; an unchanged build is restored from `.slipway/cache`. Ctrl-C stops the watcher. |
 
 `--out` is resolved from the current working directory, not from the site root, for `build`, `dev`, and `watch`; `dev`'s default is `<site>/.slipway/dev` and `watch`'s is `<site>/.slipway/watch`. `check` is the command to use in CI: it never touches `dist`.
+
+`--workers <n|auto>` (for `build` and `check`) renders pages in `n` worker threads, each one loading the theme; `auto` is the CPU count minus one. The site written is byte for byte the one `--workers 1` writes, diagnostics included. The default is `1`: a small site would pay for threads it cannot use, so a large one opts in with `--workers auto`. A worker that fails renders its pages in the main thread and adds a `render.worker-failed` warning. There is no config key, because how many cores a machine has is a machine setting, not a property of the site.
 
 The theme root is picked in this order:
 
