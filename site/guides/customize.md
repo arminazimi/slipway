@@ -178,7 +178,7 @@ Pages join a language by `lang` and the translations of one page by `translation
 
 ## Per-page settings
 
-The theme ships `doc`, `home`, `not-found`, and `base` layouts. A page can also set:
+The theme ships `doc`, `home`, `not-found`, `versions`, and `base` layouts. A page can also set:
 
 - `permalink` for a URL other than the one its file path gives.
 - `order` to sort it among siblings when navigation comes from folders.
