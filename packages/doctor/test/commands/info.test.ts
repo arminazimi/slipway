@@ -29,26 +29,27 @@ test("info --help", async () => {
 test("info with text format", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-info-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
-  writeFileSync(join(dir, "_config.yml"), "remote_theme: arminazimi/slipway@v0.2.0\n");
+  writeFileSync(join(dir, "mizzen.yml"), "title: Test\n");
+  writeFileSync(join(dir, "package.json"), JSON.stringify({ devDependencies: { "@velella/lateen": "0.2.0" } }));
 
   const ctx = getContext();
   const code = await main(["info", dir], ctx);
   assert.equal(code, 0);
-  assert.match(ctx.stdout, /Mode: remote/);
-  assert.match(ctx.stdout, /Theme pin: arminazimi\/slipway@v0\.2\.0/);
+  assert.match(ctx.stdout, /Mode: engine/);
+  assert.match(ctx.stdout, /Theme pin: @velella\/lateen@0\.2\.0/);
   assert.match(ctx.stdout, /node: v/);
 });
 
 test("info with json format", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-info-json-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
-  writeFileSync(join(dir, "_config.yml"), "theme: slipway-theme\n");
+  writeFileSync(join(dir, "_config.yml"), "theme: slipway-theme\n"); // Jekyll is no longer read
 
   const ctx = getContext();
   const code = await main(["info", dir, "--format", "json"], ctx);
   assert.equal(code, 0);
   const info = JSON.parse(ctx.stdout);
-  assert.equal(info.mode, "gem");
+  assert.equal(info.mode, "unknown");
   assert.equal(info.themePin, null);
   assert.ok(info.versions.node);
 });

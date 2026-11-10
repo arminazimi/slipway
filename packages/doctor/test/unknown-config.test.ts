@@ -1,35 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { run } from "../src/checks/unknown-config.ts";
 import { Site } from "../src/site.ts";
 
 const fixture = (name) => fileURLToPath(new URL(`fixtures/${name}`, import.meta.url));
-
-test("unknown-config warns on unknown keys and suggests valid keys", async () => {
-  const site = new Site(fixture("unknown-config"));
-  const { status, findings } = await run(site);
-
-  assert.equal(status, "fail");
-  assert.equal(findings.length, 2);
-
-  const headerFinding = findings.find(f => f.key === "headr");
-  assert.ok(headerFinding);
-  assert.equal(headerFinding.message, "unknown config key `headr`, did you mean `header`?");
-  assert.equal(headerFinding.file, "_config.yml");
-  assert.equal(headerFinding.line, 2);
-
-  const accentFinding = findings.find(f => f.key === "acent");
-  assert.ok(accentFinding);
-  assert.equal(accentFinding.message, "unknown config key `acent`, did you mean `accent`?");
-  assert.equal(accentFinding.file, "_config.yml");
-  assert.equal(accentFinding.line, 4);
-});
-
-import { readdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
 const docsSite = fileURLToPath(new URL("../../../fixtures/docs-site", import.meta.url));
 
 test("unknown-config reads the engine's slipway.yml with lines and nested suggestions", async (t) => {

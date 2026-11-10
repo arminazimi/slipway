@@ -26,50 +26,26 @@ test("pin --help", async () => {
   assert.match(ctx.stdout, /Usage: slipway pin/);
 });
 
-test("pin <version> with text format updates config", async (t) => {
-  const dir = mkdtempSync(join(tmpdir(), "slipway-pin-"));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
-  writeFileSync(join(dir, "_config.yml"), "title: Test\nremote_theme: arminazimi/slipway@v0.1.0\nplugins: []\n");
-
-  const ctx = getContext();
-  const code = await main(["pin", "v0.2.0", dir], ctx);
-  assert.equal(code, 0);
-  assert.match(ctx.stdout, /Updated remote_theme from v0\.1\.0 to v0\.2\.0/);
-});
-
-test("pin <version> --json format", async (t) => {
-  const dir = mkdtempSync(join(tmpdir(), "slipway-pin-json-"));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
-  writeFileSync(join(dir, "_config.yml"), "remote_theme: arminazimi/slipway@v0.1.0\n");
-
-  const ctx = getContext();
-  const code = await main(["pin", "v0.2.0", dir, "--json"], ctx);
-  assert.equal(code, 0);
-
-  const info = JSON.parse(ctx.stdout);
-  assert.equal(info.oldVersion, "v0.1.0");
-  assert.equal(info.newVersion, "v0.2.0");
-});
-
-test("pin error case with missing config", async (t) => {
+test("pin error case with no engine config", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-pin-err-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
 
   const ctx = getContext();
   const code = await main(["pin", "v0.2.0", dir], ctx);
   assert.equal(code, 1);
-  assert.match(ctx.stderr, /no _config\.yml found/);
+  assert.match(ctx.stderr, /no engine config/);
 });
 
-test("pin error case with missing remote_theme", async (t) => {
+test("pin ignores a Jekyll _config.yml: only an engine site can be pinned", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "slipway-pin-err2-"));
   t.after(() => rmSync(dir, { recursive: true, force: true }));
-  writeFileSync(join(dir, "_config.yml"), "theme: slipway-theme\n");
+  writeFileSync(join(dir, "_config.yml"), "remote_theme: arminazimi/slipway@v0.1.0\n");
 
   const ctx = getContext();
   const code = await main(["pin", "v0.2.0", dir], ctx);
   assert.equal(code, 1);
-  assert.match(ctx.stderr, /no remote_theme pin found in _config\.yml/);
+  assert.match(ctx.stderr, /no engine config/);
+  assert.match(readFileSync(join(dir, "_config.yml"), "utf8"), /v0\.1\.0/);
 });
 
 test("pin updates the engine and theme npm versions on an engine site", async (t) => {

@@ -17,15 +17,10 @@ const NOT_PREFIX = new Set(["میز", "میوه", "میان", "میلیون", "�
 const SUFFIXES = new Set(["ها", "های", "هایی", "هایم", "هایت", "هایش", "هایمان", "هایتان", "هایشان", "هاست", "تر", "ترین"]);
 const core = (token) => token.text.replace(/^[^\p{Script=Arabic}\u200c]+|[^\p{Script=Arabic}\u200c]+$/gu, "");
 
-/** The site's language: the engine config's `lang`, then Jekyll's `_config.yml`, else null. */
+/** The site's language: the engine config's `lang`, else null. */
 function siteLanguage(site) {
   const engineLang = site.config()?.data?.lang;
   if (typeof engineLang === "string" && engineLang.trim()) return engineLang.trim();
-  for (const name of ["_config.yml", "_config.yaml"]) {
-    if (!site.isFile(site.source, name)) continue;
-    const lang = site.dataOf(name)?.data?.lang;
-    return typeof lang === "string" && lang.trim() ? lang.trim() : null;
-  }
   return null;
 }
 

@@ -1,5 +1,5 @@
-// Root-relative Markdown links break when a site is served under a base path. Jekyll names that path
-// `baseurl`; the engine names it `base` (ADR 0024). The check reads whichever config the site has.
+// Root-relative Markdown links break when a site is served under a base path. The engine names that
+// path `base` (ADR 0024); the check reads it from the engine config.
 export const id = "doctor.root-links";
 export const level = "warning";
 
@@ -14,14 +14,7 @@ function baseOf(site) {
     const base = site.config()?.data?.base;
     return { base: typeof base === "string" ? base : "", key: "base" };
   }
-  for (const name of ["_config.yml", "_config.yaml"]) {
-    if (site.isFile(site.source, name)) {
-      const configParsed = site.dataOf(name);
-      const baseurl = configParsed?.data?.baseurl;
-      return { base: typeof baseurl === "string" ? baseurl : "", key: "baseurl" };
-    }
-  }
-  return { base: "", key: "baseurl" };
+  return { base: "", key: "base" };
 }
 
 export async function run(site) {

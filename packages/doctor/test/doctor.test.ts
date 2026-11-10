@@ -348,11 +348,11 @@ test("report: json validates against the report schema, passing or failing", asy
     assert.ok(validateReport(report), JSON.stringify(validateReport.errors));
     assert.equal(report.generator, "unknown");
   }
-  // examples/docs runs the Jekyll checks (level null, scope "jekyll"); the detect fixture is a detected Jekyll site.
-  const withChecks = await doctor(join(repo, "packages/doctor/test/fixtures/examples/docs"));
+  // An engine site runs the engine checks (level null, scope "jekyll", the frozen scope name).
+  const withChecks = await doctor(join(repo, "fixtures/docs-site"));
   assert.ok(validateReport(withChecks), JSON.stringify(validateReport.errors));
   assert.ok(withChecks.tests.some((t) => t.scope === "jekyll"));
-  assert.equal((await doctor(fixture("detect/jekyll"))).generator, "jekyll");
+  assert.equal(withChecks.generator, "mizzen");
 });
 
 test("report: a finding on a built page names the Markdown file and the section's line", async (t) => {

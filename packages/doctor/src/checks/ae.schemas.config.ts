@@ -6,11 +6,10 @@ import { pass, failWith, notRun, agentsFinding, noOutput, agentsOr, sourcemapOr,
 export const id = "ae.schemas.config";
 export const level = "L1";
 
-/** The configuration files the detected generator reads: the engine's `slipway.yml`, else Jekyll's `_config.yml`. */
+/** The configuration files the detected generator reads: the engine's config; other generators' are not reported yet. */
 function configFiles(site) {
   const engine = site.config();
-  if (engine) return [engine.file];
-  return ["_config.yml", "_config.yaml"].filter((name) => site.isFile(site.source, name));
+  return engine ? [engine.file] : [];
 }
 
 export function run(site) {

@@ -57,9 +57,6 @@ function validator(path) {
 /** The engine's site-config schema: the keys of `slipway.yml` (ADR 0024). */
 const engineConfig = "../../../../packages/engine/schema/config.schema.json";
 
-/** The 0.2 theme's `slipway:` block in `_config.yml`. */
-const legacyConfig = "../../../../schema/slipway-config.schema.json";
-
 /** The segments of an Ajv instance path. */
 function instancePath(path) {
   return String(path ?? "")
@@ -104,72 +101,9 @@ function checkEngineConfig(configData, config) {
     });
 }
 
-/** Unknown keys under the 0.2 theme's `slipway:` block in `_config.yml`. */
-function checkLegacyConfig(data, lineOf, file, schemaProps) {
-  const findings = [];
-  const validKeysAtLevel = Object.keys(schemaProps);
-
-  for (const [key, value] of Object.entries<any>(data)) {
-    if (!validKeysAtLevel.includes(key)) {
-      const suggestion = closest(key, validKeysAtLevel);
-      findings.push({
-        in: "source",
-        file,
-        line: lineOf([key]),
-        key,
-        message: `unknown config key \`${key}\`, did you mean \`${suggestion}\`?`,
-        fix: `rename ${key} to ${suggestion}`,
-      });
-    } else if (
-      value &&
-      typeof value === "object" &&
-      !Array.isArray(value) &&
-      schemaProps[key]?.type === "object" &&
-      schemaProps[key]?.properties
-    ) {
-      // Recursively check nested objects like `tokens`
-      const nestedFindings = checkLegacyConfig(
-        value,
-        (path) => lineOf([key, ...path]),
-        file,
-        schemaProps[key].properties
-      );
-      findings.push(...nestedFindings);
-    }
-  }
-  return findings;
-}
-
-/** The 0.2 `slipway:` block in `_config.yml`, for sites the engine does not build. */
-function checkJekyllConfig(site) {
-  const { schema } = validator(legacyConfig);
-  const slipwaySchema = schema.properties?.slipway;
-  if (!slipwaySchema || !slipwaySchema.properties) return [];
-
-  const findings = [];
-  for (const name of ["_config.yml", "_config.yaml"]) {
-    if (site.isFile(site.source, name)) {
-      const parsed = site.dataOf(name);
-      if (parsed.data && parsed.data.slipway && typeof parsed.data.slipway === "object") {
-        findings.push(
-          ...checkLegacyConfig(
-            parsed.data.slipway,
-            (path) => (parsed.lineOf ? parsed.lineOf(["slipway", ...path]) : undefined),
-            name,
-            slipwaySchema.properties
-          )
-        );
-      }
-    }
-  }
-  return findings;
-}
-
 export async function run(site) {
   const config = site.config();
-  const findings = config?.data
-    ? checkEngineConfig(config.data, config)
-    : checkJekyllConfig(site);
+  const findings = config?.data ? checkEngineConfig(config.data, config) : [];
 
   return { status: findings.length ? "fail" : "pass", findings };
 }

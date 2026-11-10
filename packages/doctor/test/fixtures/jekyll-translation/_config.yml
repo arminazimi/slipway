@@ -1,6 +1,0 @@
-title: Jekyll fixture
-lang: en
-slipway:
-  languages:
-    - { code: en, name: English, prefix: "" }
-    - { code: fa, name: فارسی, prefix: /fa }

@@ -4,8 +4,8 @@ import { Site } from "../site.ts";
 import { splitFrontMatter } from "../yaml.ts";
 import * as yaml from "yaml";
 
-/** Files that mark a site root: the engine's config first (ADR 0025), then Jekyll's. */
-const configFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml", "_config.yml"];
+/** Files that mark a site root: the engine's config first (ADR 0025). */
+const configFiles = ["mizzen.yml", "mizzen.yaml", "slipway.yml", "slipway.yaml"];
 
 export const usage = `Usage: slipway translate <source-page> --to <lang> [options]
 
@@ -53,7 +53,7 @@ export function parseArgs(args) {
   return { options };
 }
 
-/** Finds the site root by looking for an engine config, Jekyll's config, or a theme folder upwards. */
+/** Finds the site root by looking for an engine config or a theme folder upwards. */
 function findSiteRoot(startPath) {
   let current = resolve(startPath);
   if (!existsSync(current) || !existsSync(dirname(current))) {
@@ -212,82 +212,6 @@ function translateEngineSite(siteRoot, sourcePath, to, format, { log, error }, s
   return 0;
 }
 
-/** Translates a page on a Jekyll site by `slipway.languages` in `_config.yml`. Returns the exit code. */
-function translateJekyllSite(siteRoot, sourcePath, to, format, { log, error }, site) {
-  const relativeSourcePath = relative(siteRoot, sourcePath).split("\\").join("/");
-
-  const fm = site.frontMatterOf(relativeSourcePath);
-
-  if (!fm || !fm.data) {
-    error(`slipway translate: source page must have front matter`);
-    return 1;
-  }
-
-  if (fm.error) {
-    error(`slipway translate: ${fm.error}`);
-    return 1;
-  }
-
-  const translationKey = fm.data.translation_key;
-  if (!translationKey) {
-    error(`slipway translate: source page is missing translation_key in front matter`);
-    return 1;
-  }
-
-  const configRes = site.dataOf("_config.yml");
-  let prefix = `/${to}`;
-
-  if (configRes && !configRes.error && configRes.data && configRes.data.slipway && configRes.data.slipway.languages) {
-    const langConfig = configRes.data.slipway.languages.find(l => l.code === to);
-    if (langConfig && langConfig.prefix !== undefined) {
-      prefix = langConfig.prefix;
-    }
-  }
-
-  const cleanPrefix = prefix.startsWith("/") ? prefix.slice(1) : prefix;
-
-  let targetRelative = relativeSourcePath;
-  if (configRes && !configRes.error && configRes.data && configRes.data.slipway && configRes.data.slipway.languages) {
-      const sourceLangCode = fm.data.lang || "en";
-      const sourceLangConfig = configRes.data.slipway.languages.find(l => l.code === sourceLangCode);
-      if (sourceLangConfig && sourceLangConfig.prefix) {
-          const srcPrefix = sourceLangConfig.prefix.startsWith("/") ? sourceLangConfig.prefix.slice(1) : sourceLangConfig.prefix;
-          if (srcPrefix && targetRelative.startsWith(srcPrefix + "/")) {
-              targetRelative = targetRelative.slice(srcPrefix.length + 1);
-          }
-      }
-  }
-
-  const targetPathRelative = cleanPrefix ? join(cleanPrefix, targetRelative).replace(/\\/g, '/') : targetRelative;
-  const targetPath = join(siteRoot, targetPathRelative);
-
-  if (existsSync(targetPath)) {
-    error(`slipway translate: target file already exists: ${targetPathRelative}`);
-    return 1;
-  }
-
-  const newFmData = { ...fm.data, lang: to };
-
-  const yamlString = Object.keys(newFmData).length > 0 ? `---\n${yaml.stringify(newFmData)}---\n` : "";
-  const newContent = `${yamlString}${bodyAfterFrontMatter(readFileSync(sourcePath, "utf8"))}`;
-
-  mkdirSync(dirname(targetPath), { recursive: true });
-  writeFileSync(targetPath, newContent, "utf8");
-
-  if (format === "json") {
-    log(JSON.stringify({
-      source: relativeSourcePath,
-      target: targetPathRelative,
-      lang: to,
-      translation_key: translationKey
-    }, null, 2));
-  } else {
-    log(`Translated ${relativeSourcePath} to ${targetPathRelative} for language ${to}`);
-  }
-
-  return 0;
-}
-
 export async function main(args, { log = console.log, error = console.error } = {}) {
   const parsed = parseArgs(args);
   if (parsed.help) {
@@ -316,5 +240,6 @@ export async function main(args, { log = console.log, error = console.error } = 
   const site = new Site(siteRoot);
   const config = site.config();
   if (config) return translateEngineSite(siteRoot, sourcePath, to, format, { log, error }, site, config);
-  return translateJekyllSite(siteRoot, sourcePath, to, format, { log, error }, site);
+  error(`slipway translate: no engine config (mizzen.yml or slipway.yml) found for ${source}`);
+  return 1;
 }
