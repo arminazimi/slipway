@@ -14,6 +14,10 @@ theme:
     logo:
       light: /brand/mark-light.svg
       dark: /brand/mark-dark.svg
+    favicon:
+      svg: /brand/favicon.svg
+      ico: /brand/favicon.ico
+      apple: /brand/apple-touch-icon.png
     footer:
       copyright: "© Slipway contributors"
       license: "Released under the MIT license."
