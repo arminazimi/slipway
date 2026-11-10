@@ -9,6 +9,7 @@ import drawer from "../chrome/drawer/index.ts";
 import editPage from "../chrome/edit-page/index.ts";
 import feedback from "../chrome/feedback/index.ts";
 import header from "../chrome/header/index.ts";
+import lastUpdated from "../chrome/last-updated/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
@@ -37,10 +38,10 @@ function statusProps(page: LayoutProps["page"]): PageStatusProps {
 }
 
 /**
- * The page itself: breadcrumb, drift banner, status banner, title, body, edit link, page footer,
- * copy-Markdown control, feedback, and pager, marked for Pagefind. The drift banner reads
- * `site.data.drift` and keeps itself out of the page when the site has no findings for this URL; the
- * edit link is likewise left out when the repository gives no URL.
+ * The page itself: breadcrumb, drift banner, status banner, title, last updated line, reading time,
+ * body, edit link, page footer, copy-Markdown control, feedback, and pager, marked for Pagefind.
+ * The drift banner reads `site.data.drift` and keeps itself out of the page when the site has no
+ * findings for this URL; the edit link is likewise left out when the repository gives no URL.
  */
 function article(props: LayoutProps): ComponentChildren {
   const { page } = props;
@@ -51,6 +52,7 @@ function article(props: LayoutProps): ComponentChildren {
     driftBanner({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     pageStatus({ props: statusProps(page), page, site: props.site, html: "" }) as ComponentChildren,
     titleFromBody(props) ? null : h("h1", null, page.title),
+    lastUpdated(props) as ComponentChildren,
     readingTime({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
     editPage(props) as ComponentChildren,
