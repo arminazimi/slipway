@@ -1,6 +1,6 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
-import type { Head, LayoutProps, LinkTag, MetaTag } from "@velella/mizzen/contracts";
+import type { Head, LayoutProps, LinkTag, MetaTag, SiteConfig } from "@velella/mizzen/contracts";
 import announcement from "../chrome/announcement/index.ts";
 import footnotePopover from "../chrome/footnote-popover/index.ts";
 import siteFooter from "../chrome/site-footer/index.ts";
@@ -48,6 +48,22 @@ function linkTag(tag: LinkTag) {
   return h("link", { ...tag.attrs, rel: tag.rel, href: tag.href });
 }
 
+/** The icon links from the theme option `favicon` (`svg`, `ico`, `apple`), each a path from the site root; none when unset. */
+function iconLinks(config: SiteConfig): LinkTag[] {
+  const value = config.theme.options?.favicon;
+  if (typeof value !== "object" || value === null) return [];
+  const icons = value as Record<string, unknown>;
+  const href = (path: unknown) => (typeof path === "string" ? (path.startsWith("/") ? `${config.base}${path}` : path) : undefined);
+  const links: LinkTag[] = [];
+  const ico = href(icons.ico);
+  const svg = href(icons.svg);
+  const apple = href(icons.apple);
+  if (ico) links.push({ rel: "icon", href: ico, attrs: { sizes: "48x48" } });
+  if (svg) links.push({ rel: "icon", href: svg, attrs: { type: "image/svg+xml", sizes: "any" } });
+  if (apple) links.push({ rel: "apple-touch-icon", href: apple });
+  return links;
+}
+
 /** JSON-LD must not close its own script element, so `<` is escaped. */
 function jsonLd(data: Readonly<Record<string, unknown>>) {
   return h("script", {
@@ -57,7 +73,7 @@ function jsonLd(data: Readonly<Record<string, unknown>>) {
 }
 
 /** Everything inside `<head>`, in a fixed order, with the theme script first so nothing paints before it. */
-function headNodes(head: Head) {
+function headNodes(head: Head, config: SiteConfig) {
   return [
     h("meta", { charset: "utf-8" }),
     h("meta", { name: "viewport", content: "width=device-width, initial-scale=1" }),
@@ -65,6 +81,7 @@ function headNodes(head: Head) {
     h("title", null, head.title),
     ...head.meta.map(metaTag),
     ...head.links.map(linkTag),
+    ...iconLinks(config).map(linkTag),
     ...head.jsonLd.map(jsonLd),
   ];
 }
@@ -81,7 +98,7 @@ export default function base(props: BaseProps) {
   return h(
     "html",
     { lang: page.lang, dir: page.dir, "data-theme": "dark" },
-    h("head", null, ...headNodes(head)),
+    h("head", null, ...headNodes(head, props.site.config)),
     h(
       "body",
       null,
