@@ -1,6 +1,7 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
 import type { Chrome, SiteConfig } from "@velella/mizzen/contracts";
+import languageSwitcher from "../language-switcher/index.ts";
 import sectionTabs from "../section-tabs/index.ts";
 
 type Logo = { readonly light?: string; readonly dark?: string };
@@ -72,6 +73,7 @@ const header: Chrome = (props) => {
             h("path", { d: "M20 20l-4-4" }),
           ),
         ),
+        languageSwitcher(props) as ComponentChildren,
         repositoryLink(config),
         h(
           "button",

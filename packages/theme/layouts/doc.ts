@@ -6,13 +6,16 @@ import blockActions from "../chrome/block-actions/index.ts";
 import breadcrumb from "../chrome/breadcrumb/index.ts";
 import copyMarkdown from "../chrome/copy-markdown/index.ts";
 import drawer from "../chrome/drawer/index.ts";
+import editPage from "../chrome/edit-page/index.ts";
 import feedback from "../chrome/feedback/index.ts";
 import header from "../chrome/header/index.ts";
 import pageFooter from "../chrome/page-footer/index.ts";
 import pager from "../chrome/pager/index.ts";
 import sidebar from "../chrome/sidebar/index.ts";
 import toc from "../chrome/toc/index.ts";
+import driftBanner from "../components/drift-banner/index.ts";
 import pageStatus, { type PageStatusProps } from "../components/page-status/index.ts";
+import readingTime from "../components/reading-time/index.ts";
 
 /**
  * True when the body already supplies the page's `h1`, by the same rule as the engine's
@@ -34,8 +37,10 @@ function statusProps(page: LayoutProps["page"]): PageStatusProps {
 }
 
 /**
- * The page itself: breadcrumb, status banner, title, body, page footer, copy-Markdown control,
- * feedback, and pager, marked for Pagefind.
+ * The page itself: breadcrumb, drift banner, status banner, title, body, edit link, page footer,
+ * copy-Markdown control, feedback, and pager, marked for Pagefind. The drift banner reads
+ * `site.data.drift` and keeps itself out of the page when the site has no findings for this URL; the
+ * edit link is likewise left out when the repository gives no URL.
  */
 function article(props: LayoutProps): ComponentChildren {
   const { page } = props;
@@ -43,9 +48,12 @@ function article(props: LayoutProps): ComponentChildren {
     "article",
     { class: "doc", "data-pagefind-body": true },
     breadcrumb(props) as ComponentChildren,
+    driftBanner({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     pageStatus({ props: statusProps(page), page, site: props.site, html: "" }) as ComponentChildren,
     titleFromBody(props) ? null : h("h1", null, page.title),
+    readingTime({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: page.html } }),
+    editPage(props) as ComponentChildren,
     pageFooter(props) as ComponentChildren,
     copyMarkdown(props) as ComponentChildren,
     feedback(props) as ComponentChildren,

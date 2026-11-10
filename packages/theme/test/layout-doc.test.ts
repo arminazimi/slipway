@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { Fragment, h } from "preact";
-import type { Heading, LayoutProps, Page, Site, SiteConfig, SourcePos } from "@velella/mizzen/contracts";
+import type { Heading, LayoutProps, Page, RepositoryConfig, Site, SiteConfig, SourcePos } from "@velella/mizzen/contracts";
 import doc from "../layouts/doc.ts";
 
 const pos: SourcePos = { file: "guide/install.md", line: 1, column: 1, endLine: 1, endColumn: 1 };
@@ -46,8 +46,19 @@ function pageWith(overrides: Partial<Page> = {}): Page {
   };
 }
 
-function layoutProps(page: Page, nav: Site["nav"]["main"] = [], trail: LayoutProps["trail"] = []): LayoutProps {
-  const site: Site = { config: configWith(), pages: [page], nav: { main: nav }, data: {} };
+function layoutProps(
+  page: Page,
+  nav: Site["nav"]["main"] = [],
+  trail: LayoutProps["trail"] = [],
+  data: Site["data"] = {},
+  repository?: RepositoryConfig,
+): LayoutProps {
+  const site: Site = {
+    config: configWith(repository === undefined ? {} : { repository }),
+    pages: [page],
+    nav: { main: nav },
+    data,
+  };
   return {
     site,
     page,
@@ -164,12 +175,35 @@ test("empty navigation leaves the sidebar and drawer out without breaking the pa
   assert.match(page, /<a class="skip-link" href="#main">Skip to content<\/a>/);
 });
 
+test("the drift banner from site.data sits above the status banner and the title", () => {
+  const data = { drift: { "/guide/install/": [{}, {}] } };
+  const page = html(doc(layoutProps(pageWith({ frontMatter: { status: "beta" } }), [], [], data)));
+  assert.match(page, /<aside class="drift-banner" role="note"><span class="drift-banner-message">2 drift findings<\/span><\/aside>/);
+  assert.ok(
+    page.indexOf('class="drift-banner"') < page.indexOf('class="page-status'),
+    "the drift banner comes before the status banner",
+  );
+  assert.ok(page.indexOf('class="drift-banner"') < page.indexOf("<h1>"), "the drift banner comes before the title");
+  assert.doesNotMatch(html(doc(layoutProps(pageWith()))), /class="drift-banner"/);
+});
+
 test("the status banner from front matter sits between the breadcrumb and the title", () => {
   const page = out(pageWith({ frontMatter: { status: "beta" } }));
   assert.match(
     page,
     /<article class="doc"[^>]*><div class="page-status page-status-beta" role="note"><strong class="page-status-label">Beta<\/strong>[\s\S]*?<\/div><h1>Install<\/h1>/,
   );
+});
+
+test("the edit link sits between the body and the page footer, and is absent without a repository", () => {
+  const page = pageWith();
+  const rendered = html(doc(layoutProps(page, [], [], {}, { url: "https://github.com/o/r" })));
+
+  assert.match(
+    rendered,
+    /<div class="doc-body"><p>Run the build\.<\/p><\/div><div class="edit-page" data-edit-page><a class="edit-page-link" href="https:\/\/github\.com\/o\/r\/edit\/main\/guide\/install\.md" rel="noopener">Edit this page<\/a><\/div><div class="page-footer">/,
+  );
+  assert.doesNotMatch(html(doc(layoutProps(page))), /class="edit-page"/);
 });
 
 test("the banner shows `since`, and a deprecated page links to its replacement", () => {
