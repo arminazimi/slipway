@@ -6,6 +6,19 @@ Pull requests add a fragment in [`changelog.d/`](changelog.d/README.md), not a l
 
 ## [Unreleased]
 
+Slipway 0.3.0 replaces the Jekyll theme with a docs engine and a theme of its own. The Jekyll theme stays available on the `legacy/jekyll` branch and the `v0.2.0` tag.
+
+### Highlights
+
+- **Mizzen**, the engine (`@velella/mizzen`): builds a Markdown folder to a static site with a source map, Markdown twins, `llms.txt`, search, and link checking. The 600-page fixture builds in about 2.4 s.
+- **Lateen**, the theme (`@velella/lateen`): design tokens, doc layouts, a search dialog, light and dark themes, and content components such as callouts, tabs, steps, and file trees. Right-to-left pages are first class.
+- **Tools on the engine**: `slipway doctor`, the MCP tools, and the Agent Skills all work on engine sites. The doctor no longer reads Jekyll sites.
+- **Removed**: the Jekyll layouts, includes, plugins, `assets/`, Gemfile, and every Ruby step in CI.
+
+### Upgrading
+
+Run `slipway migrate` on a 0.2 site and read [UPGRADING.md](UPGRADING.md). To stay on Jekyll, pin `remote_theme: arminazimi/slipway@v0.2.0`.
+
 ## [0.2.0] - 2026-10-30
 
 This is the first release Evergreen pins: `remote_theme: arminazimi/slipway@v0.2.0`. It adds a block library, eleven starters, the `slipway` command line and its agent tools, and 25 more interface languages. Nothing in it breaks 0.1.0 sites.
