@@ -111,6 +111,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   "code-tabs": "code-tabs",
   details: "<details",
   "diff-block": 'class="diff-block',
+  "drift-banner": 'class="drift-banner',
   embed: 'class="embed',
   endpoint: 'class="endpoint',
   figure: "<figure",
@@ -131,6 +132,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   table: "<table",
   tags: 'class="tags"',
   terminal: 'class="terminal',
+  "tested-chip": 'class="tested-chip',
   "version-badge": 'class="version-badge',
   video: 'class="video',
 };

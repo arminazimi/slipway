@@ -46,8 +46,13 @@ function pageWith(overrides: Partial<Page> = {}): Page {
   };
 }
 
-function layoutProps(page: Page, nav: Site["nav"]["main"] = [], trail: LayoutProps["trail"] = []): LayoutProps {
-  const site: Site = { config: configWith(), pages: [page], nav: { main: nav }, data: {} };
+function layoutProps(
+  page: Page,
+  nav: Site["nav"]["main"] = [],
+  trail: LayoutProps["trail"] = [],
+  data: Site["data"] = {},
+): LayoutProps {
+  const site: Site = { config: configWith(), pages: [page], nav: { main: nav }, data };
   return {
     site,
     page,
@@ -162,6 +167,18 @@ test("empty navigation leaves the sidebar and drawer out without breaking the pa
   assert.doesNotMatch(page, /aside class="toc"/);
   assert.match(page, /^<html lang="en" dir="ltr"/);
   assert.match(page, /<a class="skip-link" href="#main">Skip to content<\/a>/);
+});
+
+test("the drift banner from site.data sits above the status banner and the title", () => {
+  const data = { drift: { "/guide/install/": [{}, {}] } };
+  const page = html(doc(layoutProps(pageWith({ frontMatter: { status: "beta" } }), [], [], data)));
+  assert.match(page, /<aside class="drift-banner" role="note"><span class="drift-banner-message">2 drift findings<\/span><\/aside>/);
+  assert.ok(
+    page.indexOf('class="drift-banner"') < page.indexOf('class="page-status'),
+    "the drift banner comes before the status banner",
+  );
+  assert.ok(page.indexOf('class="drift-banner"') < page.indexOf("<h1>"), "the drift banner comes before the title");
+  assert.doesNotMatch(html(doc(layoutProps(pageWith()))), /class="drift-banner"/);
 });
 
 test("the status banner from front matter sits between the breadcrumb and the title", () => {
