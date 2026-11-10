@@ -54,7 +54,7 @@ const RELOAD_CLIENT =
   `const overlay=document.createElement("div");` +
   `overlay.setAttribute(${JSON.stringify(OVERLAY_MARKER)},"");` +
   `overlay.hidden=true;` +
-  `overlay.style.cssText="position:fixed;inset-block-end:0;inset-inline:0;z-index:2147483647;max-block-size:50vh;overflow:auto;margin:0;padding:12px 16px;background:#1b1b1f;color:#f5f5f5;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;border-block-start:1px solid #555;";` +
+  `overlay.style.cssText="position:fixed;inset-block-end:0;inset-inline:0;z-index:2147483647;max-block-size:50vh;overflow:auto;margin:0;padding:12px 16px;background:Canvas;color:CanvasText;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;border-block-start:1px solid GrayText;";` +
   `(document.body||document.documentElement).appendChild(overlay);` +
   `const show=(items)=>{overlay.textContent="";` +
   `if(!items.length){overlay.hidden=true;return;}` +
