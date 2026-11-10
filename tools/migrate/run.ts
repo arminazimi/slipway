@@ -1,4 +1,4 @@
-// One command to migrate a Slipway 0.2 site (issue #1184): convert `_config.yml` to `slipway.yml`,
+// One command to migrate a Slipway 0.2 site (issue #1184): convert `_config.yml` to `mizzen.yml`,
 // rewrite the front matter and callout includes of every page, check `_data/navigation.yml`, and print
 // a report of every file changed and every step left for a person. With `--dry-run` it reads and
 // reports only; nothing on disk changes.
@@ -21,7 +21,7 @@ import { checkNavigation, migrateContent, type ContentNote } from "./content.ts"
 export const USAGE = `Usage: node tools/migrate/run.ts <site> [--dry-run]
 
 Migrate a Slipway 0.2 site to 0.3:
-  _config.yml becomes slipway.yml, and the 0.2 _config.yml is removed after a valid slipway.yml is written.
+  _config.yml becomes mizzen.yml, and the 0.2 _config.yml is removed after a valid mizzen.yml is written.
   Every Markdown and HTML page has its front matter renamed and its callout includes turned into directives.
   _data/navigation.yml is checked against the engine's navigation schema and never rewritten.
 
@@ -79,19 +79,19 @@ const fromProblem = (file: string, problem: MigrateProblem): Step => ({
 
 const fromNote = (note: ContentNote): Step => ({ file: note.file, line: note.line, note: note.note });
 
-/** Moves `_config.yml` to `slipway.yml` when the latter does not exist yet. */
+/** Moves `_config.yml` to `mizzen.yml` when the latter does not exist yet. */
 function migrateConfigStep(site: string, dryRun: boolean, report: MigrationReport): void {
   const source = join(site, "_config.yml");
-  const target = join(site, "slipway.yml");
+  const target = join(site, "mizzen.yml");
   const hasSource = existsSync(source);
   const hasTarget = existsSync(target);
 
   if (!hasSource) {
-    if (!hasTarget) report.manual.push({ file: "_config.yml", note: "no _config.yml or slipway.yml found; the engine builds with defaults" });
+    if (!hasTarget) report.manual.push({ file: "_config.yml", note: "no _config.yml or mizzen.yml found; the engine builds with defaults" });
     return;
   }
   if (hasTarget) {
-    report.manual.push({ file: "_config.yml", note: "slipway.yml already exists; _config.yml was left in place" });
+    report.manual.push({ file: "_config.yml", note: "mizzen.yml already exists; _config.yml was left in place" });
     return;
   }
 
@@ -106,7 +106,7 @@ function migrateConfigStep(site: string, dryRun: boolean, report: MigrationRepor
     return;
   }
 
-  report.changed.push("slipway.yml");
+  report.changed.push("mizzen.yml");
   report.removed.push("_config.yml");
   if (dryRun) return;
   try {

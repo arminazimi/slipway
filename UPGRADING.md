@@ -31,13 +31,13 @@ site: ../my-site
 mode: dry run (nothing was written)
 
 Would change (1)
-  slipway.yml
+  mizzen.yml
 
 Would remove (1)
   _config.yml
 
 Manual steps (2)
-  _config.yml — theme: names the theme that ships by default; slipway.yml needs no theme key
+  _config.yml — theme: names the theme that ships by default; mizzen.yml needs no theme key
   _config.yml — plugins: Jekyll plugins; optional front matter, README indexes, redirects, the sitemap, and SEO tags are built in
 
 Errors (0)
@@ -50,7 +50,7 @@ The tool does three things:
 - **Content.** Renames the front matter keys that changed (`layout`, `nav_order`, `direction`) and turns a standalone callout include into a `:::callout` directive. Every other Liquid tag or output stays where it is and is reported with its file and line.
 - **Navigation.** Checks `_data/navigation.yml` against the engine's schema and reports each problem with its line. It never rewrites navigation, because a URL such as `docs/x` needs a person's decision.
 
-It writes `slipway.yml`, the name from before the engine and theme were renamed. Rename it to `mizzen.yml`: that is the only config file 0.3.0 reads.
+It writes `mizzen.yml`: that is the only config file 0.3.0 reads.
 
 ### 2. Remove the Jekyll machinery
 
