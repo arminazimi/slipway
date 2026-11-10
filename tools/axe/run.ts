@@ -123,6 +123,7 @@ export const COMPONENT_MARKERS: Readonly<Record<string, string>> = {
   "os-tabs": 'class="os-tabs',
   "output-block": 'class="output-block',
   "page-status": 'class="page-status',
+  "reading-time": 'class="reading-time',
   "schema-table": 'class="schema-table',
   "status-banner": 'class="status-banner',
   steps: 'class="steps"',
