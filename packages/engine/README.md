@@ -166,6 +166,7 @@ Each `*.ts` file in an outputs folder is one unit. The pipeline finds them by li
 | `llms` | `llms.txt`, following llmstxt.org. |
 | `llms-full` | `llms-full.txt`, every page's Markdown in one file. |
 | `manifest` | `.slipway/manifest.json`, the page list and per-page source and HTML hashes. |
+| `opensearch` | `opensearch.xml`, the site's search as an OpenSearch provider, when the config has `url`. |
 | `page-json` | One JSON file per document page (`index.json` for a pretty URL): URL, title, description, headings, source, last change, and estimated tokens. |
 | `robots` | `robots.txt`, with the sitemap address when the config has `url`. |
 | `search` | `pagefind/`, a static search index. |
