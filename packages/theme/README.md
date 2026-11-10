@@ -85,7 +85,7 @@ The keys are the 0.2 `slipway.tokens` names that ADR 0024 maps into the theme's 
 
 ## Overrides
 
-The rest of `theme.options` is the theme's as well. Lateen reads four blocks:
+The rest of `theme.options` is the theme's as well. Lateen reads these blocks:
 
 ```yaml
 theme:
@@ -94,6 +94,8 @@ theme:
       id: v0-4
       text: Slipway 0.4 is out.
       href: /changelog/
+    editPage:
+      headingLinks: true
     logo:
       light: /assets/logo.svg
       dark: /assets/logo-dark.svg
@@ -114,6 +116,7 @@ theme:
 | Option | What it changes |
 | --- | --- |
 | `announcement.id`, `announcement.text`, `announcement.href` | A dismissible bar above the header. `text` is required; the bar renders nothing without it. `href` links the text; `http`, `https`, `mailto`, and root-relative paths are shown. Dismissal is remembered per `id`. |
+| `editPage.headingLinks` | `true` adds a per-heading "suggest an edit" issue link under the "Edit this page" link; absent or any other value leaves it out. |
 | `logo.light`, `logo.dark` | The header mark. A root-relative path gets the site's `base`; an absolute URL is used as written. With both, the header swaps them with the theme; with one, it shows that one in both modes. |
 | `footer.copyright`, `footer.license` | The two lines of the site footer. |
 | `footer.links[]` | Footer links with `title` and `url`; only `http`, `https`, `mailto`, and root-relative paths are shown. |
