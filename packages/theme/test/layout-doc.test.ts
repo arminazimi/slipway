@@ -187,6 +187,13 @@ test("the drift banner from site.data sits above the status banner and the title
   assert.doesNotMatch(html(doc(layoutProps(pageWith()))), /class="drift-banner"/);
 });
 
+test("the trust panel from site.data sits under the title and before the reading time", () => {
+  const data = { trust: { "/guide/install/": { level: "verified", reasons: ["All examples passed."] } } };
+  const page = html(doc(layoutProps(pageWith(), [], [], data)));
+  assert.match(page, /<h1>Install<\/h1><details class="trust-panel trust-panel-verified"/);
+  assert.doesNotMatch(html(doc(layoutProps(pageWith()))), /class="trust-panel"/);
+});
+
 test("the status banner from front matter sits between the breadcrumb and the title", () => {
   const page = out(pageWith({ frontMatter: { status: "beta" } }));
   assert.match(

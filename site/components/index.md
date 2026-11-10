@@ -57,6 +57,7 @@ The engine turns a directive into the component whose folder has the same name u
 | [Tags](./tags/) | A wrapping list of tag chips, as links or plain text. |
 | [Terminal](./terminal/) | A shell session with commands and their output. |
 | [Tested chip](./tested-chip/) | The pass or fail result of a page's examples, next to a code block. |
+| [Trust panel](./trust-panel/) | A chip under the title that opens the page's trust level, examples, drift, reviewer, and actions. |
 | [Version badge](./version-badge/) | A version badge that says when a feature was added, changed, or removed. |
 | [Video](./video/) | A click-to-load video with a poster and a link that works without JavaScript. |
 
