@@ -61,9 +61,13 @@ function article(props: LayoutProps): ComponentChildren {
     readingTime({ props: {}, page, site: props.site, html: "" }) as ComponentChildren,
     h("div", { class: "doc-body", dangerouslySetInnerHTML: { __html: highlightFences(page.html) } }),
     editPage(props) as ComponentChildren,
-    pageFooter(props) as ComponentChildren,
-    copyMarkdown(props) as ComponentChildren,
-    pageAgentMenu(props) as ComponentChildren,
+    h(
+      "div",
+      { class: "doc-actions" },
+      pageFooter(props) as ComponentChildren,
+      copyMarkdown(props) as ComponentChildren,
+      pageAgentMenu(props) as ComponentChildren,
+    ),
     feedback(props) as ComponentChildren,
     pager(props) as ComponentChildren,
   );

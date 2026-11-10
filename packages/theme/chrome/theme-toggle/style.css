@@ -1,16 +1,24 @@
-/* Theme toggle: light, system, and dark as a segmented control; hidden until client.ts runs it. */
+/* Theme toggle: one icon button the size of the repository link. The three radios stay in the page;
+   only the label of the NEXT choice (light, then system, then dark, then light again) is drawn, so a
+   click moves to it. Hidden until client.ts runs it. */
 
 .theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  display: inline-flex;
+  position: relative;
   margin: 0;
   padding: 0;
   border: 0;
+  min-inline-size: 0;
 }
 
-/* The legend names the group for screen readers; sighted visitors read the three choices. */
-.theme-toggle-legend {
+.theme-toggle[hidden] {
+  display: none;
+}
+
+.theme-toggle-legend,
+.theme-toggle-status,
+.theme-toggle-input,
+.theme-toggle-option-text {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -22,46 +30,54 @@
 }
 
 .theme-toggle-options {
-  display: flex;
-  gap: var(--space-1);
-  padding: var(--space-1);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
+  display: inline-flex;
 }
 
+/* Every label is out of sight except the next one; the inputs stay focusable, so arrow keys still move between choices. */
 .theme-toggle-option {
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-full);
-  color: var(--color-muted);
-  font-family: var(--type-font-ui);
-  font-size: var(--type-size-sm);
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
   cursor: pointer;
+}
+
+.theme-toggle-option:has(.theme-toggle-input:checked) + .theme-toggle-option,
+.theme-toggle-options:has(.theme-toggle-option:last-child .theme-toggle-input:checked) .theme-toggle-option:first-child {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: auto;
+  block-size: auto;
+  min-block-size: var(--space-8);
+  min-inline-size: var(--space-8);
+  padding: var(--space-1);
+  overflow: visible;
+  clip-path: none;
+  border-radius: var(--radius-md);
+  color: var(--color-muted);
 }
 
 .theme-toggle-option:hover {
   background: var(--state-hover-bg);
-  color: var(--color-text);
-}
-
-/* The native radio and the status region stay in the accessibility tree, out of sight. */
-.theme-toggle-input,
-.theme-toggle-status {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.theme-toggle-option:has(.theme-toggle-input:checked) {
-  background: var(--state-selected-bg);
   color: var(--color-heading);
 }
 
-.theme-toggle-option:has(.theme-toggle-input:focus-visible) {
+.theme-toggle-icon {
+  inline-size: var(--space-6);
+  block-size: var(--space-6);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The focused radio is clipped, so the ring goes on the whole control. */
+.theme-toggle:has(.theme-toggle-input:focus-visible) {
   outline: 2px solid var(--state-focus-ring);
   outline-offset: 2px;
+  border-radius: var(--radius-md);
 }
